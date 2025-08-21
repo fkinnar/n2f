@@ -1,0 +1,50 @@
+# Environnements virtuels
+venv/
+.env/
+.venv/
+env/
+
+# Fichiers Python compilés
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Fichiers de distribution
+*.egg-info/
+dist/
+build/
+wheelhouse/
+
+# Fichiers de configuration IDE/éditeur
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Fichiers de cache et logs
+*.log
+*.sqlite3
+*.db
+
+# Fichiers de dépendances
+Pipfile.lock
+poetry.lock
+
+# Fichiers de configuration locaux
+.env
+.env.local
+.secrets
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers de test/couverture
+.htmlcov/
+.tox/
+.coverage
+*.cover
+*.py,cover
+nosetests.xml
+coverage.xml
+*.log

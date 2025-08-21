@@ -1,0 +1,8 @@
+agresso:
+  prod: true
+  sql-path: "sql"
+  sql-filename: "get-agresso-n2f-users.dev.sql"
+n2f:
+  base_urls: "https://sandbox.n2f.com/services/api/v2/"
+  simulate: false
+  sandbox: true

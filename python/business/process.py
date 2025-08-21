@@ -1,0 +1,137 @@
+import pandas as pd
+
+from n2f.process import get_companies as get_n2f_companies, get_users as get_n2f_users, create_users, delete_users, update_users
+from agresso.process import select_users
+from business.normalize import normalize_agresso_users, normalize_n2f_users
+
+
+def synchronize_users(
+    do_create     : bool,
+    do_update     : bool,
+    do_delete     : bool,
+    base_dir      : str,
+    db_user       : str,
+    db_password   : str,
+    sql_path      : str,
+    sql_filename  : str,
+    base_url      : str,
+    client_id     : str,
+    client_secret : str,
+    prod          : bool,
+    simulate      : bool,
+    sandbox       : bool
+) -> None:
+    """
+    Effectue la synchronisation des utilisateurs Agresso <-> N2F selon les options passées.
+    """
+
+    # Chargement des utilisateurs Agresso et normalisation des données
+    df_agresso_users: pd.DataFrame = normalize_agresso_users(
+        select_users(
+        base_dir     = base_dir,
+        db_user      = db_user,
+        db_password  = db_password,
+        sql_path     = sql_path,
+        sql_filename = sql_filename,
+        prod         = prod
+    ))
+    print(f"Nombre d'utilisateurs Agresso chargés : {len(df_agresso_users)}")
+
+    # Chargement des utilisateurs N2F et normalisation des données
+    df_n2f_users: pd.DataFrame = normalize_n2f_users(
+        get_n2f_users(
+            base_url      = base_url,
+            client_id     = client_id,
+            client_secret = client_secret,
+            simulate      = simulate
+        )
+    )
+    print(f"Nombre d'utilisateurs N2F chargés : {len(df_n2f_users)}")
+
+    # Chargement des entreprises N2F
+    df_n2f_companies: pd.DataFrame = get_n2f_companies(
+        base_url      = base_url,
+        client_id     = client_id,
+        client_secret = client_secret,
+        simulate      = simulate
+    )
+    print(f"Nombre d'entreprises N2F chargées : {len(df_n2f_companies)}")
+
+    if do_create:
+        # Création des utilisateurs N2F
+        created, status_col = create_users(
+            df_agresso_users = df_agresso_users,
+            df_n2f_users     = df_n2f_users,
+            df_n2f_companies = df_n2f_companies,
+            base_url         = base_url,
+            client_id        = client_id,
+            client_secret    = client_secret,
+            simulate         = simulate,
+            sandbox          = sandbox
+        )
+        reporting(
+            created,
+            "Aucun utilisateur ajouté",
+            "Utilisateurs ajoutés",
+            status_col
+        )
+
+    if do_update:
+        # Mise à jour des utilisateurs N2F
+        updated, status_col = update_users(
+            df_agresso_users = df_agresso_users,
+            df_n2f_users     = df_n2f_users,
+            df_n2f_companies = df_n2f_companies,
+            base_url         = base_url,
+            client_id        = client_id,
+            client_secret    = client_secret,
+            simulate         = simulate,
+            sandbox          = sandbox
+        )
+        reporting(
+            updated,
+            "Aucun utilisateur modifié",
+            "Utilisateurs modifiés",
+            status_col
+        )
+
+    if do_delete:
+        # Suppression des utilisateurs N2F
+        deleted, status_col = delete_users(
+            df_agresso_users = df_agresso_users,
+            df_n2f_users     = df_n2f_users,
+            base_url         = base_url,
+            client_id        = client_id,
+            client_secret    = client_secret,
+            simulate         = simulate
+        )
+        reporting(
+            deleted,
+            "Aucun utilisateur supprimé",
+            "Utilisateurs supprimés",
+            status_col
+        )
+
+
+def reporting(
+    result_df      : pd.DataFrame,
+    empty_message  : str,
+    update_message : str,
+    status_col     : str
+) -> None:
+    """
+    Génère un rapport à partir du DataFrame de résultats.
+    Affiche le nombre de succès et d'échecs si une colonne de statut est fournie.
+    """
+    if result_df.empty:
+        print(empty_message)
+    else:
+        print(update_message + " :")
+        if status_col and status_col in result_df.columns:
+            nb_success = result_df[status_col].sum()
+            nb_total = len(result_df)
+            nb_failed = nb_total - nb_success
+            print(f"  Succès : {nb_success} / {nb_total}")
+            print(f"  Échecs : {nb_failed} / {nb_total}")
+        else:
+            print(f"  Total : {len(result_df)}")
