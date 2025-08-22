@@ -22,7 +22,7 @@ def get_users(
     limit = 200
 
     while True:
-        df_page = get_users_api(
+        users_page = get_users_api(
             base_url,
             client_id,
             client_secret,
@@ -30,6 +30,9 @@ def get_users(
             limit,
             simulate
         )
+        if not users_page:
+            break
+        df_page = pd.DataFrame(users_page)
         if df_page.empty:
             break
         all_users.append(df_page)
@@ -55,12 +58,12 @@ def get_companies(
     La pagination est gérée automatiquement.
     """
 
-    all_users = []
+    all_companies = []
     start = 0
     limit = 200
 
     while True:
-        df_page = get_companies_api(
+        companies_page = get_companies_api(
             base_url,
             client_id,
             client_secret,
@@ -68,15 +71,18 @@ def get_companies(
             limit,
             simulate
         )
+        if not companies_page:
+            break
+        df_page = pd.DataFrame(companies_page)
         if df_page.empty:
             break
-        all_users.append(df_page)
+        all_companies.append(df_page)
         if len(df_page) < limit:
             break
         start += limit
 
-    if all_users:
-        return pd.concat(all_users, ignore_index=True)
+    if all_companies:
+        return pd.concat(all_companies, ignore_index=True)
     else:
         return pd.DataFrame()
 
