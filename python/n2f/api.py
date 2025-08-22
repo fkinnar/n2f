@@ -127,7 +127,8 @@ def get_users(base_url: str, client_id: str, client_secret: str, start: int = 0,
     """
 
     response = get_entity("users", base_url, client_id, client_secret, start, limit, simulate)
-    return response["response"]["data"]
+    data = response["response"]
+    return data["data"] if "data" in data else []
 
 
 def get_companies(base_url: str, client_id: str, client_secret: str, start: int = 0, limit: int = 200, simulate: bool = False) -> List[Dict[str, Any]]:
@@ -150,7 +151,8 @@ def get_companies(base_url: str, client_id: str, client_secret: str, start: int 
     """
 
     response = get_entity("companies", base_url, client_id, client_secret, start, limit, simulate)
-    return response["response"]["data"]
+    data = response["response"]
+    return data["data"] if "data" in data else []
 
 
 def get_roles(base_url: str, client_id: str, client_secret: str, simulate: bool = False) -> List[Dict[str, Any]]:
@@ -171,7 +173,8 @@ def get_roles(base_url: str, client_id: str, client_secret: str, simulate: bool 
     """
 
     response = get_entity("roles", base_url, client_id, client_secret, simulate=simulate)
-    return response["response"]
+    data = response["response"]
+    return data # pas de data dans response ici !
 
 
 def get_userprofiles(base_url: str, client_id: str, client_secret: str, simulate: bool = False) -> List[Dict[str, Any]]:
@@ -192,7 +195,8 @@ def get_userprofiles(base_url: str, client_id: str, client_secret: str, simulate
     """
 
     response = get_entity("userprofiles", base_url, client_id, client_secret, simulate=simulate)
-    return response["response"]
+    data = response["response"]
+    return data # pas de data dans response ici !
 
 
 def get_customaxes(
@@ -291,8 +295,47 @@ def get_customaxes_values(
     response.raise_for_status()
     data = response.json()
 
-    values = data["response"]["data"]
+    values = data["response"]["data"] if "data" in data["response"] else []
     return values
+
+
+def get_projects(
+    base_url: str,
+    client_id: str,
+    client_secret: str,
+    company_id: str,
+    start: int,
+    limit: int,
+    simulate: bool = False
+) -> List[Dict[str, Any]]:
+    """
+    Récupère une page de projets d'une société depuis l'API N2F (utilise l'axe 'projects').
+
+    Args:
+        base_url (str): URL de base de l'API N2F.
+        client_id (str): ID du client pour l'API N2F.
+        client_secret (str): Secret du client pour l'API N2F.
+        company_id (str): UUID de la société.
+        start (int): Index de départ pour la pagination.
+        limit (int): Nombre maximum de projets à récupérer (max 200).
+        simulate (bool): Si True, simule la récupération sans l'exécuter.
+
+    Returns:
+        list[dict[str, Any]]: Liste de dictionnaires représentant les projets.
+
+    Raises:
+        Exception: En cas d'erreur HTTP ou de parsing.
+    """
+    return get_customaxes_values(
+        base_url,
+        client_id,
+        client_secret,
+        company_id,
+        "projects",
+        start,
+        limit,
+        simulate
+    )
 
 
 def upsert_user(base_url: str, client_id: str, client_secret: str, payload: dict, simulate: bool = False) -> bool:

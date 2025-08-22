@@ -1,6 +1,7 @@
 import pandas as pd
 
 from n2f.process import (
+    get_projects as get_n2f_projects,
     get_customaxes_values as get_n2f_customaxes_values,
     get_customaxes as get_n2f_customaxes,
     get_roles as get_n2f_roles,
@@ -117,6 +118,27 @@ def synchronize_users(
         df_n2f_customaxes_values = pd.DataFrame()
 
     print(f"Nombre de valeurs d'axes personnalisés N2F chargées : {len(df_n2f_customaxes_values)}")
+
+    # Chargement des projets N2F pour toutes les entreprises
+    projects_list = []
+    for company_id in df_n2f_companies["uuid"]:
+        df_projects = get_n2f_projects(
+            base_url=base_url,
+            client_id=client_id,
+            client_secret=client_secret,
+            company_id=company_id,
+            simulate=simulate
+        )
+        if not df_projects.empty:
+            df_projects["company_id"] = company_id  # Pour garder la référence à la société
+            projects_list.append(df_projects)
+
+    if projects_list:
+        df_n2f_projects = pd.concat(projects_list, ignore_index=True)
+    else:
+        df_n2f_projects = pd.DataFrame()
+
+    print(f"Nombre de projets N2F chargés : {len(df_n2f_projects)}")
 
     # Chargement des utilisateurs N2F et normalisation des données
     profile_mapping: dict[str, str] = build_n2f_mapping(df_n2f_userprofiles)

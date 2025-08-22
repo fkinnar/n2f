@@ -7,6 +7,7 @@ from n2f.api import (
     get_companies as get_companies_api,
     get_customaxes as get_customaxes_api,
     get_customaxes_values as get_customaxes_values_api,
+    get_projects as get_projects_api,
     get_users as get_users_api,
     delete_user as delete_user_api,
     create_user as create_user_api,
@@ -199,6 +200,47 @@ def get_customaxes_values(
             client_secret,
             company_id,
             axe_id,
+            start,
+            limit,
+            simulate
+        )
+        if not values_page:
+            break
+        df_page = pd.DataFrame(values_page)
+        if df_page.empty:
+            break
+        all_values.append(df_page)
+        if len(df_page) < limit:
+            break
+        start += limit
+
+    if all_values:
+        return pd.concat(all_values, ignore_index=True)
+    else:
+        return pd.DataFrame()
+
+
+def get_projects(
+    base_url: str,
+    client_id: str,
+    client_secret: str,
+    company_id: str,
+    simulate: bool = False
+) -> pd.DataFrame:
+    """
+    Récupère les projets d'une société depuis l'API N2F (axe 'projects', toutes les pages) et retourne un DataFrame unique.
+    La pagination est gérée automatiquement.
+    """
+    all_values = []
+    start = 0
+    limit = 200
+
+    while True:
+        values_page = get_projects_api(
+            base_url,
+            client_id,
+            client_secret,
+            company_id,
             start,
             limit,
             simulate
