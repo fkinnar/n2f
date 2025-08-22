@@ -104,8 +104,7 @@ def get_entity(entity: str, base_url: str, client_id: str, client_secret: str, s
     response = n2f.get_session_get().get(url, headers=headers, params=req_params)
     response.raise_for_status()  # Laisse planter en cas d'erreur HTTP
 
-    data = response.json()
-    return data["response"]["data"]
+    return response.json()
 
 
 def get_users(base_url: str, client_id: str, client_secret: str, start: int = 0, limit: int = 200, simulate: bool = False) -> List[Dict[str, Any]]:
@@ -127,7 +126,8 @@ def get_users(base_url: str, client_id: str, client_secret: str, start: int = 0,
         Exception: En cas d'erreur HTTP ou de parsing.
     """
 
-    return get_entity("users", base_url, client_id, client_secret, start, limit, simulate)
+    response = get_entity("users", base_url, client_id, client_secret, start, limit, simulate)
+    return response["response"]["data"]
 
 
 def get_companies(base_url: str, client_id: str, client_secret: str, start: int = 0, limit: int = 200, simulate: bool = False) -> List[Dict[str, Any]]:
@@ -149,7 +149,8 @@ def get_companies(base_url: str, client_id: str, client_secret: str, start: int 
         Exception: En cas d'erreur HTTP ou de parsing.
     """
 
-    return get_entity("companies", base_url, client_id, client_secret, start, limit, simulate)
+    response = get_entity("companies", base_url, client_id, client_secret, start, limit, simulate)
+    return response["response"]["data"]
 
 
 def get_roles(base_url: str, client_id: str, client_secret: str, simulate: bool = False) -> List[Dict[str, Any]]:
@@ -169,10 +170,11 @@ def get_roles(base_url: str, client_id: str, client_secret: str, simulate: bool 
         Exception: En cas d'erreur HTTP ou de parsing.
     """
 
-    return get_entity("role", base_url, client_id, client_secret, simulate=simulate)
+    response = get_entity("roles", base_url, client_id, client_secret, simulate=simulate)
+    return response["response"]
 
 
-def get_user_profiles(base_url: str, client_id: str, client_secret: str, simulate: bool = False) -> List[Dict[str, Any]]:
+def get_userprofiles(base_url: str, client_id: str, client_secret: str, simulate: bool = False) -> List[Dict[str, Any]]:
     """
     Récupère les profils d'utilisateurs depuis l'API N2F.
 
@@ -189,7 +191,8 @@ def get_user_profiles(base_url: str, client_id: str, client_secret: str, simulat
         Exception: En cas d'erreur HTTP ou de parsing.
     """
 
-    return get_entity("userprofiles", base_url, client_id, client_secret, simulate=simulate)
+    response = get_entity("userprofiles", base_url, client_id, client_secret, simulate=simulate)
+    return response["response"]
 
 
 def delete_user(base_url: str, client_id: str, client_secret: str, mail: str, simulate: bool = False) -> bool:

@@ -1,7 +1,15 @@
 import pandas as pd
 from typing import Optional, Set, Dict, Any, List, Tuple
 
-from n2f.api import get_companies as get_companies_api, get_users as get_users_api, delete_user as delete_user_api, create_user as create_user_api, update_user as update_user_api
+from n2f.api import (
+    get_roles as get_roles_api,
+    get_userprofiles as get_userprofiles_api,
+    get_companies as get_companies_api,
+    get_users as get_users_api,
+    delete_user as delete_user_api,
+    create_user as create_user_api,
+    update_user as update_user_api
+)
 from n2f.payload import create_upsert_payload
 
 
@@ -373,3 +381,38 @@ def delete_users(
         users_to_delete[status_col] = deleted_list
 
     return users_to_delete, status_col
+
+def get_roles(
+    base_url: str,
+    client_id: str,
+    client_secret: str,
+    simulate: bool = False
+) -> pd.DataFrame:
+    """
+    Récupère les rôles depuis l'API N2F et retourne un DataFrame.
+    """
+    roles = get_roles_api(
+        base_url,
+        client_id,
+        client_secret,
+        simulate
+    )
+    return pd.DataFrame(roles)
+
+
+def get_userprofiles(
+    base_url: str,
+    client_id: str,
+    client_secret: str,
+    simulate: bool = False
+) -> pd.DataFrame:
+    """
+    Récupère les profils d'utilisateurs depuis l'API N2F et retourne un DataFrame.
+    """
+    profiles = get_userprofiles_api(
+        base_url,
+        client_id,
+        client_secret,
+        simulate
+    )
+    return pd.DataFrame(profiles)
