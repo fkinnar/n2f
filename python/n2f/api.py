@@ -70,7 +70,7 @@ def get_access_token(base_url: str, client_id: str, client_secret: str, simulate
 
 def get_entity(entity: str, base_url: str, client_id: str, client_secret: str, start: int = 0, limit: int = 200, simulate: bool = False) -> List[Dict[str, Any]]:
     """
-    Récupère n'importe quelles entités depuis l'API N2F (paginé).
+    Récupère une page d'entités depuis l'API N2F (paginé).
 
     Args:
         entity (str): Type d'entité à récupérer (ex: "users", "companies").
@@ -82,7 +82,7 @@ def get_entity(entity: str, base_url: str, client_id: str, client_secret: str, s
         simulate (bool): Si True, simule la récupération sans l'exécuter.
 
     Returns:
-        list[dict[str, Any]]: Liste de dictionnaires représentant les entités récupérées.
+        dict: Réponse brute de l'API (incluant la clé "response" avec les données).
 
     Raises:
         Exception: En cas d'erreur HTTP ou de parsing.
@@ -109,7 +109,7 @@ def get_entity(entity: str, base_url: str, client_id: str, client_secret: str, s
 
 def get_users(base_url: str, client_id: str, client_secret: str, start: int = 0, limit: int = 200, simulate: bool = False) -> List[Dict[str, Any]]:
     """
-    Récupère les utilisateurs depuis l'API N2F (paginé).
+    Récupère une page d'utilisateurs depuis l'API N2F (paginé).
 
     Args:
         base_url (str): URL de base de l'API N2F.
@@ -132,7 +132,7 @@ def get_users(base_url: str, client_id: str, client_secret: str, start: int = 0,
 
 def get_companies(base_url: str, client_id: str, client_secret: str, start: int = 0, limit: int = 200, simulate: bool = False) -> List[Dict[str, Any]]:
     """
-    Récupère les entreprises depuis l'API N2F (paginé).
+    Récupère une page d'entreprises depuis l'API N2F (paginé).
 
     Args:
         base_url (str): URL de base de l'API N2F.
@@ -195,32 +195,104 @@ def get_userprofiles(base_url: str, client_id: str, client_secret: str, simulate
     return response["response"]
 
 
-def delete_user(base_url: str, client_id: str, client_secret: str, mail: str, simulate: bool = False) -> bool:
+def get_customaxes(
+    base_url: str,
+    client_id: str,
+    client_secret: str,
+    company_id: str,
+    start: int,
+    limit: int,
+    simulate: bool = False
+) -> List[Dict[str, Any]]:
     """
-    Supprime un utilisateur N2F via l'API (DELETE /v2/users/{mail}).
+    Récupère une page d'axes personnalisés d'une société depuis l'API N2F.
 
     Args:
         base_url (str): URL de base de l'API N2F.
         client_id (str): ID du client pour l'API N2F.
         client_secret (str): Secret du client pour l'API N2F.
-        mail (str): Adresse e-mail de l'utilisateur à supprimer.
-        simulate (bool): Si True, simule la suppression sans l'exécuter.
+        company_id (str): UUID de la société.
+        start (int): Index de départ pour la pagination.
+        limit (int): Nombre maximum d'axes à récupérer (max 200).
+        simulate (bool): Si True, simule la récupération sans l'exécuter.
 
     Returns:
-        bool: True si la suppression a réussi, False sinon.
+        list[dict[str, Any]]: Liste de dictionnaires représentant les axes personnalisés.
+
+    Raises:
+        Exception: En cas d'erreur HTTP ou de parsing.
     """
 
     if simulate:
-        return False
+        return []
 
     access_token, _ = get_access_token(base_url, client_id, client_secret, simulate=simulate)
-    url = base_url + f"/users/{mail}"
+    url = f"{base_url}/companies/{company_id}/axes"
+    params = {
+        "start": start,
+        "limit": limit
+    }
     headers = {
         "Authorization": f"Bearer {access_token}"
     }
 
-    response = n2f.get_session_write().delete(url, headers=headers)
-    return response.status_code >= 200 and response.status_code < 300
+    response = n2f.get_session_get().get(url, headers=headers, params=params)
+    response.raise_for_status()
+    data = response.json()
+
+    axes = data["response"]["data"]
+    return axes
+
+
+def get_customaxes_values(
+    base_url: str,
+    client_id: str,
+    client_secret: str,
+    company_id: str,
+    axe_id: str,
+    start: int,
+    limit: int,
+    simulate: bool = False
+) -> List[Dict[str, Any]]:
+    """
+    Récupère une page de valeurs d'un axe personnalisé d'une société depuis l'API N2F.
+
+    Args:
+        base_url (str): URL de base de l'API N2F.
+        client_id (str): ID du client pour l'API N2F.
+        client_secret (str): Secret du client pour l'API N2F.
+        company_id (str): UUID de la société.
+        axe_id (str): UUID de l'axe personnalisé.
+        start (int): Index de départ pour la pagination.
+        limit (int): Nombre maximum de valeurs à récupérer (max 200).
+        simulate (bool): Si True, simule la récupération sans l'exécuter.
+
+    Returns:
+        list[dict[str, Any]]: Liste de dictionnaires représentant les valeurs de l'axe personnalisé.
+
+    Raises:
+        Exception: En cas d'erreur HTTP ou de parsing.
+    """
+
+    if simulate:
+        return []
+
+    access_token, _ = get_access_token(base_url, client_id, client_secret, simulate=simulate)
+    url = f"{base_url}/companies/{company_id}/axes/{axe_id}"
+    params = {
+        "start": start,
+        "limit": limit
+    }
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+
+    response = n2f.get_session_get().get(url, headers=headers, params=params)
+    response.raise_for_status()
+    data = response.json()
+
+    values = data["response"]["data"]
+    return values
 
 
 def upsert_user(base_url: str, client_id: str, client_secret: str, payload: dict, simulate: bool = False) -> bool:
@@ -284,3 +356,31 @@ def update_user(base_url: str, client_id: str, client_secret: str, payload: dict
         bool: True si l'opération a réussi (code 200 ou 201), False sinon.
     """
     return upsert_user(base_url, client_id, client_secret, payload, simulate)
+
+
+def delete_user(base_url: str, client_id: str, client_secret: str, mail: str, simulate: bool = False) -> bool:
+    """
+    Supprime un utilisateur N2F via l'API (DELETE /v2/users/{mail}).
+
+    Args:
+        base_url (str): URL de base de l'API N2F.
+        client_id (str): ID du client pour l'API N2F.
+        client_secret (str): Secret du client pour l'API N2F.
+        mail (str): Adresse e-mail de l'utilisateur à supprimer.
+        simulate (bool): Si True, simule la suppression sans l'exécuter.
+
+    Returns:
+        bool: True si la suppression a réussi, False sinon.
+    """
+
+    if simulate:
+        return False
+
+    access_token, _ = get_access_token(base_url, client_id, client_secret, simulate=simulate)
+    url = base_url + f"/users/{mail}"
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+
+    response = n2f.get_session_write().delete(url, headers=headers)
+    return response.status_code >= 200 and response.status_code < 300

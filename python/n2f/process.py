@@ -5,6 +5,8 @@ from n2f.api import (
     get_roles as get_roles_api,
     get_userprofiles as get_userprofiles_api,
     get_companies as get_companies_api,
+    get_customaxes as get_customaxes_api,
+    get_customaxes_values as get_customaxes_values_api,
     get_users as get_users_api,
     delete_user as delete_user_api,
     create_user as create_user_api,
@@ -91,6 +93,128 @@ def get_companies(
 
     if all_companies:
         return pd.concat(all_companies, ignore_index=True)
+    else:
+        return pd.DataFrame()
+
+
+def get_roles(
+    base_url: str,
+    client_id: str,
+    client_secret: str,
+    simulate: bool = False
+) -> pd.DataFrame:
+    """
+    Récupère les rôles depuis l'API N2F et retourne un DataFrame.
+    """
+    roles = get_roles_api(
+        base_url,
+        client_id,
+        client_secret,
+        simulate
+    )
+
+    return pd.DataFrame(roles)
+
+
+def get_userprofiles(
+    base_url: str,
+    client_id: str,
+    client_secret: str,
+    simulate: bool = False
+) -> pd.DataFrame:
+    """
+    Récupère les profils d'utilisateurs depuis l'API N2F et retourne un DataFrame.
+    """
+    profiles = get_userprofiles_api(
+        base_url,
+        client_id,
+        client_secret,
+        simulate
+    )
+
+    return pd.DataFrame(profiles)
+
+
+def get_customaxes(
+    base_url: str,
+    client_id: str,
+    client_secret: str,
+    company_id: str,
+    simulate: bool = False
+) -> pd.DataFrame:
+    """
+    Récupère les axes personnalisés d'une société depuis l'API N2F (toutes les pages) et retourne un DataFrame unique.
+    La pagination est gérée automatiquement.
+    """
+    all_axes = []
+    start = 0
+    limit = 200
+
+    while True:
+        axes_page = get_customaxes_api(
+            base_url,
+            client_id,
+            client_secret,
+            company_id,
+            start,
+            limit,
+            simulate
+        )
+        if not axes_page:
+            break
+        df_page = pd.DataFrame(axes_page)
+        if df_page.empty:
+            break
+        all_axes.append(df_page)
+        if len(df_page) < limit:
+            break
+        start += limit
+
+    if all_axes:
+        return pd.concat(all_axes, ignore_index=True)
+    else:
+        return pd.DataFrame()
+
+
+def get_customaxes_values(
+    base_url: str,
+    client_id: str,
+    client_secret: str,
+    company_id: str,
+    axe_id: str,
+    simulate: bool = False
+) -> pd.DataFrame:
+    """
+    Récupère les valeurs d'un axe personnalisé d'une société depuis l'API N2F (toutes les pages) et retourne un DataFrame unique.
+    La pagination est gérée automatiquement.
+    """
+    all_values = []
+    start = 0
+    limit = 200
+
+    while True:
+        values_page = get_customaxes_values_api(
+            base_url,
+            client_id,
+            client_secret,
+            company_id,
+            axe_id,
+            start,
+            limit,
+            simulate
+        )
+        if not values_page:
+            break
+        df_page = pd.DataFrame(values_page)
+        if df_page.empty:
+            break
+        all_values.append(df_page)
+        if len(df_page) < limit:
+            break
+        start += limit
+
+    if all_values:
+        return pd.concat(all_values, ignore_index=True)
     else:
         return pd.DataFrame()
 
@@ -381,38 +505,3 @@ def delete_users(
         users_to_delete[status_col] = deleted_list
 
     return users_to_delete, status_col
-
-def get_roles(
-    base_url: str,
-    client_id: str,
-    client_secret: str,
-    simulate: bool = False
-) -> pd.DataFrame:
-    """
-    Récupère les rôles depuis l'API N2F et retourne un DataFrame.
-    """
-    roles = get_roles_api(
-        base_url,
-        client_id,
-        client_secret,
-        simulate
-    )
-    return pd.DataFrame(roles)
-
-
-def get_userprofiles(
-    base_url: str,
-    client_id: str,
-    client_secret: str,
-    simulate: bool = False
-) -> pd.DataFrame:
-    """
-    Récupère les profils d'utilisateurs depuis l'API N2F et retourne un DataFrame.
-    """
-    profiles = get_userprofiles_api(
-        base_url,
-        client_id,
-        client_secret,
-        simulate
-    )
-    return pd.DataFrame(profiles)

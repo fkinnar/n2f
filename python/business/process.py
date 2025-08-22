@@ -1,6 +1,8 @@
 import pandas as pd
 
 from n2f.process import (
+    get_customaxes_values as get_n2f_customaxes_values,
+    get_customaxes as get_n2f_customaxes,
     get_roles as get_n2f_roles,
     get_userprofiles as get_n2f_userprofiles,
     get_companies as get_n2f_companies,
@@ -70,6 +72,52 @@ def synchronize_users(
     )
     print(f"Nombre d'entreprises N2F chargées : {len(df_n2f_companies)}")
 
+    # Chargement des axes personnalisés N2F pour toutes les entreprises
+    customaxes_list = []
+    for company_id in df_n2f_companies["uuid"]:
+        df_axes = get_n2f_customaxes(
+            base_url=base_url,
+            client_id=client_id,
+            client_secret=client_secret,
+            company_id=company_id,
+            simulate=simulate
+        )
+        if not df_axes.empty:
+            df_axes["company_id"] = company_id  # Pour garder la référence à la société
+            customaxes_list.append(df_axes)
+
+    if customaxes_list:
+        df_n2f_customaxes = pd.concat(customaxes_list, ignore_index=True)
+    else:
+        df_n2f_customaxes = pd.DataFrame()
+
+    print(f"Nombre d'axes personnalisés N2F chargés : {len(df_n2f_customaxes)}")
+
+    # Chargement des valeurs des axes personnalisés N2F pour tous les axes de toutes les sociétés
+    customaxes_values_list = []
+    for _, row in df_n2f_customaxes.iterrows():
+        company_id = row["company_id"]
+        axe_id = row["uuid"]
+        df_values = get_n2f_customaxes_values(
+            base_url=base_url,
+            client_id=client_id,
+            client_secret=client_secret,
+            company_id=company_id,
+            axe_id=axe_id,
+            simulate=simulate
+        )
+        if not df_values.empty:
+            df_values["company_id"] = company_id
+            df_values["axe_id"] = axe_id
+            customaxes_values_list.append(df_values)
+
+    if customaxes_values_list:
+        df_n2f_customaxes_values = pd.concat(customaxes_values_list, ignore_index=True)
+    else:
+        df_n2f_customaxes_values = pd.DataFrame()
+
+    print(f"Nombre de valeurs d'axes personnalisés N2F chargées : {len(df_n2f_customaxes_values)}")
+
     # Chargement des utilisateurs N2F et normalisation des données
     profile_mapping: dict[str, str] = build_n2f_mapping(df_n2f_userprofiles)
     # role_mapping: dict[str, str] = build_n2f_mapping(df_n2f_roles)
@@ -77,7 +125,6 @@ def synchronize_users(
         "gebruiker": "Utilisateur",
         "utilisateur": "Utilisateur"
     }
-
     df_n2f_users: pd.DataFrame = normalize_n2f_users(
         get_n2f_users(
             base_url      = base_url,
