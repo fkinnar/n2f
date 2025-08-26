@@ -3,7 +3,7 @@ import pandas as pd
 from n2f.helper import to_bool
 
 
-def create_upsert_payload(user: dict, company_id: str, sandbox: bool) -> dict:
+def create_user_upsert_payload(user: dict, company_id: str, sandbox: bool) -> dict:
     """
     Construit le payload JSON pour l'upsert (création ou mise à jour) d'un utilisateur N2F
     à partir d'une ligne du DataFrame Agresso, en remplaçant le code entreprise par son UUID.
@@ -41,6 +41,36 @@ def create_upsert_payload(user: dict, company_id: str, sandbox: bool) -> dict:
         "canRaiseLimits": to_bool(user["Droit_Relever_Plafond"]),
         "authMode": user["Methode_SSO"] if not sandbox else "Integrated",
         "canDefineHisAnalytics": user["Update_Champs_Perso"],
+    }
+
+    return payload
+
+
+def create_project_upsert_payload(project: dict, sandbox: bool) -> dict:
+    """
+    Construit le payload JSON pour l'upsert (création ou mise à jour) d'un projet N2F
+    à partir d'une ligne du DataFrame Agresso.
+
+    Args:
+        project (dict): Dictionnaire représentant un projet.
+        sandbox (bool): Indique si l'environnement est un sandbox.
+
+    Returns:
+        dict: Dictionnaire prêt à être converti en JSON pour l'API N2F.
+    """
+
+    payload = {
+    "code": project["Code"],
+    "names": [
+        {
+        "culture": "fr",
+        "value": project["Nom_Fr"]
+        },
+        {
+        "culture": "nl",
+        "value": project["Nom_Nl"]
+        }
+    ]
     }
 
     return payload

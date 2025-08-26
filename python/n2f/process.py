@@ -1,19 +1,26 @@
 import pandas as pd
 from typing import Optional, Set, Dict, Any, List, Tuple
 
-from n2f.api import (
-    get_roles as get_roles_api,
-    get_userprofiles as get_userprofiles_api,
-    get_companies as get_companies_api,
-    get_customaxes as get_customaxes_api,
-    get_customaxes_values as get_customaxes_values_api,
-    get_projects as get_projects_api,
-    get_users as get_users_api,
-    delete_user as delete_user_api,
-    create_user as create_user_api,
-    update_user as update_user_api
+from n2f.api.user import (
+    get_users as get_users_api, 
+    create_user as create_user_api, 
+    update_user as update_user_api, 
+    delete_user as delete_user_api
 )
-from n2f.payload import create_upsert_payload
+from n2f.api.project import (
+    get_projects as get_projects_api,
+    create_project as create_project_api,
+    update_project as update_project_api,
+    delete_project as delete_project_api
+)
+from n2f.api.customaxe import (
+    get_customaxes as get_customaxes_api,
+    get_customaxes_values as get_customaxes_values_api
+)
+from n2f.api.company import get_companies as get_companies_api
+from n2f.api.role import get_roles as get_roles_api
+from n2f.api.userprofile import get_userprofiles as get_userprofiles_api
+from n2f.payload import create_user_upsert_payload, create_project_upsert_payload
 
 
 def get_users(
@@ -369,7 +376,7 @@ def build_user_payload(
     Retourne un dictionnaire prêt à être envoyé à l'API N2F.
     """
     company_id = lookup_company_id(user["Entreprise"], df_n2f_companies)
-    payload = create_upsert_payload(user.to_dict(), company_id, sandbox)
+    payload = create_user_upsert_payload(user.to_dict(), company_id, sandbox)
     if manager_email is None:
         payload["managerMail"] = ensure_manager_exists(
             user["Manager"],
@@ -385,6 +392,18 @@ def build_user_payload(
     else:
         payload["managerMail"] = manager_email
 
+    return payload
+
+
+def build_project_payload(
+    project: pd.Series,
+    sandbox: bool
+) -> Dict[str, Any]:
+    """
+    Construit le payload JSON pour l'upsert (création ou mise à jour) d'un projet N2F.
+    Retourne un dictionnaire prêt à être envoyé à l'API N2F.
+    """
+    payload = create_project_upsert_payload(project.to_dict(), sandbox)
     return payload
 
 
@@ -547,3 +566,103 @@ def delete_users(
         users_to_delete[status_col] = deleted_list
 
     return users_to_delete, status_col
+
+def create_projects(
+    df_projects: pd.DataFrame,
+    base_url: str,
+    client_id: str,
+    client_secret: str,
+    company_id: str,
+    status_col: str = "created",
+    simulate: bool = False,
+    sandbox: bool = False
+) -> Tuple[pd.DataFrame, str]:
+    """
+    Crée les projets dans N2F via l'API N2F pour une société donnée.
+    Retourne un DataFrame avec une colonne 'created' (booléen) indiquant le succès ou l'échec.
+    """
+    if df_projects.empty:
+        return pd.DataFrame(), status_col
+
+    created_list: List[bool] = []
+    for _, project in df_projects.iterrows():
+        payload = build_project_payload(project, sandbox)
+        status = create_project_api(
+            base_url,
+            client_id,
+            client_secret,
+            company_id,
+            payload,
+            simulate
+        )
+        created_list.append(status)
+    df_projects[status_col] = created_list
+
+    return df_projects, status_col
+
+
+def update_projects(
+    df_projects: pd.DataFrame,
+    base_url: str,
+    client_id: str,
+    client_secret: str,
+    company_id: str,
+    status_col: str = "updated",
+    simulate: bool = False,
+    sandbox: bool = False
+) -> Tuple[pd.DataFrame, str]:
+    """
+    Met à jour les projets dans N2F via l'API N2F pour une société donnée.
+    Retourne un DataFrame avec une colonne 'updated' (booléen) indiquant le succès ou l'échec.
+    """
+    if df_projects.empty:
+        return pd.DataFrame(), status_col
+
+    updated_list: List[bool] = []
+    for _, project in df_projects.iterrows():
+        payload = build_project_payload(project, sandbox)
+        status = update_project_api(
+            base_url,
+            client_id,
+            client_secret,
+            company_id,
+            payload,
+            simulate
+        )
+        updated_list.append(status)
+    df_projects[status_col] = updated_list
+
+    return df_projects, status_col
+
+
+def delete_projects(
+    df_projects: pd.DataFrame,
+    base_url: str,
+    client_id: str,
+    client_secret: str,
+    company_id: str,
+    status_col: str = "deleted",
+    simulate: bool = False
+) -> Tuple[pd.DataFrame, str]:
+    """
+    Supprime les projets dans N2F via l'API N2F pour une société donnée.
+    Retourne un DataFrame avec une colonne 'deleted' (booléen) indiquant le succès ou l'échec.
+    """
+    if df_projects.empty:
+        return pd.DataFrame(), status_col
+
+    deleted_list: List[bool] = []
+    for _, project in df_projects.iterrows():
+        code = project["code"]
+        deleted = delete_project_api(
+            base_url,
+            client_id,
+            client_secret,
+            company_id,
+            code,
+            simulate
+        )
+        deleted_list.append(deleted)
+    df_projects[status_col] = deleted_list
+
+    return df_projects, status_col

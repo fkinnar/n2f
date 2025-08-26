@@ -5,7 +5,7 @@ import argparse
 from typing import Any
 from dotenv import load_dotenv
 
-from business.process import synchronize_users
+from business.process import synchronize
 
 
 def main() -> None:
@@ -34,7 +34,7 @@ def main() -> None:
         args.update = True
 
     # Logique métier
-    synchronize_users(
+    synchronize(
         do_create     = args.create,
         do_update     = args.update,
         do_delete     = args.delete,

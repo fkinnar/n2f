@@ -14,7 +14,7 @@ from agresso.process import select_users
 from business.normalize import normalize_agresso_users, normalize_n2f_users, build_mapping as build_n2f_mapping
 
 
-def synchronize_users(
+def synchronize(
     do_create     : bool,
     do_update     : bool,
     do_delete     : bool,
