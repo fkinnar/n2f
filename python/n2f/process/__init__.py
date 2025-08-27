@@ -10,12 +10,20 @@ from .companies import get_companies
 from .roles import get_roles
 from .userprofiles import get_userprofiles
 from .customaxes import get_customaxes, get_customaxes_values
-from .projects import (
-    get_projects,
-    build_project_payload,
-    create_projects,
-    update_projects,
-    delete_projects,
+from .axes import (
+    get_axes,
+    build_axe_payload,
+    create_axes,
+    update_axes,
+    delete_axes,
+)
+# Projects functions as aliases to axes functions
+from .axes import (
+    get_axes as get_projects,
+    build_axe_payload as build_project_payload,
+    create_axes as create_projects,
+    update_axes as update_projects,
+    delete_axes as delete_projects,
 )
 
 __all__ = [
@@ -35,6 +43,12 @@ __all__ = [
     # custom axes
     "get_customaxes",
     "get_customaxes_values",
+    # generic axes
+    "get_axes",
+    "build_axe_payload",
+    "create_axes",
+    "update_axes",
+    "delete_axes",
     # projects
     "get_projects",
     "build_project_payload",

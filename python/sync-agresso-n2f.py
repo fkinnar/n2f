@@ -5,8 +5,12 @@ import argparse
 from typing import Any
 from dotenv import load_dotenv
 
-from business.process.user import synchronize as synchronize_users
-from business.process.project import synchronize as synchronize_projects
+from business.process import (
+    synchronize_users,
+    synchronize_projects,
+    synchronize_plates,
+    synchronize_subposts
+)
 
 
 def main() -> None:
@@ -78,10 +82,42 @@ def main() -> None:
         )
 
     if "plates" in scopes:
-        print("Scope 'plates' sélectionné: la synchronisation des plaques n'est pas encore implémentée.")
+        # Logique métier pour les plaques
+        synchronize_plates(
+            do_create     = args.create,
+            do_update     = args.update,
+            do_delete     = args.delete,
+            base_dir      = base_dir,
+            db_user       = os.getenv("AGRESSO_DB_USER"),
+            db_password   = os.getenv("AGRESSO_DB_PASSWORD"),
+            sql_path      = config["agresso"]["sql-path"],
+            sql_filename  = config["agresso"]["sql-filename-customaxes"],
+            base_url      = config["n2f"]["base_urls"],
+            client_id     = os.getenv("N2F_CLIENT_ID"),
+            client_secret = os.getenv("N2F_CLIENT_SECRET"),
+            prod          = config["agresso"]["prod"],
+            simulate      = config["n2f"]["simulate"],
+            sandbox       = config["n2f"]["sandbox"]
+        )
 
     if "subposts" in scopes:
-        print("Scope 'subposts' sélectionné: la synchronisation des subposts n'est pas encore implémentée.")
+        # Logique métier pour les subposts
+        synchronize_subposts(
+            do_create     = args.create,
+            do_update     = args.update,
+            do_delete     = args.delete,
+            base_dir      = base_dir,
+            db_user       = os.getenv("AGRESSO_DB_USER"),
+            db_password   = os.getenv("AGRESSO_DB_PASSWORD"),
+            sql_path      = config["agresso"]["sql-path"],
+            sql_filename  = config["agresso"]["sql-filename-customaxes"],
+            base_url      = config["n2f"]["base_urls"],
+            client_id     = os.getenv("N2F_CLIENT_ID"),
+            client_secret = os.getenv("N2F_CLIENT_SECRET"),
+            prod          = config["agresso"]["prod"],
+            simulate      = config["n2f"]["simulate"],
+            sandbox       = config["n2f"]["sandbox"]
+        )
 
 def create_arg_parser() -> argparse.ArgumentParser:
     """

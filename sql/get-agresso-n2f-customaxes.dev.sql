@@ -25,5 +25,5 @@ SELECT
       ,[date_from]
       ,[date_to]
 FROM ranked
-WHERE rn <= 5
+WHERE rn <= 10
 ORDER BY [typ], [code];
