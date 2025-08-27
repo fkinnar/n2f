@@ -13,8 +13,8 @@ WITH ranked AS (
       ,ROW_NUMBER() OVER (PARTITION BY [typ] ORDER BY [code]) AS rn
   FROM [AgrProd].[dbo].[iris_N2F_Analytics]
   WHERE
-    ( [typ] = 'PROJECT' AND [code] LIKE 'P%' )
-    OR [typ] IN ('SUBPOST', 'PLAQUE')
+    ( [typ] = 'PROJECT' AND [code] LIKE 'P%' ) OR
+    [typ] IN ('SUBPOST', 'PLAQUE')
 )
 SELECT
   [typ]

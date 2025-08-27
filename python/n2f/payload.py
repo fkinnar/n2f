@@ -1,6 +1,6 @@
 import pandas as pd
 
-from n2f.helper import to_bool
+from n2f.helper import to_bool, normalize_date_for_payload
 
 
 def create_user_upsert_payload(user: dict, company_id: str, sandbox: bool) -> dict:
@@ -60,17 +60,19 @@ def create_project_upsert_payload(project: dict, sandbox: bool) -> dict:
     """
 
     payload = {
-    "code": project["Code"],
+    "code": project["code"],
     "names": [
         {
-        "culture": "fr",
-        "value": project["Nom_Fr"]
+            "culture": "fr",
+            "value": project["description"]
         },
         {
-        "culture": "nl",
-        "value": project["Nom_Nl"]
+            "culture": "nl",
+            "value": project["description"]
         }
-    ]
+    ],
+    "validityDateFrom": normalize_date_for_payload(project.get("date_from")),
+    "validityDateTo": normalize_date_for_payload(project.get("date_to")),
     }
 
     return payload

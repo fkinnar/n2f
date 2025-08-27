@@ -84,7 +84,7 @@ def delete(
     endpoint: str,
     client_id: str,
     client_secret: str,
-    mail: str,
+    id: str,
     simulate: bool = False
 ) -> bool:
     """
@@ -106,7 +106,7 @@ def delete(
         return False
 
     access_token, _ = get_access_token(base_url, client_id, client_secret, simulate=simulate)
-    url = base_url + f"/{endpoint}/{mail}"
+    url = base_url + f"/{endpoint}/{id}"
     headers = {
         "Authorization": f"Bearer {access_token}"
     }

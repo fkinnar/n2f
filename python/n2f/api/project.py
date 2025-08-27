@@ -115,5 +115,5 @@ def delete_project(
     Returns:
         bool: True si la suppression a réussi (code 200-299), False sinon.
     """
-    endpoint = f"/companies/{company_id}/axes/projects/{code}"
-    return delete(base_url, endpoint, client_id, client_secret, "", simulate)
+    endpoint = f"/companies/{company_id}/axes/projects/"
+    return delete(base_url, endpoint, client_id, client_secret, code, simulate)

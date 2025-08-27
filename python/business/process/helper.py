@@ -1,4 +1,5 @@
 import pandas as pd
+from typing import Dict, Any
 
 
 def reporting(
@@ -23,3 +24,21 @@ def reporting(
             print(f"  Échecs : {nb_failed} / {nb_total}")
         else:
             print(f"  Total : {len(result_df)}")
+
+
+def has_payload_changes(payload: Dict[str, Any], n2f_entity: Dict[str, Any]) -> bool:
+    """
+    Compare les champs du payload avec les données N2F pour détecter les changements.
+
+    Args:
+        payload: Dictionnaire contenant les données à envoyer à l'API
+        n2f_entity: Dictionnaire contenant les données actuelles de N2F
+
+    Returns:
+        bool: True si des changements sont détectés, False sinon
+    """
+    for key, value in payload.items():
+        if key in n2f_entity and n2f_entity[key] != value:
+            return True
+
+    return False

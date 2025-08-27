@@ -11,3 +11,26 @@ def to_bool(val) -> bool:
     if isinstance(val, str):
         return val.strip().lower() in {'1', 'true', 'yes', 'on'}
     return False
+
+
+def normalize_date_for_payload(value):
+    """
+    Normalise une date pour l'API: renvoie None si vide/NaN
+    et si la date représente 31/12/2099 (sentinelle d'illimité).
+    Accepte datetime/date ou chaîne (jour/mois/année OK).
+    Retourne une chaîne ISO formatée (YYYY-MM-DD) ou None.
+    """
+    import pandas as pd
+    if pd.isna(value) or value is None:
+        return None
+    try:
+        dt = pd.to_datetime(value, dayfirst=True, errors='coerce')
+    except Exception:
+        dt = None
+    if dt is not None and not pd.isna(dt):
+        # Vérifier si c'est la date sentinelle
+        if dt.date().strftime('%Y-%m-%d') == '2099-12-31':
+            return None
+        # Retourner la date au format ISO (YYYY-MM-DD)
+        return dt.date().strftime('%Y-%m-%d') + "T00:00:00Z"
+    return None

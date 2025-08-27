@@ -3,9 +3,8 @@ import pandas as pd
 from business.process.helper import reporting
 from n2f.process import (
     get_projects as get_n2f_projects,
-    get_customaxes_values as get_n2f_customaxes_values,
-    get_customaxes as get_n2f_customaxes,
     get_companies as get_n2f_companies,
+    create_projects, delete_projects, update_projects
 )
 from agresso.process import select
 
@@ -27,11 +26,10 @@ def synchronize(
     sandbox       : bool
 ) -> None:
     """
-    Effectue la synchronisation des utilisateurs Agresso <-> N2F selon les options passées.
+    Effectue la synchronisation des projets Agresso <-> N2F selon les options passées.
     """
-
-    # Chargement des customaxes Agresso
-    df_agresso_customaxes: pd.DataFrame = select(
+    # Chargement des projets Agresso
+    df_agresso_projects: pd.DataFrame = select(
         base_dir     = base_dir,
         db_user      = db_user,
         db_password  = db_password,
@@ -39,7 +37,11 @@ def synchronize(
         sql_filename = sql_filename,
         prod         = prod
     )
-    print(f"Nombre de customaxes Agresso chargés : {len(df_agresso_customaxes)}")
+    if not df_agresso_projects.empty:
+        df_agresso_projects = df_agresso_projects[
+            df_agresso_projects["typ"].astype(str).str.upper() == "PROJECT"
+        ].copy()
+    print(f"Nombre de projets Agresso chargés : {len(df_agresso_projects)}")
 
     # Chargement des entreprises N2F
     df_n2f_companies: pd.DataFrame = get_n2f_companies(
@@ -49,52 +51,6 @@ def synchronize(
         simulate      = simulate
     )
     print(f"Nombre d'entreprises N2F chargées : {len(df_n2f_companies)}")
-
-    # Chargement des axes personnalisés N2F pour toutes les entreprises
-    customaxes_list = []
-    for company_id in df_n2f_companies["uuid"]:
-        df_axes = get_n2f_customaxes(
-            base_url=base_url,
-            client_id=client_id,
-            client_secret=client_secret,
-            company_id=company_id,
-            simulate=simulate
-        )
-        if not df_axes.empty:
-            df_axes["company_id"] = company_id  # Pour garder la référence à la société
-            customaxes_list.append(df_axes)
-
-    if customaxes_list:
-        df_n2f_customaxes = pd.concat(customaxes_list, ignore_index=True)
-    else:
-        df_n2f_customaxes = pd.DataFrame()
-
-    print(f"Nombre d'axes personnalisés N2F chargés : {len(df_n2f_customaxes)}")
-
-    # Chargement des valeurs des axes personnalisés N2F pour tous les axes de toutes les sociétés
-    customaxes_values_list = []
-    for _, row in df_n2f_customaxes.iterrows():
-        company_id = row["company_id"]
-        axe_id = row["uuid"]
-        df_values = get_n2f_customaxes_values(
-            base_url=base_url,
-            client_id=client_id,
-            client_secret=client_secret,
-            company_id=company_id,
-            axe_id=axe_id,
-            simulate=simulate
-        )
-        if not df_values.empty:
-            df_values["company_id"] = company_id
-            df_values["axe_id"] = axe_id
-            customaxes_values_list.append(df_values)
-
-    if customaxes_values_list:
-        df_n2f_customaxes_values = pd.concat(customaxes_values_list, ignore_index=True)
-    else:
-        df_n2f_customaxes_values = pd.DataFrame()
-
-    print(f"Nombre de valeurs d'axes personnalisés N2F chargées : {len(df_n2f_customaxes_values)}")
 
     # Chargement des projets N2F pour toutes les entreprises
     projects_list = []
@@ -118,13 +74,58 @@ def synchronize(
     print(f"Nombre de projets N2F chargés : {len(df_n2f_projects)}")
 
     if do_create:
-        # Création des utilisateurs N2F
-        pass
+        # Création des projets N2F (par société)
+        created_df, status_col = create_projects(
+            df_agresso_projects = df_agresso_projects,
+            df_n2f_projects     = df_n2f_projects,
+            base_url            = base_url,
+            client_id           = client_id,
+            client_secret       = client_secret,
+            df_n2f_companies    = df_n2f_companies,
+            simulate            = simulate,
+            sandbox             = sandbox
+        )
+        reporting(
+            created_df,
+            "Aucun projet ajouté",
+            "Projets ajoutés",
+            status_col
+        )
 
     if do_update:
-        # Mise à jour des utilisateurs N2F
-        pass
+        # Mise à jour des projets N2F
+        updated_df, status_col = update_projects(
+            df_agresso_projects = df_agresso_projects,
+            df_n2f_projects     = df_n2f_projects,
+            base_url            = base_url,
+            client_id           = client_id,
+            client_secret       = client_secret,
+            df_n2f_companies    = df_n2f_companies,
+            simulate            = simulate,
+            sandbox             = sandbox
+        )
+        reporting(
+            updated_df,
+            "Aucun projet mis à jour",
+            "Projets mis à jour",
+            status_col
+        )
 
     if do_delete:
-        # Suppression des utilisateurs N2F
-        pass
+        # Suppression des projets N2F
+        deleted_df, status_col = delete_projects(
+            df_agresso_projects = df_agresso_projects,
+            df_n2f_projects     = df_n2f_projects,
+            base_url            = base_url,
+            client_id           = client_id,
+            client_secret       = client_secret,
+            df_n2f_companies    = df_n2f_companies,
+            simulate            = simulate,
+            sandbox             = sandbox
+        )
+        reporting(
+            deleted_df,
+            "Aucun projet supprimé",
+            "Projets supprimés",
+            status_col
+        )

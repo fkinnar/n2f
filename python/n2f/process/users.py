@@ -9,6 +9,7 @@ from n2f.api.user import (
 )
 from n2f.payload import create_user_upsert_payload
 from helper.cache import get_from_cache, set_in_cache
+from business.process.helper import has_payload_changes
 
 
 def get_users(
@@ -133,22 +134,31 @@ def ensure_manager_exists(
     return ""
 
 
-def lookup_company_id(company_code: str, df_n2f_companies: pd.DataFrame) -> str:
+def lookup_company_id(company_code: str, df_n2f_companies: pd.DataFrame, sandbox: bool = False) -> str:
     """
     Recherche l'UUID d'une entreprise à partir de son code dans le DataFrame des entreprises N2F.
+    En mode sandbox, si l'entreprise n'est pas trouvée, retourne le premier UUID disponible.
 
     Args:
         company_code (str): Code de l'entreprise à rechercher.
         df_n2f_companies (pd.DataFrame): DataFrame contenant les entreprises N2F.
+        sandbox (bool): Si True et que l'entreprise n'est pas trouvée, utilise le premier UUID disponible.
 
     Returns:
-        str: UUID de l'entreprise si trouvé, sinon une chaîne vide.
+        str: UUID de l'entreprise si trouvé, sinon une chaîne vide (ou premier UUID en sandbox).
     """
     if df_n2f_companies.empty:
         return ""
 
     match = df_n2f_companies.loc[df_n2f_companies["code"] == company_code, "uuid"]
-    return match.iloc[0] if not match.empty else ""
+    if not match.empty:
+        return match.iloc[0]
+
+    # En sandbox, si l'entreprise n'est pas trouvée, on prend le premier disponible
+    if sandbox and not df_n2f_companies.empty and "uuid" in df_n2f_companies.columns:
+        return df_n2f_companies["uuid"].iloc[0]
+
+    return ""
 
 
 def build_user_payload(
@@ -206,35 +216,35 @@ def create_users(
 
     if df_agresso_users.empty:
         return pd.DataFrame(), status_col
+
     if df_n2f_users.empty:
         users_to_create = df_agresso_users.copy()
     else:
         users_to_create = df_agresso_users[~df_agresso_users["AdresseEmail"].isin(df_n2f_users["mail"])].copy()
 
-    if not users_to_create.empty:
-        created_list: List[bool] = []
-        for _, user in users_to_create.iterrows():
-            payload = build_user_payload(
-                user,
-                df_agresso_users,
-                df_n2f_users,
-                df_n2f_companies,
-                base_url,
-                client_id,
-                client_secret,
-                simulate,
-                sandbox
-            )
+    created_list: List[bool] = []
+    for _, user in users_to_create.iterrows():
+        payload = build_user_payload(
+            user,
+            df_agresso_users,
+            df_n2f_users,
+            df_n2f_companies,
+            base_url,
+            client_id,
+            client_secret,
+            simulate,
+            sandbox
+        )
 
-            status = create_user_api(
-                base_url,
-                client_id,
-                client_secret,
-                payload,
-                simulate
-            )
-            created_list.append(status)
-        users_to_create[status_col] = created_list
+        status = create_user_api(
+            base_url,
+            client_id,
+            client_secret,
+            payload,
+            simulate
+        )
+        created_list.append(status)
+    users_to_create[status_col] = created_list
 
     return users_to_create, status_col
 
@@ -282,22 +292,18 @@ def update_users(
         n2f_user = n2f_by_mail.get(mail, {})
 
         # On compare les champs du payload avec ceux de N2F
-        diff = False
-        for key, value in payload.items():
-            if key in n2f_user and n2f_user[key] != value:
-                diff = True
-                break
-        if diff:
-            status = update_user_api(
-                base_url,
-                client_id,
-                client_secret,
-                payload,
-                simulate
-            )
-            updated_list.append(status)
-            users_to_update.append(user.to_dict())
-        # Sinon, on ne fait rien (pas de mise à jour)
+        if not has_payload_changes(payload, n2f_user):
+            continue
+
+        status = update_user_api(
+            base_url,
+            client_id,
+            client_secret,
+            payload,
+            simulate
+        )
+        updated_list.append(status)
+        users_to_update.append(user.to_dict())
 
     if users_to_update:
         df_result = pd.DataFrame(users_to_update)
