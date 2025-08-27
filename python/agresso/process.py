@@ -3,15 +3,17 @@ import pandas as pd
 
 from Iris.Database.IrisConnect import IrisConnect
 from agresso.database import execute_query
+from helper.cache import get_from_cache, set_in_cache
 
 
-def select_users(
+def select(
     base_dir     : str,
     db_user      : str,
     db_password  : str,
     sql_path     : str,
     sql_filename : str,
-    prod         : bool
+    prod         : bool,
+    cache        : bool = True
 ) -> pd.DataFrame:
     """
     Lit la requête SQL depuis le fichier,
@@ -24,6 +26,11 @@ def select_users(
     with open(sql_file, encoding='utf-8') as f:
         query = f.read()
 
+    if cache:
+        cached = get_from_cache("agresso_select", sql_file, prod, db_user, query)
+        if cached is not None:
+            return cached
+
     # Connexion à la base Agresso via IrisConnect
     db = IrisConnect(
         server     = IrisConnect.Server.Production if prod else IrisConnect.Server.Development,
@@ -35,4 +42,8 @@ def select_users(
 
     # Exécution de la requête et récupération des résultats
     df = execute_query(db, query)
+
+    if cache:
+        set_in_cache(df, "agresso_select", sql_file, prod, db_user, query)
+
     return df

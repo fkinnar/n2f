@@ -2,38 +2,31 @@ import pandas as pd
 from typing import Optional, Set, Dict, Any, List, Tuple
 
 from n2f.api.user import (
-    get_users as get_users_api, 
-    create_user as create_user_api, 
-    update_user as update_user_api, 
+    get_users as get_users_api,
+    create_user as create_user_api,
+    update_user as update_user_api,
     delete_user as delete_user_api
 )
-from n2f.api.project import (
-    get_projects as get_projects_api,
-    create_project as create_project_api,
-    update_project as update_project_api,
-    delete_project as delete_project_api
-)
-from n2f.api.customaxe import (
-    get_customaxes as get_customaxes_api,
-    get_customaxes_values as get_customaxes_values_api
-)
-from n2f.api.company import get_companies as get_companies_api
-from n2f.api.role import get_roles as get_roles_api
-from n2f.api.userprofile import get_userprofiles as get_userprofiles_api
-from n2f.payload import create_user_upsert_payload, create_project_upsert_payload
+from n2f.payload import create_user_upsert_payload
+from helper.cache import get_from_cache, set_in_cache
 
 
 def get_users(
         base_url: str,
         client_id: str,
         client_secret: str,
-        simulate: bool = False
+        simulate: bool = False,
+        cache: bool = True
     ) -> pd.DataFrame:
     """
     Récupère tous les utilisateurs depuis l'API N2F (toutes les pages) et retourne un DataFrame unique.
     Respecte le quota d'appels à l'API (en secondes entre chaque appel).
     La pagination est gérée automatiquement.
     """
+    if cache:
+        cached = get_from_cache("get_users", base_url, client_id, simulate)
+        if cached is not None:
+            return cached
 
     all_users = []
     start = 0
@@ -59,213 +52,13 @@ def get_users(
         start += limit
 
     if all_users:
-        return pd.concat(all_users, ignore_index=True)
+        result = pd.concat(all_users, ignore_index=True)
     else:
-        return pd.DataFrame()
+        result = pd.DataFrame()
 
-
-def get_companies(
-        base_url: str,
-        client_id: str,
-        client_secret: str,
-        simulate: bool = False
-    ) -> pd.DataFrame:
-    """
-    Récupère toutes les entreprises depuis l'API N2F (toutes les pages) et retourne un DataFrame unique.
-    Respecte le quota d'appels à l'API (en secondes entre chaque appel).
-    La pagination est gérée automatiquement.
-    """
-
-    all_companies = []
-    start = 0
-    limit = 200
-
-    while True:
-        companies_page = get_companies_api(
-            base_url,
-            client_id,
-            client_secret,
-            start,
-            limit,
-            simulate
-        )
-        if not companies_page:
-            break
-        df_page = pd.DataFrame(companies_page)
-        if df_page.empty:
-            break
-        all_companies.append(df_page)
-        if len(df_page) < limit:
-            break
-        start += limit
-
-    if all_companies:
-        return pd.concat(all_companies, ignore_index=True)
-    else:
-        return pd.DataFrame()
-
-
-def get_roles(
-    base_url: str,
-    client_id: str,
-    client_secret: str,
-    simulate: bool = False
-) -> pd.DataFrame:
-    """
-    Récupère les rôles depuis l'API N2F et retourne un DataFrame.
-    """
-    roles = get_roles_api(
-        base_url,
-        client_id,
-        client_secret,
-        simulate
-    )
-
-    return pd.DataFrame(roles)
-
-
-def get_userprofiles(
-    base_url: str,
-    client_id: str,
-    client_secret: str,
-    simulate: bool = False
-) -> pd.DataFrame:
-    """
-    Récupère les profils d'utilisateurs depuis l'API N2F et retourne un DataFrame.
-    """
-    profiles = get_userprofiles_api(
-        base_url,
-        client_id,
-        client_secret,
-        simulate
-    )
-
-    return pd.DataFrame(profiles)
-
-
-def get_customaxes(
-    base_url: str,
-    client_id: str,
-    client_secret: str,
-    company_id: str,
-    simulate: bool = False
-) -> pd.DataFrame:
-    """
-    Récupère les axes personnalisés d'une société depuis l'API N2F (toutes les pages) et retourne un DataFrame unique.
-    La pagination est gérée automatiquement.
-    """
-    all_axes = []
-    start = 0
-    limit = 200
-
-    while True:
-        axes_page = get_customaxes_api(
-            base_url,
-            client_id,
-            client_secret,
-            company_id,
-            start,
-            limit,
-            simulate
-        )
-        if not axes_page:
-            break
-        df_page = pd.DataFrame(axes_page)
-        if df_page.empty:
-            break
-        all_axes.append(df_page)
-        if len(df_page) < limit:
-            break
-        start += limit
-
-    if all_axes:
-        return pd.concat(all_axes, ignore_index=True)
-    else:
-        return pd.DataFrame()
-
-
-def get_customaxes_values(
-    base_url: str,
-    client_id: str,
-    client_secret: str,
-    company_id: str,
-    axe_id: str,
-    simulate: bool = False
-) -> pd.DataFrame:
-    """
-    Récupère les valeurs d'un axe personnalisé d'une société depuis l'API N2F (toutes les pages) et retourne un DataFrame unique.
-    La pagination est gérée automatiquement.
-    """
-    all_values = []
-    start = 0
-    limit = 200
-
-    while True:
-        values_page = get_customaxes_values_api(
-            base_url,
-            client_id,
-            client_secret,
-            company_id,
-            axe_id,
-            start,
-            limit,
-            simulate
-        )
-        if not values_page:
-            break
-        df_page = pd.DataFrame(values_page)
-        if df_page.empty:
-            break
-        all_values.append(df_page)
-        if len(df_page) < limit:
-            break
-        start += limit
-
-    if all_values:
-        return pd.concat(all_values, ignore_index=True)
-    else:
-        return pd.DataFrame()
-
-
-def get_projects(
-    base_url: str,
-    client_id: str,
-    client_secret: str,
-    company_id: str,
-    simulate: bool = False
-) -> pd.DataFrame:
-    """
-    Récupère les projets d'une société depuis l'API N2F (axe 'projects', toutes les pages) et retourne un DataFrame unique.
-    La pagination est gérée automatiquement.
-    """
-    all_values = []
-    start = 0
-    limit = 200
-
-    while True:
-        values_page = get_projects_api(
-            base_url,
-            client_id,
-            client_secret,
-            company_id,
-            start,
-            limit,
-            simulate
-        )
-        if not values_page:
-            break
-        df_page = pd.DataFrame(values_page)
-        if df_page.empty:
-            break
-        all_values.append(df_page)
-        if len(df_page) < limit:
-            break
-        start += limit
-
-    if all_values:
-        return pd.concat(all_values, ignore_index=True)
-    else:
-        return pd.DataFrame()
+    if cache:
+        set_in_cache(result, "get_users", base_url, client_id, simulate)
+    return result.copy(deep=True)
 
 
 def ensure_manager_exists(
@@ -395,18 +188,6 @@ def build_user_payload(
     return payload
 
 
-def build_project_payload(
-    project: pd.Series,
-    sandbox: bool
-) -> Dict[str, Any]:
-    """
-    Construit le payload JSON pour l'upsert (création ou mise à jour) d'un projet N2F.
-    Retourne un dictionnaire prêt à être envoyé à l'API N2F.
-    """
-    payload = create_project_upsert_payload(project.to_dict(), sandbox)
-    return payload
-
-
 def create_users(
     df_agresso_users: pd.DataFrame,
     df_n2f_users: pd.DataFrame,
@@ -456,6 +237,7 @@ def create_users(
         users_to_create[status_col] = created_list
 
     return users_to_create, status_col
+
 
 def update_users(
     df_agresso_users: pd.DataFrame,
@@ -524,6 +306,7 @@ def update_users(
     else:
         return pd.DataFrame(), status_col
 
+
 def delete_users(
     df_agresso_users: pd.DataFrame,
     df_n2f_users: pd.DataFrame,
@@ -566,103 +349,3 @@ def delete_users(
         users_to_delete[status_col] = deleted_list
 
     return users_to_delete, status_col
-
-def create_projects(
-    df_projects: pd.DataFrame,
-    base_url: str,
-    client_id: str,
-    client_secret: str,
-    company_id: str,
-    status_col: str = "created",
-    simulate: bool = False,
-    sandbox: bool = False
-) -> Tuple[pd.DataFrame, str]:
-    """
-    Crée les projets dans N2F via l'API N2F pour une société donnée.
-    Retourne un DataFrame avec une colonne 'created' (booléen) indiquant le succès ou l'échec.
-    """
-    if df_projects.empty:
-        return pd.DataFrame(), status_col
-
-    created_list: List[bool] = []
-    for _, project in df_projects.iterrows():
-        payload = build_project_payload(project, sandbox)
-        status = create_project_api(
-            base_url,
-            client_id,
-            client_secret,
-            company_id,
-            payload,
-            simulate
-        )
-        created_list.append(status)
-    df_projects[status_col] = created_list
-
-    return df_projects, status_col
-
-
-def update_projects(
-    df_projects: pd.DataFrame,
-    base_url: str,
-    client_id: str,
-    client_secret: str,
-    company_id: str,
-    status_col: str = "updated",
-    simulate: bool = False,
-    sandbox: bool = False
-) -> Tuple[pd.DataFrame, str]:
-    """
-    Met à jour les projets dans N2F via l'API N2F pour une société donnée.
-    Retourne un DataFrame avec une colonne 'updated' (booléen) indiquant le succès ou l'échec.
-    """
-    if df_projects.empty:
-        return pd.DataFrame(), status_col
-
-    updated_list: List[bool] = []
-    for _, project in df_projects.iterrows():
-        payload = build_project_payload(project, sandbox)
-        status = update_project_api(
-            base_url,
-            client_id,
-            client_secret,
-            company_id,
-            payload,
-            simulate
-        )
-        updated_list.append(status)
-    df_projects[status_col] = updated_list
-
-    return df_projects, status_col
-
-
-def delete_projects(
-    df_projects: pd.DataFrame,
-    base_url: str,
-    client_id: str,
-    client_secret: str,
-    company_id: str,
-    status_col: str = "deleted",
-    simulate: bool = False
-) -> Tuple[pd.DataFrame, str]:
-    """
-    Supprime les projets dans N2F via l'API N2F pour une société donnée.
-    Retourne un DataFrame avec une colonne 'deleted' (booléen) indiquant le succès ou l'échec.
-    """
-    if df_projects.empty:
-        return pd.DataFrame(), status_col
-
-    deleted_list: List[bool] = []
-    for _, project in df_projects.iterrows():
-        code = project["code"]
-        deleted = delete_project_api(
-            base_url,
-            client_id,
-            client_secret,
-            company_id,
-            code,
-            simulate
-        )
-        deleted_list.append(deleted)
-    df_projects[status_col] = deleted_list
-
-    return df_projects, status_col

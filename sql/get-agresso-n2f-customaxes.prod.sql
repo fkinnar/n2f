@@ -1,0 +1,8 @@
+SELECT [typ]
+      ,[client]
+      ,[code]
+      ,[description]
+      ,[status]
+      ,[date_from]
+      ,[date_to]
+  FROM [AgrProd].[dbo].[iris_N2F_Analytics]
