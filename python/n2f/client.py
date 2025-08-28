@@ -44,7 +44,7 @@ class N2fApiClient:
 
         response = n2f.get_session_get().get(url, headers=headers, params=params)
         response.raise_for_status()
-        
+
         data = response.json()["response"]
         return data.get("data", [])
 
@@ -64,10 +64,10 @@ class N2fApiClient:
             companies_page = self._request("companies", start, limit)
             if not companies_page:
                 break
-            
+
             df_page = pd.DataFrame(companies_page)
             all_companies_list.append(df_page)
-            
+
             if len(df_page) < limit:
                 break
             start += limit
@@ -76,7 +76,7 @@ class N2fApiClient:
 
         if use_cache:
             set_in_cache(result, "get_companies", *cache_key_args)
-        
+
         return result.copy(deep=True)
 
     def get_roles(self, use_cache: bool = True) -> pd.DataFrame:
@@ -96,14 +96,14 @@ class N2fApiClient:
         headers = {"Authorization": f"Bearer {access_token}"}
         response = n2f.get_session_get().get(url, headers=headers)
         response.raise_for_status()
-        
+
         # La réponse pour les rôles est directement la liste
         roles_data = response.json()["response"]
         result = pd.DataFrame(roles_data)
 
         if use_cache:
             set_in_cache(result, "get_roles", *cache_key_args)
-        
+
         return result.copy(deep=True)
 
     def get_userprofiles(self, use_cache: bool = True) -> pd.DataFrame:
@@ -123,13 +123,13 @@ class N2fApiClient:
         headers = {"Authorization": f"Bearer {access_token}"}
         response = n2f.get_session_get().get(url, headers=headers)
         response.raise_for_status()
-        
+
         profiles_data = response.json()["response"]
         result = pd.DataFrame(profiles_data)
 
         if use_cache:
             set_in_cache(result, "get_userprofiles", *cache_key_args)
-        
+
         return result.copy(deep=True)
 
     def get_users(self, use_cache: bool = True) -> pd.DataFrame:
@@ -146,10 +146,10 @@ class N2fApiClient:
             users_page = self._request("users", start, limit)
             if not users_page:
                 break
-            
+
             df_page = pd.DataFrame(users_page)
             all_users_list.append(df_page)
-            
+
             if len(df_page) < limit:
                 break
             start += limit
@@ -158,13 +158,14 @@ class N2fApiClient:
 
         if use_cache:
             set_in_cache(result, "get_users", *cache_key_args)
-        
+
         return result.copy(deep=True)
 
-    def _upsert(self, endpoint: str, payload: dict) -> ApiResult:
+    def _upsert(self, endpoint: str, payload: dict, action_type: str = "upsert",
+                object_type: str = None, object_id: str = None, scope: str = None) -> ApiResult:
         """Effectue un appel POST pour créer ou mettre à jour un objet."""
         if self.simulate:
-            return ApiResult.simulate_result("upsert")
+            return ApiResult.simulate_result("upsert", action_type, object_type, object_id, scope)
 
         start_time = time.time()
         try:
@@ -177,33 +178,46 @@ class N2fApiClient:
 
             response = n2f.get_session_write().post(url, headers=headers, json=payload)
             duration_ms = (time.time() - start_time) * 1000
-            
+
             if 200 <= response.status_code < 300:
                 return ApiResult.success_result(
                     message=f"Upsert successful: {response.status_code}",
                     status_code=response.status_code,
                     duration_ms=duration_ms,
-                    response_data=response.json() if response.content else None
+                    response_data=response.json() if response.content else None,
+                    action_type=action_type,
+                    object_type=object_type,
+                    object_id=object_id,
+                    scope=scope
                 )
             else:
                 return ApiResult.error_result(
                     message=f"Upsert failed: {response.status_code}",
                     status_code=response.status_code,
                     duration_ms=duration_ms,
-                    error_details=response.text
+                    error_details=response.text,
+                    action_type=action_type,
+                    object_type=object_type,
+                    object_id=object_id,
+                    scope=scope
                 )
         except Exception as e:
             duration_ms = (time.time() - start_time) * 1000
             return ApiResult.error_result(
                 message=f"Upsert exception: {str(e)}",
                 duration_ms=duration_ms,
-                error_details=str(e)
+                error_details=str(e),
+                action_type=action_type,
+                object_type=object_type,
+                object_id=object_id,
+                scope=scope
             )
 
-    def _delete(self, endpoint: str, object_id: str) -> ApiResult:
+    def _delete(self, endpoint: str, object_id: str, action_type: str = "delete",
+                object_type: str = None, scope: str = None) -> ApiResult:
         """Effectue un appel DELETE pour supprimer un objet."""
         if self.simulate:
-            return ApiResult.simulate_result("delete")
+            return ApiResult.simulate_result("delete", action_type, object_type, object_id, scope)
 
         start_time = time.time()
         try:
@@ -213,39 +227,53 @@ class N2fApiClient:
 
             response = n2f.get_session_write().delete(url, headers=headers)
             duration_ms = (time.time() - start_time) * 1000
-            
+
             if 200 <= response.status_code < 300:
                 return ApiResult.success_result(
                     message=f"Delete successful: {response.status_code}",
                     status_code=response.status_code,
-                    duration_ms=duration_ms
+                    duration_ms=duration_ms,
+                    action_type=action_type,
+                    object_type=object_type,
+                    object_id=object_id,
+                    scope=scope
                 )
             else:
                 return ApiResult.error_result(
                     message=f"Delete failed: {response.status_code}",
                     status_code=response.status_code,
                     duration_ms=duration_ms,
-                    error_details=response.text
+                    error_details=response.text,
+                    action_type=action_type,
+                    object_type=object_type,
+                    object_id=object_id,
+                    scope=scope
                 )
         except Exception as e:
             duration_ms = (time.time() - start_time) * 1000
             return ApiResult.error_result(
-                message=f"Delete exception: {str(e)}",
+                message=f"Upsert exception: {str(e)}",
                 duration_ms=duration_ms,
-                error_details=str(e)
+                error_details=str(e),
+                action_type=action_type,
+                object_type=object_type,
+                object_id=object_id,
+                scope=scope
             )
 
     def create_user(self, payload: dict) -> ApiResult:
         """Crée un utilisateur."""
-        return self._upsert("/users", payload)
+        user_email = payload.get("mail", "unknown")
+        return self._upsert("/users", payload, "create", "user", user_email, "users")
 
     def update_user(self, payload: dict) -> ApiResult:
         """Met à jour un utilisateur."""
-        return self._upsert("/users", payload)
+        user_email = payload.get("mail", "unknown")
+        return self._upsert("/users", payload, "update", "user", user_email, "users")
 
     def delete_user(self, user_email: str) -> ApiResult:
         """Supprime un utilisateur par son email."""
-        return self._delete("/users", user_email)
+        return self._delete("/users", user_email, "delete", "user", user_email, "users")
 
     def get_custom_axes(self, company_id: str, use_cache: bool = True) -> pd.DataFrame:
         """Récupère les axes personnalisés pour une société."""
@@ -300,10 +328,10 @@ class N2fApiClient:
 
             if not values_page:
                 break
-            
+
             df_page = pd.DataFrame(values_page)
             all_values_list.append(df_page)
-            
+
             if len(df_page) < limit:
                 break
             start += limit
@@ -312,15 +340,16 @@ class N2fApiClient:
 
         if use_cache:
             set_in_cache(result, f"get_axe_values_{axe_id}", *cache_key_args)
-        
+
         return result.copy(deep=True)
 
-    def upsert_axe_value(self, company_id: str, axe_id: str, payload: dict) -> ApiResult:
+    def upsert_axe_value(self, company_id: str, axe_id: str, payload: dict, action_type: str = "upsert", scope: str = None) -> ApiResult:
         """Crée ou met à jour une valeur d'axe pour une société."""
         endpoint = f"/companies/{company_id}/axes/{axe_id}"
-        return self._upsert(endpoint, payload)
+        object_code = payload.get("code", "unknown")
+        return self._upsert(endpoint, payload, action_type, "axe", object_code, scope)
 
-    def delete_axe_value(self, company_id: str, axe_id: str, value_code: str) -> ApiResult:
+    def delete_axe_value(self, company_id: str, axe_id: str, value_code: str, scope: str = None) -> ApiResult:
         """Supprime une valeur d'axe pour une société par son code."""
         endpoint = f"/companies/{company_id}/axes/{value_code}"
-        return self._delete(endpoint, value_code)
+        return self._delete(endpoint, value_code, "delete", "axe", value_code, scope)

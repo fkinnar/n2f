@@ -4,7 +4,7 @@ from typing import List, Dict, Any, Tuple
 from n2f.client import N2fApiClient
 from n2f.payload import create_project_upsert_payload
 from n2f.process.user import lookup_company_id
-from business.process.helper import has_payload_changes
+# Import déplacé dans la fonction pour éviter l'import circulaire
 from n2f.api_result import ApiResult
 from n2f.process.helper import add_api_logging_columns
 
@@ -28,6 +28,7 @@ def create_axes(
     df_n2f_companies: pd.DataFrame,
     sandbox: bool,
     status_col: str = "created",
+    scope: str = "projects",
 ) -> Tuple[pd.DataFrame, str]:
     """Crée les valeurs d'un axe via le client N2F."""
     if df_agresso_projects.empty:
@@ -44,14 +45,15 @@ def create_axes(
         company_id = lookup_company_id(company_code, df_n2f_companies, sandbox)
         if company_id:
             payload = build_axe_payload(project, sandbox)
-            api_result = n2f_client.upsert_axe_value(company_id, axe_id, payload)
+            api_result = n2f_client.upsert_axe_value(company_id, axe_id, payload, "create", scope)
             api_results.append(api_result)
         else:
-            api_results.append(ApiResult.error_result("Company not found", error_details=f"Company code: {company_code}"))
-    
+            api_results.append(ApiResult.error_result("Company not found", error_details=f"Company code: {company_code}",
+                                                     action_type="create", object_type="axe", object_id=project.get("code", "unknown"), scope=scope))
+
     projects_to_create[status_col] = [result.success for result in api_results]
     projects_to_create = add_api_logging_columns(projects_to_create, api_results)
-    
+
     return projects_to_create, status_col
 
 def update_axes(
@@ -62,6 +64,7 @@ def update_axes(
     df_n2f_companies: pd.DataFrame,
     sandbox: bool,
     status_col: str = "updated",
+    scope: str = "projects",
 ) -> Tuple[pd.DataFrame, str]:
     """Met à jour les valeurs d'un axe via le client N2F."""
     if df_agresso_projects.empty or df_n2f_projects.empty:
@@ -73,24 +76,36 @@ def update_axes(
 
     for _, project in df_agresso_projects[df_agresso_projects["code"].isin(df_n2f_projects["code"])].iterrows():
         payload = build_axe_payload(project, sandbox)
-        if not has_payload_changes(payload, n2f_by_code.get(project["code"], {})):
+        n2f_project = n2f_by_code.get(project["code"], {})
+
+        from business.process.helper import has_payload_changes, debug_payload_changes
+        # Debug temporaire pour voir les différences
+        if has_payload_changes(payload, n2f_project, 'axe'):
+            differences = debug_payload_changes(payload, n2f_project, 'axe')
+            if differences:
+                print(f"🔍 DEBUG - Projet {project['code']} - Différences détectées:")
+                for field, diff in differences.items():
+                    print(f"  {field}: '{diff['payload_value']}' vs '{diff['n2f_value']}' ({diff['type']})")
+
+        if not has_payload_changes(payload, n2f_project, 'axe'):
             continue
 
         company_code = project.get("client")
         company_id = lookup_company_id(company_code, df_n2f_companies, sandbox)
         if company_id:
-            api_result = n2f_client.upsert_axe_value(company_id, axe_id, payload)
+            api_result = n2f_client.upsert_axe_value(company_id, axe_id, payload, "update", scope)
             api_results.append(api_result)
             axes_to_update.append(project.to_dict())
         else:
-            api_results.append(ApiResult.error_result("Company not found", error_details=f"Company code: {company_code}"))
+            api_results.append(ApiResult.error_result("Company not found", error_details=f"Company code: {company_code}",
+                                                     action_type="update", object_type="axe", object_id=project.get("code", "unknown"), scope=scope))
             axes_to_update.append(project.to_dict())
 
     if axes_to_update:
         df_result = pd.DataFrame(axes_to_update)
         df_result[status_col] = [result.success for result in api_results]
         df_result = add_api_logging_columns(df_result, api_results)
-        
+
         return df_result, status_col
     return pd.DataFrame(), status_col
 
@@ -102,6 +117,7 @@ def delete_axes(
     df_n2f_companies: pd.DataFrame,
     sandbox: bool,
     status_col: str = "deleted",
+    scope: str = "projects",
 ) -> Tuple[pd.DataFrame, str]:
     """Supprime les valeurs d'un axe via le client N2F."""
     if df_n2f_projects.empty:
@@ -116,12 +132,13 @@ def delete_axes(
     for _, project in axes_to_delete.iterrows():
         company_id = project.get("company_id") # Assumes company_id was added during get_axes
         if company_id:
-            api_result = n2f_client.delete_axe_value(company_id, axe_id, project["code"])
+            api_result = n2f_client.delete_axe_value(company_id, axe_id, project["code"], scope)
             api_results.append(api_result)
         else:
-            api_results.append(ApiResult.error_result("Company ID not found", error_details="company_id field missing"))
-    
+            api_results.append(ApiResult.error_result("Company ID not found", error_details="company_id field missing",
+                                                     action_type="delete", object_type="axe", object_id=project.get("code", "unknown"), scope=scope))
+
     axes_to_delete[status_col] = [result.success for result in api_results]
     axes_to_delete = add_api_logging_columns(axes_to_delete, api_results)
-    
+
     return axes_to_delete, status_col

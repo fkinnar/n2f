@@ -44,7 +44,6 @@ def create_user_upsert_payload(user: dict, company_id: str, sandbox: bool) -> di
         N2F_COL_ROLE: user[AGRESSO_COL_ROLE],
         N2F_COL_PROFILE: user[AGRESSO_COL_PROFILE],
         N2F_COL_MANAGER_MAIL: user[AGRESSO_COL_MANAGER],
-        N2F_COL_COST_CENTER: user[AGRESSO_COL_COST_CENTER],
         N2F_COL_CREATE_VEHICLE: user[AGRESSO_COL_CREATE_VEHICLE],
         N2F_COL_APPROVE_VEHICLE: to_bool(user[AGRESSO_COL_APPROVE_VEHICLE]),
         N2F_COL_DEDUCT_DISTANCE: to_bool(user[AGRESSO_COL_DEDUCT_DISTANCE]),
@@ -53,13 +52,10 @@ def create_user_upsert_payload(user: dict, company_id: str, sandbox: bool) -> di
         N2F_COL_JOB_TITLE: user[AGRESSO_COL_FUNCTION],
         N2F_COL_EMPLOYEE_NUMBER: user[AGRESSO_COL_EMPLOYEE_NUMBER],
         N2F_COL_STRUCTURE: user[AGRESSO_COL_STRUCTURE],
-        N2F_COL_SSO_LOGIN: user[AGRESSO_COL_SSO_LOGIN],
         N2F_COL_PRO_PAYMENT: to_bool(user[AGRESSO_COL_PRO_PAYMENT]),
         N2F_COL_AUX_ACCOUNT: user[AGRESSO_COL_AUX_ACCOUNT],
-        N2F_COL_AUX_ACCOUNT2: user[AGRESSO_COL_AUX_ACCOUNT2],
         N2F_COL_RAISE_LIMITS: to_bool(user[AGRESSO_COL_RAISE_LIMITS]),
         N2F_COL_AUTH_MODE: user[AGRESSO_COL_SSO_METHOD] if not sandbox else DEFAULT_AUTH_MODE_SANDBOX,
-        N2F_COL_UPDATE_PERSONAL: user[AGRESSO_COL_UPDATE_PERSONAL],
     }
 
     return payload

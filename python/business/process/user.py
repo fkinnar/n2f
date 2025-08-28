@@ -41,7 +41,7 @@ def _load_n2f_data(n2f_client: N2fApiClient) -> Tuple[pd.DataFrame, pd.DataFrame
         profile_mapping, role_mapping
     )
     print(f"Nombre d'utilisateurs N2F chargés : {len(df_users)}")
-    
+
     return df_users, df_companies
 
 def _perform_sync_actions(
@@ -53,7 +53,7 @@ def _perform_sync_actions(
 ) -> list[pd.DataFrame]:
     """Exécute les actions de création, mise à jour et suppression."""
     results = []
-    
+
     if context.args.create:
         created, status_col = create_users(
             df_agresso_users=df_agresso_users,
@@ -87,7 +87,7 @@ def _perform_sync_actions(
         reporting(deleted, "Aucun utilisateur supprimé", "Utilisateurs supprimés", status_col)
         if not deleted.empty:
             results.append(deleted)
-    
+
     return results
 
 def synchronize(
@@ -106,5 +106,5 @@ def synchronize(
     results = _perform_sync_actions(
         context, n2f_client, df_agresso_users, df_n2f_users, df_n2f_companies
     )
-    
+
     return results

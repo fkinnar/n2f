@@ -3,11 +3,42 @@ from typing import Optional, Set, Dict, Any, List, Tuple
 
 from n2f.client import N2fApiClient
 from n2f.payload import create_user_upsert_payload
-from business.process.helper import has_payload_changes
+# Import déplacé dans la fonction pour éviter l'import circulaire
 from n2f.api_result import ApiResult
 from n2f.process.helper import add_api_logging_columns
 
 # Note: get_users is now in the client, but we keep the process file for business logic
+
+def lookup_company_id(company_code: str, df_n2f_companies: pd.DataFrame, sandbox: bool = False) -> str:
+    """Recherche l'UUID d'une entreprise à partir de son code."""
+    if df_n2f_companies.empty:
+        return ""
+    match = df_n2f_companies.loc[df_n2f_companies["code"] == company_code, "uuid"]
+    if not match.empty:
+        return match.iloc[0]
+    if sandbox and not df_n2f_companies.empty and "uuid" in df_n2f_companies.columns:
+        return df_n2f_companies["uuid"].iloc[0]
+    return ""
+
+def build_user_payload(
+    user: pd.Series,
+    df_agresso_users: pd.DataFrame,
+    df_n2f_users: pd.DataFrame,
+    n2f_client: N2fApiClient,
+    df_n2f_companies: pd.DataFrame,
+    sandbox: bool,
+    manager_email: str = None
+) -> Dict[str, Any]:
+    """Construit le payload JSON pour l'upsert d'un utilisateur."""
+    company_id = lookup_company_id(user["Entreprise"], df_n2f_companies)
+    payload = create_user_upsert_payload(user.to_dict(), company_id, sandbox)
+    if manager_email is None:
+        payload["managerMail"] = ensure_manager_exists(
+            user["Manager"], df_agresso_users, df_n2f_users, n2f_client, df_n2f_companies, sandbox
+        )
+    else:
+        payload["managerMail"] = manager_email
+    return payload
 
 def ensure_manager_exists(
     manager_email: str,
@@ -50,37 +81,6 @@ def ensure_manager_exists(
 
     return ""
 
-def lookup_company_id(company_code: str, df_n2f_companies: pd.DataFrame, sandbox: bool = False) -> str:
-    """Recherche l'UUID d'une entreprise à partir de son code."""
-    if df_n2f_companies.empty:
-        return ""
-    match = df_n2f_companies.loc[df_n2f_companies["code"] == company_code, "uuid"]
-    if not match.empty:
-        return match.iloc[0]
-    if sandbox and not df_n2f_companies.empty and "uuid" in df_n2f_companies.columns:
-        return df_n2f_companies["uuid"].iloc[0]
-    return ""
-
-def build_user_payload(
-    user: pd.Series,
-    df_agresso_users: pd.DataFrame,
-    df_n2f_users: pd.DataFrame,
-    n2f_client: N2fApiClient,
-    df_n2f_companies: pd.DataFrame,
-    sandbox: bool,
-    manager_email: str = None
-) -> Dict[str, Any]:
-    """Construit le payload JSON pour l'upsert d'un utilisateur."""
-    company_id = lookup_company_id(user["Entreprise"], df_n2f_companies)
-    payload = create_user_upsert_payload(user.to_dict(), company_id, sandbox)
-    if manager_email is None:
-        payload["managerMail"] = ensure_manager_exists(
-            user["Manager"], df_agresso_users, df_n2f_users, n2f_client, df_n2f_companies, sandbox
-        )
-    else:
-        payload["managerMail"] = manager_email
-    return payload
-
 def create_users(
     df_agresso_users: pd.DataFrame,
     df_n2f_users: pd.DataFrame,
@@ -100,11 +100,11 @@ def create_users(
         payload = build_user_payload(user, df_agresso_users, df_n2f_users, n2f_client, df_n2f_companies, sandbox)
         api_result = n2f_client.create_user(payload)
         api_results.append(api_result)
-    
+
     # Ajouter les colonnes de logging
     users_to_create[status_col] = [result.success for result in api_results]
     users_to_create = add_api_logging_columns(users_to_create, api_results)
-    
+
     return users_to_create, status_col
 
 def update_users(
@@ -126,8 +126,12 @@ def update_users(
     for _, user in df_agresso_users[df_agresso_users["AdresseEmail"].isin(df_n2f_users["mail"])].iterrows():
         payload = build_user_payload(user, df_agresso_users, df_n2f_users, n2f_client, df_n2f_companies, sandbox)
         n2f_user = n2f_by_mail.get(user["AdresseEmail"], {})
+        # Ajouter l'email car set_index("mail") le retire des valeurs
+        if n2f_user:
+            n2f_user["mail"] = user["AdresseEmail"]
 
-        if not has_payload_changes(payload, n2f_user):
+        from business.process.helper import has_payload_changes
+        if not has_payload_changes(payload, n2f_user, 'user'):
             continue
 
         api_result = n2f_client.update_user(payload)
@@ -138,7 +142,7 @@ def update_users(
         df_result = pd.DataFrame(users_to_update)
         df_result[status_col] = [result.success for result in api_results]
         df_result = add_api_logging_columns(df_result, api_results)
-        
+
         return df_result, status_col
     return pd.DataFrame(), status_col
 
