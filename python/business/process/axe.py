@@ -12,6 +12,8 @@ from n2f.process.axe import (
 )
 from agresso.process import select
 
+from business.constants import AGRESSO_COL_AXE_TYPE, COL_UUID
+
 def _load_agresso_axes(context: SyncContext, sql_filename: str, sql_column_filter: str) -> pd.DataFrame:
     """Charge et filtre les axes depuis Agresso."""
     df_agresso_axes = select(
@@ -24,7 +26,7 @@ def _load_agresso_axes(context: SyncContext, sql_filename: str, sql_column_filte
     )
     if not df_agresso_axes.empty:
         df_agresso_axes = df_agresso_axes[
-            df_agresso_axes["typ"].astype(str).str.upper() == sql_column_filter
+            df_agresso_axes[AGRESSO_COL_AXE_TYPE].astype(str).str.upper() == sql_column_filter
         ].copy()
     print(f"Nombre de {sql_column_filter} Agresso chargés : {len(df_agresso_axes)}")
     return df_agresso_axes
@@ -90,7 +92,7 @@ def synchronize(
     df_n2f_companies = n2f_client.get_companies()
     print(f"Nombre d'entreprises N2F chargées : {len(df_n2f_companies)}")
 
-    company_id_for_mapping = df_n2f_companies["uuid"].iloc[0] if not df_n2f_companies.empty else ""
+    company_id_for_mapping = df_n2f_companies[COL_UUID].iloc[0] if not df_n2f_companies.empty else ""
     sql_column, n2f_code = get_axe_mapping(
         axe_type=axe_type, n2f_client=n2f_client, company_id=company_id_for_mapping
     )
