@@ -1,10 +1,11 @@
-import os
 import yaml
 import argparse
-
-from typing import Any
+import os
+from pathlib import Path
+from typing import Any, Callable
 from dotenv import load_dotenv
 
+from helper.context import SyncContext
 from business.process import (
     synchronize_users,
     synchronize_projects,
@@ -12,128 +13,77 @@ from business.process import (
     synchronize_subposts
 )
 
-
 def main() -> None:
     """
     Point d'entrée du script.
-    Gère les arguments en ligne de commande, charge les paramètres,
-    puis lance la synchronisation selon les options.
+    Gère les arguments, charge la configuration dans un contexte,
+    puis lance la synchronisation pour chaque périmètre sélectionné.
     """
-
-    # Chargement des variables d'environnement
     load_dotenv()
-
-    # Gestion des arguments
     args = create_arg_parser().parse_args()
-
-    # Chargement de la configuration YAML
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    config_filename = args.config + ".yaml"
-    config_path = os.path.join(base_dir, '..', config_filename)
-    with open(config_path, 'r') as config_file:
-        config: dict[str, Any] = yaml.safe_load(config_file)
 
     # Si aucun paramètre n'est passé, on active create et update par défaut
     if not (args.create or args.delete or args.update):
         args.create = True
         args.update = True
 
-    # Sélection du périmètre à traiter (liste de scopes)
-    scopes = set(args.scope) if hasattr(args, "scope") else {"all"}
-    if "all" in scopes:
-        scopes = {"users", "projects", "plates", "subposts"}
+    # Construction du contexte
+    base_dir = Path(__file__).resolve().parent
+    config_filename = f"{args.config}.yaml"
+    config_path = base_dir.parent / config_filename
+    
+    with config_path.open('r') as config_file:
+        config = yaml.safe_load(config_file)
 
-    if "users" in scopes:
-        # Logique métier pour les utilisateurs
-        synchronize_users(
-            do_create     = args.create,
-            do_update     = args.update,
-            do_delete     = args.delete,
-            base_dir      = base_dir,
-            db_user       = os.getenv("AGRESSO_DB_USER"),
-            db_password   = os.getenv("AGRESSO_DB_PASSWORD"),
-            sql_path      = config["agresso"]["sql-path"],
-            sql_filename  = config["agresso"]["sql-filename-users"],
-            base_url      = config["n2f"]["base_urls"],
-            client_id     = os.getenv("N2F_CLIENT_ID"),
-            client_secret = os.getenv("N2F_CLIENT_SECRET"),
-            prod          = config["agresso"]["prod"],
-            simulate      = config["n2f"]["simulate"],
-            sandbox       = config["n2f"]["sandbox"]
-        )
+    context = SyncContext(
+        args=args,
+        config=config,
+        base_dir=base_dir,
+        db_user=os.getenv("AGRESSO_DB_USER"),
+        db_password=os.getenv("AGRESSO_DB_PASSWORD"),
+        client_id=os.getenv("N2F_CLIENT_ID"),
+        client_secret=os.getenv("N2F_CLIENT_SECRET")
+    )
 
-    if "projects" in scopes:
-        # Logique métier pour les projets
-        synchronize_projects(
-            do_create     = args.create,
-            do_update     = args.update,
-            do_delete     = args.delete,
-            base_dir      = base_dir,
-            db_user       = os.getenv("AGRESSO_DB_USER"),
-            db_password   = os.getenv("AGRESSO_DB_PASSWORD"),
-            sql_path      = config["agresso"]["sql-path"],
-            sql_filename  = config["agresso"]["sql-filename-customaxes"],
-            base_url      = config["n2f"]["base_urls"],
-            client_id     = os.getenv("N2F_CLIENT_ID"),
-            client_secret = os.getenv("N2F_CLIENT_SECRET"),
-            prod          = config["agresso"]["prod"],
-            simulate      = config["n2f"]["simulate"],
-            sandbox       = config["n2f"]["sandbox"]
-        )
+    # Mapping des périmètres (scopes) à leurs fonctions et fichiers SQL
+    scope_map: dict[str, tuple[Callable, str]] = {
+        "users": (synchronize_users, context.config["agresso"]["sql-filename-users"]),
+        "projects": (synchronize_projects, context.config["agresso"]["sql-filename-customaxes"]),
+        "plates": (synchronize_plates, context.config["agresso"]["sql-filename-customaxes"]),
+        "subposts": (synchronize_subposts, context.config["agresso"]["sql-filename-customaxes"]),
+    }
 
-    if "plates" in scopes:
-        # Logique métier pour les plaques
-        synchronize_plates(
-            do_create     = args.create,
-            do_update     = args.update,
-            do_delete     = args.delete,
-            base_dir      = base_dir,
-            db_user       = os.getenv("AGRESSO_DB_USER"),
-            db_password   = os.getenv("AGRESSO_DB_PASSWORD"),
-            sql_path      = config["agresso"]["sql-path"],
-            sql_filename  = config["agresso"]["sql-filename-customaxes"],
-            base_url      = config["n2f"]["base_urls"],
-            client_id     = os.getenv("N2F_CLIENT_ID"),
-            client_secret = os.getenv("N2F_CLIENT_SECRET"),
-            prod          = config["agresso"]["prod"],
-            simulate      = config["n2f"]["simulate"],
-            sandbox       = config["n2f"]["sandbox"]
-        )
+    # Sélection du périmètre à traiter
+    selected_scopes = set(args.scope) if hasattr(args, "scope") else {"all"}
+    if "all" in selected_scopes:
+        selected_scopes = set(scope_map.keys())
 
-    if "subposts" in scopes:
-        # Logique métier pour les subposts
-        synchronize_subposts(
-            do_create     = args.create,
-            do_update     = args.update,
-            do_delete     = args.delete,
-            base_dir      = base_dir,
-            db_user       = os.getenv("AGRESSO_DB_USER"),
-            db_password   = os.getenv("AGRESSO_DB_PASSWORD"),
-            sql_path      = config["agresso"]["sql-path"],
-            sql_filename  = config["agresso"]["sql-filename-customaxes"],
-            base_url      = config["n2f"]["base_urls"],
-            client_id     = os.getenv("N2F_CLIENT_ID"),
-            client_secret = os.getenv("N2F_CLIENT_SECRET"),
-            prod          = config["agresso"]["prod"],
-            simulate      = config["n2f"]["simulate"],
-            sandbox       = config["n2f"]["sandbox"]
-        )
+    # Boucle de traitement
+    for scope_name in selected_scopes:
+        if scope_name in scope_map:
+            sync_function, sql_filename = scope_map[scope_name]
+            
+            print(f"--- Début de la synchronisation pour le périmètre : {scope_name} ---")
+            
+            sync_function(
+                context=context,
+                sql_filename=sql_filename
+            )
+            
+            print(f"--- Fin de la synchronisation pour le périmètre : {scope_name} ---\
+")
+
 
 def create_arg_parser() -> argparse.ArgumentParser:
-    """
-    Crée et retourne un parser d'arguments pour la ligne de commande.
-    Permet de spécifier les actions à effectuer (create, delete, update) et le fichier de configuration.
-    """
-
-    parser = argparse.ArgumentParser(description="Synchronisation Agresso <-> N2F (utilisateurs et projets)")
-    parser.add_argument('-c', '--create', action='store_true', help="Créer les utilisateurs manquants dans N2F")
-    parser.add_argument('-d', '--delete', action='store_true', help="Supprimer les utilisateurs obsolètes de N2F")
-    parser.add_argument('-u', '--update', action='store_true', help="Mettre à jour les utilisateurs existants dans N2F")
-    parser.add_argument('-f', '--config', default='dev', help="Nom du fichier de configuration (sans extension .yaml)")
-    parser.add_argument('-s', '--scope', choices=['users', 'projects', 'plates', 'subposts', 'all'], nargs='+', default=['all'], help="Périmètre(s) à synchroniser (plusieurs valeurs possibles)")
+    """Crée et retourne un parser d'arguments pour la ligne de commande."""
+    parser = argparse.ArgumentParser(description="Synchronisation Agresso <-> N2F")
+    parser.add_argument('-c', '--create', action='store_true', help="Créer les éléments manquants dans N2F")
+    parser.add_argument('-d', '--delete', action='store_true', help="Supprimer les éléments obsolètes de N2F")
+    parser.add_argument('-u', '--update', action='store_true', help="Mettre à jour les éléments existants dans N2F")
+    parser.add_argument('-f', '--config', default='dev', help="Nom du fichier de configuration (sans .yaml)")
+    parser.add_argument('-s', '--scope', choices=['users', 'projects', 'plates', 'subposts', 'all'], nargs='+', default=['all'], help="Périmètre(s) à synchroniser")
     return parser
 
 
-# Point d'entrée du script
 if __name__ == "__main__":
     main()

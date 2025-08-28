@@ -1,5 +1,6 @@
 import pandas as pd
 
+from helper.context import SyncContext
 from business.process.helper import reporting
 from n2f.process import (
     get_roles as get_n2f_roles,
@@ -13,20 +14,8 @@ from business.normalize import normalize_agresso_users, normalize_n2f_users, bui
 
 
 def synchronize(
-    do_create     : bool,
-    do_update     : bool,
-    do_delete     : bool,
-    base_dir      : str,
-    db_user       : str,
-    db_password   : str,
-    sql_path      : str,
-    sql_filename  : str,
-    base_url      : str,
-    client_id     : str,
-    client_secret : str,
-    prod          : bool,
-    simulate      : bool,
-    sandbox       : bool
+    context: SyncContext,
+    sql_filename: str
 ) -> None:
     """
     Effectue la synchronisation des utilisateurs Agresso <-> N2F selon les options passées.
@@ -35,39 +24,39 @@ def synchronize(
     # Chargement des utilisateurs Agresso et normalisation des données
     df_agresso_users: pd.DataFrame = normalize_agresso_users(
         select(
-        base_dir     = base_dir,
-        db_user      = db_user,
-        db_password  = db_password,
-        sql_path     = sql_path,
+        base_dir     = context.base_dir,
+        db_user      = context.db_user,
+        db_password  = context.db_password,
+        sql_path     = context.config["agresso"]["sql-path"],
         sql_filename = sql_filename,
-        prod         = prod
+        prod         = context.config["agresso"]["prod"]
     ))
     print(f"Nombre d'utilisateurs Agresso chargés : {len(df_agresso_users)}")
 
     # Chargement des rôles N2F
     df_n2f_roles: pd.DataFrame = get_n2f_roles(
-        base_url,
-        client_id,
-        client_secret,
-        simulate
+        context.config["n2f"]["base_urls"],
+        context.client_id,
+        context.client_secret,
+        context.config["n2f"]["simulate"]
     )
     print(f"Nombre de rôles N2F chargés : {len(df_n2f_roles)}")
 
     # Chargement des profils N2F
     df_n2f_userprofiles: pd.DataFrame = get_n2f_userprofiles(
-        base_url,
-        client_id,
-        client_secret,
-        simulate
+        context.config["n2f"]["base_urls"],
+        context.client_id,
+        context.client_secret,
+        context.config["n2f"]["simulate"]
     )
     print(f"Nombre de profils N2F chargés : {len(df_n2f_userprofiles)}")
 
     # Chargement des entreprises N2F
     df_n2f_companies: pd.DataFrame = get_n2f_companies(
-        base_url      = base_url,
-        client_id     = client_id,
-        client_secret = client_secret,
-        simulate      = simulate
+        base_url      = context.config["n2f"]["base_urls"],
+        client_id     = context.client_id,
+        client_secret = context.client_secret,
+        simulate      = context.config["n2f"]["simulate"]
     )
     print(f"Nombre d'entreprises N2F chargées : {len(df_n2f_companies)}")
 
@@ -76,26 +65,26 @@ def synchronize(
     role_mapping: dict[str, str] = build_n2f_mapping(df_n2f_roles)
     df_n2f_users: pd.DataFrame = normalize_n2f_users(
         get_n2f_users(
-            base_url      = base_url,
-            client_id     = client_id,
-            client_secret = client_secret,
-            simulate      = simulate
+            base_url      = context.config["n2f"]["base_urls"],
+            client_id     = context.client_id,
+            client_secret = context.client_secret,
+            simulate      = context.config["n2f"]["simulate"]
         ),
         profile_mapping, role_mapping
     )
     print(f"Nombre d'utilisateurs N2F chargés : {len(df_n2f_users)}")
 
-    if do_create:
+    if context.args.create:
         # Création des utilisateurs N2F
         created, status_col = create_users(
             df_agresso_users = df_agresso_users,
             df_n2f_users     = df_n2f_users,
             df_n2f_companies = df_n2f_companies,
-            base_url         = base_url,
-            client_id        = client_id,
-            client_secret    = client_secret,
-            simulate         = simulate,
-            sandbox          = sandbox
+            base_url         = context.config["n2f"]["base_urls"],
+            client_id        = context.client_id,
+            client_secret    = context.client_secret,
+            simulate         = context.config["n2f"]["simulate"],
+            sandbox          = context.config["n2f"]["sandbox"]
         )
         reporting(
             created,
@@ -104,17 +93,17 @@ def synchronize(
             status_col
         )
 
-    if do_update:
+    if context.args.update:
         # Mise à jour des utilisateurs N2F
         updated, status_col = update_users(
             df_agresso_users = df_agresso_users,
             df_n2f_users     = df_n2f_users,
             df_n2f_companies = df_n2f_companies,
-            base_url         = base_url,
-            client_id        = client_id,
-            client_secret    = client_secret,
-            simulate         = simulate,
-            sandbox          = sandbox
+            base_url         = context.config["n2f"]["base_urls"],
+            client_id        = context.client_id,
+            client_secret    = context.client_secret,
+            simulate         = context.config["n2f"]["simulate"],
+            sandbox          = context.config["n2f"]["sandbox"]
         )
         reporting(
             updated,
@@ -123,15 +112,15 @@ def synchronize(
             status_col
         )
 
-    if do_delete:
+    if context.args.delete:
         # Suppression des utilisateurs N2F
         deleted, status_col = delete_users(
             df_agresso_users = df_agresso_users,
             df_n2f_users     = df_n2f_users,
-            base_url         = base_url,
-            client_id        = client_id,
-            client_secret    = client_secret,
-            simulate         = simulate
+            base_url         = context.config["n2f"]["base_urls"],
+            client_id        = context.client_id,
+            client_secret    = context.client_secret,
+            simulate         = context.config["n2f"]["simulate"]
         )
         reporting(
             deleted,

@@ -1,5 +1,6 @@
 import pandas as pd
 
+from helper.context import SyncContext
 from business.process.helper import reporting
 from business.process.axe_types import AxeType, get_axe_mapping
 from n2f.process import (
@@ -13,41 +14,29 @@ from agresso.process import select
 
 
 def synchronize(
+    context       : SyncContext,
     axe_type      : AxeType,
-    do_create     : bool,
-    do_update     : bool,
-    do_delete     : bool,
-    base_dir      : str,
-    db_user       : str,
-    db_password   : str,
-    sql_path      : str,
     sql_filename  : str,
-    base_url      : str,
-    client_id     : str,
-    client_secret : str,
-    prod          : bool,
-    simulate      : bool,
-    sandbox       : bool
 ) -> None:
     """
     Effectue la synchronisation des axes Agresso <-> N2F selon les options passées.
     """
     # Chargement des axes Agresso
     df_agresso_axes: pd.DataFrame = select(
-        base_dir     = base_dir,
-        db_user      = db_user,
-        db_password  = db_password,
-        sql_path     = sql_path,
+        base_dir     = context.base_dir,
+        db_user      = context.db_user,
+        db_password  = context.db_password,
+        sql_path     = context.config["agresso"]["sql-path"],
         sql_filename = sql_filename,
-        prod         = prod
+        prod         = context.config["agresso"]["prod"]
     )
 
     # Chargement des entreprises N2F
     df_n2f_companies: pd.DataFrame = get_n2f_companies(
-        base_url      = base_url,
-        client_id     = client_id,
-        client_secret = client_secret,
-        simulate      = simulate
+        base_url      = context.config["n2f"]["base_urls"],
+        client_id     = context.client_id,
+        client_secret = context.client_secret,
+        simulate      = context.config["n2f"]["simulate"]
     )
     print(f"Nombre d'entreprises N2F chargées : {len(df_n2f_companies)}")
 
@@ -57,11 +46,11 @@ def synchronize(
     company_id_for_mapping = df_n2f_companies["uuid"].iloc[0] if not df_n2f_companies.empty else ""
     sql_column, n2f_code = get_axe_mapping(
         axe_type=axe_type,
-        base_url=base_url,
-        client_id=client_id,
-        client_secret=client_secret,
+        base_url=context.config["n2f"]["base_urls"],
+        client_id=context.client_id,
+        client_secret=context.client_secret,
         company_id=company_id_for_mapping,
-        simulate=simulate
+        simulate=context.config["n2f"]["simulate"]
     )
 
     if not df_agresso_axes.empty:
@@ -76,11 +65,11 @@ def synchronize(
     for company_id in df_n2f_companies["uuid"]:
         df_axes = get_n2f_projects(
             axe_id=n2f_code,
-            base_url=base_url,
-            client_id=client_id,
-            client_secret=client_secret,
+            base_url=context.config["n2f"]["base_urls"],
+            client_id=context.client_id,
+            client_secret=context.client_secret,
             company_id=company_id,
-            simulate=simulate
+            simulate=context.config["n2f"]["simulate"]
         )
         if not df_axes.empty:
             df_axes["company_id"] = company_id  # Pour garder la référence à la société
@@ -93,18 +82,18 @@ def synchronize(
 
     print(f"Nombre de {sql_column} N2F chargés : {len(df_n2f_axes)}")
 
-    if do_create:
+    if context.args.create:
         # Création des axes N2F (par société)
         created_df, status_col = create_n2f_axes(
             axe_id=n2f_code,
             df_agresso_projects = df_agresso_axes,
             df_n2f_projects     = df_n2f_axes,
-            base_url            = base_url,
-            client_id           = client_id,
-            client_secret       = client_secret,
+            base_url            = context.config["n2f"]["base_urls"],
+            client_id           = context.client_id,
+            client_secret       = context.client_secret,
             df_n2f_companies    = df_n2f_companies,
-            simulate            = simulate,
-            sandbox             = sandbox
+            simulate            = context.config["n2f"]["simulate"],
+            sandbox             = context.config["n2f"]["sandbox"]
         )
         reporting(
             created_df,
@@ -113,18 +102,18 @@ def synchronize(
             status_col
         )
 
-    if do_update:
+    if context.args.update:
         # Mise à jour des axes N2F
         updated_df, status_col = update_n2f_axes(
             axe_id=n2f_code,
             df_agresso_projects = df_agresso_axes,
             df_n2f_projects     = df_n2f_axes,
-            base_url            = base_url,
-            client_id           = client_id,
-            client_secret       = client_secret,
+            base_url            = context.config["n2f"]["base_urls"],
+            client_id           = context.client_id,
+            client_secret       = context.client_secret,
             df_n2f_companies    = df_n2f_companies,
-            simulate            = simulate,
-            sandbox             = sandbox
+            simulate            = context.config["n2f"]["simulate"],
+            sandbox             = context.config["n2f"]["sandbox"]
         )
         reporting(
             updated_df,
@@ -133,18 +122,18 @@ def synchronize(
             status_col
         )
 
-    if do_delete:
+    if context.args.delete:
         # Suppression des axes N2F
         deleted_df, status_col = delete_n2f_axes(
             axe_id=n2f_code,
             df_agresso_projects = df_agresso_axes,
             df_n2f_projects     = df_n2f_axes,
-            base_url            = base_url,
-            client_id           = client_id,
-            client_secret       = client_secret,
+            base_url            = context.config["n2f"]["base_urls"],
+            client_id           = context.client_id,
+            client_secret       = context.client_secret,
             df_n2f_companies    = df_n2f_companies,
-            simulate            = simulate,
-            sandbox             = sandbox
+            simulate            = context.config["n2f"]["simulate"],
+            sandbox             = context.config["n2f"]["sandbox"]
         )
         reporting(
             deleted_df,
@@ -154,115 +143,36 @@ def synchronize(
         )
 
 
-def synchronize_projects(
-    do_create     : bool,
-    do_update     : bool,
-    do_delete     : bool,
-    base_dir      : str,
-    db_user       : str,
-    db_password   : str,
-    sql_path      : str,
-    sql_filename  : str,
-    base_url      : str,
-    client_id     : str,
-    client_secret : str,
-    prod          : bool,
-    simulate      : bool,
-    sandbox       : bool
-) -> None:
+def synchronize_projects(context: SyncContext, sql_filename: str) -> None:
     """
     Effectue la synchronisation des projets Agresso <-> N2F.
     """
     synchronize(
+        context=context,
         axe_type=AxeType.PROJECTS,
-        do_create=do_create,
-        do_update=do_update,
-        do_delete=do_delete,
-        base_dir=base_dir,
-        db_user=db_user,
-        db_password=db_password,
-        sql_path=sql_path,
-        sql_filename=sql_filename,
-        base_url=base_url,
-        client_id=client_id,
-        client_secret=client_secret,
-        prod=prod,
-        simulate=simulate,
-        sandbox=sandbox
+        sql_filename=sql_filename
     )
 
 
-def synchronize_plates(
-    do_create     : bool,
-    do_update     : bool,
-    do_delete     : bool,
-    base_dir      : str,
-    db_user       : str,
-    db_password   : str,
-    sql_path      : str,
-    sql_filename  : str,
-    base_url      : str,
-    client_id     : str,
-    client_secret : str,
-    prod          : bool,
-    simulate      : bool,
-    sandbox       : bool
-) -> None:
+def synchronize_plates(context: SyncContext, sql_filename: str) -> None:
     """
     Effectue la synchronisation des plaques Agresso <-> N2F.
     """
     synchronize(
+        context=context,
         axe_type=AxeType.PLATES,
-        do_create=do_create,
-        do_update=do_update,
-        do_delete=do_delete,
-        base_dir=base_dir,
-        db_user=db_user,
-        db_password=db_password,
-        sql_path=sql_path,
-        sql_filename=sql_filename,
-        base_url=base_url,
-        client_id=client_id,
-        client_secret=client_secret,
-        prod=prod,
-        simulate=simulate,
-        sandbox=sandbox
+        sql_filename=sql_filename
     )
 
 
-def synchronize_subposts(
-    do_create     : bool,
-    do_update     : bool,
-    do_delete     : bool,
-    base_dir      : str,
-    db_user       : str,
-    db_password   : str,
-    sql_path      : str,
-    sql_filename  : str,
-    base_url      : str,
-    client_id     : str,
-    client_secret : str,
-    prod          : bool,
-    simulate      : bool,
-    sandbox       : bool
-) -> None:
+def synchronize_subposts(context: SyncContext, sql_filename: str) -> None:
     """
     Effectue la synchronisation des subposts Agresso <-> N2F.
     """
     synchronize(
+        context=context,
         axe_type=AxeType.SUBPOSTS,
-        do_create=do_create,
-        do_update=do_update,
-        do_delete=do_delete,
-        base_dir=base_dir,
-        db_user=db_user,
-        db_password=db_password,
-        sql_path=sql_path,
-        sql_filename=sql_filename,
-        base_url=base_url,
-        client_id=client_id,
-        client_secret=client_secret,
-        prod=prod,
-        simulate=simulate,
-        sandbox=sandbox
+        sql_filename=sql_filename
     )
+
+

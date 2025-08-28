@@ -1,4 +1,4 @@
-from .users import (
+from .user import (
     get_users,
     ensure_manager_exists,
     build_user_payload,
@@ -6,11 +6,11 @@ from .users import (
     update_users,
     delete_users,
 )
-from .companies import get_companies
-from .roles import get_roles
-from .userprofiles import get_userprofiles
-from .customaxes import get_customaxes, get_customaxes_values
-from .axes import (
+from .company import get_companies
+from .role import get_roles
+from .userprofile import get_userprofiles
+from .customaxe import get_customaxes, get_customaxes_values
+from .axe import (
     get_axes,
     build_axe_payload,
     create_axes,
@@ -18,7 +18,7 @@ from .axes import (
     delete_axes,
 )
 # Projects functions as aliases to axes functions
-from .axes import (
+from .axe import (
     get_axes as get_projects,
     build_axe_payload as build_project_payload,
     create_axes as create_projects,

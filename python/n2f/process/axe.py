@@ -5,7 +5,7 @@ from n2f.api.customaxe import get_customaxes_values
 from n2f.api.base import upsert, delete
 from n2f.payload import create_project_upsert_payload
 from helper.cache import get_from_cache, set_in_cache
-from n2f.process.users import lookup_company_id
+from n2f.process.user import lookup_company_id
 
 from business.process.helper import has_payload_changes
 
