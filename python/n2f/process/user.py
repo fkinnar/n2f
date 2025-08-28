@@ -4,6 +4,8 @@ from typing import Optional, Set, Dict, Any, List, Tuple
 from n2f.client import N2fApiClient
 from n2f.payload import create_user_upsert_payload
 from business.process.helper import has_payload_changes
+from n2f.api_result import ApiResult
+from n2f.process.helper import add_api_logging_columns
 
 # Note: get_users is now in the client, but we keep the process file for business logic
 
@@ -93,12 +95,16 @@ def create_users(
 
     users_to_create = df_agresso_users[~df_agresso_users["AdresseEmail"].isin(df_n2f_users["mail"])].copy() if not df_n2f_users.empty else df_agresso_users.copy()
 
-    created_list: List[bool] = []
+    api_results: List[ApiResult] = []
     for _, user in users_to_create.iterrows():
         payload = build_user_payload(user, df_agresso_users, df_n2f_users, n2f_client, df_n2f_companies, sandbox)
-        status = n2f_client.create_user(payload)
-        created_list.append(status)
-    users_to_create[status_col] = created_list
+        api_result = n2f_client.create_user(payload)
+        api_results.append(api_result)
+    
+    # Ajouter les colonnes de logging
+    users_to_create[status_col] = [result.success for result in api_results]
+    users_to_create = add_api_logging_columns(users_to_create, api_results)
+    
     return users_to_create, status_col
 
 def update_users(
@@ -114,7 +120,7 @@ def update_users(
         return pd.DataFrame(), status_col
 
     users_to_update: List[Dict] = []
-    updated_list: List[bool] = []
+    api_results: List[ApiResult] = []
     n2f_by_mail = df_n2f_users.set_index("mail").to_dict(orient="index")
 
     for _, user in df_agresso_users[df_agresso_users["AdresseEmail"].isin(df_n2f_users["mail"])].iterrows():
@@ -124,13 +130,15 @@ def update_users(
         if not has_payload_changes(payload, n2f_user):
             continue
 
-        status = n2f_client.update_user(payload)
-        updated_list.append(status)
+        api_result = n2f_client.update_user(payload)
+        api_results.append(api_result)
         users_to_update.append(user.to_dict())
 
     if users_to_update:
         df_result = pd.DataFrame(users_to_update)
-        df_result[status_col] = updated_list
+        df_result[status_col] = [result.success for result in api_results]
+        df_result = add_api_logging_columns(df_result, api_results)
+        
         return df_result, status_col
     return pd.DataFrame(), status_col
 
@@ -147,7 +155,8 @@ def delete_users(
     users_to_delete = df_n2f_users[~df_n2f_users["mail"].isin(df_agresso_users["AdresseEmail"])].copy() if not df_agresso_users.empty else df_n2f_users.copy()
 
     if not users_to_delete.empty:
-        deleted_list: List[bool] = [n2f_client.delete_user(mail) for mail in users_to_delete["mail"]]
-        users_to_delete[status_col] = deleted_list
+        api_results: List[ApiResult] = [n2f_client.delete_user(mail) for mail in users_to_delete["mail"]]
+        users_to_delete[status_col] = [result.success for result in api_results]
+        users_to_delete = add_api_logging_columns(users_to_delete, api_results)
 
     return users_to_delete, status_col

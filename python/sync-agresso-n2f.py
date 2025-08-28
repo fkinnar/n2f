@@ -1,6 +1,7 @@
 import yaml
 import argparse
 import os
+import pandas as pd
 from pathlib import Path
 from typing import Any, Callable
 from dotenv import load_dotenv
@@ -12,6 +13,7 @@ from business.process import (
     synchronize_plates,
     synchronize_subposts
 )
+from n2f.process.helper import export_api_logs
 
 def main() -> None:
     """
@@ -31,7 +33,7 @@ def main() -> None:
     base_dir = Path(__file__).resolve().parent
     config_filename = f"{args.config}.yaml"
     config_path = base_dir.parent / config_filename
-    
+
     with config_path.open('r') as config_file:
         config = yaml.safe_load(config_file)
 
@@ -59,19 +61,54 @@ def main() -> None:
         selected_scopes = set(scope_map.keys())
 
     # Boucle de traitement
+    all_results = []
     for scope_name in selected_scopes:
         if scope_name in scope_map:
             sync_function, sql_filename = scope_map[scope_name]
-            
+
             print(f"--- Début de la synchronisation pour le périmètre : {scope_name} ---")
-            
-            sync_function(
+
+            results = sync_function(
                 context=context,
                 sql_filename=sql_filename
             )
-            
-            print(f"--- Fin de la synchronisation pour le périmètre : {scope_name} ---\
-")
+
+            if results:
+                all_results.extend(results)
+
+            print(f"--- Fin de la synchronisation pour le périmètre : {scope_name} ---")
+
+    # Export des logs d'API si des résultats sont disponibles
+    if all_results:
+        print("\n--- Export des logs d'API ---")
+        try:
+            # Combiner tous les résultats
+            combined_df = pd.concat(all_results, ignore_index=True)
+
+            # Exporter les logs
+            log_filename = export_api_logs(combined_df)
+            print(f"Logs d'API exportés vers : {log_filename}")
+
+            # Afficher un résumé des erreurs
+            if "api_success" in combined_df.columns:
+                success_count = combined_df["api_success"].sum()
+                total_count = len(combined_df)
+                error_count = total_count - success_count
+
+                print(f"\nRésumé des opérations API :")
+                print(f"  - Succès : {success_count}/{total_count}")
+                print(f"  - Erreurs : {error_count}/{total_count}")
+
+                if error_count > 0:
+                    print(f"\nDétails des erreurs :")
+                    errors_df = combined_df[~combined_df["api_success"]]
+                    for _, row in errors_df.iterrows():
+                        print(f"  - {row.get('api_message', 'Erreur inconnue')}")
+                        if 'api_error_details' in row and pd.notna(row['api_error_details']):
+                            print(f"    Détails : {row['api_error_details']}")
+
+        except Exception as e:
+            print(f"Erreur lors de l'export des logs : {e}")
 
 
 def create_arg_parser() -> argparse.ArgumentParser:

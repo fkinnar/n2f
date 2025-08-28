@@ -55,8 +55,10 @@ def _perform_sync_actions(
     df_agresso_axes: pd.DataFrame,
     df_n2f_axes: pd.DataFrame,
     df_n2f_companies: pd.DataFrame
-):
+) -> list[pd.DataFrame]:
     """Exécute les actions de création, mise à jour et suppression pour les axes."""
+    results = []
+    
     if context.args.create:
         created_df, status_col = create_n2f_axes(
             n2f_client=n2f_client, axe_id=n2f_code, df_agresso_projects=df_agresso_axes,
@@ -64,6 +66,8 @@ def _perform_sync_actions(
             sandbox=context.config["n2f"]["sandbox"]
         )
         reporting(created_df, f"Aucun {sql_column} ajouté", f"{sql_column} ajoutés", status_col)
+        if not created_df.empty:
+            results.append(created_df)
 
     if context.args.update:
         updated_df, status_col = update_n2f_axes(
@@ -72,6 +76,8 @@ def _perform_sync_actions(
             sandbox=context.config["n2f"]["sandbox"]
         )
         reporting(updated_df, f"Aucun {sql_column} mis à jour", f"{sql_column} mis à jour", status_col)
+        if not updated_df.empty:
+            results.append(updated_df)
 
     if context.args.delete:
         deleted_df, status_col = delete_n2f_axes(
@@ -80,12 +86,16 @@ def _perform_sync_actions(
             sandbox=context.config["n2f"]["sandbox"]
         )
         reporting(deleted_df, f"Aucun {sql_column} supprimé", f"{sql_column} supprimés", status_col)
+        if not deleted_df.empty:
+            results.append(deleted_df)
+    
+    return results
 
 def synchronize(
     context: SyncContext,
     axe_type: AxeType,
     sql_filename: str,
-) -> None:
+) -> list[pd.DataFrame]:
     """Orchestre la synchronisation des axes Agresso <-> N2F."""
     n2f_client = N2fApiClient(context)
 
@@ -100,18 +110,20 @@ def synchronize(
     df_agresso_axes = _load_agresso_axes(context, sql_filename, sql_column)
     df_n2f_axes = _load_n2f_axes(n2f_client, df_n2f_companies, n2f_code)
 
-    _perform_sync_actions(
+    results = _perform_sync_actions(
         context, n2f_client, n2f_code, sql_column, df_agresso_axes, df_n2f_axes, df_n2f_companies
     )
+    
+    return results
 
-def synchronize_projects(context: SyncContext, sql_filename: str) -> None:
+def synchronize_projects(context: SyncContext, sql_filename: str) -> list[pd.DataFrame]:
     """Effectue la synchronisation des projets Agresso <-> N2F."""
-    synchronize(context=context, axe_type=AxeType.PROJECTS, sql_filename=sql_filename)
+    return synchronize(context=context, axe_type=AxeType.PROJECTS, sql_filename=sql_filename)
 
-def synchronize_plates(context: SyncContext, sql_filename: str) -> None:
+def synchronize_plates(context: SyncContext, sql_filename: str) -> list[pd.DataFrame]:
     """Effectue la synchronisation des plaques Agresso <-> N2F."""
-    synchronize(context=context, axe_type=AxeType.PLATES, sql_filename=sql_filename)
+    return synchronize(context=context, axe_type=AxeType.PLATES, sql_filename=sql_filename)
 
-def synchronize_subposts(context: SyncContext, sql_filename: str) -> None:
+def synchronize_subposts(context: SyncContext, sql_filename: str) -> list[pd.DataFrame]:
     """Effectue la synchronisation des subposts Agresso <-> N2F."""
-    synchronize(context=context, axe_type=AxeType.SUBPOSTS, sql_filename=sql_filename)
+    return synchronize(context=context, axe_type=AxeType.SUBPOSTS, sql_filename=sql_filename)

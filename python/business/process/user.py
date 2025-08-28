@@ -50,8 +50,10 @@ def _perform_sync_actions(
     df_agresso_users: pd.DataFrame,
     df_n2f_users: pd.DataFrame,
     df_n2f_companies: pd.DataFrame
-):
+) -> list[pd.DataFrame]:
     """Exécute les actions de création, mise à jour et suppression."""
+    results = []
+    
     if context.args.create:
         created, status_col = create_users(
             df_agresso_users=df_agresso_users,
@@ -61,6 +63,8 @@ def _perform_sync_actions(
             sandbox=context.config["n2f"]["sandbox"]
         )
         reporting(created, "Aucun utilisateur ajouté", "Utilisateurs ajoutés", status_col)
+        if not created.empty:
+            results.append(created)
 
     if context.args.update:
         updated, status_col = update_users(
@@ -71,6 +75,8 @@ def _perform_sync_actions(
             sandbox=context.config["n2f"]["sandbox"]
         )
         reporting(updated, "Aucun utilisateur modifié", "Utilisateurs modifiés", status_col)
+        if not updated.empty:
+            results.append(updated)
 
     if context.args.delete:
         deleted, status_col = delete_users(
@@ -79,11 +85,15 @@ def _perform_sync_actions(
             n2f_client=n2f_client
         )
         reporting(deleted, "Aucun utilisateur supprimé", "Utilisateurs supprimés", status_col)
+        if not deleted.empty:
+            results.append(deleted)
+    
+    return results
 
 def synchronize(
     context: SyncContext,
     sql_filename: str
-) -> None:
+) -> list[pd.DataFrame]:
     """
     Orchestre la synchronisation des utilisateurs Agresso <-> N2F.
     """
@@ -93,6 +103,8 @@ def synchronize(
     df_n2f_users, df_n2f_companies = _load_n2f_data(n2f_client)
 
     # Exécution des actions de synchronisation
-    _perform_sync_actions(
+    results = _perform_sync_actions(
         context, n2f_client, df_agresso_users, df_n2f_users, df_n2f_companies
     )
+    
+    return results

@@ -1,10 +1,12 @@
 import pandas as pd
+import time
 from typing import List, Any
 
 import n2f
 from helper.context import SyncContext
 from n2f.api.token import get_access_token
 from helper.cache import get_from_cache, set_in_cache
+from n2f.api_result import ApiResult
 
 class N2fApiClient:
     """Un client pour interagir avec l'API N2F."""
@@ -159,42 +161,89 @@ class N2fApiClient:
         
         return result.copy(deep=True)
 
-    def _upsert(self, endpoint: str, payload: dict) -> bool:
+    def _upsert(self, endpoint: str, payload: dict) -> ApiResult:
         """Effectue un appel POST pour créer ou mettre à jour un objet."""
         if self.simulate:
-            return False
+            return ApiResult.simulate_result("upsert")
 
-        access_token = self._get_token()
-        url = f"{self.base_url}{endpoint}"
-        headers = {
-            "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/json"
-        }
+        start_time = time.time()
+        try:
+            access_token = self._get_token()
+            url = f"{self.base_url}{endpoint}"
+            headers = {
+                "Authorization": f"Bearer {access_token}",
+                "Content-Type": "application/json"
+            }
 
-        response = n2f.get_session_write().post(url, headers=headers, json=payload)
-        return 200 <= response.status_code < 300
+            response = n2f.get_session_write().post(url, headers=headers, json=payload)
+            duration_ms = (time.time() - start_time) * 1000
+            
+            if 200 <= response.status_code < 300:
+                return ApiResult.success_result(
+                    message=f"Upsert successful: {response.status_code}",
+                    status_code=response.status_code,
+                    duration_ms=duration_ms,
+                    response_data=response.json() if response.content else None
+                )
+            else:
+                return ApiResult.error_result(
+                    message=f"Upsert failed: {response.status_code}",
+                    status_code=response.status_code,
+                    duration_ms=duration_ms,
+                    error_details=response.text
+                )
+        except Exception as e:
+            duration_ms = (time.time() - start_time) * 1000
+            return ApiResult.error_result(
+                message=f"Upsert exception: {str(e)}",
+                duration_ms=duration_ms,
+                error_details=str(e)
+            )
 
-    def _delete(self, endpoint: str, object_id: str) -> bool:
+    def _delete(self, endpoint: str, object_id: str) -> ApiResult:
         """Effectue un appel DELETE pour supprimer un objet."""
         if self.simulate:
-            return False
+            return ApiResult.simulate_result("delete")
 
-        access_token = self._get_token()
-        url = f"{self.base_url}{endpoint}/{object_id}"
-        headers = {"Authorization": f"Bearer {access_token}"}
+        start_time = time.time()
+        try:
+            access_token = self._get_token()
+            url = f"{self.base_url}{endpoint}/{object_id}"
+            headers = {"Authorization": f"Bearer {access_token}"}
 
-        response = n2f.get_session_write().delete(url, headers=headers)
-        return 200 <= response.status_code < 300
+            response = n2f.get_session_write().delete(url, headers=headers)
+            duration_ms = (time.time() - start_time) * 1000
+            
+            if 200 <= response.status_code < 300:
+                return ApiResult.success_result(
+                    message=f"Delete successful: {response.status_code}",
+                    status_code=response.status_code,
+                    duration_ms=duration_ms
+                )
+            else:
+                return ApiResult.error_result(
+                    message=f"Delete failed: {response.status_code}",
+                    status_code=response.status_code,
+                    duration_ms=duration_ms,
+                    error_details=response.text
+                )
+        except Exception as e:
+            duration_ms = (time.time() - start_time) * 1000
+            return ApiResult.error_result(
+                message=f"Delete exception: {str(e)}",
+                duration_ms=duration_ms,
+                error_details=str(e)
+            )
 
-    def create_user(self, payload: dict) -> bool:
+    def create_user(self, payload: dict) -> ApiResult:
         """Crée un utilisateur."""
         return self._upsert("/users", payload)
 
-    def update_user(self, payload: dict) -> bool:
+    def update_user(self, payload: dict) -> ApiResult:
         """Met à jour un utilisateur."""
         return self._upsert("/users", payload)
 
-    def delete_user(self, user_email: str) -> bool:
+    def delete_user(self, user_email: str) -> ApiResult:
         """Supprime un utilisateur par son email."""
         return self._delete("/users", user_email)
 
@@ -266,12 +315,12 @@ class N2fApiClient:
         
         return result.copy(deep=True)
 
-    def upsert_axe_value(self, company_id: str, axe_id: str, payload: dict) -> bool:
+    def upsert_axe_value(self, company_id: str, axe_id: str, payload: dict) -> ApiResult:
         """Crée ou met à jour une valeur d'axe pour une société."""
         endpoint = f"/companies/{company_id}/axes/{axe_id}"
         return self._upsert(endpoint, payload)
 
-    def delete_axe_value(self, company_id: str, axe_id: str, value_code: str) -> bool:
+    def delete_axe_value(self, company_id: str, axe_id: str, value_code: str) -> ApiResult:
         """Supprime une valeur d'axe pour une société par son code."""
-        endpoint = f"/companies/{company_id}/axes/{axe_id}"
+        endpoint = f"/companies/{company_id}/axes/{value_code}"
         return self._delete(endpoint, value_code)
