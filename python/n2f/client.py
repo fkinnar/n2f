@@ -1,0 +1,277 @@
+import pandas as pd
+from typing import List, Any
+
+import n2f
+from helper.context import SyncContext
+from n2f.api.token import get_access_token
+from helper.cache import get_from_cache, set_in_cache
+
+class N2fApiClient:
+    """Un client pour interagir avec l'API N2F."""
+
+    def __init__(self, context: SyncContext):
+        """Initialise le client avec le contexte de synchronisation."""
+        self.context = context
+        self.base_url = context.config["n2f"]["base_urls"]
+        self.client_id = context.client_id
+        self.client_secret = context.client_secret
+        self.simulate = context.config["n2f"]["simulate"]
+        self._access_token = None
+
+    def _get_token(self) -> str:
+        """Récupère et met en cache le token d'accès."""
+        if self._access_token is None:
+            token, _ = get_access_token(
+                self.base_url,
+                self.client_id,
+                self.client_secret,
+                simulate=self.simulate
+            )
+            self._access_token = token
+        return self._access_token
+
+    def _request(self, entity: str, start: int = 0, limit: int = 200) -> List[dict[str, Any]]:
+        """Effectue une requête GET paginée à l'API N2F."""
+        if self.simulate:
+            return []
+
+        access_token = self._get_token()
+        url = f"{self.base_url}/{entity}"
+        params = {"start": start, "limit": limit}
+        headers = {"Authorization": f"Bearer {access_token}"}
+
+        response = n2f.get_session_get().get(url, headers=headers, params=params)
+        response.raise_for_status()
+        
+        data = response.json()["response"]
+        return data.get("data", [])
+
+    def get_companies(self, use_cache: bool = True) -> pd.DataFrame:
+        """
+        Récupère toutes les entreprises (gère la pagination et le cache).
+        """
+        cache_key_args = (self.base_url, self.client_id, self.simulate)
+        if use_cache:
+            cached = get_from_cache("get_companies", *cache_key_args)
+            if cached is not None:
+                return cached
+
+        all_companies_list = []
+        start, limit = 0, 200
+        while True:
+            companies_page = self._request("companies", start, limit)
+            if not companies_page:
+                break
+            
+            df_page = pd.DataFrame(companies_page)
+            all_companies_list.append(df_page)
+            
+            if len(df_page) < limit:
+                break
+            start += limit
+
+        result = pd.concat(all_companies_list, ignore_index=True) if all_companies_list else pd.DataFrame()
+
+        if use_cache:
+            set_in_cache(result, "get_companies", *cache_key_args)
+        
+        return result.copy(deep=True)
+
+    def get_roles(self, use_cache: bool = True) -> pd.DataFrame:
+        """Récupère les rôles et les met en cache."""
+        cache_key_args = (self.base_url, self.client_id, self.simulate)
+        if use_cache:
+            cached = get_from_cache("get_roles", *cache_key_args)
+            if cached is not None:
+                return cached
+
+        # L'endpoint "roles" ne semble pas paginé et a une structure de réponse différente
+        if self.simulate:
+            return pd.DataFrame()
+
+        access_token = self._get_token()
+        url = f"{self.base_url}/roles"
+        headers = {"Authorization": f"Bearer {access_token}"}
+        response = n2f.get_session_get().get(url, headers=headers)
+        response.raise_for_status()
+        
+        # La réponse pour les rôles est directement la liste
+        roles_data = response.json()["response"]
+        result = pd.DataFrame(roles_data)
+
+        if use_cache:
+            set_in_cache(result, "get_roles", *cache_key_args)
+        
+        return result.copy(deep=True)
+
+    def get_userprofiles(self, use_cache: bool = True) -> pd.DataFrame:
+        """Récupère les profils utilisateurs et les met en cache."""
+        cache_key_args = (self.base_url, self.client_id, self.simulate)
+        if use_cache:
+            cached = get_from_cache("get_userprofiles", *cache_key_args)
+            if cached is not None:
+                return cached
+
+        # L'endpoint "userprofiles" a la même structure de réponse que "roles"
+        if self.simulate:
+            return pd.DataFrame()
+
+        access_token = self._get_token()
+        url = f"{self.base_url}/userprofiles"
+        headers = {"Authorization": f"Bearer {access_token}"}
+        response = n2f.get_session_get().get(url, headers=headers)
+        response.raise_for_status()
+        
+        profiles_data = response.json()["response"]
+        result = pd.DataFrame(profiles_data)
+
+        if use_cache:
+            set_in_cache(result, "get_userprofiles", *cache_key_args)
+        
+        return result.copy(deep=True)
+
+    def get_users(self, use_cache: bool = True) -> pd.DataFrame:
+        """Récupère tous les utilisateurs (gère la pagination et le cache)."""
+        cache_key_args = (self.base_url, self.client_id, self.simulate)
+        if use_cache:
+            cached = get_from_cache("get_users", *cache_key_args)
+            if cached is not None:
+                return cached
+
+        all_users_list = []
+        start, limit = 0, 200
+        while True:
+            users_page = self._request("users", start, limit)
+            if not users_page:
+                break
+            
+            df_page = pd.DataFrame(users_page)
+            all_users_list.append(df_page)
+            
+            if len(df_page) < limit:
+                break
+            start += limit
+
+        result = pd.concat(all_users_list, ignore_index=True) if all_users_list else pd.DataFrame()
+
+        if use_cache:
+            set_in_cache(result, "get_users", *cache_key_args)
+        
+        return result.copy(deep=True)
+
+    def _upsert(self, endpoint: str, payload: dict) -> bool:
+        """Effectue un appel POST pour créer ou mettre à jour un objet."""
+        if self.simulate:
+            return False
+
+        access_token = self._get_token()
+        url = f"{self.base_url}{endpoint}"
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/json"
+        }
+
+        response = n2f.get_session_write().post(url, headers=headers, json=payload)
+        return 200 <= response.status_code < 300
+
+    def _delete(self, endpoint: str, object_id: str) -> bool:
+        """Effectue un appel DELETE pour supprimer un objet."""
+        if self.simulate:
+            return False
+
+        access_token = self._get_token()
+        url = f"{self.base_url}{endpoint}/{object_id}"
+        headers = {"Authorization": f"Bearer {access_token}"}
+
+        response = n2f.get_session_write().delete(url, headers=headers)
+        return 200 <= response.status_code < 300
+
+    def create_user(self, payload: dict) -> bool:
+        """Crée un utilisateur."""
+        return self._upsert("/users", payload)
+
+    def update_user(self, payload: dict) -> bool:
+        """Met à jour un utilisateur."""
+        return self._upsert("/users", payload)
+
+    def delete_user(self, user_email: str) -> bool:
+        """Supprime un utilisateur par son email."""
+        return self._delete("/users", user_email)
+
+    def get_custom_axes(self, company_id: str, use_cache: bool = True) -> pd.DataFrame:
+        """Récupère les axes personnalisés pour une société."""
+        cache_key_args = (self.base_url, self.client_id, company_id, self.simulate)
+        if use_cache:
+            cached = get_from_cache(f"get_custom_axes_{company_id}", *cache_key_args)
+            if cached is not None:
+                return cached
+
+        # Cet endpoint n'est pas paginé dans l'implémentation de référence
+        endpoint = f"companies/{company_id}/axes"
+        if self.simulate:
+            axes_data = []
+        else:
+            access_token = self._get_token()
+            url = f"{self.base_url}/{endpoint}"
+            headers = {"Authorization": f"Bearer {access_token}"}
+            response = n2f.get_session_get().get(url, headers=headers)
+            response.raise_for_status()
+            axes_data = response.json().get("response", {}).get("data", [])
+
+        result = pd.DataFrame(axes_data)
+
+        if use_cache:
+            set_in_cache(result, f"get_custom_axes_{company_id}", *cache_key_args)
+
+        return result.copy(deep=True)
+
+    def get_axe_values(self, company_id: str, axe_id: str, use_cache: bool = True) -> pd.DataFrame:
+        """Récupère les valeurs d'un axe pour une société (gère pagination et cache)."""
+        cache_key_args = (self.base_url, self.client_id, company_id, axe_id, self.simulate)
+        if use_cache:
+            cached = get_from_cache(f"get_axe_values_{axe_id}", *cache_key_args)
+            if cached is not None:
+                return cached
+
+        all_values_list = []
+        start, limit = 0, 200
+        endpoint = f"companies/{company_id}/axes/{axe_id}"
+        while True:
+            # La méthode _request est pour les endpoints globaux, ici l'URL est spécifique
+            if self.simulate:
+                values_page = []
+            else:
+                access_token = self._get_token()
+                url = f"{self.base_url}/{endpoint}"
+                params = {"start": start, "limit": limit}
+                headers = {"Authorization": f"Bearer {access_token}"}
+                response = n2f.get_session_get().get(url, headers=headers, params=params)
+                response.raise_for_status()
+                values_page = response.json().get("response", {}).get("data", [])
+
+            if not values_page:
+                break
+            
+            df_page = pd.DataFrame(values_page)
+            all_values_list.append(df_page)
+            
+            if len(df_page) < limit:
+                break
+            start += limit
+
+        result = pd.concat(all_values_list, ignore_index=True) if all_values_list else pd.DataFrame()
+
+        if use_cache:
+            set_in_cache(result, f"get_axe_values_{axe_id}", *cache_key_args)
+        
+        return result.copy(deep=True)
+
+    def upsert_axe_value(self, company_id: str, axe_id: str, payload: dict) -> bool:
+        """Crée ou met à jour une valeur d'axe pour une société."""
+        endpoint = f"/companies/{company_id}/axes/{axe_id}"
+        return self._upsert(endpoint, payload)
+
+    def delete_axe_value(self, company_id: str, axe_id: str, value_code: str) -> bool:
+        """Supprime une valeur d'axe pour une société par son code."""
+        endpoint = f"/companies/{company_id}/axes/{axe_id}"
+        return self._delete(endpoint, value_code)

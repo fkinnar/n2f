@@ -2,13 +2,8 @@ import pandas as pd
 
 from helper.context import SyncContext
 from business.process.helper import reporting
-from n2f.process import (
-    get_roles as get_n2f_roles,
-    get_userprofiles as get_n2f_userprofiles,
-    get_companies as get_n2f_companies,
-    get_users as get_n2f_users,
-    create_users, delete_users, update_users
-)
+from n2f.client import N2fApiClient
+from n2f.process import create_users, delete_users, update_users
 from agresso.process import select
 from business.normalize import normalize_agresso_users, normalize_n2f_users, build_mapping as build_n2f_mapping
 
@@ -20,6 +15,9 @@ def synchronize(
     """
     Effectue la synchronisation des utilisateurs Agresso <-> N2F selon les options passées.
     """
+
+    # Initialisation du client N2F
+    n2f_client = N2fApiClient(context)
 
     # Chargement des utilisateurs Agresso et normalisation des données
     df_agresso_users: pd.DataFrame = normalize_agresso_users(
@@ -34,42 +32,22 @@ def synchronize(
     print(f"Nombre d'utilisateurs Agresso chargés : {len(df_agresso_users)}")
 
     # Chargement des rôles N2F
-    df_n2f_roles: pd.DataFrame = get_n2f_roles(
-        context.config["n2f"]["base_urls"],
-        context.client_id,
-        context.client_secret,
-        context.config["n2f"]["simulate"]
-    )
+    df_n2f_roles: pd.DataFrame = n2f_client.get_roles()
     print(f"Nombre de rôles N2F chargés : {len(df_n2f_roles)}")
 
     # Chargement des profils N2F
-    df_n2f_userprofiles: pd.DataFrame = get_n2f_userprofiles(
-        context.config["n2f"]["base_urls"],
-        context.client_id,
-        context.client_secret,
-        context.config["n2f"]["simulate"]
-    )
+    df_n2f_userprofiles: pd.DataFrame = n2f_client.get_userprofiles()
     print(f"Nombre de profils N2F chargés : {len(df_n2f_userprofiles)}")
 
     # Chargement des entreprises N2F
-    df_n2f_companies: pd.DataFrame = get_n2f_companies(
-        base_url      = context.config["n2f"]["base_urls"],
-        client_id     = context.client_id,
-        client_secret = context.client_secret,
-        simulate      = context.config["n2f"]["simulate"]
-    )
+    df_n2f_companies: pd.DataFrame = n2f_client.get_companies()
     print(f"Nombre d'entreprises N2F chargées : {len(df_n2f_companies)}")
 
     # Chargement des utilisateurs N2F et normalisation des données
     profile_mapping: dict[str, str] = build_n2f_mapping(df_n2f_userprofiles)
     role_mapping: dict[str, str] = build_n2f_mapping(df_n2f_roles)
     df_n2f_users: pd.DataFrame = normalize_n2f_users(
-        get_n2f_users(
-            base_url      = context.config["n2f"]["base_urls"],
-            client_id     = context.client_id,
-            client_secret = context.client_secret,
-            simulate      = context.config["n2f"]["simulate"]
-        ),
+        n2f_client.get_users(),
         profile_mapping, role_mapping
     )
     print(f"Nombre d'utilisateurs N2F chargés : {len(df_n2f_users)}")
@@ -80,10 +58,7 @@ def synchronize(
             df_agresso_users = df_agresso_users,
             df_n2f_users     = df_n2f_users,
             df_n2f_companies = df_n2f_companies,
-            base_url         = context.config["n2f"]["base_urls"],
-            client_id        = context.client_id,
-            client_secret    = context.client_secret,
-            simulate         = context.config["n2f"]["simulate"],
+            n2f_client       = n2f_client,
             sandbox          = context.config["n2f"]["sandbox"]
         )
         reporting(
@@ -99,10 +74,7 @@ def synchronize(
             df_agresso_users = df_agresso_users,
             df_n2f_users     = df_n2f_users,
             df_n2f_companies = df_n2f_companies,
-            base_url         = context.config["n2f"]["base_urls"],
-            client_id        = context.client_id,
-            client_secret    = context.client_secret,
-            simulate         = context.config["n2f"]["simulate"],
+            n2f_client       = n2f_client,
             sandbox          = context.config["n2f"]["sandbox"]
         )
         reporting(
@@ -117,10 +89,7 @@ def synchronize(
         deleted, status_col = delete_users(
             df_agresso_users = df_agresso_users,
             df_n2f_users     = df_n2f_users,
-            base_url         = context.config["n2f"]["base_urls"],
-            client_id        = context.client_id,
-            client_secret    = context.client_secret,
-            simulate         = context.config["n2f"]["simulate"]
+            n2f_client       = n2f_client
         )
         reporting(
             deleted,
