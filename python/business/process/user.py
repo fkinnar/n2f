@@ -20,19 +20,19 @@ def _load_agresso_users(context: SyncContext, sql_filename: str) -> pd.DataFrame
             prod=context.config["agresso"]["prod"]
         )
     )
-    print(f"Nombre d'utilisateurs Agresso chargés : {len(df_agresso_users)}")
+    print(f"Number of Agresso users loaded : {len(df_agresso_users)}")
     return df_agresso_users
 
 def _load_n2f_data(n2f_client: N2fApiClient) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Charge toutes les données nécessaires depuis N2F (utilisateurs, rôles, profils, entreprises)."""
     df_roles = n2f_client.get_roles()
-    print(f"Nombre de rôles N2F chargés : {len(df_roles)}")
+    print(f"Number of N2F roles loaded : {len(df_roles)}")
 
     df_userprofiles = n2f_client.get_userprofiles()
-    print(f"Nombre de profils N2F chargés : {len(df_userprofiles)}")
+    print(f"Number of N2F profiles loaded : {len(df_userprofiles)}")
 
     df_companies = n2f_client.get_companies()
-    print(f"Nombre d'entreprises N2F chargées : {len(df_companies)}")
+    print(f"Number of N2F companies loaded : {len(df_companies)}")
 
     profile_mapping = build_n2f_mapping(df_userprofiles)
     role_mapping = build_n2f_mapping(df_roles)
@@ -40,7 +40,7 @@ def _load_n2f_data(n2f_client: N2fApiClient) -> Tuple[pd.DataFrame, pd.DataFrame
         n2f_client.get_users(),
         profile_mapping, role_mapping
     )
-    print(f"Nombre d'utilisateurs N2F chargés : {len(df_users)}")
+    print(f"Number of N2F users loaded : {len(df_users)}")
 
     return df_users, df_companies
 
@@ -62,7 +62,7 @@ def _perform_sync_actions(
             n2f_client=n2f_client,
             sandbox=context.config["n2f"]["sandbox"]
         )
-        reporting(created, "Aucun utilisateur ajouté", "Utilisateurs ajoutés", status_col)
+        reporting(created, "No user added", "Users added", status_col)
         if not created.empty:
             results.append(created)
 
@@ -74,7 +74,7 @@ def _perform_sync_actions(
             n2f_client=n2f_client,
             sandbox=context.config["n2f"]["sandbox"]
         )
-        reporting(updated, "Aucun utilisateur modifié", "Utilisateurs modifiés", status_col)
+        reporting(updated, "No user modified", "Users modified", status_col)
         if not updated.empty:
             results.append(updated)
 
@@ -84,7 +84,7 @@ def _perform_sync_actions(
             df_n2f_users=df_n2f_users,
             n2f_client=n2f_client
         )
-        reporting(deleted, "Aucun utilisateur supprimé", "Utilisateurs supprimés", status_col)
+        reporting(deleted, "No user deleted", "Users deleted", status_col)
         if not deleted.empty:
             results.append(deleted)
 

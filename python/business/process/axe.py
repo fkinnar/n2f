@@ -28,7 +28,7 @@ def _load_agresso_axes(context: SyncContext, sql_filename: str, sql_column_filte
         df_agresso_axes = df_agresso_axes[
             df_agresso_axes[AGRESSO_COL_AXE_TYPE].astype(str).str.upper() == sql_column_filter
         ].copy()
-    print(f"Nombre de {sql_column_filter} Agresso chargés : {len(df_agresso_axes)}")
+    print(f"Number of {sql_column_filter} Agresso loaded : {len(df_agresso_axes)}")
     return df_agresso_axes
 
 def _load_n2f_axes(n2f_client: N2fApiClient, df_n2f_companies: pd.DataFrame, n2f_code: str) -> pd.DataFrame:
@@ -44,7 +44,7 @@ def _load_n2f_axes(n2f_client: N2fApiClient, df_n2f_companies: pd.DataFrame, n2f
             df_axes["company_id"] = company_id
             axes_list.append(df_axes)
     df_n2f_axes = pd.concat(axes_list, ignore_index=True) if axes_list else pd.DataFrame()
-    print(f"Nombre de valeurs d'axe N2F chargées : {len(df_n2f_axes)}")
+    print(f"Number of N2F axe values loaded : {len(df_n2f_axes)}")
     return df_n2f_axes
 
 def _get_scope_from_axe_type(axe_type: AxeType) -> str:
@@ -75,7 +75,7 @@ def _perform_sync_actions(
             df_n2f_projects=df_n2f_axes, df_n2f_companies=df_n2f_companies,
             sandbox=context.config["n2f"]["sandbox"], scope=scope
         )
-        reporting(created_df, f"Aucun {sql_column} ajouté", f"{sql_column} ajoutés", status_col)
+        reporting(created_df, f"No {sql_column} added", f"{sql_column} added", status_col)
         if not created_df.empty:
             results.append(created_df)
 
@@ -85,7 +85,7 @@ def _perform_sync_actions(
             df_n2f_projects=df_n2f_axes, df_n2f_companies=df_n2f_companies,
             sandbox=context.config["n2f"]["sandbox"], scope=scope
         )
-        reporting(updated_df, f"Aucun {sql_column} mis à jour", f"{sql_column} mis à jour", status_col)
+        reporting(updated_df, f"No {sql_column} updated", f"{sql_column} updated", status_col)
         if not updated_df.empty:
             results.append(updated_df)
 
@@ -110,7 +110,7 @@ def synchronize(
     n2f_client = N2fApiClient(context)
 
     df_n2f_companies = n2f_client.get_companies()
-    print(f"Nombre d'entreprises N2F chargées : {len(df_n2f_companies)}")
+    print(f"Number of N2F companies loaded : {len(df_n2f_companies)}")
 
     company_id_for_mapping = df_n2f_companies[COL_UUID].iloc[0] if not df_n2f_companies.empty else ""
     sql_column, n2f_code = get_axe_mapping(

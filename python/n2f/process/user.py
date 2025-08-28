@@ -97,9 +97,17 @@ def create_users(
 
     api_results: List[ApiResult] = []
     for _, user in users_to_create.iterrows():
-        payload = build_user_payload(user, df_agresso_users, df_n2f_users, n2f_client, df_n2f_companies, sandbox)
-        api_result = n2f_client.create_user(payload)
-        api_results.append(api_result)
+        try:
+            payload = build_user_payload(user, df_agresso_users, df_n2f_users, n2f_client, df_n2f_companies, sandbox)
+            api_result = n2f_client.create_user(payload)
+            api_results.append(api_result)
+        except Exception as e:
+            # Log l'erreur mais continue le processus
+            log_error("USERS", "CREATE", user["AdresseEmail"], e, f"Payload: {payload}")
+            # Créer un ApiResult d'erreur pour maintenir la cohérence
+            api_results.append(ApiResult.error_result(str(e), error_details=str(e),
+                                                     action_type="create", object_type="user",
+                                                     object_id=user["AdresseEmail"], scope="users"))
 
     # Ajouter les colonnes de logging
     users_to_create[status_col] = [result.success for result in api_results]
@@ -130,13 +138,22 @@ def update_users(
         if n2f_user:
             n2f_user["mail"] = user["AdresseEmail"]
 
-        from business.process.helper import has_payload_changes
+        from business.process.helper import has_payload_changes, log_error
         if not has_payload_changes(payload, n2f_user, 'user'):
             continue
 
-        api_result = n2f_client.update_user(payload)
-        api_results.append(api_result)
-        users_to_update.append(user.to_dict())
+        try:
+            api_result = n2f_client.update_user(payload)
+            api_results.append(api_result)
+            users_to_update.append(user.to_dict())
+        except Exception as e:
+            # Log l'erreur mais continue le processus
+            log_error("USERS", "UPDATE", user["AdresseEmail"], e, f"Payload: {payload}")
+            # Créer un ApiResult d'erreur pour maintenir la cohérence
+            api_results.append(ApiResult.error_result(str(e), error_details=str(e),
+                                                     action_type="update", object_type="user",
+                                                     object_id=user["AdresseEmail"], scope="users"))
+            users_to_update.append(user.to_dict())
 
     if users_to_update:
         df_result = pd.DataFrame(users_to_update)
@@ -159,7 +176,18 @@ def delete_users(
     users_to_delete = df_n2f_users[~df_n2f_users["mail"].isin(df_agresso_users["AdresseEmail"])].copy() if not df_agresso_users.empty else df_n2f_users.copy()
 
     if not users_to_delete.empty:
-        api_results: List[ApiResult] = [n2f_client.delete_user(mail) for mail in users_to_delete["mail"]]
+        api_results: List[ApiResult] = []
+        for mail in users_to_delete["mail"]:
+            try:
+                api_result = n2f_client.delete_user(mail)
+                api_results.append(api_result)
+            except Exception as e:
+                # Log l'erreur mais continue le processus
+                log_error("USERS", "DELETE", mail, e)
+                # Créer un ApiResult d'erreur pour maintenir la cohérence
+                api_results.append(ApiResult.error_result(str(e), error_details=str(e),
+                                                         action_type="delete", object_type="user",
+                                                         object_id=mail, scope="users"))
         users_to_delete[status_col] = [result.success for result in api_results]
         users_to_delete = add_api_logging_columns(users_to_delete, api_results)
 

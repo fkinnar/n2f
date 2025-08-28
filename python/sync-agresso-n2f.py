@@ -66,7 +66,7 @@ def main() -> None:
         if scope_name in scope_map:
             sync_function, sql_filename = scope_map[scope_name]
 
-            print(f"--- Début de la synchronisation pour le périmètre : {scope_name} ---")
+            print(f"--- Starting synchronization for scope : {scope_name} ---")
 
             results = sync_function(
                 context=context,
@@ -76,18 +76,18 @@ def main() -> None:
             if results:
                 all_results.extend(results)
 
-            print(f"--- Fin de la synchronisation pour le périmètre : {scope_name} ---")
+            print(f"--- End of synchronization for scope : {scope_name} ---")
 
     # Export des logs d'API si des résultats sont disponibles
     if all_results:
-        print("\n--- Export des logs d'API ---")
+        print("\n--- API Logs Export ---")
         try:
             # Combiner tous les résultats
             combined_df = pd.concat(all_results, ignore_index=True)
 
             # Exporter les logs
             log_filename = export_api_logs(combined_df)
-            print(f"Logs d'API exportés vers : {log_filename}")
+            print(f"API logs exported to : {log_filename}")
 
             # Afficher un résumé des erreurs
             if "api_success" in combined_df.columns:
@@ -95,20 +95,20 @@ def main() -> None:
                 total_count = len(combined_df)
                 error_count = total_count - success_count
 
-                print(f"\nRésumé des opérations API :")
-                print(f"  - Succès : {success_count}/{total_count}")
-                print(f"  - Erreurs : {error_count}/{total_count}")
+                print(f"\nAPI Operations Summary :")
+                print(f"  - Success : {success_count}/{total_count}")
+                print(f"  - Errors : {error_count}/{total_count}")
 
                 if error_count > 0:
-                    print(f"\nDétails des erreurs :")
+                    print(f"\nError Details :")
                     errors_df = combined_df[~combined_df["api_success"]]
                     for _, row in errors_df.iterrows():
-                        print(f"  - {row.get('api_message', 'Erreur inconnue')}")
+                        print(f"  - {row.get('api_message', 'Unknown error')}")
                         if 'api_error_details' in row and pd.notna(row['api_error_details']):
-                            print(f"    Détails : {row['api_error_details']}")
+                            print(f"    Details : {row['api_error_details']}")
 
         except Exception as e:
-            print(f"Erreur lors de l'export des logs : {e}")
+            print(f"Error during logs export : {e}")
 
 
 def create_arg_parser() -> argparse.ArgumentParser:
@@ -123,4 +123,8 @@ def create_arg_parser() -> argparse.ArgumentParser:
 
 
 if __name__ == "__main__":
+    # Forcer l'encodage UTF-8 pour la sortie
+    import sys
+    import os
+    os.environ['PYTHONIOENCODING'] = 'utf-8'
     main()

@@ -41,15 +41,25 @@ def create_axes(
 
     api_results: List[ApiResult] = []
     for _, project in projects_to_create.iterrows():
-        company_code = project.get("client")
-        company_id = lookup_company_id(company_code, df_n2f_companies, sandbox)
-        if company_id:
-            payload = build_axe_payload(project, sandbox)
-            api_result = n2f_client.upsert_axe_value(company_id, axe_id, payload, "create", scope)
-            api_results.append(api_result)
-        else:
-            api_results.append(ApiResult.error_result("Company not found", error_details=f"Company code: {company_code}",
-                                                     action_type="create", object_type="axe", object_id=project.get("code", "unknown"), scope=scope))
+        try:
+            company_code = project.get("client")
+            company_id = lookup_company_id(company_code, df_n2f_companies, sandbox)
+            if company_id:
+                payload = build_axe_payload(project, sandbox)
+                api_result = n2f_client.upsert_axe_value(company_id, axe_id, payload, "create", scope)
+                api_results.append(api_result)
+            else:
+                error_msg = f"Company not found: {company_code}"
+                log_error(scope.upper(), "CREATE", project.get("code", "unknown"), Exception(error_msg))
+                api_results.append(ApiResult.error_result("Company not found", error_details=f"Company code: {company_code}",
+                                                         action_type="create", object_type="axe", object_id=project.get("code", "unknown"), scope=scope))
+        except Exception as e:
+            # Log l'erreur mais continue le processus
+            log_error(scope.upper(), "CREATE", project.get("code", "unknown"), e, f"Company: {project.get('client', 'unknown')}")
+            # Créer un ApiResult d'erreur pour maintenir la cohérence
+            api_results.append(ApiResult.error_result(str(e), error_details=str(e),
+                                                     action_type="create", object_type="axe",
+                                                     object_id=project.get("code", "unknown"), scope=scope))
 
     projects_to_create[status_col] = [result.success for result in api_results]
     projects_to_create = add_api_logging_columns(projects_to_create, api_results)
@@ -78,7 +88,7 @@ def update_axes(
         payload = build_axe_payload(project, sandbox)
         n2f_project = n2f_by_code.get(project["code"], {})
 
-        from business.process.helper import has_payload_changes, debug_payload_changes
+        from business.process.helper import has_payload_changes, debug_payload_changes, log_error
         # Debug temporaire pour voir les différences
         if has_payload_changes(payload, n2f_project, 'axe'):
             differences = debug_payload_changes(payload, n2f_project, 'axe')
@@ -90,15 +100,26 @@ def update_axes(
         if not has_payload_changes(payload, n2f_project, 'axe'):
             continue
 
-        company_code = project.get("client")
-        company_id = lookup_company_id(company_code, df_n2f_companies, sandbox)
-        if company_id:
-            api_result = n2f_client.upsert_axe_value(company_id, axe_id, payload, "update", scope)
-            api_results.append(api_result)
-            axes_to_update.append(project.to_dict())
-        else:
-            api_results.append(ApiResult.error_result("Company not found", error_details=f"Company code: {company_code}",
-                                                     action_type="update", object_type="axe", object_id=project.get("code", "unknown"), scope=scope))
+        try:
+            company_code = project.get("client")
+            company_id = lookup_company_id(company_code, df_n2f_companies, sandbox)
+            if company_id:
+                api_result = n2f_client.upsert_axe_value(company_id, axe_id, payload, "update", scope)
+                api_results.append(api_result)
+                axes_to_update.append(project.to_dict())
+            else:
+                error_msg = f"Company not found: {company_code}"
+                log_error(scope.upper(), "UPDATE", project.get("code", "unknown"), Exception(error_msg))
+                api_results.append(ApiResult.error_result("Company not found", error_details=f"Company code: {company_code}",
+                                                         action_type="update", object_type="axe", object_id=project.get("code", "unknown"), scope=scope))
+                axes_to_update.append(project.to_dict())
+        except Exception as e:
+            # Log l'erreur mais continue le processus
+            log_error(scope.upper(), "UPDATE", project.get("code", "unknown"), e, f"Company: {project.get('client', 'unknown')}")
+            # Créer un ApiResult d'erreur pour maintenir la cohérence
+            api_results.append(ApiResult.error_result(str(e), error_details=str(e),
+                                                     action_type="update", object_type="axe",
+                                                     object_id=project.get("code", "unknown"), scope=scope))
             axes_to_update.append(project.to_dict())
 
     if axes_to_update:
@@ -130,13 +151,23 @@ def delete_axes(
 
     api_results: List[ApiResult] = []
     for _, project in axes_to_delete.iterrows():
-        company_id = project.get("company_id") # Assumes company_id was added during get_axes
-        if company_id:
-            api_result = n2f_client.delete_axe_value(company_id, axe_id, project["code"], scope)
-            api_results.append(api_result)
-        else:
-            api_results.append(ApiResult.error_result("Company ID not found", error_details="company_id field missing",
-                                                     action_type="delete", object_type="axe", object_id=project.get("code", "unknown"), scope=scope))
+        try:
+            company_id = project.get("company_id") # Assumes company_id was added during get_axes
+            if company_id:
+                api_result = n2f_client.delete_axe_value(company_id, axe_id, project["code"], scope)
+                api_results.append(api_result)
+            else:
+                error_msg = "Company ID not found: company_id field missing"
+                log_error(scope.upper(), "DELETE", project.get("code", "unknown"), Exception(error_msg))
+                api_results.append(ApiResult.error_result("Company ID not found", error_details="company_id field missing",
+                                                         action_type="delete", object_type="axe", object_id=project.get("code", "unknown"), scope=scope))
+        except Exception as e:
+            # Log l'erreur mais continue le processus
+            log_error(scope.upper(), "DELETE", project.get("code", "unknown"), e, f"Company ID: {project.get('company_id', 'missing')}")
+            # Créer un ApiResult d'erreur pour maintenir la cohérence
+            api_results.append(ApiResult.error_result(str(e), error_details=str(e),
+                                                     action_type="delete", object_type="axe",
+                                                     object_id=project.get("code", "unknown"), scope=scope))
 
     axes_to_delete[status_col] = [result.success for result in api_results]
     axes_to_delete = add_api_logging_columns(axes_to_delete, api_results)

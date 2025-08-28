@@ -9,8 +9,8 @@ def reporting(
     status_col     : str
 ) -> None:
     """
-    Génère un rapport à partir du DataFrame de résultats.
-    Affiche le nombre de succès et d'échecs si une colonne de statut est fournie.
+    Generates a report from the results DataFrame.
+    Displays the number of successes and failures if a status column is provided.
     """
     if result_df.empty:
         print(empty_message)
@@ -20,70 +20,85 @@ def reporting(
             nb_success = result_df[status_col].sum()
             nb_total = len(result_df)
             nb_failed = nb_total - nb_success
-            print(f"  Succès : {nb_success} / {nb_total}")
-            print(f"  Échecs : {nb_failed} / {nb_total}")
+            print(f"  Success : {nb_success} / {nb_total}")
+            print(f"  Failures : {nb_failed} / {nb_total}")
         else:
             print(f"  Total : {len(result_df)}")
 
 
-def has_payload_changes(payload: Dict[str, Any], n2f_entity: Dict[str, Any], entity_type: str = None) -> bool:
+def log_error(scope: str, action: str, entity_id: str, error: Exception, context: str = "") -> None:
     """
-    Compare les champs du payload avec les données N2F pour détecter les changements.
-    Ignore les champs non pertinents et gère les types de données.
+    Log an error with context to facilitate debugging.
 
     Args:
-        payload: Dictionnaire contenant les données à envoyer à l'API
-        n2f_entity: Dictionnaire contenant les données actuelles de N2F
-        entity_type: Type d'entité ('axe' ou 'user') pour adapter la logique
+        scope: Scope (USERS, PROJECTS, PLATES, SUBPOSTS)
+        action: Action performed (CREATE, UPDATE, DELETE)
+        entity_id: Entity identifier (email for users, code for axes)
+        error: Exception raised
+        context: Optional additional context
+    """
+    context_str = f" - {context}" if context else ""
+    print(f"[ERROR] [{scope}] [{action}] [{entity_id}]{context_str} - {str(error)}")
+
+
+def has_payload_changes(payload: Dict[str, Any], n2f_entity: Dict[str, Any], entity_type: str = None) -> bool:
+    """
+    Compare payload fields with N2F data to detect changes.
+    Ignores irrelevant fields and handles data types.
+
+    Args:
+        payload: Dictionary containing data to send to API
+        n2f_entity: Dictionary containing current N2F data
+        entity_type: Entity type ('axe' or 'user') to adapt logic
 
     Returns:
-        bool: True si des changements sont détectés, False sinon
+        bool: True if changes are detected, False otherwise
     """
-            # Champs à ignorer car ils peuvent changer sans être des changements métier
+    # Fields to ignore as they can change without being business changes
     ignored_fields = {
         'uuid', 'id', 'created_at', 'updated_at', 'created', 'updated',
         'company_id', 'manager_id', 'profile_id', 'role_id'
     }
 
-    # Champs spécifiques aux axes à ignorer (code est un identifiant technique pour les axes)
+    # Axe-specific fields to ignore (code is a technical identifier for axes)
     axe_ignored_fields = {
         'axe_id', 'company_uuid', 'created_by', 'modified_by', 'code'
     }
 
     for key, value in payload.items():
-        # Ignorer les champs non pertinents
+        # Ignore irrelevant fields
         if key in ignored_fields:
             continue
 
-        # Pour les axes, ignorer aussi les champs spécifiques aux axes
+        # For axes, also ignore axe-specific fields
         if entity_type == 'axe' and key in axe_ignored_fields:
             continue
 
-        # Vérifier si le champ existe dans N2F
+        # Check if field exists in N2F
         if key not in n2f_entity:
-            # Si le champ n'existe pas dans N2F mais est None dans le payload, ignorer
+            # If field doesn't exist in N2F but is None in payload, ignore
             if value is None:
                 continue
-            # Sinon, c'est un vrai changement
+            # Otherwise, it's a real change
             return True
 
         n2f_value = n2f_entity[key]
 
-        # Normaliser les types pour la comparaison
+        # Normalize types for comparison
         if isinstance(value, (int, float)) and isinstance(n2f_value, (int, float)):
-            # Comparaison numérique avec tolérance pour les floats
+            # Numeric comparison with tolerance for floats
             if abs(float(value) - float(n2f_value)) > 0.001:
                 return True
         elif isinstance(value, str) and isinstance(n2f_value, str):
-            # Comparaison de chaînes (ignorer les espaces en début/fin)
+            # String comparison (ignore leading/trailing spaces)
             if value.strip() != n2f_value.strip():
                 return True
         elif value != n2f_value:
-            # Gérer les cas spéciaux None vs nan
+            # Handle special cases None vs nan
             if (value is None and (n2f_value is None or str(n2f_value).lower() == 'nan')) or \
                (n2f_value is None and (value is None or str(value).lower() == 'nan')):
                 continue
-            # Comparaison directe pour les autres types
+            # Direct comparison for other types
             return True
 
     return False
@@ -91,44 +106,44 @@ def has_payload_changes(payload: Dict[str, Any], n2f_entity: Dict[str, Any], ent
 
 def debug_payload_changes(payload: Dict[str, Any], n2f_entity: Dict[str, Any], entity_type: str = None) -> Dict[str, Any]:
     """
-    Debug: Affiche les différences entre payload et n2f_entity.
+    Debug: Shows differences between payload and n2f_entity.
 
     Args:
-        payload: Dictionnaire contenant les données à envoyer à l'API
-        n2f_entity: Dictionnaire contenant les données actuelles de N2F
-        entity_type: Type d'entité ('axe' ou 'user') pour adapter la logique
+        payload: Dictionary containing data to send to API
+        n2f_entity: Dictionary containing current N2F data
+        entity_type: Entity type ('axe' or 'user') to adapt logic
 
     Returns:
-        Dict contenant les différences détectées
+        Dict containing detected differences
     """
     differences = {}
 
-        # Champs à ignorer car ils peuvent changer sans être des changements métier
+    # Fields to ignore as they can change without being business changes
     ignored_fields = {
         'uuid', 'id', 'created_at', 'updated_at', 'created', 'updated',
         'company_id', 'manager_id', 'profile_id', 'role_id'
     }
 
-    # Champs spécifiques aux axes à ignorer (code est un identifiant technique pour les axes)
+    # Axe-specific fields to ignore (code is a technical identifier for axes)
     axe_ignored_fields = {
         'axe_id', 'company_uuid', 'created_by', 'modified_by', 'code'
     }
 
     for key, value in payload.items():
-        # Ignorer les champs non pertinents
+        # Ignore irrelevant fields
         if key in ignored_fields:
             continue
 
-        # Pour les axes, ignorer aussi les champs spécifiques aux axes
+        # For axes, also ignore axe-specific fields
         if entity_type == 'axe' and key in axe_ignored_fields:
             continue
 
-        # Vérifier si le champ existe dans N2F
+        # Check if field exists in N2F
         if key not in n2f_entity:
-            # Si le champ n'existe pas dans N2F mais est None dans le payload, ignorer
+            # If field doesn't exist in N2F but is None in payload, ignore
             if value is None:
                 continue
-            # Sinon, c'est un vrai changement
+            # Otherwise, it's a real change
             differences[key] = {
                 'payload_value': value,
                 'n2f_value': 'MISSING',
@@ -138,9 +153,9 @@ def debug_payload_changes(payload: Dict[str, Any], n2f_entity: Dict[str, Any], e
 
         n2f_value = n2f_entity[key]
 
-        # Normaliser les types pour la comparaison
+        # Normalize types for comparison
         if isinstance(value, (int, float)) and isinstance(n2f_value, (int, float)):
-            # Comparaison numérique avec tolérance pour les floats
+            # Numeric comparison with tolerance for floats
             if abs(float(value) - float(n2f_value)) > 0.001:
                 differences[key] = {
                     'payload_value': value,
@@ -148,7 +163,7 @@ def debug_payload_changes(payload: Dict[str, Any], n2f_entity: Dict[str, Any], e
                     'type': 'numeric_difference'
                 }
         elif isinstance(value, str) and isinstance(n2f_value, str):
-            # Comparaison de chaînes (ignorer les espaces en début/fin)
+            # String comparison (ignore leading/trailing spaces)
             if value.strip() != n2f_value.strip():
                 differences[key] = {
                     'payload_value': value,
@@ -156,11 +171,11 @@ def debug_payload_changes(payload: Dict[str, Any], n2f_entity: Dict[str, Any], e
                     'type': 'string_difference'
                 }
         elif value != n2f_value:
-            # Gérer les cas spéciaux None vs nan
+            # Handle special cases None vs nan
             if (value is None and (n2f_value is None or str(n2f_value).lower() == 'nan')) or \
                (n2f_value is None and (value is None or str(value).lower() == 'nan')):
                 continue
-            # Comparaison directe pour les autres types
+            # Direct comparison for other types
             differences[key] = {
                 'payload_value': value,
                 'n2f_value': n2f_value,
