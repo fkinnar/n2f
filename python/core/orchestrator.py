@@ -18,6 +18,7 @@ from .registry import get_registry
 from .cache import get_cache, cache_stats, cache_clear, cache_invalidate
 from .memory_manager import get_memory_manager, cleanup_scope, cleanup_all, print_memory_summary
 from .metrics import get_metrics, start_operation, end_operation, record_memory_usage, print_summary as print_metrics_summary
+from .retry import get_retry_manager, print_retry_summary
 import sys
 from pathlib import Path
 
@@ -72,6 +73,9 @@ class ContextBuilder:
 
         # Initialisation du système de métriques
         get_metrics()
+
+        # Initialisation du système de retry
+        get_retry_manager()
 
         # Auto-découverte des scopes APRÈS le chargement de la configuration
         registry = get_registry()
@@ -309,6 +313,9 @@ class SyncOrchestrator:
 
             # Affichage des métriques de synchronisation
             print_metrics_summary()
+
+            # Affichage des métriques de retry
+            print_retry_summary()
 
         except Exception as e:
             print(f"Fatal error during synchronization: {e}")

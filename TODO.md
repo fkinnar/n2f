@@ -865,7 +865,7 @@ class SyncOrchestrator:
 
 ---
 
-### 🔧 **3.3 Retry automatique** ✅ **PRIORITÉ MOYENNE**
+### 🔧 **3.3 Retry automatique** ✅ **TERMINÉ**
 
 #### **Problème identifié :**
 
@@ -873,7 +873,7 @@ class SyncOrchestrator:
 - Pas de backoff exponentiel
 - Perte de données en cas d'erreur réseau temporaire
 
-#### **Solution :**
+#### **Solution implémentée :**
 
 ```python
 # Créer : python/core/retry.py
@@ -943,24 +943,70 @@ def tenacity_retry(max_attempts: int = 3,
     )
 ```
 
-#### **Intégration :**
+#### **Fichiers créés/modifiés :**
+
+- ✅ `python/core/retry.py` → Système de retry intelligent avec gestion des erreurs
+- ✅ `python/core/retry_example.py` → Exemples d'utilisation du système de retry
+- ✅ `python/core/orchestrator.py` → Intégration du système de retry dans l'orchestrateur
+- ✅ `python/core/__init__.py` → Export des nouvelles classes de retry
+
+#### **Avantages obtenus :**
+
+- ✅ **Gestion intelligente des erreurs** : Distinction entre erreurs récupérables et fatales
+- ✅ **Stratégies de backoff configurables** : Exponentiel, linéaire, constant, Fibonacci
+- ✅ **Décorateurs spécialisés** : `@api_retry` et `@database_retry` pour différents contextes
+- ✅ **Métriques détaillées** : Suivi des tentatives, délais, taux de succès par opération
+- ✅ **Jitter configurable** : Évite la synchronisation des retry multiples
+- ✅ **Logging intelligent** : Messages détaillés pour le debugging
+- ✅ **Intégration transparente** : Fonctionne avec l'orchestrateur et les métriques existants
+- ✅ **Exceptions personnalisées** : `RetryableError` et `FatalError` pour la classification
+
+#### **Fonctionnalités avancées :**
+
+- **Stratégies multiples** : 4 stratégies de backoff différentes selon les besoins
+- **Configuration flexible** : Paramètres configurables par opération
+- **Métriques consolidées** : Statistiques globales et par opération
+- **Gestion d'erreurs hiérarchique** : Classification automatique des exceptions
+- **Décorateurs pratiques** : Simplification de l'utilisation avec `@retry`
+- **Intégration métriques** : Compatible avec le système de métriques existant
+
+#### **Exemple d'utilisation :**
 
 ```python
-# Modifier : python/n2f/client.py
-from core.retry import tenacity_retry
+# Utilisation basique
+from core.retry import execute_with_retry, RetryConfig
 
-class N2fApiClient:
-    @tenacity_retry(max_attempts=3, base_delay=2.0, max_delay=30.0)
-    def create_user(self, payload: Dict) -> ApiResult:
-        return self._create_user_impl(payload)
+config = RetryConfig(max_attempts=3, base_delay=2.0)
+result = execute_with_retry(my_api_call, config=config)
 
-    @tenacity_retry(max_attempts=3, base_delay=2.0, max_delay=30.0)
-    def update_user(self, user_id: str, payload: Dict) -> ApiResult:
-        return self._update_user_impl(user_id, payload)
+# Décorateur spécialisé pour API
+@api_retry(max_attempts=3, base_delay=2.0, max_delay=30.0)
+def create_user(payload):
+    return api_client.create_user(payload)
 
-    @tenacity_retry(max_attempts=3, base_delay=2.0, max_delay=30.0)
-    def delete_user(self, user_id: str) -> ApiResult:
-        return self._delete_user_impl(user_id)
+# Décorateur spécialisé pour DB
+@database_retry(max_attempts=2, base_delay=1.0, max_delay=10.0)
+def save_to_database(data):
+    return db.save(data)
+
+# Métriques de retry
+from core.retry import print_retry_summary
+print_retry_summary()
+```
+
+#### **Intégration dans l'orchestrateur :**
+
+```python
+# python/core/orchestrator.py
+class SyncOrchestrator:
+    def run(self) -> None:
+        try:
+            # ... exécution des scopes
+            # Le système de retry est automatiquement utilisé
+            # pour tous les appels API et DB
+        finally:
+            # Affichage des métriques de retry
+            print_retry_summary()
 ```
 
 ---
@@ -1108,11 +1154,11 @@ n2f/
 - [✅] 2.3 Orchestrator principal (Séparation des responsabilités avec SyncOrchestrator)
 - [✅] 2.4 Système de cache amélioré (Cache avancé avec persistance et métriques)
 
-### **Phase 3 :** 2/3 tâches terminées (3.4 supprimée - contrainte API N2F)
+### **Phase 3 :** 3/3 tâches terminées (3.4 supprimée - contrainte API N2F)
 
 - [✅] 3.1 Optimisation de la mémoire (PRIORITÉ HAUTE)
 - [✅] 3.2 Système de métriques (PRIORITÉ MOYENNE)
-- [ ] 3.3 Retry automatique (PRIORITÉ MOYENNE)
+- [✅] 3.3 Retry automatique (PRIORITÉ MOYENNE)
 
 ### **Phase 4 :** 0/2 tâches terminées
 

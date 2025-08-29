@@ -63,6 +63,22 @@ from .metrics import (
     print_summary,
     export_metrics
 )
+from .retry import (
+    RetryConfig,
+    RetryStrategy,
+    RetryableError,
+    FatalError,
+    RetryMetrics,
+    RetryManager,
+    get_retry_manager,
+    retry,
+    api_retry,
+    database_retry,
+    execute_with_retry,
+    get_retry_metrics,
+    reset_retry_metrics,
+    print_retry_summary
+)
 from .exceptions import (
     SyncException,
     ApiException,
@@ -131,6 +147,22 @@ __all__ = [
     "get_summary",
     "print_summary",
     "export_metrics",
+
+    # Retry System
+    "RetryConfig",
+    "RetryStrategy",
+    "RetryableError",
+    "FatalError",
+    "RetryMetrics",
+    "RetryManager",
+    "get_retry_manager",
+    "retry",
+    "api_retry",
+    "database_retry",
+    "execute_with_retry",
+    "get_retry_metrics",
+    "reset_retry_metrics",
+    "print_retry_summary",
 
     # Exceptions
     "SyncException",
