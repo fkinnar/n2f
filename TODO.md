@@ -627,16 +627,22 @@ def api_call(self, endpoint: str) -> ApiResult:
 
 #### **Optimisations à implémenter :**
 
-- [ ] **Parallélisation** - Exécution concurrente des scopes
+- [ ] **Optimisation séquentielle** - Amélioration de l'efficacité des appels API séquentiels
 - [ ] **Streaming de données** - Traitement par chunks pour gros volumes
 - [ ] **Cache distribué** - Cache partagé entre instances
 - [ ] **Optimisation des requêtes** - Requêtes SQL optimisées
 - [ ] **Compression des données** - Réduction de l'utilisation mémoire
+- [ ] **Batch processing** - Traitement par lots pour optimiser les appels API
+
+#### **Contraintes techniques :**
+- **API N2F séquentielle** - Les appels API doivent être séquentiels (pas de parallélisation)
+- **Respect des limites de l'API** - Gestion des rate limits et timeouts
 
 #### **Objectifs :**
 - Support de volumes de données massifs
-- Réduction des temps d'exécution
+- Optimisation des appels séquentiels
 - Optimisation des ressources
+- Respect des contraintes de l'API
 
 ### 🔧 **5.4 Sécurité et Conformité** 📋 **À PLANIFIER**
 
@@ -653,20 +659,7 @@ def api_call(self, endpoint: str) -> ApiResult:
 - Protection des données sensibles
 - Traçabilité complète
 
-### 🔧 **5.5 Interface utilisateur** 📋 **À PLANIFIER**
 
-#### **Interface à développer :**
-
-- [ ] **Interface web** - Dashboard de gestion et monitoring
-- [ ] **API REST** - Interface programmatique
-- [ ] **Interface CLI** - Commandes avancées
-- [ ] **Notifications** - Système d'alertes et notifications
-- [ ] **Rapports** - Génération de rapports automatisés
-
-#### **Objectifs :**
-- Interface utilisateur intuitive
-- Automatisation des tâches répétitives
-- Reporting et analytics
 
 ---
 
