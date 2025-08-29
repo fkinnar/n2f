@@ -21,6 +21,13 @@ from .registry import (
     get_registry,
     register_scope
 )
+from .orchestrator import (
+    SyncOrchestrator,
+    ContextBuilder,
+    ScopeExecutor,
+    LogManager,
+    SyncResult
+)
 from .exceptions import (
     SyncException,
     ApiException,
@@ -47,6 +54,13 @@ __all__ = [
     "RegistryEntry",
     "get_registry",
     "register_scope",
+    
+    # Orchestrator
+    "SyncOrchestrator",
+    "ContextBuilder",
+    "ScopeExecutor",
+    "LogManager",
+    "SyncResult",
     
     # Exceptions
     "SyncException",

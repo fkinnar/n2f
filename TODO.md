@@ -281,7 +281,7 @@ class SyncRegistry:
     def __init__(self):
         self._registry: Dict[str, RegistryEntry] = {}
         self._discovered_modules: set = set()
-    
+
     def register(self, scope_name: str, sync_function: Callable, sql_filename: str, ...) -> None
     def get(self, scope_name: str) -> Optional[ScopeConfig]
     def get_all_scopes(self) -> List[str]
