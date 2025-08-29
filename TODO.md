@@ -264,27 +264,73 @@ class ScopeConfig:
 
 ---
 
-### 🔧 **2.2 Pattern Registry pour les scopes**
+### 🔧 **2.2 Pattern Registry pour les scopes** ✅ **TERMINÉ**
 
 #### **Problème identifié :**
 
-- Modification du code nécessaire pour ajouter un nouveau scope
-- Violation du principe d'ouverture/fermeture
+- Violation du principe d'ouverture/fermeture (Open/Closed Principle)
+- Pour ajouter un nouveau scope, il faut modifier le code existant
+- Hardcoded scope-to-function mapping dans `sync-agresso-n2f.py`
+- Risque d'erreurs lors de l'ajout de nouveaux scopes
 
-#### **Solution :**
+#### **Solution implémentée :**
 
 ```python
-# Créer : python/core/registry.py
+# Créé : python/core/registry.py
 class SyncRegistry:
     def __init__(self):
-        self._sync_functions = {}
+        self._registry: Dict[str, RegistryEntry] = {}
+        self._discovered_modules: set = set()
+    
+    def register(self, scope_name: str, sync_function: Callable, sql_filename: str, ...) -> None
+    def get(self, scope_name: str) -> Optional[ScopeConfig]
+    def get_all_scopes(self) -> List[str]
+    def get_enabled_scopes(self) -> List[str]
+    def auto_discover_scopes(self, modules_path: str) -> None
+    def validate(self) -> List[str]
 
-    def register(self, scope: str, sync_function: Callable, sql_filename: str):
-        self._sync_functions[scope] = SyncConfig(sync_function, sql_filename)
-
-    def get(self, scope: str) -> Optional[SyncConfig]:
-        return self._sync_functions.get(scope)
+# Fonction utilitaire pour l'enregistrement
+def register_scope(scope_name: str, sync_function: Callable, ...) -> None
 ```
+
+#### **Fichiers créés/modifiés :**
+
+- ✅ `python/core/registry.py` → Pattern Registry avec auto-découverte
+- ✅ `python/core/__init__.py` → Export du Registry
+- ✅ `python/core/config.py` → Intégration avec le Registry
+- ✅ `python/sync-agresso-n2f.py` → Utilisation du Registry pour la gestion des scopes
+- ✅ `python/business/process/department.py` → Exemple de nouveau scope (départements)
+
+#### **Démonstration de l'extensibilité :**
+
+```python
+# Ajout d'un nouveau scope SANS modification du code existant
+# python/business/process/department.py
+def synchronize_departments(context: SyncContext, sql_filename: str) -> List[pd.DataFrame]:
+    # Logique de synchronisation des départements
+    pass
+
+# Enregistrement automatique
+register_scope(
+    scope_name="departments",
+    sync_function=synchronize_departments,
+    sql_filename="get-agresso-n2f-departments.dev.sql",
+    entity_type="department",
+    display_name="Départements",
+    description="Synchronisation des départements Agresso vers N2F"
+)
+```
+
+#### **Avantages obtenus :**
+
+- ✅ **Principe d'ouverture/fermeture respecté** : Le code est fermé pour modification, ouvert pour extension
+- ✅ **Enregistrement automatique** : Les nouveaux scopes se découvrent eux-mêmes
+- ✅ **Configuration déclarative** : Plus besoin de modifier le code, juste configurer
+- ✅ **Extensibilité infinie** : Facile d'ajouter autant de scopes que nécessaire
+- ✅ **Moins d'erreurs** : Pas de risque d'oublier une modification
+- ✅ **Auto-découverte** : Scan automatique des modules pour trouver les fonctions `synchronize_*`
+- ✅ **Validation** : Vérification automatique de la cohérence des scopes
+- ✅ **Compatibilité** : Fonctionne avec l'ancien système de configuration
 
 ---
 
@@ -556,10 +602,10 @@ n2f/
 - [✅] 1.3 Exceptions personnalisées (Hiérarchie complète d'exceptions créée)
 - [✅] 1.4 Documentation complète (README + API Reference + Docstrings)
 
-### **Phase 2 :** 1/4 tâches terminées
+### **Phase 2 :** 2/4 tâches terminées
 
 - [✅] 2.1 Configuration centralisée (Configuration centralisée avec dataclasses)
-- [ ] 2.2 Pattern Registry pour les scopes
+- [✅] 2.2 Pattern Registry pour les scopes (Registry avec auto-découverte et extensibilité)
 - [ ] 2.3 Orchestrator principal
 - [ ] 2.4 Système de cache amélioré
 
@@ -584,8 +630,8 @@ n2f/
 4. **✅ Phase 1, tâche 1.4 terminée** - Documentation complète (README + API Reference + Docstrings)
 5. **🎉 Phase 1 COMPLÈTE ET MERGÉE** - Architecture de base solide et maintenable
 6. **✅ Phase 2, tâche 2.1 terminée** - Configuration centralisée avec dataclasses et validation
-7. **🔄 Phase 2 EN COURS** - Pattern Registry et architecture avancée
-8. **📋 Branche feature-architecture active** - Prêt pour la tâche 2.2
+7. **✅ Phase 2, tâche 2.2 terminée** - Pattern Registry avec auto-découverte et extensibilité
+8. **🔄 Phase 2 EN COURS** - Prêt pour la tâche 2.3 (Orchestrator principal)
 
 ---
 

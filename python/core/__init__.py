@@ -15,6 +15,12 @@ from .config import (
     ConfigLoader,
     create_default_config
 )
+from .registry import (
+    SyncRegistry,
+    RegistryEntry,
+    get_registry,
+    register_scope
+)
 from .exceptions import (
     SyncException,
     ApiException,
@@ -35,6 +41,12 @@ __all__ = [
     "ScopeConfig",
     "ConfigLoader",
     "create_default_config",
+    
+    # Registry
+    "SyncRegistry",
+    "RegistryEntry",
+    "get_registry",
+    "register_scope",
     
     # Exceptions
     "SyncException",

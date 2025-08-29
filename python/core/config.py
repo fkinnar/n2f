@@ -9,6 +9,7 @@ from dataclasses import dataclass, field
 from typing import Dict, Any, Callable, Optional, List
 from pathlib import Path
 import yaml
+from .registry import get_registry
 # Les imports des fonctions de synchronisation sont déplacés dans les méthodes pour éviter les imports circulaires
 
 
@@ -53,7 +54,17 @@ class SyncConfig:
             self._init_default_scopes()
     
     def _init_default_scopes(self):
-        """Initialise les scopes par défaut."""
+        """Initialise les scopes par défaut en utilisant le Registry."""
+        registry = get_registry()
+        
+        # Enregistrement manuel des scopes par défaut
+        self._register_default_scopes_if_needed(registry)
+        
+        # Récupération des scopes depuis le registry
+        self.scopes = registry.get_all_scope_configs()
+    
+    def _register_default_scopes_if_needed(self, registry):
+        """Enregistre les scopes par défaut s'ils ne sont pas encore découverts."""
         # Import des fonctions de synchronisation ici pour éviter les imports circulaires
         from business.process import (
             synchronize_users,
@@ -62,36 +73,47 @@ class SyncConfig:
             synchronize_subposts
         )
         
-        self.scopes = {
-            "users": ScopeConfig(
-                sync_function=synchronize_users,
-                sql_filename=self.database.sql_filename_users,
-                entity_type="user",
-                display_name="Utilisateurs",
-                description="Synchronisation des utilisateurs Agresso vers N2F"
-            ),
-            "projects": ScopeConfig(
-                sync_function=synchronize_projects,
-                sql_filename=self.database.sql_filename_customaxes,
-                entity_type="project",
-                display_name="Projets",
-                description="Synchronisation des projets (axes personnalisés)"
-            ),
-            "plates": ScopeConfig(
-                sync_function=synchronize_plates,
-                sql_filename=self.database.sql_filename_customaxes,
-                entity_type="plate",
-                display_name="Plaques",
-                description="Synchronisation des plaques (axes personnalisés)"
-            ),
-            "subposts": ScopeConfig(
-                sync_function=synchronize_subposts,
-                sql_filename=self.database.sql_filename_customaxes,
-                entity_type="subpost",
-                display_name="Sous-posts",
-                description="Synchronisation des sous-posts (axes personnalisés)"
-            )
+        default_scopes = {
+            "users": {
+                "function": synchronize_users,
+                "sql_filename": self.database.sql_filename_users,
+                "entity_type": "user",
+                "display_name": "Utilisateurs",
+                "description": "Synchronisation des utilisateurs Agresso vers N2F"
+            },
+            "projects": {
+                "function": synchronize_projects,
+                "sql_filename": self.database.sql_filename_customaxes,
+                "entity_type": "project",
+                "display_name": "Projets",
+                "description": "Synchronisation des projets (axes personnalisés)"
+            },
+            "plates": {
+                "function": synchronize_plates,
+                "sql_filename": self.database.sql_filename_customaxes,
+                "entity_type": "plate",
+                "display_name": "Plaques",
+                "description": "Synchronisation des plaques (axes personnalisés)"
+            },
+            "subposts": {
+                "function": synchronize_subposts,
+                "sql_filename": self.database.sql_filename_customaxes,
+                "entity_type": "subpost",
+                "display_name": "Sous-posts",
+                "description": "Synchronisation des sous-posts (axes personnalisés)"
+            }
         }
+        
+        for scope_name, scope_data in default_scopes.items():
+            if not registry.is_registered(scope_name):
+                registry.register(
+                    scope_name=scope_name,
+                    sync_function=scope_data["function"],
+                    sql_filename=scope_data["sql_filename"],
+                    entity_type=scope_data["entity_type"],
+                    display_name=scope_data["display_name"],
+                    description=scope_data["description"]
+                )
     
     def get_scope(self, scope_name: str) -> Optional[ScopeConfig]:
         """Récupère la configuration d'un scope."""

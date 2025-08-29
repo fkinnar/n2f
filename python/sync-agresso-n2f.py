@@ -6,7 +6,7 @@ from typing import Any
 from dotenv import load_dotenv
 
 from helper.context import SyncContext
-from core import ConfigLoader
+from core import ConfigLoader, get_registry
 from n2f.process.helper import export_api_logs
 
 def main() -> None:
@@ -51,6 +51,11 @@ def main() -> None:
     config_loader = ConfigLoader(config_path)
     sync_config = config_loader.load()
 
+    # Initialisation du registry
+    registry = get_registry()
+    # Auto-découverte pour les nouveaux scopes seulement
+    registry.auto_discover_scopes("business.process")
+
     context = SyncContext(
         args=args,
         config=sync_config,
@@ -64,12 +69,16 @@ def main() -> None:
     # Sélection du périmètre à traiter
     selected_scopes = set(args.scope) if hasattr(args, "scope") else {"all"}
     if "all" in selected_scopes:
-        selected_scopes = set(sync_config.get_enabled_scopes())
+        # Utilise le registry pour obtenir les scopes disponibles
+        registry = get_registry()
+        selected_scopes = set(registry.get_enabled_scopes())
 
     # Boucle de traitement
     all_results = []
+    registry = get_registry()
+    
     for scope_name in selected_scopes:
-        scope_config = sync_config.get_scope(scope_name)
+        scope_config = registry.get(scope_name)
         if scope_config and scope_config.enabled:
             print(f"--- Starting synchronization for scope : {scope_name} ({scope_config.display_name}) ---")
 
@@ -138,7 +147,12 @@ def create_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument('-d', '--delete', action='store_true', help="Supprimer les éléments obsolètes de N2F")
     parser.add_argument('-u', '--update', action='store_true', help="Mettre à jour les éléments existants dans N2F")
     parser.add_argument('-f', '--config', default='dev', help="Nom du fichier de configuration (sans .yaml)")
-    parser.add_argument('-s', '--scope', choices=['users', 'projects', 'plates', 'subposts', 'all'], nargs='+', default=['all'], help="Périmètre(s) à synchroniser")
+    
+    # Utilisation des scopes par défaut pour le parser d'arguments
+    # Le registry sera initialisé plus tard dans le processus
+    scope_choices = ['users', 'projects', 'plates', 'subposts', 'departments', 'all']
+    
+    parser.add_argument('-s', '--scope', choices=scope_choices, nargs='+', default=['all'], help="Périmètre(s) à synchroniser")
     return parser
 
 
