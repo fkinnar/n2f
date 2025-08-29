@@ -540,86 +540,346 @@ class CacheManager:
 
 ## ⚡ PHASE 3 : Optimisations (1-2 jours)
 
-### 🔧 **3.1 Pagination optimisée**
+### 🔧 **3.1 Optimisation de la mémoire** ✅ **PRIORITÉ HAUTE**
 
 #### **Problème identifié :**
 
-- Boucles while pour la pagination
-- Pas de parallélisation possible
+- DataFrames chargés en mémoire sans gestion optimisée
+- Pas de libération de mémoire entre les scopes
+- Risque de consommation excessive avec de gros volumes de données
 
 #### **Solution :**
 
 ```python
-# Modifier : python/n2f/client.py
-def paginated_request(self, entity: str, limit: int = 200) -> Iterator[List[dict]]:
-    start = 0
-    while True:
-        page = self._request(entity, start, limit)
-        if not page:
-            break
-        yield page
-        start += limit
-        if len(page) < limit:
-            break
+# Créer : python/core/memory_manager.py
+class MemoryManager:
+    def __init__(self, max_memory_mb: int = 1024):
+        self.max_memory_mb = max_memory_mb
+        self.current_usage = 0
+        self.dataframes = {}
+
+    def register_dataframe(self, name: str, df: pd.DataFrame) -> bool:
+        """Enregistre un DataFrame avec gestion de la mémoire."""
+        size_mb = df.memory_usage(deep=True).sum() / 1024 / 1024
+
+        if self.current_usage + size_mb > self.max_memory_mb:
+            self._cleanup_oldest()
+
+        self.dataframes[name] = {
+            'dataframe': df,
+            'size_mb': size_mb,
+            'access_time': time.time()
+        }
+        self.current_usage += size_mb
+        return True
+
+    def get_dataframe(self, name: str) -> Optional[pd.DataFrame]:
+        """Récupère un DataFrame avec mise à jour du temps d'accès."""
+        if name in self.dataframes:
+            self.dataframes[name]['access_time'] = time.time()
+            return self.dataframes[name]['dataframe']
+        return None
+
+    def cleanup_scope(self, scope_name: str):
+        """Libère la mémoire d'un scope spécifique."""
+        keys_to_remove = [k for k in self.dataframes.keys() if k.startswith(f"{scope_name}_")]
+        for key in keys_to_remove:
+            self.current_usage -= self.dataframes[key]['size_mb']
+            del self.dataframes[key]
+
+    def _cleanup_oldest(self):
+        """Libère les DataFrames les plus anciens."""
+        if not self.dataframes:
+            return
+
+        oldest_key = min(self.dataframes.keys(),
+                        key=lambda k: self.dataframes[k]['access_time'])
+        self.current_usage -= self.dataframes[oldest_key]['size_mb']
+        del self.dataframes[oldest_key]
+```
+
+#### **Intégration :**
+
+```python
+# Modifier : python/core/orchestrator.py
+class SyncOrchestrator:
+    def __init__(self, config_path: Path, args: argparse.Namespace):
+        self.memory_manager = MemoryManager(max_memory_mb=1024)
+        # ... reste du code
+
+    def run(self):
+        try:
+            for scope_name in enabled_scopes:
+                # ... exécution du scope
+                self.memory_manager.cleanup_scope(scope_name)  # Libération après chaque scope
+        finally:
+            self.memory_manager.cleanup_all()  # Nettoyage final
 ```
 
 ---
 
-### 🔧 **3.2 Système de métriques**
+### 🔧 **3.2 Système de métriques** ✅ **PRIORITÉ MOYENNE**
 
 #### **Problème identifié :**
 
 - Pas de monitoring des performances
 - Pas de statistiques d'utilisation
+- Pas de visibilité sur les goulots d'étranglement
 
 #### **Solution :**
 
 ```python
 # Créer : python/core/metrics.py
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional
+import time
+from collections import defaultdict
+
+@dataclass
+class OperationMetrics:
+    """Métriques d'une opération spécifique."""
+    scope: str
+    action: str  # create, update, delete
+    start_time: float
+    end_time: Optional[float] = None
+    success: bool = True
+    error_message: Optional[str] = None
+    records_processed: int = 0
+    memory_usage_mb: float = 0.0
+
+    @property
+    def duration_seconds(self) -> float:
+        return (self.end_time or time.time()) - self.start_time
+
 class SyncMetrics:
+    """Système de métriques pour la synchronisation."""
+
     def __init__(self):
         self.start_time = time.time()
-        self.operations = defaultdict(int)
-        self.errors = []
-        self.durations = defaultdict(list)
+        self.operations: List[OperationMetrics] = []
+        self.memory_usage_history: List[Dict] = []
 
-    def record_operation(self, scope: str, action: str, success: bool, duration: float):
-        self.operations[f"{scope}_{action}_{'success' if success else 'error'}"] += 1
-        self.durations[f"{scope}_{action}"].append(duration)
+    def start_operation(self, scope: str, action: str) -> OperationMetrics:
+        """Démarre le suivi d'une opération."""
+        metrics = OperationMetrics(
+            scope=scope,
+            action=action,
+            start_time=time.time()
+        )
+        self.operations.append(metrics)
+        return metrics
+
+    def end_operation(self, metrics: OperationMetrics, success: bool = True,
+                     error_message: Optional[str] = None, records_processed: int = 0):
+        """Termine le suivi d'une opération."""
+        metrics.end_time = time.time()
+        metrics.success = success
+        metrics.error_message = error_message
+        metrics.records_processed = records_processed
+
+    def record_memory_usage(self, usage_mb: float):
+        """Enregistre l'utilisation mémoire."""
+        self.memory_usage_history.append({
+            'timestamp': time.time(),
+            'usage_mb': usage_mb
+        })
 
     def get_summary(self) -> Dict:
+        """Génère un résumé des métriques."""
+        total_operations = len(self.operations)
+        successful_operations = sum(1 for op in self.operations if op.success)
+
         return {
-            "duration_seconds": time.time() - self.start_time,
-            "total_operations": sum(self.operations.values()),
-            "success_rate": self._calculate_success_rate(),
-            "average_durations": self._calculate_average_durations(),
-            "errors_by_scope": self._group_errors_by_scope()
+            'total_duration_seconds': time.time() - self.start_time,
+            'total_operations': total_operations,
+            'successful_operations': successful_operations,
+            'success_rate': successful_operations / total_operations if total_operations > 0 else 0,
+            'operations_by_scope': self._group_operations_by_scope(),
+            'average_duration_by_action': self._calculate_average_durations(),
+            'memory_usage_stats': self._calculate_memory_stats(),
+            'errors_summary': self._group_errors()
         }
+
+    def _group_operations_by_scope(self) -> Dict:
+        """Groupe les opérations par scope."""
+        result = defaultdict(lambda: {'total': 0, 'success': 0, 'errors': 0})
+        for op in self.operations:
+            result[op.scope]['total'] += 1
+            if op.success:
+                result[op.scope]['success'] += 1
+            else:
+                result[op.scope]['errors'] += 1
+        return dict(result)
+
+    def _calculate_average_durations(self) -> Dict:
+        """Calcule les durées moyennes par action."""
+        durations = defaultdict(list)
+        for op in self.operations:
+            durations[op.action].append(op.duration_seconds)
+
+        return {
+            action: sum(durs) / len(durs) if durs else 0
+            for action, durs in durations.items()
+        }
+
+    def _calculate_memory_stats(self) -> Dict:
+        """Calcule les statistiques d'utilisation mémoire."""
+        if not self.memory_usage_history:
+            return {}
+
+        usages = [entry['usage_mb'] for entry in self.memory_usage_history]
+        return {
+            'peak_usage_mb': max(usages),
+            'average_usage_mb': sum(usages) / len(usages),
+            'min_usage_mb': min(usages)
+        }
+
+    def _group_errors(self) -> Dict:
+        """Groupe les erreurs par type."""
+        errors = defaultdict(int)
+        for op in self.operations:
+            if not op.success and op.error_message:
+                errors[op.error_message] += 1
+        return dict(errors)
+```
+
+#### **Intégration :**
+
+```python
+# Modifier : python/core/orchestrator.py
+class SyncOrchestrator:
+    def __init__(self, config_path: Path, args: argparse.Namespace):
+        self.metrics = SyncMetrics()
+        # ... reste du code
+
+    def run(self):
+        try:
+            for scope_name in enabled_scopes:
+                metrics = self.metrics.start_operation(scope_name, "sync")
+                try:
+                    # ... exécution du scope
+                    self.metrics.end_operation(metrics, success=True, records_processed=len(results))
+                except Exception as e:
+                    self.metrics.end_operation(metrics, success=False, error_message=str(e))
+        finally:
+            summary = self.metrics.get_summary()
+            self._print_metrics_summary(summary)
 ```
 
 ---
 
-### 🔧 **3.3 Retry automatique**
+### 🔧 **3.3 Retry automatique** ✅ **PRIORITÉ MOYENNE**
 
 #### **Problème identifié :**
 
 - Pas de retry en cas d'échec temporaire
 - Pas de backoff exponentiel
+- Perte de données en cas d'erreur réseau temporaire
 
 #### **Solution :**
 
 ```python
-# Créer : python/api/retry.py
-from tenacity import retry, stop_after_attempt, wait_exponential
+# Créer : python/core/retry.py
+import time
+import random
+from functools import wraps
+from typing import Callable, Any, Optional
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
-class RetryableApiClient:
-    @retry(
-        stop=stop_after_attempt(3),
-        wait=wait_exponential(multiplier=1, min=4, max=10)
+class RetryConfig:
+    """Configuration pour les retry automatiques."""
+
+    def __init__(self,
+                 max_attempts: int = 3,
+                 base_delay: float = 1.0,
+                 max_delay: float = 60.0,
+                 exponential_base: float = 2.0,
+                 jitter: bool = True):
+        self.max_attempts = max_attempts
+        self.base_delay = base_delay
+        self.max_delay = max_delay
+        self.exponential_base = exponential_base
+        self.jitter = jitter
+
+def api_retry(config: Optional[RetryConfig] = None):
+    """Décorateur pour les appels API avec retry automatique."""
+    if config is None:
+        config = RetryConfig()
+
+    def decorator(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            last_exception = None
+
+            for attempt in range(config.max_attempts):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    last_exception = e
+
+                    if attempt < config.max_attempts - 1:
+                        delay = config.base_delay * (config.exponential_base ** attempt)
+                        delay = min(delay, config.max_delay)
+
+                        if config.jitter:
+                            delay *= (0.5 + random.random() * 0.5)
+
+                        print(f"Tentative {attempt + 1} échouée: {e}")
+                        print(f"Réessai dans {delay:.2f} secondes...")
+                        time.sleep(delay)
+
+            # Toutes les tentatives ont échoué
+            raise last_exception
+
+        return wrapper
+    return decorator
+
+# Utilisation avec tenacity (plus robuste)
+def tenacity_retry(max_attempts: int = 3,
+                  base_delay: float = 1.0,
+                  max_delay: float = 60.0):
+    """Décorateur utilisant tenacity pour les retry."""
+    return retry(
+        stop=stop_after_attempt(max_attempts),
+        wait=wait_exponential(multiplier=base_delay, min=base_delay, max=max_delay),
+        retry=retry_if_exception_type((ConnectionError, TimeoutError, OSError))
     )
+```
+
+#### **Intégration :**
+
+```python
+# Modifier : python/n2f/client.py
+from core.retry import tenacity_retry
+
+class N2fApiClient:
+    @tenacity_retry(max_attempts=3, base_delay=2.0, max_delay=30.0)
     def create_user(self, payload: Dict) -> ApiResult:
         return self._create_user_impl(payload)
+
+    @tenacity_retry(max_attempts=3, base_delay=2.0, max_delay=30.0)
+    def update_user(self, user_id: str, payload: Dict) -> ApiResult:
+        return self._update_user_impl(user_id, payload)
+
+    @tenacity_retry(max_attempts=3, base_delay=2.0, max_delay=30.0)
+    def delete_user(self, user_id: str) -> ApiResult:
+        return self._delete_user_impl(user_id)
 ```
+
+---
+
+### 🔧 **3.4 Pagination optimisée** ❌ **DÉCISION : SUPPRIMÉ**
+
+#### **Raison de la suppression :**
+
+- **Contrainte API N2F** : L'API impose une séquence stricte des appels (pas de parallélisation)
+- **Pas de gain de performance** : La parallélisation n'est pas possible
+- **Risque de surcharge** : Tentative de parallélisation pourrait surcharger l'API
+- **Complexité inutile** : Ajouter du code qu'on ne peut pas utiliser
+
+#### **Alternative :**
+
+La pagination actuelle avec boucles `while` est suffisante et respecte les contraintes de l'API N2F.
 
 ---
 
@@ -751,11 +1011,11 @@ n2f/
 - [✅] 2.3 Orchestrator principal (Séparation des responsabilités avec SyncOrchestrator)
 - [✅] 2.4 Système de cache amélioré (Cache avancé avec persistance et métriques)
 
-### **Phase 3 :** 0/3 tâches terminées
+### **Phase 3 :** 0/3 tâches terminées (3.4 supprimée - contrainte API N2F)
 
-- [ ] 3.1 Pagination optimisée
-- [ ] 3.2 Système de métriques
-- [ ] 3.3 Retry automatique
+- [ ] 3.1 Optimisation de la mémoire (PRIORITÉ HAUTE)
+- [ ] 3.2 Système de métriques (PRIORITÉ MOYENNE)
+- [ ] 3.3 Retry automatique (PRIORITÉ MOYENNE)
 
 ### **Phase 4 :** 0/2 tâches terminées
 
