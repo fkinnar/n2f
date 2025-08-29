@@ -495,13 +495,20 @@ def api_call(self, endpoint: str) -> ApiResult:
 
 **Corrections effectuées :**
 
-- ✅ **Correction des erreurs de patch** - `N2fApiClient` au lieu de `N2FClient`
-- ✅ **Correction des tests de base de données** - Utilisation de `execute_query` au lieu de `connect`
-- ✅ **Correction des erreurs de cache** - Mock de `cache_clear` pour `mock_cache.clear`
-- ✅ **Correction des erreurs de ConfigLoader** - Ajustement pour 2 appels au lieu d'1
-- ✅ **Correction des erreurs de get_registry** - Ajustement pour 2 appels au lieu d'1
-- ✅ **Correction des erreurs de cleanup_scope** - Mock de `cleanup_scope` pour `mock_memory_manager.cleanup_scope`
-- ✅ **Correction des erreurs de register_dataframe** - Commenté car non appelé automatiquement
+- ✅ **Correction des erreurs de patch** - `N2fApiClient` au lieu de
+  `N2FClient`
+- ✅ **Correction des tests de base de données** - Utilisation de
+  `execute_query` au lieu de `connect`
+- ✅ **Correction des erreurs de cache** - Mock de `cache_clear` pour
+  `mock_cache.clear`
+- ✅ **Correction des erreurs de ConfigLoader** - Ajustement pour 2 appels au lieu
+  d'1
+- ✅ **Correction des erreurs de get_registry** - Ajustement pour 2 appels au lieu
+  d'1
+- ✅ **Correction des erreurs de cleanup_scope** - Mock de `cleanup_scope` pour
+  `mock_memory_manager.cleanup_scope`
+- ✅ **Correction des erreurs de register_dataframe** - Commenté car non appelé
+  automatiquement
 
 **Reste à faire :**
 
@@ -603,7 +610,8 @@ def api_call(self, endpoint: str) -> ApiResult:
 - [ ] **Tests des métriques** - SyncMetrics et export de données
 - [ ] **Tests du retry** - RetryManager et stratégies de retry
 
-#### **Objectifs :**
+#### **Objectifs des tests :**
+
 - Couverture de test complète (100%)
 - Tests de régression automatisés
 - Intégration continue (CI/CD)
@@ -618,7 +626,8 @@ def api_call(self, endpoint: str) -> ApiResult:
 - [ ] **Tracing distribué** - Suivi des opérations end-to-end
 - [ ] **Health checks** - Vérification de l'état du système
 
-#### **Objectifs :**
+#### **Objectifs du monitoring :**
+
 - Visibilité complète sur les opérations
 - Détection proactive des problèmes
 - Métriques de performance en temps réel
@@ -627,22 +636,26 @@ def api_call(self, endpoint: str) -> ApiResult:
 
 #### **Optimisations à implémenter :**
 
-- [ ] **Optimisation séquentielle** - Amélioration de l'efficacité des appels API séquentiels
-- [ ] **Streaming de données** - Traitement par chunks pour gros volumes
-- [ ] **Cache distribué** - Cache partagé entre instances
+- [ ] **Optimisation séquentielle** - Amélioration de l'efficacité des appels API
+  séquentiels
 - [ ] **Optimisation des requêtes** - Requêtes SQL optimisées
 - [ ] **Compression des données** - Réduction de l'utilisation mémoire
-- [ ] **Batch processing** - Traitement par lots pour optimiser les appels API
+- [ ] **Gestion mémoire avancée** - Optimisation de l'utilisation des DataFrames
 
 #### **Contraintes techniques :**
-- **API N2F séquentielle** - Les appels API doivent être séquentiels (pas de parallélisation)
+
+- **API N2F séquentielle** - Les appels API doivent être séquentiels (pas de
+  parallélisation)
+- **Pas de batch processing** - L'API ne supporte qu'un upsert à la fois
+- **Pas de streaming** - Traitement obligatoire en mémoire
 - **Respect des limites de l'API** - Gestion des rate limits et timeouts
 
-#### **Objectifs :**
-- Support de volumes de données massifs
+#### **Objectifs de performance :**
+
 - Optimisation des appels séquentiels
-- Optimisation des ressources
+- Optimisation des ressources mémoire
 - Respect des contraintes de l'API
+- Performance maximale dans les limites techniques
 
 ### 🔧 **5.4 Sécurité et Conformité** 📋 **À PLANIFIER**
 
@@ -654,12 +667,11 @@ def api_call(self, endpoint: str) -> ApiResult:
 - [ ] **Authentification renforcée** - OAuth2, API keys, etc.
 - [ ] **Validation des données** - Sanitisation et validation stricte
 
-#### **Objectifs :**
+#### **Objectifs de sécurité :**
+
 - Conformité aux standards de sécurité
 - Protection des données sensibles
 - Traçabilité complète
-
-
 
 ---
 
