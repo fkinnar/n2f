@@ -4,7 +4,7 @@ Documentation technique complète des APIs et composants du projet de synchronis
 
 ## 🏗️ Architecture Overview
 
-```
+```text
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Agresso DB    │    │  N2F Sync Tool  │    │   N2F API       │
 │                 │    │                 │    │                 │
@@ -15,6 +15,7 @@ Documentation technique complète des APIs et composants du projet de synchronis
 │                 │    │ │ N2F Client  │◄┼────┼─────────────────┤
 │                 │    │ └─────────────┘ │    │                 │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
+
 ```
 
 ## 🔧 Core Components
@@ -30,6 +31,7 @@ class EntitySynchronizer(ABC):
     def __init__(self, n2f_client: N2fApiClient, sandbox: bool, scope: str)
 
     # Méthodes concrètes (implémentées dans la classe de base)
+
     def create_entities(self, df_agresso: pd.DataFrame, df_n2f: pd.DataFrame,
                        df_n2f_companies: pd.DataFrame = None) -> Tuple[pd.DataFrame, str]
     def update_entities(self, df_agresso: pd.DataFrame, df_n2f: pd.DataFrame,
@@ -38,6 +40,7 @@ class EntitySynchronizer(ABC):
                        df_n2f_companies: pd.DataFrame = None) -> Tuple[pd.DataFrame, str]
 
     # Méthodes abstraites (à implémenter dans les classes concrètes)
+
     @abstractmethod
     def build_payload(self, entity: pd.Series, df_agresso: pd.DataFrame,
                      df_n2f: pd.DataFrame, df_n2f_companies: pd.DataFrame = None) -> Dict[str, Any]
@@ -62,6 +65,7 @@ class EntitySynchronizer(ABC):
     @abstractmethod
     def _perform_delete_operation(self, entity: pd.Series,
                                 df_n2f_companies: pd.DataFrame = None) -> ApiResult
+
 ```
 
 #### Exemple d'implémentation
@@ -95,6 +99,7 @@ class UserSynchronizer(EntitySynchronizer):
     def _perform_delete_operation(self, entity: pd.Series,
                                 df_n2f_companies: pd.DataFrame = None) -> ApiResult:
         return self.n2f_client.delete_user(self.get_entity_id(entity))
+
 ```
 
 ### 2. N2fApiClient
@@ -108,6 +113,7 @@ class N2fApiClient:
     def __init__(self, context: SyncContext)
 
     # Récupération de données
+
     def get_companies(self, use_cache: bool = True) -> pd.DataFrame
     def get_roles(self, use_cache: bool = True) -> pd.DataFrame
     def get_users(self, use_cache: bool = True) -> pd.DataFrame
@@ -115,27 +121,34 @@ class N2fApiClient:
     def get_custom_axes(self, company_id: str, use_cache: bool = True) -> pd.DataFrame
 
     # Opérations CRUD
+
     def create_user(self, payload: dict) -> ApiResult
     def update_user(self, payload: dict) -> ApiResult
     def delete_user(self, user_email: str) -> ApiResult
 
     # Opérations sur les axes
+
     def upsert_axe_value(self, company_id: str, axe_id: str, payload: dict,
                         action_type: str, scope: str) -> ApiResult
+
 ```
 
 #### Exemple d'utilisation
 
 ```python
+
 # Initialisation
+
 context = SyncContext(...)
 client = N2fApiClient(context)
 
 # Récupération de données
+
 companies = client.get_companies(use_cache=True)
 users = client.get_users(use_cache=True)
 
 # Création d'un utilisateur
+
 user_payload = {
     "mail": "john.doe@example.com",
     "firstname": "John",
@@ -147,6 +160,7 @@ if result.success:
     print(f"User created: {result.message}")
 else:
     print(f"Error: {result.message}")
+
 ```
 
 ### 3. ApiResult
@@ -163,6 +177,7 @@ class ApiResult:
                  object_id: str = None, scope: str = None)
 
     # Propriétés
+
     success: bool
     message: str
     status_code: Optional[int]
@@ -174,6 +189,7 @@ class ApiResult:
     scope: Optional[str]
 
     # Méthodes de factory
+
     @classmethod
     def success_result(cls, message: str, status_code: int = None,
                       duration_ms: float = None, **kwargs) -> 'ApiResult'
@@ -185,12 +201,15 @@ class ApiResult:
     @classmethod
     def simulate_result(cls, action_type: str, object_type: str = None,
                        object_id: str = None, scope: str = None) -> 'ApiResult'
+
 ```
 
 #### Exemple d'utilisation
 
 ```python
+
 # Succès
+
 result = ApiResult.success_result(
     message="User created successfully",
     status_code=201,
@@ -202,6 +221,7 @@ result = ApiResult.success_result(
 )
 
 # Erreur
+
 result = ApiResult.error_result(
     message="User not found",
     status_code=404,
@@ -214,12 +234,14 @@ result = ApiResult.error_result(
 )
 
 # Simulation
+
 result = ApiResult.simulate_result(
     action_type="create",
     object_type="user",
     object_id="john@example.com",
     scope="users"
 )
+
 ```
 
 ## 🚨 Exception Hierarchy
@@ -233,73 +255,90 @@ class SyncException(Exception):
     def __init__(self, message: str, details: str = None, context: Dict[str, Any] = None)
 
     # Propriétés
+
     message: str
     details: Optional[str]
     context: Dict[str, Any]
 
     # Méthodes
+
     def to_dict(self) -> Dict[str, Any]
+
 ```
 
 ### Exceptions spécialisées
 
 ```python
+
 # Erreurs d'API
+
 class ApiException(SyncException):
     def __init__(self, message: str, status_code: int = None,
                  response_text: str = None, endpoint: str = None, **kwargs)
 
     # Propriétés additionnelles
+
     status_code: Optional[int]
     response_text: Optional[str]
     endpoint: Optional[str]
 
 # Erreurs de validation
+
 class ValidationException(SyncException):
     def __init__(self, message: str, field: str = None,
                  value: Any = None, expected_format: str = None, **kwargs)
 
     # Propriétés additionnelles
+
     field: Optional[str]
     value: Optional[Any]
     expected_format: Optional[str]
 
 # Erreurs de configuration
+
 class ConfigurationException(SyncException):
     def __init__(self, message: str, config_key: str = None,
                  config_file: str = None, **kwargs)
 
     # Propriétés additionnelles
+
     config_key: Optional[str]
     config_file: Optional[str]
 
 # Erreurs de base de données
+
 class DatabaseException(SyncException):
     def __init__(self, message: str, sql_query: str = None,
                  table: str = None, **kwargs)
 
     # Propriétés additionnelles
+
     sql_query: Optional[str]
     table: Optional[str]
 
 # Erreurs d'authentification
+
 class AuthenticationException(SyncException):
     def __init__(self, message: str, service: str = None,
                  credentials_type: str = None, **kwargs)
 
     # Propriétés additionnelles
+
     service: Optional[str]
     credentials_type: Optional[str]
 
 # Erreurs réseau
+
 class NetworkException(SyncException):
     def __init__(self, message: str, url: str = None,
                  timeout: float = None, retry_count: int = None, **kwargs)
 
     # Propriétés additionnelles
+
     url: Optional[str]
     timeout: Optional[float]
     retry_count: Optional[int]
+
 ```
 
 ### Exemple d'utilisation
@@ -308,6 +347,7 @@ class NetworkException(SyncException):
 from core.exceptions import ApiException, ValidationException
 
 # Gestion d'erreur d'API
+
 try:
     result = client.create_user(payload)
 except ApiException as e:
@@ -317,6 +357,7 @@ except ApiException as e:
     print(f"Response: {e.response_text}")
 
 # Gestion d'erreur de validation
+
 try:
     validate_email(email)
 except ValidationException as e:
@@ -326,18 +367,24 @@ except ValidationException as e:
     print(f"Expected Format: {e.expected_format}")
 
 # Gestion hiérarchique
+
 try:
     # Opération qui peut lever différentes exceptions
+
     pass
 except ApiException as e:
     # Gestion spécifique des erreurs d'API
+
     handle_api_error(e)
 except SyncException as e:
     # Gestion générique des erreurs de synchronisation
+
     handle_sync_error(e)
 except Exception as e:
     # Gestion des erreurs inattendues
+
     handle_unexpected_error(e)
+
 ```
 
 ## 🔧 Utility Functions
@@ -358,6 +405,7 @@ def has_payload_changes(payload: Dict[str, Any], n2f_entity: Dict[str, Any],
     Returns:
         bool: True si des changements sont détectés, False sinon
     """
+
 ```
 
 ### Fonctions de logging
@@ -387,6 +435,7 @@ def reporting(result_df: pd.DataFrame, empty_message: str, update_message: str,
         update_message: Message de base pour les opérations avec résultats
         status_col: Nom de la colonne contenant le statut
     """
+
 ```
 
 ### Fonctions de cache
@@ -413,6 +462,7 @@ def set_in_cache(value: Any, key: str, *args) -> None:
         key: Clé de cache
         *args: Arguments pour générer la clé de cache
     """
+
 ```
 
 ## 🎯 Décorateurs
@@ -437,6 +487,7 @@ def sync_function():
     Convertit automatiquement les exceptions génériques en SyncException.
     """
     pass
+
 ```
 
 ## 📊 Data Models
@@ -451,6 +502,7 @@ class SyncContext:
                  db_user: str, db_password: str, client_id: str, client_secret: str)
 
     # Propriétés
+
     args: argparse.Namespace
     config: dict
     base_dir: Path
@@ -458,6 +510,7 @@ class SyncContext:
     db_password: str
     client_id: str
     client_secret: str
+
 ```
 
 ### Configuration YAML
@@ -477,6 +530,7 @@ database:
   host: "localhost"
   port: 1433
   database: "AGRESSO_DEV"
+
 ```
 
 ## 🔄 Workflow de synchronisation
@@ -484,53 +538,70 @@ database:
 ### 1. Initialisation
 
 ```python
+
 # Chargement de la configuration
+
 context = SyncContext(...)
 client = N2fApiClient(context)
 
 # Création du synchroniseur
+
 synchronizer = UserSynchronizer(client, sandbox=True)
+
 ```
 
 ### 2. Récupération des données
 
 ```python
+
 # Données Agresso (via SQL)
+
 df_agresso = load_agresso_data(sql_filename)
 
 # Données N2F (via API)
+
 df_n2f = client.get_users(use_cache=True)
 df_n2f_companies = client.get_companies(use_cache=True)
+
 ```
 
 ### 3. Synchronisation
 
 ```python
+
 # Création des entités manquantes
+
 create_results, create_summary = synchronizer.create_entities(
     df_agresso, df_n2f, df_n2f_companies
 )
 
 # Mise à jour des entités existantes
+
 update_results, update_summary = synchronizer.update_entities(
     df_agresso, df_n2f, df_n2f_companies
 )
 
 # Suppression des entités obsolètes
+
 delete_results, delete_summary = synchronizer.delete_entities(
     df_agresso, df_n2f, df_n2f_companies
 )
+
 ```
 
 ### 4. Export des logs
 
 ```python
+
 # Combinaison des résultats
+
 all_results = [create_results, update_results, delete_results]
 combined_df = pd.concat(all_results, ignore_index=True)
 
 # Export des logs
+
 log_filename = export_api_logs(combined_df)
+
 ```
 
 ## 🧪 Testing
@@ -548,6 +619,7 @@ class TestUserSynchronizer(unittest.TestCase):
 
     def test_build_payload(self):
         # Test de construction du payload
+
         entity = pd.Series({
             "AdresseEmail": "test@example.com",
             "Nom": "Test User"
@@ -557,9 +629,11 @@ class TestUserSynchronizer(unittest.TestCase):
 
     def test_get_entity_id(self):
         # Test d'extraction de l'ID
+
         entity = pd.Series({"AdresseEmail": "test@example.com"})
         entity_id = self.synchronizer.get_entity_id(entity)
         self.assertEqual(entity_id, "test@example.com")
+
 ```
 
 ### Tests d'intégration
@@ -573,6 +647,7 @@ class TestN2fApiClient(unittest.TestCase):
     @patch('n2f.client.requests.get')
     def test_get_users(self, mock_get):
         # Mock de la réponse API
+
         mock_get.return_value.json.return_value = {
             "response": {"data": [{"mail": "test@example.com"}]}
         }
@@ -581,6 +656,7 @@ class TestN2fApiClient(unittest.TestCase):
         users = self.client.get_users()
         self.assertFalse(users.empty)
         self.assertEqual(users.iloc[0]["mail"], "test@example.com")
+
 ```
 
 ## 📈 Performance et optimisation
@@ -588,19 +664,25 @@ class TestN2fApiClient(unittest.TestCase):
 ### Cache
 
 - **TTL** : 5 minutes par défaut
+
 - **Clés** : Basées sur les paramètres de la requête
+
 - **Nettoyage** : Automatique lors du dépassement de la taille limite
 
 ### Pagination
 
 - **Taille de page** : 200 éléments par défaut
+
 - **Récupération automatique** : Toutes les pages récupérées automatiquement
+
 - **Optimisation mémoire** : Traitement par chunks
 
 ### Gestion d'erreur
 
 - **Retry automatique** : 3 tentatives avec backoff exponentiel
+
 - **Fallback** : Mode simulation en cas d'échec critique
+
 - **Logging détaillé** : Toutes les erreurs tracées avec contexte
 
 ---
