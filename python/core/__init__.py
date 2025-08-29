@@ -28,6 +28,17 @@ from .orchestrator import (
     LogManager,
     SyncResult
 )
+from .cache import (
+    AdvancedCache,
+    CacheEntry,
+    CacheMetrics,
+    get_cache,
+    cache_get,
+    cache_set,
+    cache_invalidate,
+    cache_clear,
+    cache_stats
+)
 from .exceptions import (
     SyncException,
     ApiException,
@@ -43,25 +54,36 @@ from .exceptions import (
 __all__ = [
     # Configuration
     "SyncConfig",
-    "DatabaseConfig", 
+    "DatabaseConfig",
     "ApiConfig",
     "ScopeConfig",
     "ConfigLoader",
     "create_default_config",
-    
+
     # Registry
     "SyncRegistry",
     "RegistryEntry",
     "get_registry",
     "register_scope",
-    
+
     # Orchestrator
     "SyncOrchestrator",
     "ContextBuilder",
     "ScopeExecutor",
     "LogManager",
     "SyncResult",
-    
+
+    # Cache
+    "AdvancedCache",
+    "CacheEntry",
+    "CacheMetrics",
+    "get_cache",
+    "cache_get",
+    "cache_set",
+    "cache_invalidate",
+    "cache_clear",
+    "cache_stats",
+
     # Exceptions
     "SyncException",
     "ApiException",

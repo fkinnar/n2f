@@ -31,6 +31,16 @@ class ApiConfig:
 
 
 @dataclass
+class CacheConfig:
+    """Configuration du cache."""
+    enabled: bool = True
+    cache_dir: str = "cache"
+    max_size_mb: int = 100
+    default_ttl: int = 3600  # 1 heure par défaut
+    persist_cache: bool = True
+
+
+@dataclass
 class ScopeConfig:
     """Configuration d'un scope de synchronisation."""
     sync_function: Callable
@@ -47,6 +57,7 @@ class SyncConfig:
     """Configuration complète de la synchronisation."""
     database: DatabaseConfig
     api: ApiConfig
+    cache: CacheConfig = field(default_factory=CacheConfig)
     scopes: Dict[str, ScopeConfig] = field(default_factory=dict)
 
     def __post_init__(self):
@@ -178,7 +189,19 @@ class ConfigLoader:
             sandbox=config_data.get("n2f", {}).get("sandbox", True)
         )
 
-        sync_config = SyncConfig(database=database_config, api=api_config)
+        cache_config = CacheConfig(
+            enabled=config_data.get("cache", {}).get("enabled", True),
+            cache_dir=config_data.get("cache", {}).get("cache_dir", "cache"),
+            max_size_mb=config_data.get("cache", {}).get("max_size_mb", 100),
+            default_ttl=config_data.get("cache", {}).get("default_ttl", 3600),
+            persist_cache=config_data.get("cache", {}).get("persist_cache", True)
+        )
+
+        sync_config = SyncConfig(
+            database=database_config,
+            api=api_config,
+            cache=cache_config
+        )
 
         # Validation de la configuration
         errors = sync_config.validate()

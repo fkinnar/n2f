@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 
 from .config import ConfigLoader, SyncConfig
 from .registry import get_registry
+from .cache import get_cache, cache_stats, cache_clear, cache_invalidate
 import sys
 from pathlib import Path
 
@@ -50,6 +51,18 @@ class ContextBuilder:
         # Chargement de la configuration
         config_loader = ConfigLoader(self.config_path)
         sync_config = config_loader.load()
+
+        # Initialisation du cache avancé
+        if sync_config.cache.enabled:
+            cache_dir = None
+            if sync_config.cache.persist_cache:
+                cache_dir = Path(__file__).resolve().parent.parent.parent / sync_config.cache.cache_dir
+
+            get_cache(
+                cache_dir=cache_dir,
+                max_size_mb=sync_config.cache.max_size_mb,
+                default_ttl=sync_config.cache.default_ttl
+            )
 
         # Auto-découverte des scopes APRÈS le chargement de la configuration
         registry = get_registry()
@@ -248,6 +261,20 @@ class SyncOrchestrator:
         4. Export et résumé des résultats
         """
         try:
+            # Gestion du cache si demandé
+            if hasattr(self.args, 'clear_cache') and self.args.clear_cache:
+                print("--- Clearing cache ---")
+                cache_clear()
+                print("Cache cleared successfully")
+
+            # Invalidation sélective du cache si demandé
+            if hasattr(self.args, 'invalidate_cache') and self.args.invalidate_cache:
+                print("--- Invalidating specific cache entries ---")
+                for function_name in self.args.invalidate_cache:
+                    cache_invalidate(function_name)
+                    print(f"  - Invalidated: {function_name}")
+                print("Cache invalidation completed")
+
             # Construction du contexte
             context = self.context_builder.build()
 
@@ -260,6 +287,13 @@ class SyncOrchestrator:
             # Export et résumé
             self.log_manager.export_and_summarize()
             self.log_manager.print_sync_summary()
+
+            # Affichage des statistiques du cache
+            config_loader = ConfigLoader(self.config_path)
+            sync_config = config_loader.load()
+            if sync_config.cache.enabled:
+                print(f"\n--- Cache Statistics ---")
+                print(cache_stats())
 
         except Exception as e:
             print(f"Fatal error during synchronization: {e}")
