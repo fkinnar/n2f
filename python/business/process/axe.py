@@ -16,13 +16,18 @@ from business.constants import AGRESSO_COL_AXE_TYPE, COL_UUID
 
 def _load_agresso_axes(context: SyncContext, sql_filename: str, sql_column_filter: str) -> pd.DataFrame:
     """Charge et filtre les axes depuis Agresso."""
+    # Utilise la méthode get_config_value pour supporter l'ancien et le nouveau format
+    agresso_config = context.get_config_value("agresso")
+    sql_path = agresso_config.sql_path if hasattr(agresso_config, 'sql_path') else agresso_config["sql-path"]
+    prod = agresso_config.prod if hasattr(agresso_config, 'prod') else agresso_config["prod"]
+    
     df_agresso_axes = select(
         base_dir=context.base_dir,
         db_user=context.db_user,
         db_password=context.db_password,
-        sql_path=context.config["agresso"]["sql-path"],
+        sql_path=sql_path,
         sql_filename=sql_filename,
-        prod=context.config["agresso"]["prod"]
+        prod=prod
     )
     if not df_agresso_axes.empty:
         df_agresso_axes = df_agresso_axes[
@@ -70,10 +75,14 @@ def _perform_sync_actions(
     results = []
 
     if context.args.create:
+        # Utilise la méthode get_config_value pour supporter l'ancien et le nouveau format
+        n2f_config = context.get_config_value("n2f")
+        sandbox = n2f_config.sandbox if hasattr(n2f_config, 'sandbox') else n2f_config["sandbox"]
+        
         created_df, status_col = create_n2f_axes(
             n2f_client=n2f_client, axe_id=n2f_code, df_agresso_projects=df_agresso_axes,
             df_n2f_projects=df_n2f_axes, df_n2f_companies=df_n2f_companies,
-            sandbox=context.config["n2f"]["sandbox"], scope=scope
+            sandbox=sandbox, scope=scope
         )
         reporting(created_df, f"No {sql_column} added", f"{sql_column} added", status_col)
         if not created_df.empty:
@@ -83,7 +92,7 @@ def _perform_sync_actions(
         updated_df, status_col = update_n2f_axes(
             n2f_client=n2f_client, axe_id=n2f_code, df_agresso_projects=df_agresso_axes,
             df_n2f_projects=df_n2f_axes, df_n2f_companies=df_n2f_companies,
-            sandbox=context.config["n2f"]["sandbox"], scope=scope
+            sandbox=sandbox, scope=scope
         )
         reporting(updated_df, f"No {sql_column} updated", f"{sql_column} updated", status_col)
         if not updated_df.empty:
@@ -93,7 +102,7 @@ def _perform_sync_actions(
         deleted_df, status_col = delete_n2f_axes(
             n2f_client=n2f_client, axe_id=n2f_code, df_agresso_projects=df_agresso_axes,
             df_n2f_projects=df_n2f_axes, df_n2f_companies=df_n2f_companies,
-            sandbox=context.config["n2f"]["sandbox"], scope=scope
+            sandbox=sandbox, scope=scope
         )
         reporting(deleted_df, f"Aucun {sql_column} supprimé", f"{sql_column} supprimés", status_col)
         if not deleted_df.empty:
