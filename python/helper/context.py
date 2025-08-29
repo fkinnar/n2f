@@ -14,12 +14,12 @@ class SyncContext:
     db_password: str | None
     client_id: str | None
     client_secret: str | None
-    
+
     def get_config_value(self, key: str, default: Any = None) -> Any:
         """Récupère une valeur de configuration de manière compatible avec l'ancien et le nouveau format."""
         # Import local pour éviter l'import circulaire
         from core import SyncConfig
-        
+
         if isinstance(self.config, SyncConfig):
             # Nouveau format : SyncConfig
             if key == "agresso":

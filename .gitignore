@@ -49,3 +49,7 @@ Thumbs.db
 nosetests.xml
 coverage.xml
 *.log
+
+# Fichiers de métriques générés automatiquement
+metrics_*.json
+example_metrics.json
