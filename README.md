@@ -162,7 +162,7 @@ class EntitySynchronizer(ABC):
     def create_entities(self, df_agresso, df_n2f) -> Tuple[pd.DataFrame, str]
     def update_entities(self, df_agresso, df_n2f) -> Tuple[pd.DataFrame, str]
     def delete_entities(self, df_agresso, df_n2f) -> Tuple[pd.DataFrame, str]
-    
+
     @abstractmethod
     def build_payload(self, entity) -> Dict[str, Any]
     @abstractmethod
@@ -259,7 +259,7 @@ python tests/run_tests.py --list
 class NewEntitySynchronizer(EntitySynchronizer):
     def build_payload(self, entity):
         return {"name": entity["name"], "type": "new_entity"}
-    
+
     def get_entity_id(self, entity):
         return entity["id"]
 ```
