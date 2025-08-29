@@ -14,7 +14,7 @@ def _load_agresso_users(context: SyncContext, sql_filename: str) -> pd.DataFrame
     agresso_config = context.get_config_value("agresso")
     sql_path = agresso_config.sql_path if hasattr(agresso_config, 'sql_path') else agresso_config["sql-path"]
     prod = agresso_config.prod if hasattr(agresso_config, 'prod') else agresso_config["prod"]
-    
+
     df_agresso_users = normalize_agresso_users(
         select(
             base_dir=context.base_dir,
@@ -51,11 +51,12 @@ def _load_n2f_data(n2f_client: N2fApiClient) -> Tuple[pd.DataFrame, pd.DataFrame
 
 def synchronize(
     context: SyncContext,
-    sql_filename: str
+    sql_filename: str,
+    sql_column_filter: str = ""
 ) -> List[pd.DataFrame]:
     """
     Orchestre la synchronisation des utilisateurs Agresso <-> N2F.
-    
+
     Utilise la nouvelle classe UserSynchronizer pour une meilleure architecture.
     """
     # Initialisation des clients et chargement des données

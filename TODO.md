@@ -334,30 +334,65 @@ register_scope(
 
 ---
 
-### 🔧 **2.3 Orchestrator principal**
+### 🔧 **2.3 Orchestrator principal** ✅ **TERMINÉ**
 
 #### **Problème identifié :**
 
-- Fonction `main()` fait trop de choses
+- Fonction `main()` fait trop de choses (~150 lignes)
 - Pas de séparation des responsabilités
+- Code difficile à maintenir et tester
+- Gestion d'erreur dispersée
 
-#### **Solution :**
+#### **Solution implémentée :**
 
 ```python
-# Créer : python/sync/orchestrator.py
+# Créé : python/core/orchestrator.py
 class SyncOrchestrator:
-    def __init__(self, config_path: str, args: argparse.Namespace):
-        self.config = ConfigLoader(config_path).load()
-        self.context = ContextBuilder(args, self.config).build()
-        self.logger = LogManager()
-        self.metrics = SyncMetrics()
+    def __init__(self, config_path: Path, args: argparse.Namespace):
+        self.config_path = config_path
+        self.args = args
+        self.context_builder = ContextBuilder(args, config_path)
+        self.log_manager = LogManager()
+        self.registry = get_registry()
 
     def run(self) -> None:
-        for scope in self.context.selected_scopes:
-            self.sync_scope(scope)
-        self.logger.export_and_summarize()
-        self.metrics.print_summary()
+        # Construction du contexte
+        context = self.context_builder.build()
+        # Détermination des scopes à traiter
+        selected_scopes = self._get_selected_scopes()
+        # Exécution des scopes
+        self._execute_scopes(context, selected_scopes)
+        # Export et résumé
+        self.log_manager.export_and_summarize()
+        self.log_manager.print_sync_summary()
+
+class ContextBuilder:
+    """Constructeur de contexte de synchronisation."""
+
+class ScopeExecutor:
+    """Exécuteur de synchronisation pour un scope."""
+
+class LogManager:
+    """Gestionnaire de logs et d'export."""
 ```
+
+#### **Fichiers créés/modifiés :**
+
+- ✅ `python/core/orchestrator.py` → Orchestrateur principal avec séparation des responsabilités
+- ✅ `python/core/orchestrator_example.py` → Exemples d'utilisation de l'orchestrateur
+- ✅ `python/core/__init__.py` → Export des nouvelles classes
+- ✅ `python/sync-agresso-n2f.py` → Simplifié de ~150 lignes à ~30 lignes
+
+#### **Avantages obtenus :**
+
+- ✅ **Séparation des responsabilités** : Chaque classe a une responsabilité claire
+- ✅ **Code simplifié** : Le fichier principal est passé de 150 à 30 lignes
+- ✅ **Gestion d'erreur améliorée** : Chaque scope traité individuellement avec gestion d'erreur
+- ✅ **Testabilité** : Chaque composant peut être testé indépendamment
+- ✅ **Maintenabilité** : Code plus facile à comprendre et modifier
+- ✅ **Résumé détaillé** : Affichage du nombre de scopes traités, succès/échecs, durée totale
+- ✅ **Extensibilité** : Facile d'ajouter de nouvelles fonctionnalités
+- ✅ **Réutilisabilité** : L'orchestrateur peut être utilisé dans d'autres contextes
 
 ---
 
@@ -602,11 +637,11 @@ n2f/
 - [✅] 1.3 Exceptions personnalisées (Hiérarchie complète d'exceptions créée)
 - [✅] 1.4 Documentation complète (README + API Reference + Docstrings)
 
-### **Phase 2 :** 2/4 tâches terminées
+### **Phase 2 :** 3/4 tâches terminées
 
 - [✅] 2.1 Configuration centralisée (Configuration centralisée avec dataclasses)
 - [✅] 2.2 Pattern Registry pour les scopes (Registry avec auto-découverte et extensibilité)
-- [ ] 2.3 Orchestrator principal
+- [✅] 2.3 Orchestrator principal (Séparation des responsabilités avec SyncOrchestrator)
 - [ ] 2.4 Système de cache amélioré
 
 ### **Phase 3 :** 0/3 tâches terminées
@@ -631,7 +666,8 @@ n2f/
 5. **🎉 Phase 1 COMPLÈTE ET MERGÉE** - Architecture de base solide et maintenable
 6. **✅ Phase 2, tâche 2.1 terminée** - Configuration centralisée avec dataclasses et validation
 7. **✅ Phase 2, tâche 2.2 terminée** - Pattern Registry avec auto-découverte et extensibilité
-8. **🔄 Phase 2 EN COURS** - Prêt pour la tâche 2.3 (Orchestrator principal)
+8. **✅ Phase 2, tâche 2.3 terminée** - Orchestrator principal avec séparation des responsabilités
+9. **🔄 Phase 2 EN COURS** - Prêt pour la tâche 2.4 (Système de cache amélioré)
 
 ---
 

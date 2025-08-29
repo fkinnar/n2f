@@ -37,23 +37,27 @@ class SyncResult:
 
 class ContextBuilder:
     """Constructeur de contexte de synchronisation."""
-    
+
     def __init__(self, args: argparse.Namespace, config_path: Path):
         self.args = args
         self.config_path = config_path
-    
+
     def build(self) -> SyncContext:
         """Construit le contexte de synchronisation."""
         # Chargement des variables d'environnement
         load_dotenv()
-        
+
         # Chargement de la configuration
         config_loader = ConfigLoader(self.config_path)
         sync_config = config_loader.load()
-        
+
+        # Auto-découverte des scopes APRÈS le chargement de la configuration
+        registry = get_registry()
+        registry.auto_discover_scopes("business.process")
+
         # Construction du contexte
         base_dir = Path(__file__).resolve().parent.parent
-        
+
         return SyncContext(
             args=self.args,
             config=sync_config,
@@ -67,16 +71,16 @@ class ContextBuilder:
 
 class ScopeExecutor:
     """Exécuteur de synchronisation pour un scope."""
-    
+
     def __init__(self, context: SyncContext):
         self.context = context
         self.registry = get_registry()
-    
+
     def execute_scope(self, scope_name: str) -> SyncResult:
         """Exécute la synchronisation pour un scope donné."""
         import time
         start_time = time.time()
-        
+
         try:
             # Récupération de la configuration du scope
             scope_config = self.registry.get(scope_name)
@@ -87,30 +91,31 @@ class ScopeExecutor:
                     results=[],
                     error_message=f"Scope '{scope_name}' not found or disabled"
                 )
-            
+
             print(f"--- Starting synchronization for scope : {scope_name} ({scope_config.display_name}) ---")
-            
+
             # Exécution de la synchronisation
             results = scope_config.sync_function(
                 context=self.context,
-                sql_filename=scope_config.sql_filename
+                sql_filename=scope_config.sql_filename,
+                sql_column_filter=scope_config.sql_column_filter
             )
-            
+
             duration = time.time() - start_time
             print(f"--- End of synchronization for scope : {scope_name} ---")
-            
+
             return SyncResult(
                 scope_name=scope_name,
                 success=True,
                 results=results or [],
                 duration_seconds=duration
             )
-            
+
         except Exception as e:
             duration = time.time() - start_time
             error_msg = f"Error during synchronization of scope '{scope_name}': {str(e)}"
             print(f"ERROR: {error_msg}")
-            
+
             return SyncResult(
                 scope_name=scope_name,
                 success=False,
@@ -122,58 +127,58 @@ class ScopeExecutor:
 
 class LogManager:
     """Gestionnaire de logs et d'export."""
-    
+
     def __init__(self):
         self.results: List[SyncResult] = []
-    
+
     def add_result(self, result: SyncResult) -> None:
         """Ajoute un résultat de synchronisation."""
         self.results.append(result)
-    
+
     def export_and_summarize(self) -> None:
         """Exporte les logs et affiche un résumé."""
         if not self.results:
             print("No synchronization results to export.")
             return
-        
+
         # Collecte de tous les DataFrames de résultats
         all_dataframes = []
         for result in self.results:
             if result.success and result.results:
                 all_dataframes.extend(result.results)
-        
+
         if not all_dataframes:
             print("No data to export.")
             return
-        
+
         try:
             # Combiner tous les résultats
             combined_df = pd.concat(all_dataframes, ignore_index=True)
-            
+
             # Exporter les logs
             log_filename = export_api_logs(combined_df)
             print(f"\n--- API Logs Export ---")
             print(f"API logs exported to : {log_filename}")
-            
+
             # Afficher un résumé des erreurs
             self._print_api_summary(combined_df)
-            
+
         except Exception as e:
             print(f"Error during logs export : {e}")
-    
+
     def _print_api_summary(self, combined_df: pd.DataFrame) -> None:
         """Affiche un résumé des opérations API."""
         if "api_success" not in combined_df.columns:
             return
-        
+
         success_count = combined_df["api_success"].sum()
         total_count = len(combined_df)
         error_count = total_count - success_count
-        
+
         print(f"\nAPI Operations Summary :")
         print(f"  - Success : {success_count}/{total_count}")
         print(f"  - Errors : {error_count}/{total_count}")
-        
+
         if error_count > 0:
             print(f"\nError Details :")
             errors_df = combined_df[~combined_df["api_success"]]
@@ -181,23 +186,23 @@ class LogManager:
                 print(f"  - {row.get('api_message', 'Unknown error')}")
                 if 'api_error_details' in row and pd.notna(row['api_error_details']):
                     print(f"    Details : {row['api_error_details']}")
-    
+
     def print_sync_summary(self) -> None:
         """Affiche un résumé de la synchronisation."""
         if not self.results:
             return
-        
+
         total_scopes = len(self.results)
         successful_scopes = sum(1 for r in self.results if r.success)
         failed_scopes = total_scopes - successful_scopes
         total_duration = sum(r.duration_seconds for r in self.results)
-        
+
         print(f"\n--- Synchronization Summary ---")
         print(f"  - Total scopes processed : {total_scopes}")
         print(f"  - Successful : {successful_scopes}")
         print(f"  - Failed : {failed_scopes}")
         print(f"  - Total duration : {total_duration:.2f} seconds")
-        
+
         if failed_scopes > 0:
             print(f"\nFailed scopes :")
             for result in self.results:
@@ -208,17 +213,17 @@ class LogManager:
 class SyncOrchestrator:
     """
     Orchestrateur principal pour la synchronisation N2F.
-    
+
     Coordonne tous les aspects de la synchronisation :
     - Configuration et contexte
     - Exécution des scopes
     - Gestion des logs et reporting
     """
-    
+
     def __init__(self, config_path: Path, args: argparse.Namespace):
         """
         Initialise l'orchestrateur.
-        
+
         Args:
             config_path: Chemin vers le fichier de configuration
             args: Arguments de ligne de commande
@@ -227,15 +232,15 @@ class SyncOrchestrator:
         self.args = args
         self.context_builder = ContextBuilder(args, config_path)
         self.log_manager = LogManager()
-        
+
         # Initialisation du registry avec auto-découverte
         self.registry = get_registry()
-        self.registry.auto_discover_scopes("business.process")
-    
+        # L'auto-découverte se fait dans le ContextBuilder, pas ici
+
     def run(self) -> None:
         """
         Exécute la synchronisation complète.
-        
+
         Cette méthode orchestre l'ensemble du processus :
         1. Construction du contexte
         2. Détermination des scopes à traiter
@@ -245,44 +250,44 @@ class SyncOrchestrator:
         try:
             # Construction du contexte
             context = self.context_builder.build()
-            
+
             # Détermination des scopes à traiter
             selected_scopes = self._get_selected_scopes()
-            
+
             # Exécution des scopes
             self._execute_scopes(context, selected_scopes)
-            
+
             # Export et résumé
             self.log_manager.export_and_summarize()
             self.log_manager.print_sync_summary()
-            
+
         except Exception as e:
             print(f"Fatal error during synchronization: {e}")
             raise
-    
+
     def _get_selected_scopes(self) -> List[str]:
         """Détermine les scopes à traiter."""
         selected_scopes = set(self.args.scope) if hasattr(self.args, "scope") else {"all"}
-        
+
         if "all" in selected_scopes:
             # Utilise le registry pour obtenir les scopes disponibles
             selected_scopes = set(self.registry.get_enabled_scopes())
-        
+
         return list(selected_scopes)
-    
+
     def _execute_scopes(self, context: SyncContext, scope_names: List[str]) -> None:
         """Exécute les scopes sélectionnés."""
         executor = ScopeExecutor(context)
-        
+
         for scope_name in scope_names:
             result = executor.execute_scope(scope_name)
             self.log_manager.add_result(result)
-    
+
     def get_configuration_summary(self) -> Dict[str, Any]:
         """Retourne un résumé de la configuration."""
         config_loader = ConfigLoader(self.config_path)
         sync_config = config_loader.load()
-        
+
         return {
             "config_file": str(self.config_path),
             "database_prod": sync_config.database.prod,

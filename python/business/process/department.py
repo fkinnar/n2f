@@ -11,34 +11,34 @@ from helper.context import SyncContext
 from core import register_scope
 
 
-def synchronize_departments(context: SyncContext, sql_filename: str) -> List[pd.DataFrame]:
+def synchronize_departments(context: SyncContext, sql_filename: str, sql_column_filter: str = "") -> List[pd.DataFrame]:
     """
     Fonction de synchronisation pour les départements.
-    
+
     Cette fonction est automatiquement découverte et enregistrée
     par le Pattern Registry grâce à son nom qui commence par 'synchronize_'.
-    
+
     Args:
         context: Contexte de synchronisation
         sql_filename: Nom du fichier SQL à utiliser
-        
+
     Returns:
         Liste des DataFrames de résultats
     """
     print(f"--- Synchronisation des départements avec {sql_filename} ---")
-    
+
     # Simulation de la synchronisation
     print("Chargement des départements depuis Agresso...")
     print("Chargement des départements depuis N2F...")
     print("Comparaison et synchronisation...")
-    
+
     # Retourne un DataFrame vide pour l'exemple
     result_df = pd.DataFrame({
         'department_id': [],
         'department_name': [],
         'status': []
     })
-    
+
     print("Synchronisation des départements terminée")
     return [result_df]
 

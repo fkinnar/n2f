@@ -20,7 +20,7 @@ def _load_agresso_axes(context: SyncContext, sql_filename: str, sql_column_filte
     agresso_config = context.get_config_value("agresso")
     sql_path = agresso_config.sql_path if hasattr(agresso_config, 'sql_path') else agresso_config["sql-path"]
     prod = agresso_config.prod if hasattr(agresso_config, 'prod') else agresso_config["prod"]
-    
+
     df_agresso_axes = select(
         base_dir=context.base_dir,
         db_user=context.db_user,
@@ -78,7 +78,7 @@ def _perform_sync_actions(
         # Utilise la méthode get_config_value pour supporter l'ancien et le nouveau format
         n2f_config = context.get_config_value("n2f")
         sandbox = n2f_config.sandbox if hasattr(n2f_config, 'sandbox') else n2f_config["sandbox"]
-        
+
         created_df, status_col = create_n2f_axes(
             n2f_client=n2f_client, axe_id=n2f_code, df_agresso_projects=df_agresso_axes,
             df_n2f_projects=df_n2f_axes, df_n2f_companies=df_n2f_companies,
@@ -136,14 +136,14 @@ def synchronize(
 
     return results
 
-def synchronize_projects(context: SyncContext, sql_filename: str) -> list[pd.DataFrame]:
+def synchronize_projects(context: SyncContext, sql_filename: str, sql_column_filter: str = "") -> list[pd.DataFrame]:
     """Effectue la synchronisation des projets Agresso <-> N2F."""
     return synchronize(context=context, axe_type=AxeType.PROJECTS, sql_filename=sql_filename)
 
-def synchronize_plates(context: SyncContext, sql_filename: str) -> list[pd.DataFrame]:
+def synchronize_plates(context: SyncContext, sql_filename: str, sql_column_filter: str = "") -> list[pd.DataFrame]:
     """Effectue la synchronisation des plaques Agresso <-> N2F."""
     return synchronize(context=context, axe_type=AxeType.PLATES, sql_filename=sql_filename)
 
-def synchronize_subposts(context: SyncContext, sql_filename: str) -> list[pd.DataFrame]:
+def synchronize_subposts(context: SyncContext, sql_filename: str, sql_column_filter: str = "") -> list[pd.DataFrame]:
     """Effectue la synchronisation des subposts Agresso <-> N2F."""
     return synchronize(context=context, axe_type=AxeType.SUBPOSTS, sql_filename=sql_filename)
