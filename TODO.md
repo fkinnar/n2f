@@ -596,7 +596,7 @@ def api_call(self, endpoint: str) -> ApiResult:
 3. **✅ Tests de configuration terminés** - 21/21 tests passent (100% de succès)
 4. **✅ Tests du cache terminés** - 21/21 tests passent (100% de succès)
 5. **✅ Tests des métriques terminés** - 20/20 tests passent (100% de succès)
-6. **Compléter les tests unitaires manquants** - Tests du retry
+6. **✅ Tests du retry terminés** - 34/34 tests passent (100% de succès)
 7. **Améliorer la documentation des tests** - Documentation complète et mise à jour
 
 ---
@@ -611,7 +611,7 @@ def api_call(self, endpoint: str) -> ApiResult:
 - [✅] **Tests de configuration** - SyncConfig, ConfigLoader, SyncRegistry (21 tests)
 - [✅] **Tests du cache** - AdvancedCache avec persistance et métriques (21 tests)
 - [✅] **Tests des métriques** - SyncMetrics et export de données (20 tests)
-- [ ] **Tests du retry** - RetryManager et stratégies de retry
+- [✅] **Tests du retry** - RetryManager et stratégies de retry (34 tests)
 
 #### **Objectifs des tests :**
 
