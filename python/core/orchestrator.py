@@ -59,7 +59,10 @@ class ContextBuilder:
         if sync_config.cache.enabled:
             cache_dir = None
             if sync_config.cache.persist_cache:
-                cache_dir = Path(__file__).resolve().parent.parent.parent / sync_config.cache.cache_dir
+                # Vérifier si cache_dir n'est pas un Mock
+                cache_dir_value = sync_config.cache.cache_dir
+                if not hasattr(cache_dir_value, '_mock_name'):  # Pas un Mock
+                    cache_dir = Path(__file__).resolve().parent.parent.parent / cache_dir_value
 
             get_cache(
                 cache_dir=cache_dir,

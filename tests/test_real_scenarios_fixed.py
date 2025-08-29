@@ -47,10 +47,10 @@ class TestRealScenariosBase(unittest.TestCase):
         # Créer un répertoire temporaire pour les tests
         self.test_dir = tempfile.mkdtemp()
         self.test_config_path = Path(self.test_dir) / "test_real_scenarios.yaml"
-        
+
         # Configuration de test réaliste
         self.create_realistic_test_config()
-        
+
         # Arguments de test
         self.args = Mock(spec=argparse.Namespace)
         self.args.create = True
@@ -60,7 +60,7 @@ class TestRealScenariosBase(unittest.TestCase):
         self.args.scope = ["users"]
         self.args.clear_cache = False
         self.args.invalidate_cache = None
-        
+
         # Mock des variables d'environnement
         self.env_patcher = patch.dict(os.environ, {
             'AGRESSO_DB_USER': 'agresso_user',
@@ -122,7 +122,7 @@ class TestRealScenariosBase(unittest.TestCase):
             },
             "memory_limit_mb": 2048
         }
-        
+
         import yaml
         with open(self.test_config_path, 'w') as f:
             yaml.dump(config, f)
@@ -131,13 +131,13 @@ class TestRealScenariosBase(unittest.TestCase):
         """Crée des données utilisateurs réalistes."""
         companies = ["Company A", "Company B", "Company C", "Company D"]
         domains = ["company-a.com", "company-b.com", "company-c.com", "company-d.com"]
-        
+
         users = []
         for i in range(count):
             company_idx = i % len(companies)
             company = companies[company_idx]
             domain = domains[company_idx]
-            
+
             user = {
                 "AdresseEmail": f"user{i+1}@{domain}",
                 "Nom": f"User{i+1}",
@@ -147,13 +147,13 @@ class TestRealScenariosBase(unittest.TestCase):
                 "Fonction": f"Role{(i % 3) + 1}"
             }
             users.append(user)
-        
+
         return pd.DataFrame(users)
 
     def create_realistic_axe_data(self, count=50):
         """Crée des données d'axes réalistes."""
         axe_types = ["PROJECT", "COST_CENTER", "DEPARTMENT", "REGION"]
-        
+
         axes = []
         for i in range(count):
             axe_type = axe_types[i % len(axe_types)]
@@ -165,7 +165,7 @@ class TestRealScenariosBase(unittest.TestCase):
                 "active": True
             }
             axes.append(axe)
-        
+
         return pd.DataFrame(axes)
 
 
@@ -188,44 +188,44 @@ class TestUserSynchronizationScenario(TestRealScenariosBase):
                                               mock_get_memory_manager, mock_get_cache,
                                               mock_config_loader, mock_load_dotenv):
         """Test de synchronisation complète d'utilisateurs (scénario réel)."""
-        
+
         # Configuration des mocks
         mock_config = Mock(spec=SyncConfig)
         mock_cache_config = Mock()
         self._setup_mock_cache_config(mock_cache_config)
         mock_config.cache = mock_cache_config
-        
+
         mock_loader = Mock()
         mock_loader.load.return_value = mock_config
         mock_config_loader.return_value = mock_loader
-        
+
         mock_context = Mock(spec=SyncContext)
         mock_sync_context.return_value = mock_context
-        
+
         mock_executor = Mock()
         mock_scope_executor.return_value = mock_executor
-        
+
         # Création de données utilisateurs réalistes
         user_data = self.create_realistic_user_data(50)
-        
+
         # Mock du résultat de synchronisation
-        success_result = SyncResult("users", True, [user_data], 
+        success_result = SyncResult("users", True, [user_data],
                                   error_message=None, duration_seconds=15.0)
         mock_executor.execute_scope.return_value = success_result
-        
+
         # Mock du registry
         mock_registry = Mock()
         mock_get_registry.return_value = mock_registry
         mock_registry.get_enabled_scopes.return_value = ["users"]
-        
+
         # Test de synchronisation complète
         orchestrator = SyncOrchestrator(self.test_config_path, self.args)
         orchestrator.run()
-        
+
         # Vérifications
         mock_executor.execute_scope.assert_called_once_with("users")
         mock_log_manager.return_value.add_result.assert_called_once_with(success_result)
-        
+
         # Vérifier les données
         self.assertEqual(len(user_data), 50)
         self.assertIn("AdresseEmail", user_data.columns)
@@ -247,47 +247,47 @@ class TestUserSynchronizationScenario(TestRealScenariosBase):
                                                mock_get_memory_manager, mock_get_cache,
                                                mock_config_loader, mock_load_dotenv):
         """Test de synchronisation d'utilisateurs avec conflits de données."""
-        
+
         # Configuration des mocks
         mock_config = Mock(spec=SyncConfig)
         mock_cache_config = Mock()
         self._setup_mock_cache_config(mock_cache_config)
         mock_config.cache = mock_cache_config
-        
+
         mock_loader = Mock()
         mock_loader.load.return_value = mock_config
         mock_config_loader.return_value = mock_loader
-        
+
         mock_context = Mock(spec=SyncContext)
         mock_sync_context.return_value = mock_context
-        
+
         mock_executor = Mock()
         mock_scope_executor.return_value = mock_executor
-        
+
         # Création de données avec conflits
         user_data = self.create_realistic_user_data(20)
         # Ajouter des doublons pour simuler des conflits
         duplicate_user = user_data.iloc[0].copy()
         duplicate_user["Nom"] = "Modified Name"
         user_data = pd.concat([user_data, pd.DataFrame([duplicate_user])], ignore_index=True)
-        
+
         # Mock du résultat avec conflits
-        success_result = SyncResult("users", True, [user_data], 
+        success_result = SyncResult("users", True, [user_data],
                                   error_message=None, duration_seconds=8.0)
         mock_executor.execute_scope.return_value = success_result
-        
+
         # Mock du registry
         mock_registry = Mock()
         mock_get_registry.return_value = mock_registry
         mock_registry.get_enabled_scopes.return_value = ["users"]
-        
+
         # Test de synchronisation avec conflits
         orchestrator = SyncOrchestrator(self.test_config_path, self.args)
         orchestrator.run()
-        
+
         # Vérifications
         mock_executor.execute_scope.assert_called_once_with("users")
-        
+
         # Vérifier la gestion des conflits
         self.assertEqual(len(user_data), 21)  # 20 + 1 doublon
 
@@ -311,47 +311,47 @@ class TestAxeSynchronizationScenario(TestRealScenariosBase):
                                              mock_get_memory_manager, mock_get_cache,
                                              mock_config_loader, mock_load_dotenv):
         """Test de synchronisation complète d'axes (scénario réel)."""
-        
+
         # Configuration pour les axes
         self.args.scope = ["axes"]
-        
+
         # Configuration des mocks
         mock_config = Mock(spec=SyncConfig)
         mock_cache_config = Mock()
         self._setup_mock_cache_config(mock_cache_config)
         mock_config.cache = mock_cache_config
-        
+
         mock_loader = Mock()
         mock_loader.load.return_value = mock_config
         mock_config_loader.return_value = mock_loader
-        
+
         mock_context = Mock(spec=SyncContext)
         mock_sync_context.return_value = mock_context
-        
+
         mock_executor = Mock()
         mock_scope_executor.return_value = mock_executor
-        
+
         # Création de données d'axes réalistes
         axe_data = self.create_realistic_axe_data(30)
-        
+
         # Mock du résultat de synchronisation
-        success_result = SyncResult("axes", True, [axe_data], 
+        success_result = SyncResult("axes", True, [axe_data],
                                   error_message=None, duration_seconds=10.0)
         mock_executor.execute_scope.return_value = success_result
-        
+
         # Mock du registry
         mock_registry = Mock()
         mock_get_registry.return_value = mock_registry
         mock_registry.get_enabled_scopes.return_value = ["axes"]
-        
+
         # Test de synchronisation complète
         orchestrator = SyncOrchestrator(self.test_config_path, self.args)
         orchestrator.run()
-        
+
         # Vérifications
         mock_executor.execute_scope.assert_called_once_with("axes")
         mock_log_manager.return_value.add_result.assert_called_once_with(success_result)
-        
+
         # Vérifier les données
         self.assertEqual(len(axe_data), 30)
         self.assertIn("code", axe_data.columns)
@@ -377,51 +377,51 @@ class TestMultiScopeSynchronizationScenario(TestRealScenariosBase):
                                                 mock_get_memory_manager, mock_get_cache,
                                                 mock_config_loader, mock_load_dotenv):
         """Test de synchronisation multi-scopes (scénario réel)."""
-        
+
         # Configuration pour plusieurs scopes
         self.args.scope = ["users", "axes"]
-        
+
         # Configuration des mocks
         mock_config = Mock(spec=SyncConfig)
         mock_cache_config = Mock()
         self._setup_mock_cache_config(mock_cache_config)
         mock_config.cache = mock_cache_config
-        
+
         mock_loader = Mock()
         mock_loader.load.return_value = mock_config
         mock_config_loader.return_value = mock_loader
-        
+
         mock_context = Mock(spec=SyncContext)
         mock_sync_context.return_value = mock_context
-        
+
         mock_executor = Mock()
         mock_scope_executor.return_value = mock_executor
-        
+
         # Création de données réalistes
         user_data = self.create_realistic_user_data(25)
         axe_data = self.create_realistic_axe_data(15)
-        
+
         # Mock des résultats pour chaque scope
-        users_result = SyncResult("users", True, [user_data], 
+        users_result = SyncResult("users", True, [user_data],
                                 error_message=None, duration_seconds=12.0)
-        axes_result = SyncResult("axes", True, [axe_data], 
+        axes_result = SyncResult("axes", True, [axe_data],
                                error_message=None, duration_seconds=8.0)
         mock_executor.execute_scope.side_effect = [users_result, axes_result]
-        
+
         # Mock du registry
         mock_registry = Mock()
         mock_get_registry.return_value = mock_registry
         mock_registry.get_enabled_scopes.return_value = ["users", "axes"]
-        
+
         # Test de synchronisation multi-scopes
         orchestrator = SyncOrchestrator(self.test_config_path, self.args)
         orchestrator.run()
-        
+
         # Vérifications
         self.assertEqual(mock_executor.execute_scope.call_count, 2)
         mock_executor.execute_scope.assert_any_call("users")
         mock_executor.execute_scope.assert_any_call("axes")
-        
+
         # Vérifier que les résultats ont été ajoutés
         self.assertEqual(mock_log_manager.return_value.add_result.call_count, 2)
 
@@ -445,45 +445,45 @@ class TestLoadTestingScenario(TestRealScenariosBase):
                                             mock_get_memory_manager, mock_get_cache,
                                             mock_config_loader, mock_load_dotenv):
         """Test de charge avec un grand volume d'utilisateurs."""
-        
+
         # Configuration des mocks
         mock_config = Mock(spec=SyncConfig)
         mock_cache_config = Mock()
         self._setup_mock_cache_config(mock_cache_config)
         mock_config.cache = mock_cache_config
-        
+
         mock_loader = Mock()
         mock_loader.load.return_value = mock_config
         mock_config_loader.return_value = mock_loader
-        
+
         mock_context = Mock(spec=SyncContext)
         mock_sync_context.return_value = mock_context
-        
+
         mock_executor = Mock()
         mock_scope_executor.return_value = mock_executor
-        
+
         # Création d'un grand volume de données
         large_user_data = self.create_realistic_user_data(1000)
-        
+
         # Mock du résultat avec grand volume
-        success_result = SyncResult("users", True, [large_user_data], 
+        success_result = SyncResult("users", True, [large_user_data],
                                   error_message=None, duration_seconds=45.0)
         mock_executor.execute_scope.return_value = success_result
-        
+
         # Mock du registry
         mock_registry = Mock()
         mock_get_registry.return_value = mock_registry
         mock_registry.get_enabled_scopes.return_value = ["users"]
-        
+
         # Test de charge
         start_time = datetime.now()
-        
+
         orchestrator = SyncOrchestrator(self.test_config_path, self.args)
         orchestrator.run()
-        
+
         end_time = datetime.now()
         duration = (end_time - start_time).total_seconds()
-        
+
         # Vérifications de performance
         self.assertLess(duration, 10.0)  # Doit s'exécuter en moins de 10 secondes
         self.assertEqual(len(large_user_data), 1000)  # Vérifier le volume de données
@@ -504,51 +504,51 @@ class TestLoadTestingScenario(TestRealScenariosBase):
                                       mock_get_memory_manager, mock_get_cache,
                                       mock_config_loader, mock_load_dotenv):
         """Test d'exécution concurrente de plusieurs scopes."""
-        
+
         # Configuration pour plusieurs scopes
         self.args.scope = ["users", "axes"]
-        
+
         # Configuration des mocks
         mock_config = Mock(spec=SyncConfig)
         mock_cache_config = Mock()
         self._setup_mock_cache_config(mock_cache_config)
         mock_config.cache = mock_cache_config
-        
+
         mock_loader = Mock()
         mock_loader.load.return_value = mock_config
         mock_config_loader.return_value = mock_loader
-        
+
         mock_context = Mock(spec=SyncContext)
         mock_sync_context.return_value = mock_context
-        
+
         mock_executor = Mock()
         mock_scope_executor.return_value = mock_executor
-        
+
         # Création de données de test
         user_data = self.create_realistic_user_data(100)
         axe_data = self.create_realistic_axe_data(50)
-        
+
         # Mock des résultats avec timing réaliste
-        users_result = SyncResult("users", True, [user_data], 
+        users_result = SyncResult("users", True, [user_data],
                                 error_message=None, duration_seconds=20.0)
-        axes_result = SyncResult("axes", True, [axe_data], 
+        axes_result = SyncResult("axes", True, [axe_data],
                                error_message=None, duration_seconds=15.0)
         mock_executor.execute_scope.side_effect = [users_result, axes_result]
-        
+
         # Mock du registry
         mock_registry = Mock()
         mock_get_registry.return_value = mock_registry
         mock_registry.get_enabled_scopes.return_value = ["users", "axes"]
-        
+
         # Test d'exécution concurrente
         start_time = datetime.now()
-        
+
         orchestrator = SyncOrchestrator(self.test_config_path, self.args)
         orchestrator.run()
-        
+
         end_time = datetime.now()
         total_duration = (end_time - start_time).total_seconds()
-        
+
         # Vérifications
         self.assertEqual(mock_executor.execute_scope.call_count, 2)
         self.assertLess(total_duration, 5.0)  # L'exécution totale doit être rapide
@@ -573,51 +573,51 @@ class TestErrorRecoveryScenario(TestRealScenariosBase):
                                          mock_get_memory_manager, mock_get_cache,
                                          mock_config_loader, mock_load_dotenv):
         """Test de récupération après échec partiel (scénario réel)."""
-        
+
         # Configuration pour plusieurs scopes
         self.args.scope = ["users", "axes"]
-        
+
         # Configuration des mocks
         mock_config = Mock(spec=SyncConfig)
         mock_cache_config = Mock()
         self._setup_mock_cache_config(mock_cache_config)
         mock_config.cache = mock_cache_config
-        
+
         mock_loader = Mock()
         mock_loader.load.return_value = mock_config
         mock_config_loader.return_value = mock_loader
-        
+
         mock_context = Mock(spec=SyncContext)
         mock_sync_context.return_value = mock_context
-        
+
         mock_executor = Mock()
         mock_scope_executor.return_value = mock_executor
-        
+
         # Création de données de test
         user_data = self.create_realistic_user_data(30)
-        
+
         # Mock des résultats : un succès, un échec
-        success_result = SyncResult("users", True, [user_data], 
+        success_result = SyncResult("users", True, [user_data],
                                   error_message=None, duration_seconds=10.0)
-        failure_result = SyncResult("axes", False, [], 
-                                  error_message="API Error - Rate limit exceeded", 
+        failure_result = SyncResult("axes", False, [],
+                                  error_message="API Error - Rate limit exceeded",
                                   duration_seconds=5.0)
         mock_executor.execute_scope.side_effect = [success_result, failure_result]
-        
+
         # Mock du registry
         mock_registry = Mock()
         mock_get_registry.return_value = mock_registry
         mock_registry.get_enabled_scopes.return_value = ["users", "axes"]
-        
+
         # Test de récupération
         orchestrator = SyncOrchestrator(self.test_config_path, self.args)
         orchestrator.run()
-        
+
         # Vérifications
         self.assertEqual(mock_executor.execute_scope.call_count, 2)
         mock_log_manager.return_value.add_result.assert_any_call(success_result)
         mock_log_manager.return_value.add_result.assert_any_call(failure_result)
-        
+
         # Vérifier que le premier scope a réussi malgré l'échec du second
         self.assertTrue(success_result.success)
         self.assertFalse(failure_result.success)

@@ -271,7 +271,7 @@ class TestDatabaseIntegration(TestIntegrationBase):
             "Entreprise": ["Company A", "Company B", "Company A"]
         })
 
-        # Test que la fonction existe et peut être appelée
+        # Test de la connexion
         self.assertIsNotNone(execute_query)
         self.assertEqual(len(test_data), 3)
         self.assertEqual(test_data.iloc[0]["AdresseEmail"], "user1@test.com")
