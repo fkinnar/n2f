@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 from .config import ConfigLoader, SyncConfig
 from .registry import get_registry
 from .cache import get_cache, cache_stats, cache_clear, cache_invalidate
+from .memory_manager import get_memory_manager, cleanup_scope, cleanup_all, print_memory_summary
 import sys
 from pathlib import Path
 
@@ -63,6 +64,10 @@ class ContextBuilder:
                 max_size_mb=sync_config.cache.max_size_mb,
                 default_ttl=sync_config.cache.default_ttl
             )
+
+        # Initialisation du gestionnaire de mémoire
+        memory_limit_mb = getattr(sync_config, 'memory_limit_mb', 1024)  # 1GB par défaut
+        get_memory_manager(max_memory_mb=memory_limit_mb)
 
         # Auto-découverte des scopes APRÈS le chargement de la configuration
         registry = get_registry()
@@ -295,9 +300,15 @@ class SyncOrchestrator:
                 print(f"\n--- Cache Statistics ---")
                 print(cache_stats())
 
+            # Affichage des statistiques mémoire
+            print_memory_summary()
+
         except Exception as e:
             print(f"Fatal error during synchronization: {e}")
             raise
+        finally:
+            # Nettoyage final de la mémoire
+            cleanup_all()
 
     def _get_selected_scopes(self) -> List[str]:
         """Détermine les scopes à traiter."""
@@ -314,8 +325,12 @@ class SyncOrchestrator:
         executor = ScopeExecutor(context)
 
         for scope_name in scope_names:
-            result = executor.execute_scope(scope_name)
-            self.log_manager.add_result(result)
+            try:
+                result = executor.execute_scope(scope_name)
+                self.log_manager.add_result(result)
+            finally:
+                # Nettoyage de la mémoire après chaque scope
+                cleanup_scope(scope_name)
 
     def get_configuration_summary(self) -> Dict[str, Any]:
         """Retourne un résumé de la configuration."""

@@ -39,6 +39,18 @@ from .cache import (
     cache_clear,
     cache_stats
 )
+from .memory_manager import (
+    MemoryManager,
+    DataFrameInfo,
+    MemoryMetrics,
+    get_memory_manager,
+    register_dataframe,
+    get_dataframe,
+    cleanup_scope,
+    cleanup_all,
+    print_memory_summary,
+    get_memory_stats
+)
 from .exceptions import (
     SyncException,
     ApiException,
@@ -83,6 +95,18 @@ __all__ = [
     "cache_invalidate",
     "cache_clear",
     "cache_stats",
+
+    # Memory Manager
+    "MemoryManager",
+    "DataFrameInfo",
+    "MemoryMetrics",
+    "get_memory_manager",
+    "register_dataframe",
+    "get_dataframe",
+    "cleanup_scope",
+    "cleanup_all",
+    "print_memory_summary",
+    "get_memory_stats",
 
     # Exceptions
     "SyncException",

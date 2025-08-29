@@ -540,7 +540,7 @@ class CacheManager:
 
 ## ⚡ PHASE 3 : Optimisations (1-2 jours)
 
-### 🔧 **3.1 Optimisation de la mémoire** ✅ **PRIORITÉ HAUTE**
+### 🔧 **3.1 Optimisation de la mémoire** ✅ **TERMINÉ**
 
 #### **Problème identifié :**
 
@@ -548,72 +548,153 @@ class CacheManager:
 - Pas de libération de mémoire entre les scopes
 - Risque de consommation excessive avec de gros volumes de données
 
-#### **Solution :**
+#### **Solution implémentée :**
 
 ```python
-# Créer : python/core/memory_manager.py
+# Créé : python/core/memory_manager.py
 class MemoryManager:
-    def __init__(self, max_memory_mb: int = 1024):
+    """
+    Gestionnaire de mémoire intelligent pour les DataFrames.
+
+    Fonctionnalités :
+    - Surveillance de l'utilisation mémoire
+    - Libération automatique selon stratégie LRU
+    - Nettoyage par scope
+    - Métriques détaillées
+    - Protection contre la surconsommation
+    """
+
+    def __init__(self, max_memory_mb: int = 1024, cleanup_threshold: float = 0.8):
         self.max_memory_mb = max_memory_mb
-        self.current_usage = 0
-        self.dataframes = {}
+        self.cleanup_threshold = cleanup_threshold
+        self.dataframes: Dict[str, DataFrameInfo] = {}
+        self.metrics = MemoryMetrics()
+        self.process = psutil.Process()
 
-    def register_dataframe(self, name: str, df: pd.DataFrame) -> bool:
+    def register_dataframe(self, name: str, df: pd.DataFrame, scope: str = "default") -> bool:
         """Enregistre un DataFrame avec gestion de la mémoire."""
-        size_mb = df.memory_usage(deep=True).sum() / 1024 / 1024
+        size_mb = self._calculate_dataframe_size(df)
 
-        if self.current_usage + size_mb > self.max_memory_mb:
+        if self.metrics.current_usage_mb + size_mb > self.max_memory_mb * self.cleanup_threshold:
             self._cleanup_oldest()
 
-        self.dataframes[name] = {
-            'dataframe': df,
-            'size_mb': size_mb,
-            'access_time': time.time()
-        }
-        self.current_usage += size_mb
+        if self.metrics.current_usage_mb + size_mb > self.max_memory_mb:
+            return False
+
+        self.dataframes[name] = DataFrameInfo(
+            dataframe=df,
+            size_mb=size_mb,
+            access_time=time.time(),
+            scope=scope,
+            name=name
+        )
         return True
 
-    def get_dataframe(self, name: str) -> Optional[pd.DataFrame]:
-        """Récupère un DataFrame avec mise à jour du temps d'accès."""
-        if name in self.dataframes:
-            self.dataframes[name]['access_time'] = time.time()
-            return self.dataframes[name]['dataframe']
-        return None
-
-    def cleanup_scope(self, scope_name: str):
+    def cleanup_scope(self, scope_name: str) -> float:
         """Libère la mémoire d'un scope spécifique."""
-        keys_to_remove = [k for k in self.dataframes.keys() if k.startswith(f"{scope_name}_")]
+        keys_to_remove = [k for k in self.dataframes.keys()
+                         if self.dataframes[k].scope == scope_name]
+
+        freed_memory = 0.0
         for key in keys_to_remove:
-            self.current_usage -= self.dataframes[key]['size_mb']
+            freed_memory += self.dataframes[key].size_mb
             del self.dataframes[key]
 
-    def _cleanup_oldest(self):
-        """Libère les DataFrames les plus anciens."""
-        if not self.dataframes:
-            return
+        return freed_memory
 
-        oldest_key = min(self.dataframes.keys(),
-                        key=lambda k: self.dataframes[k]['access_time'])
-        self.current_usage -= self.dataframes[oldest_key]['size_mb']
-        del self.dataframes[oldest_key]
+    def get_memory_stats(self) -> Dict:
+        """Retourne les statistiques d'utilisation mémoire."""
+        return {
+            "memory_manager": {
+                "current_usage_mb": self.metrics.current_usage_mb,
+                "peak_usage_mb": self.metrics.peak_usage_mb,
+                "max_memory_mb": self.max_memory_mb,
+                "usage_percentage": (self.metrics.current_usage_mb / self.max_memory_mb) * 100,
+                "total_dataframes": self.metrics.total_dataframes,
+                "active_dataframes": len(self.dataframes),
+                "freed_memory_mb": self.metrics.freed_memory_mb,
+                "cleanup_count": self.metrics.cleanup_count
+            },
+            "system": {
+                "total_memory_mb": system_memory.total / 1024 / 1024,
+                "available_memory_mb": system_memory.available / 1024 / 1024,
+                "memory_percentage": system_memory.percent,
+                "process_memory_mb": self.process.memory_info().rss / 1024 / 1024
+            },
+            "dataframes_by_scope": self._get_dataframes_by_scope()
+        }
 ```
 
-#### **Intégration :**
+#### **Fichiers créés/modifiés :**
+
+- ✅ `python/core/memory_manager.py` → Gestionnaire de mémoire intelligent avec métriques
+- ✅ `python/core/memory_example.py` → Exemples d'utilisation du MemoryManager
+- ✅ `python/core/orchestrator.py` → Intégration du MemoryManager dans l'orchestrateur
+- ✅ `python/core/__init__.py` → Export des nouvelles classes de gestion mémoire
+- ✅ `requirements.txt` → Ajout de la dépendance `psutil==6.1.0`
+
+#### **Avantages obtenus :**
+
+- ✅ **Surveillance automatique** : Monitoring en temps réel de l'utilisation mémoire
+- ✅ **Libération intelligente** : Stratégie LRU pour libérer les DataFrames les plus anciens
+- ✅ **Nettoyage par scope** : Libération automatique après chaque synchronisation de scope
+- ✅ **Protection contre la surconsommation** : Limite configurable avec seuil de déclenchement
+- ✅ **Métriques détaillées** : Statistiques complètes d'utilisation mémoire et système
+- ✅ **Intégration transparente** : Fonctionne automatiquement avec l'orchestrateur existant
+- ✅ **Monitoring système** : Surveillance de la mémoire système et du processus
+- ✅ **Gestion d'erreur robuste** : Refus d'enregistrement si mémoire insuffisante
+- ✅ **Nettoyage final automatique** : Libération complète en fin de synchronisation
+
+#### **Fonctionnalités avancées :**
+
+- **Stratégie LRU** : Libération automatique des DataFrames les moins récemment utilisés
+- **Seuil configurable** : Déclenchement du nettoyage à 80% de la limite par défaut
+- **Métriques système** : Surveillance de la mémoire système et du processus
+- **Répartition par scope** : Visualisation de l'utilisation mémoire par scope
+- **Garbage collection** : Appel automatique du GC lors du nettoyage complet
+- **Logging détaillé** : Affichage des opérations de nettoyage et des métriques
+
+#### **Exemple d'utilisation :**
 
 ```python
-# Modifier : python/core/orchestrator.py
-class SyncOrchestrator:
-    def __init__(self, config_path: Path, args: argparse.Namespace):
-        self.memory_manager = MemoryManager(max_memory_mb=1024)
-        # ... reste du code
+# Initialisation du gestionnaire
+memory_manager = get_memory_manager(max_memory_mb=1024)
 
-    def run(self):
+# Enregistrement d'un DataFrame
+success = register_dataframe("users_data", df_users, scope="users")
+
+# Nettoyage d'un scope
+freed_memory = cleanup_scope("users")
+
+# Affichage des statistiques
+print_memory_summary()
+
+# Statistiques détaillées
+stats = get_memory_stats()
+print(f"Utilisation: {stats['memory_manager']['current_usage_mb']:.1f}MB")
+print(f"Pic: {stats['memory_manager']['peak_usage_mb']:.1f}MB")
+```
+
+#### **Intégration dans l'orchestrateur :**
+
+```python
+# python/core/orchestrator.py
+class SyncOrchestrator:
+    def run(self) -> None:
         try:
-            for scope_name in enabled_scopes:
-                # ... exécution du scope
-                self.memory_manager.cleanup_scope(scope_name)  # Libération après chaque scope
+            # ... exécution des scopes
+            for scope_name in scope_names:
+                try:
+                    result = executor.execute_scope(scope_name)
+                    self.log_manager.add_result(result)
+                finally:
+                    # Nettoyage de la mémoire après chaque scope
+                    cleanup_scope(scope_name)
         finally:
-            self.memory_manager.cleanup_all()  # Nettoyage final
+            # Nettoyage final de la mémoire
+            cleanup_all()
+            # Affichage des statistiques mémoire
+            print_memory_summary()
 ```
 
 ---
@@ -1011,9 +1092,9 @@ n2f/
 - [✅] 2.3 Orchestrator principal (Séparation des responsabilités avec SyncOrchestrator)
 - [✅] 2.4 Système de cache amélioré (Cache avancé avec persistance et métriques)
 
-### **Phase 3 :** 0/3 tâches terminées (3.4 supprimée - contrainte API N2F)
+### **Phase 3 :** 1/3 tâches terminées (3.4 supprimée - contrainte API N2F)
 
-- [ ] 3.1 Optimisation de la mémoire (PRIORITÉ HAUTE)
+- [✅] 3.1 Optimisation de la mémoire (PRIORITÉ HAUTE)
 - [ ] 3.2 Système de métriques (PRIORITÉ MOYENNE)
 - [ ] 3.3 Retry automatique (PRIORITÉ MOYENNE)
 
