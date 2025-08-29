@@ -204,7 +204,7 @@ class ApiResult:
 
 ```
 
-#### Exemple d'utilisation
+#### Exemple d'utilisation ApiResult
 
 ```python
 
@@ -341,7 +341,7 @@ class NetworkException(SyncException):
 
 ```
 
-### Exemple d'utilisation
+### Exemple d'utilisation des exceptions
 
 ```python
 from core.exceptions import ApiException, ValidationException
