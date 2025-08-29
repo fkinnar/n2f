@@ -2,7 +2,6 @@ from typing import Dict, Any
 import pandas as pd
 from n2f.api_result import ApiResult
 from business.process.base_synchronizer import EntitySynchronizer
-from n2f.process.axe import build_axe_payload, lookup_company_id
 
 
 class AxeSynchronizer(EntitySynchronizer):
@@ -40,6 +39,8 @@ class AxeSynchronizer(EntitySynchronizer):
         Returns:
             Dict: Payload pour l'API N2F axe
         """
+        # Import déplacé ici pour éviter les imports circulaires
+        from n2f.process.axe import build_axe_payload
         return build_axe_payload(entity, self.sandbox)
 
     def get_entity_id(self, entity: pd.Series) -> str:
@@ -85,6 +86,8 @@ class AxeSynchronizer(EntitySynchronizer):
         Returns:
             ApiResult: Résultat de l'opération
         """
+        # Import déplacé ici pour éviter les imports circulaires
+        from n2f.process.axe import lookup_company_id
         company_code = entity.get("client")
         company_id = lookup_company_id(company_code, df_n2f_companies, self.sandbox)
 

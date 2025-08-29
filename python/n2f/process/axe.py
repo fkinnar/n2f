@@ -3,7 +3,7 @@ from typing import List, Dict, Any, Tuple
 
 from n2f.client import N2fApiClient
 from n2f.payload import create_project_upsert_payload
-from n2f.process.user import lookup_company_id
+# Import déplacé dans les fonctions pour éviter l'import circulaire
 # Import déplacé dans la fonction pour éviter l'import circulaire
 from n2f.api_result import ApiResult
 from n2f.process.helper import add_api_logging_columns
@@ -43,6 +43,8 @@ def create_axes(
     api_results: List[ApiResult] = []
     for _, project in projects_to_create.iterrows():
         try:
+            # Import déplacé ici pour éviter les imports circulaires
+            from n2f.process.user import lookup_company_id
             company_code = project.get("client")
             company_id = lookup_company_id(company_code, df_n2f_companies, sandbox)
             if company_id:
@@ -93,6 +95,8 @@ def update_axes(
             continue
 
         try:
+            # Import déplacé ici pour éviter les imports circulaires
+            from n2f.process.user import lookup_company_id
             company_code = project.get("client")
             company_id = lookup_company_id(company_code, df_n2f_companies, sandbox)
             if company_id:

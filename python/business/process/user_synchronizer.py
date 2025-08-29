@@ -2,7 +2,6 @@ from typing import Dict, Any
 import pandas as pd
 from n2f.api_result import ApiResult
 from business.process.base_synchronizer import EntitySynchronizer
-from n2f.process.user import build_user_payload
 
 
 class UserSynchronizer(EntitySynchronizer):
@@ -37,6 +36,8 @@ class UserSynchronizer(EntitySynchronizer):
         Returns:
             Dict: Payload pour l'API N2F utilisateur
         """
+        # Import déplacé ici pour éviter les imports circulaires
+        from n2f.process.user import build_user_payload
         return build_user_payload(entity, df_agresso, df_n2f, self.n2f_client, df_n2f_companies, self.sandbox)
 
     def get_entity_id(self, entity: pd.Series) -> str:

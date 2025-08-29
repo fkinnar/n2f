@@ -10,14 +10,19 @@ from .user_synchronizer import UserSynchronizer
 
 def _load_agresso_users(context: SyncContext, sql_filename: str) -> pd.DataFrame:
     """Charge et normalise les utilisateurs depuis Agresso."""
+    # Utilise la méthode get_config_value pour supporter l'ancien et le nouveau format
+    agresso_config = context.get_config_value("agresso")
+    sql_path = agresso_config.sql_path if hasattr(agresso_config, 'sql_path') else agresso_config["sql-path"]
+    prod = agresso_config.prod if hasattr(agresso_config, 'prod') else agresso_config["prod"]
+    
     df_agresso_users = normalize_agresso_users(
         select(
             base_dir=context.base_dir,
             db_user=context.db_user,
             db_password=context.db_password,
-            sql_path=context.config["agresso"]["sql-path"],
+            sql_path=sql_path,
             sql_filename=sql_filename,
-            prod=context.config["agresso"]["prod"]
+            prod=prod
         )
     )
     print(f"Number of Agresso users loaded : {len(df_agresso_users)}")
@@ -59,7 +64,9 @@ def synchronize(
     df_n2f_users, df_n2f_companies = _load_n2f_data(n2f_client)
 
     # Création du synchroniseur
-    synchronizer = UserSynchronizer(n2f_client, context.config["n2f"]["sandbox"])
+    n2f_config = context.get_config_value("n2f")
+    sandbox = n2f_config.sandbox if hasattr(n2f_config, 'sandbox') else n2f_config["sandbox"]
+    synchronizer = UserSynchronizer(n2f_client, sandbox)
     results = []
 
     # Exécution des actions de synchronisation

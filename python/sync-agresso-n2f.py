@@ -1,18 +1,12 @@
-import yaml
 import argparse
 import os
 import pandas as pd
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 from dotenv import load_dotenv
 
 from helper.context import SyncContext
-from business.process import (
-    synchronize_users,
-    synchronize_projects,
-    synchronize_plates,
-    synchronize_subposts
-)
+from core import ConfigLoader
 from n2f.process.helper import export_api_logs
 
 def main() -> None:
@@ -53,12 +47,13 @@ def main() -> None:
     config_filename = f"{args.config}.yaml"
     config_path = base_dir.parent / config_filename
 
-    with config_path.open('r') as config_file:
-        config = yaml.safe_load(config_file)
+    # Chargement de la configuration centralisée
+    config_loader = ConfigLoader(config_path)
+    sync_config = config_loader.load()
 
     context = SyncContext(
         args=args,
-        config=config,
+        config=sync_config,
         base_dir=base_dir,
         db_user=os.getenv("AGRESSO_DB_USER"),
         db_password=os.getenv("AGRESSO_DB_PASSWORD"),
@@ -66,36 +61,29 @@ def main() -> None:
         client_secret=os.getenv("N2F_CLIENT_SECRET")
     )
 
-    # Mapping des périmètres (scopes) à leurs fonctions et fichiers SQL
-    scope_map: dict[str, tuple[Callable, str]] = {
-        "users": (synchronize_users, context.config["agresso"]["sql-filename-users"]),
-        "projects": (synchronize_projects, context.config["agresso"]["sql-filename-customaxes"]),
-        "plates": (synchronize_plates, context.config["agresso"]["sql-filename-customaxes"]),
-        "subposts": (synchronize_subposts, context.config["agresso"]["sql-filename-customaxes"]),
-    }
-
     # Sélection du périmètre à traiter
     selected_scopes = set(args.scope) if hasattr(args, "scope") else {"all"}
     if "all" in selected_scopes:
-        selected_scopes = set(scope_map.keys())
+        selected_scopes = set(sync_config.get_enabled_scopes())
 
     # Boucle de traitement
     all_results = []
     for scope_name in selected_scopes:
-        if scope_name in scope_map:
-            sync_function, sql_filename = scope_map[scope_name]
+        scope_config = sync_config.get_scope(scope_name)
+        if scope_config and scope_config.enabled:
+            print(f"--- Starting synchronization for scope : {scope_name} ({scope_config.display_name}) ---")
 
-            print(f"--- Starting synchronization for scope : {scope_name} ---")
-
-            results = sync_function(
+            results = scope_config.sync_function(
                 context=context,
-                sql_filename=sql_filename
+                sql_filename=scope_config.sql_filename
             )
 
             if results:
                 all_results.extend(results)
 
             print(f"--- End of synchronization for scope : {scope_name} ---")
+        else:
+            print(f"Warning: Scope '{scope_name}' not found or disabled")
 
     # Export des logs d'API si des résultats sont disponibles
     if all_results:
