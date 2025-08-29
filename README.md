@@ -132,8 +132,7 @@ python python/sync-agresso-n2f.py --config dev
 
 ### Structure du projet
 
-```
-
+```text
 n2f/
 ├── python/
 │   ├── sync-agresso-n2f.py      # Point d'entrée principal
