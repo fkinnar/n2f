@@ -216,7 +216,7 @@ class NetworkException(SyncException):
 
 ## 🏗️ PHASE 2 : Architecture (2-3 jours)
 
-### 🔧 **2.1 Configuration centralisée**
+### 🔧 **2.1 Configuration centralisée** ✅ **TERMINÉ**
 
 #### **Problème identifié :**
 
@@ -224,10 +224,10 @@ class NetworkException(SyncException):
 - Hardcoding des mappings scope → fonction
 - Pas de validation de configuration
 
-#### **Solution :**
+#### **Solution implémentée :**
 
 ```python
-# Créer : python/core/config.py
+# Créé : python/core/config.py
 @dataclass
 class SyncConfig:
     scopes: Dict[str, ScopeConfig]
@@ -240,12 +240,27 @@ class ScopeConfig:
     sql_filename: str
     entity_type: str
     display_name: str
+    description: str
+    enabled: bool
 ```
 
-#### **Fichiers à modifier :**
+#### **Fichiers créés/modifiés :**
 
-- `python/sync-agresso-n2f.py` → Utiliser SyncConfig
-- `python/helper/context.py` → Intégrer la configuration
+- ✅ `python/core/config.py` → Configuration centralisée avec dataclasses
+- ✅ `python/core/__init__.py` → Module core avec exports
+- ✅ `python/sync-agresso-n2f.py` → Utilise SyncConfig au lieu du hardcoding
+- ✅ `python/helper/context.py` → Supporte l'ancien et nouveau format de configuration
+- ✅ `python/n2f/client.py` → Compatible avec la nouvelle configuration
+- ✅ `python/business/process/user.py` → Compatible avec la nouvelle configuration
+
+#### **Avantages obtenus :**
+
+- ✅ **Configuration centralisée** : Toute la configuration dans un seul endroit
+- ✅ **Validation automatique** : Vérification de la cohérence de la configuration
+- ✅ **Extensibilité** : Facile d'ajouter de nouveaux scopes
+- ✅ **Compatibilité** : Supporte l'ancien format dict et le nouveau SyncConfig
+- ✅ **Type safety** : Utilisation de dataclasses avec types
+- ✅ **Documentation intégrée** : Chaque scope a une description et un nom d'affichage
 
 ---
 
@@ -541,9 +556,9 @@ n2f/
 - [✅] 1.3 Exceptions personnalisées (Hiérarchie complète d'exceptions créée)
 - [✅] 1.4 Documentation complète (README + API Reference + Docstrings)
 
-### **Phase 2 :** 0/4 tâches terminées
+### **Phase 2 :** 1/4 tâches terminées
 
-- [ ] 2.1 Configuration centralisée
+- [✅] 2.1 Configuration centralisée (Configuration centralisée avec dataclasses)
 - [ ] 2.2 Pattern Registry pour les scopes
 - [ ] 2.3 Orchestrator principal
 - [ ] 2.4 Système de cache amélioré
@@ -568,8 +583,9 @@ n2f/
 3. **✅ Phase 1, tâche 1.3 terminée** - Hiérarchie complète d'exceptions personnalisées créée
 4. **✅ Phase 1, tâche 1.4 terminée** - Documentation complète (README + API Reference + Docstrings)
 5. **🎉 Phase 1 COMPLÈTE ET MERGÉE** - Architecture de base solide et maintenable
-6. **🔄 Phase 2 PRÊTE** - Configuration centralisée et architecture avancée
-7. **📋 Branche feature-architecture créée** - Prêt pour commencer la Phase 2
+6. **✅ Phase 2, tâche 2.1 terminée** - Configuration centralisée avec dataclasses et validation
+7. **🔄 Phase 2 EN COURS** - Pattern Registry et architecture avancée
+8. **📋 Branche feature-architecture active** - Prêt pour la tâche 2.2
 
 ---
 
