@@ -5,6 +5,7 @@ Ce répertoire contient tous les tests unitaires et d'intégration pour le proje
 ## 📁 Structure des tests
 
 ### Tests unitaires
+
 - `test_cache.py` - Tests du système de cache
 - `test_config.py` - Tests de configuration
 - `test_exceptions.py` - Tests des exceptions personnalisées
@@ -14,22 +15,26 @@ Ce répertoire contient tous les tests unitaires et d'intégration pour le proje
 - `test_synchronizers.py` - Tests des synchroniseurs
 
 ### Tests d'intégration
+
 - `test_integration.py` - Tests d'intégration généraux
 - `test_real_scenarios.py` - Tests de scénarios réels
 
 ## 🧪 Exécution des tests
 
 ### Tous les tests
+
 ```bash
 python tests/run_tests.py
 ```
 
 ### Tests spécifiques
+
 ```bash
 python tests/run_tests.py --module tests.test_orchestrator
 ```
 
 ### Lister les tests disponibles
+
 ```bash
 python tests/run_tests.py --list
 ```
@@ -37,6 +42,7 @@ python tests/run_tests.py --list
 ## 📊 Couverture des tests
 
 ### Tests unitaires (156/156 ✅)
+
 - ✅ **Cache** : 20/20 tests réussis
 - ✅ **Configuration** : 25/25 tests réussis  
 - ✅ **Exceptions** : 15/15 tests réussis
@@ -46,16 +52,21 @@ python tests/run_tests.py --list
 - ✅ **Synchroniseurs** : 21/21 tests réussis
 
 ### Tests d'intégration (9/33 ⚠️)
+
 - ⚠️ **Intégration générale** : 6/13 tests réussis
 - ⚠️ **Scénarios réels** : 3/20 tests réussis
 
-**Total : 165/189 tests réussis (87.3%)**
+### Total des tests
+
+165/189 tests réussis (87.3%)
 
 ## 🔧 Configuration
 
-Les tests utilisent des configurations mockées et des données de test pour éviter les dépendances externes.
+Les tests utilisent des configurations mockées et des données de test pour éviter
+les dépendances externes.
 
 ### Variables d'environnement de test
+
 - `AGRESSO_DB_USER` : Utilisateur de test
 - `AGRESSO_DB_PASSWORD` : Mot de passe de test
 - `N2F_CLIENT_ID` : Client ID de test
@@ -63,8 +74,10 @@ Les tests utilisent des configurations mockées et des données de test pour év
 
 ## 📝 Notes de développement
 
-### Tests d'intégration
+### Scénarios d'intégration
+
 Les tests d'intégration simulent des scénarios réels avec :
+
 - Données utilisateurs réalistes
 - Données d'axes personnalisés
 - Tests de performance
@@ -72,7 +85,9 @@ Les tests d'intégration simulent des scénarios réels avec :
 - Tests de charge
 
 ### Mocking
+
 Les tests utilisent des mocks pour :
+
 - Base de données Agresso
 - API N2F
 - Système de cache
