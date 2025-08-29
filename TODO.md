@@ -597,7 +597,9 @@ def api_call(self, endpoint: str) -> ApiResult:
 4. **✅ Tests du cache terminés** - 21/21 tests passent (100% de succès)
 5. **✅ Tests des métriques terminés** - 20/20 tests passent (100% de succès)
 6. **✅ Tests du retry terminés** - 34/34 tests passent (100% de succès)
-7. **Améliorer la documentation des tests** - Documentation complète et mise à jour
+7. **Tests unitaires manquants** - Modules critiques sans tests (voir section 5.1.2)
+8. **Nettoyage du projet** - Suppression des fichiers temporaires et logs
+9. **Améliorer la documentation des tests** - Documentation complète et mise à jour
 
 ---
 
@@ -605,7 +607,7 @@ def api_call(self, endpoint: str) -> ApiResult:
 
 ### 🔧 **5.1 Tests unitaires manquants** 📋 **À PLANIFIER**
 
-#### **Tests à implémenter :**
+#### **Tests terminés :**
 
 - [✅] **Tests des synchronizers** - EntitySynchronizer, UserSynchronizer, AxeSynchronizer (31 tests)
 - [✅] **Tests de configuration** - SyncConfig, ConfigLoader, SyncRegistry (21 tests)
@@ -613,13 +615,99 @@ def api_call(self, endpoint: str) -> ApiResult:
 - [✅] **Tests des métriques** - SyncMetrics et export de données (20 tests)
 - [✅] **Tests du retry** - RetryManager et stratégies de retry (34 tests)
 
+#### **Tests à implémenter (PRIORITÉ HAUTE) :**
+
+- [ ] **Tests du client API** - N2fApiClient (authentification, appels API, gestion d'erreur)
+- [ ] **Tests des payloads** - Construction des payloads N2F (user, project, axe)
+- [ ] **Tests de normalisation** - Normalisation des données Agresso/N2F
+- [ ] **Tests du contexte** - SyncContext et gestion de configuration
+
+#### **Tests à implémenter (PRIORITÉ MOYENNE) :**
+
+- [ ] **Tests des tokens** - Gestion des tokens d'authentification
+- [ ] **Tests des fonctions API de base** - retreive, upsert, delete
+- [ ] **Tests du cache simple** - Cache helper pour les fonctions get_*
+- [ ] **Tests de la base de données** - Accès et requêtes Agresso
+
+#### **Tests à implémenter (PRIORITÉ BASSE) :**
+
+- [ ] **Tests des API spécifiques** - user.py, company.py, customaxe.py, project.py
+- [ ] **Tests des modules de traitement** - n2f/process/*.py
+- [ ] **Tests des modules business** - helper.py, axe_types.py, department.py
+
+#### **Modules analysés sans tests :**
+
+**Modules Business :**
+- `business/constants.py` - Définitions de constantes (pas de logique à tester)
+- `business/normalize.py` - Fonctions de normalisation (3 fonctions à tester)
+
+**Modules N2F :**
+- `n2f/client.py` - Client API principal (classe N2fApiClient)
+- `n2f/payload.py` - Construction de payloads (2 fonctions à tester)
+- `n2f/api_result.py` - Classe ApiResult (déjà testée indirectement)
+- `n2f/api/token.py` - Gestion des tokens (2 fonctions à tester)
+- `n2f/api/base.py` - Fonctions de base API (3 fonctions à tester)
+- `n2f/api/user.py` - API utilisateurs
+- `n2f/api/company.py` - API entreprises
+- `n2f/api/customaxe.py` - API axes personnalisés
+- `n2f/api/project.py` - API projets
+- `n2f/api/userprofile.py` - API profils utilisateurs
+- `n2f/api/role.py` - API rôles
+
+**Modules Helper :**
+- `helper/context.py` - Classe SyncContext (1 classe à tester)
+- `helper/cache.py` - Cache simple (5 fonctions à tester)
+
+**Modules Agresso :**
+- `agresso/database.py` - Fonction execute_query (1 fonction à tester)
+- `agresso/process.py` - Fonction select (1 fonction à tester)
+
+**Modules Process :**
+- `business/process/user.py` - Logique utilisateur (déjà testée via synchronizers)
+- `business/process/axe.py` - Logique axe (déjà testée via synchronizers)
+- `business/process/helper.py` - Fonctions utilitaires
+- `business/process/axe_types.py` - Types d'axes
+- `business/process/department.py` - Logique département
+- `business/process/sync_example.py` - Exemple de synchronisation
+
+**Modules N2F Process :**
+- `n2f/process/user.py` - Traitement utilisateurs N2F
+- `n2f/process/axe.py` - Traitement axes N2F
+- `n2f/process/company.py` - Traitement entreprises N2F
+- `n2f/process/customaxe.py` - Traitement axes personnalisés N2F
+- `n2f/process/userprofile.py` - Traitement profils N2F
+- `n2f/process/role.py` - Traitement rôles N2F
+- `n2f/process/helper.py` - Fonctions utilitaires N2F
+
 #### **Objectifs des tests :**
 
 - Couverture de test complète (100%)
 - Tests de régression automatisés
 - Intégration continue (CI/CD)
 
-### 🔧 **5.2 Monitoring et Observabilité** 📋 **À PLANIFIER**
+### 🔧 **5.2 Nettoyage et Maintenance** 📋 **À PLANIFIER**
+
+#### **Fichiers à nettoyer :**
+
+- [ ] **Fichiers de logs** - Supprimer les fichiers dans `python/logs/` (ajouter au .gitignore)
+- [ ] **Fichiers de métriques** - Supprimer les fichiers `metrics_*.json` dans la racine
+- [ ] **Fichiers de logs API** - Supprimer les fichiers `api_logs_*.csv` dans la racine
+- [ ] **Cache** - Nettoyer le dossier `cache/` et `cache_persistent/`
+- [ ] **Fichiers temporaires** - Supprimer les fichiers de test et temporaires
+
+#### **Améliorations du .gitignore :**
+
+- [ ] **Ajouter les patterns** pour les fichiers de logs, métriques, cache
+- [ ] **Exclure les fichiers temporaires** de test et de développement
+- [ ] **Protéger les fichiers sensibles** (credentials, configurations)
+
+#### **Objectifs du nettoyage :**
+
+- Réduction de la taille du repository
+- Suppression des fichiers temporaires
+- Amélioration de la lisibilité du projet
+
+### 🔧 **5.3 Monitoring et Observabilité** 📋 **À PLANIFIER**
 
 #### **Fonctionnalités à ajouter :**
 
@@ -635,7 +723,7 @@ def api_call(self, endpoint: str) -> ApiResult:
 - Détection proactive des problèmes
 - Métriques de performance en temps réel
 
-### 🔧 **5.3 Performance et Scalabilité** 📋 **À PLANIFIER**
+### 🔧 **5.4 Performance et Scalabilité** 📋 **À PLANIFIER**
 
 #### **Optimisations à implémenter :**
 
@@ -660,7 +748,7 @@ def api_call(self, endpoint: str) -> ApiResult:
 - Respect des contraintes de l'API
 - Performance maximale dans les limites techniques
 
-### 🔧 **5.4 Sécurité et Conformité** 📋 **À PLANIFIER**
+### 🔧 **5.5 Sécurité et Conformité** 📋 **À PLANIFIER**
 
 #### **Améliorations de sécurité :**
 
@@ -678,5 +766,74 @@ def api_call(self, endpoint: str) -> ApiResult:
 
 ---
 
+## 🔍 **ANALYSE COMPLÈTE DU PROJET - PROBLÈMES IDENTIFIÉS**
+
+### **📁 Fichiers temporaires à nettoyer :**
+
+**Fichiers de logs :**
+- `python/logs/sync_*.log` - Fichiers de logs de synchronisation
+- `api_logs_*.csv` - Logs d'appels API dans la racine
+- `metrics_*.json` - Fichiers de métriques dans la racine
+
+**Fichiers de cache :**
+- `cache/` - Dossier de cache temporaire
+- `cache_persistent/` - Dossier de cache persistant
+
+**Fichiers de test :**
+- `test_config.yaml` - Configuration de test dans la racine
+- `example_metrics.json` - Exemple de métriques dans la racine
+
+### **🔧 Améliorations du .gitignore :**
+
+**Patterns à ajouter :**
+```
+# Logs
+python/logs/*.log
+api_logs_*.csv
+*.log
+
+# Métriques et cache
+metrics_*.json
+example_metrics.json
+cache/
+cache_persistent/
+
+# Fichiers temporaires
+test_config.yaml
+*.tmp
+*.temp
+
+# IDE
+.idea/
+.vscode/settings.json
+.vscode/tasks.json
+```
+
+### **📊 Métriques de couverture actuelle :**
+
+**Tests existants : 127 tests**
+- Tests d'intégration : 75 tests
+- Tests unitaires : 52 tests
+  - Synchronizers : 31 tests
+  - Configuration : 21 tests
+  - Cache : 21 tests
+  - Métriques : 20 tests
+  - Retry : 34 tests
+  - Exceptions : 0 tests (inclus dans les autres)
+
+**Modules testés : ~15 modules**
+**Modules sans tests : ~25 modules**
+
+**Couverture estimée : ~60%**
+
+### **🎯 Recommandations prioritaires :**
+
+1. **Nettoyer les fichiers temporaires** (1-2 heures)
+2. **Améliorer le .gitignore** (30 minutes)
+3. **Créer les tests prioritaires** (1-2 jours)
+4. **Documenter les modules manquants** (2-3 heures)
+
+---
+
 *Dernière mise à jour : 29 août 2025*
-*Version : 1.1*
+*Version : 1.2*
