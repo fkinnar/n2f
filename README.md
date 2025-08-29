@@ -142,12 +142,14 @@ python python/sync-agresso-n2f.py --config prod.yaml --scopes users,projects
 Le projet inclut des scripts batch pour faciliter l'utilisation :
 
 #### **setup.bat** - Installation automatique
+
 ```bash
 # Crée l'environnement virtuel et installe les requirements
 setup.bat
 ```
 
 #### **sync_n2f.bat** - Synchronisation avec gestion automatique
+
 ```bash
 # Lance la synchronisation avec vérification automatique des requirements
 sync_n2f.bat
@@ -158,6 +160,7 @@ sync_n2f.bat --all --clear-cache
 ```
 
 **Avantages des scripts batch :**
+
 - ✅ **Vérification automatique** de l'environnement virtuel
 - ✅ **Installation automatique** des requirements si manquants
 - ✅ **Gestion des erreurs** avec messages clairs
