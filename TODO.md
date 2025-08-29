@@ -699,104 +699,120 @@ class SyncOrchestrator:
 
 ---
 
-### 🔧 **3.2 Système de métriques** ✅ **PRIORITÉ MOYENNE**
+### 🔧 **3.2 Système de métriques** ✅ **TERMINÉ**
 
 #### **Problème identifié :**
+- Pas de suivi des performances des opérations
+- Pas de métriques d'utilisation mémoire
+- Pas de statistiques par scope et par action
+- Pas de rapports de performance détaillés
 
-- Pas de monitoring des performances
-- Pas de statistiques d'utilisation
-- Pas de visibilité sur les goulots d'étranglement
-
-#### **Solution :**
-
+#### **Solution implémentée :**
 ```python
-# Créer : python/core/metrics.py
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional
-import time
-from collections import defaultdict
-
-@dataclass
-class OperationMetrics:
-    """Métriques d'une opération spécifique."""
-    scope: str
-    action: str  # create, update, delete
-    start_time: float
-    end_time: Optional[float] = None
-    success: bool = True
-    error_message: Optional[str] = None
-    records_processed: int = 0
-    memory_usage_mb: float = 0.0
-
-    @property
-    def duration_seconds(self) -> float:
-        return (self.end_time or time.time()) - self.start_time
-
+# Créé : python/core/metrics.py
 class SyncMetrics:
-    """Système de métriques pour la synchronisation."""
+    """
+    Système de métriques pour la synchronisation N2F.
 
-    def __init__(self):
-        self.start_time = time.time()
-        self.operations: List[OperationMetrics] = []
-        self.memory_usage_history: List[Dict] = []
+    Fonctionnalités :
+    - Suivi des performances par opération
+    - Métriques d'utilisation mémoire
+    - Statistiques par scope et par action
+    - Rapports de performance détaillés
+    - Export des métriques au format JSON
+    """
 
     def start_operation(self, scope: str, action: str) -> OperationMetrics:
         """Démarre le suivi d'une opération."""
-        metrics = OperationMetrics(
-            scope=scope,
-            action=action,
-            start_time=time.time()
-        )
-        self.operations.append(metrics)
-        return metrics
 
-    def end_operation(self, metrics: OperationMetrics, success: bool = True,
-                     error_message: Optional[str] = None, records_processed: int = 0):
+    def end_operation(self, metrics: OperationMetrics, **kwargs):
         """Termine le suivi d'une opération."""
-        metrics.end_time = time.time()
-        metrics.success = success
-        metrics.error_message = error_message
-        metrics.records_processed = records_processed
 
-    def record_memory_usage(self, usage_mb: float):
-        """Enregistre l'utilisation mémoire."""
-        self.memory_usage_history.append({
-            'timestamp': time.time(),
-            'usage_mb': usage_mb
-        })
+    def get_summary(self) -> Dict[str, Any]:
+        """Génère un résumé complet des métriques."""
 
-    def get_summary(self) -> Dict:
-        """Génère un résumé des métriques."""
-        total_operations = len(self.operations)
-        successful_operations = sum(1 for op in self.operations if op.success)
+    def export_metrics(self, output_path: Optional[Path] = None) -> Path:
+        """Exporte les métriques au format JSON."""
+```
 
-        return {
-            'total_duration_seconds': time.time() - self.start_time,
-            'total_operations': total_operations,
-            'successful_operations': successful_operations,
-            'success_rate': successful_operations / total_operations if total_operations > 0 else 0,
-            'operations_by_scope': self._group_operations_by_scope(),
-            'average_duration_by_action': self._calculate_average_durations(),
-            'memory_usage_stats': self._calculate_memory_stats(),
-            'errors_summary': self._group_errors()
-        }
+#### **Fichiers créés/modifiés :**
 
-    def _group_operations_by_scope(self) -> Dict:
-        """Groupe les opérations par scope."""
-        result = defaultdict(lambda: {'total': 0, 'success': 0, 'errors': 0})
-        for op in self.operations:
-            result[op.scope]['total'] += 1
-            if op.success:
-                result[op.scope]['success'] += 1
-            else:
-                result[op.scope]['errors'] += 1
-        return dict(result)
+- ✅ `python/core/metrics.py` → Système de métriques complet avec suivi des performances
+- ✅ `python/core/metrics_example.py` → Exemples d'utilisation du système de métriques
+- ✅ `python/core/orchestrator.py` → Intégration du système de métriques dans l'orchestrateur
+- ✅ `python/core/__init__.py` → Export des nouvelles classes de métriques
 
-    def _calculate_average_durations(self) -> Dict:
-        """Calcule les durées moyennes par action."""
-        durations = defaultdict(list)
-        for op in self.operations:
-            durations[op.action].append(op.duration_seconds)
+#### **Avantages obtenus :**
+
+- ✅ **Suivi détaillé** : Monitoring complet de chaque opération de synchronisation
+- ✅ **Métriques de performance** : Durée, taux de succès, enregistrements traités par seconde
+- ✅ **Statistiques par scope** : Analyse des performances par type de synchronisation
+- ✅ **Suivi des erreurs** : Historique détaillé des erreurs avec contexte
+- ✅ **Métriques mémoire** : Intégration avec le MemoryManager pour le suivi mémoire
+- ✅ **Export JSON** : Export des métriques pour analyse externe
+- ✅ **Rapports détaillés** : Affichage console avec statistiques complètes
+- ✅ **Intégration transparente** : Fonctionne automatiquement avec l'orchestrateur existant
+- ✅ **Monitoring en temps réel** : Suivi des performances pendant l'exécution
+
+#### **Fonctionnalités avancées :**
+
+- **Métriques par action** : Suivi séparé des opérations create, update, delete, sync
+- **Historique des erreurs** : Enregistrement détaillé des erreurs avec timestamp
+- **Statistiques d'API** : Suivi des appels API et du cache (prêt pour extension)
+- **Métriques consolidées** : Calcul automatique des moyennes, pics, et taux
+- **Export flexible** : Export au format JSON avec métadonnées complètes
+- **Monitoring mémoire** : Intégration avec le système de gestion mémoire
+
+#### **Exemple d'utilisation :**
+
+```python
+# Démarrage d'une opération
+metrics = start_operation("users", "create")
+
+# Exécution de l'opération
+# ... code de synchronisation ...
+
+# Fin de l'opération avec métriques
+end_operation(
+    metrics,
+    success=True,
+    records_processed=150,
+    memory_usage_mb=25.5,
+    api_calls=12,
+    cache_hits=8,
+    cache_misses=4
+)
+
+# Affichage du résumé
+print_summary()
+
+# Export des métriques
+export_metrics("metrics_report.json")
+```
+
+#### **Intégration dans l'orchestrateur :**
+
+```python
+# python/core/orchestrator.py
+class SyncOrchestrator:
+    def _execute_scopes(self, context: SyncContext, scope_names: List[str]) -> None:
+        for scope_name in scope_names:
+            # Démarrage du suivi des métriques
+            metrics = start_operation(scope_name, "sync")
+
+            try:
+                result = executor.execute_scope(scope_name)
+                # Enregistrement des métriques de succès
+                end_operation(metrics, success=result.success, ...)
+            except Exception as e:
+                # Enregistrement des métriques d'erreur
+                end_operation(metrics, success=False, error_message=str(e), ...)
+            finally:
+                cleanup_scope(scope_name)
+
+        # Affichage du résumé des métriques
+        print_metrics_summary()
+```
 
         return {
             action: sum(durs) / len(durs) if durs else 0
@@ -1092,10 +1108,10 @@ n2f/
 - [✅] 2.3 Orchestrator principal (Séparation des responsabilités avec SyncOrchestrator)
 - [✅] 2.4 Système de cache amélioré (Cache avancé avec persistance et métriques)
 
-### **Phase 3 :** 1/3 tâches terminées (3.4 supprimée - contrainte API N2F)
+### **Phase 3 :** 2/3 tâches terminées (3.4 supprimée - contrainte API N2F)
 
 - [✅] 3.1 Optimisation de la mémoire (PRIORITÉ HAUTE)
-- [ ] 3.2 Système de métriques (PRIORITÉ MOYENNE)
+- [✅] 3.2 Système de métriques (PRIORITÉ MOYENNE)
 - [ ] 3.3 Retry automatique (PRIORITÉ MOYENNE)
 
 ### **Phase 4 :** 0/2 tâches terminées

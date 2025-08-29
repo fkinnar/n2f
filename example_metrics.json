@@ -1,0 +1,1309 @@
+{
+  "metadata": {
+    "export_timestamp": 1756469261.8373382,
+    "export_date": "2025-08-29 14:07:41",
+    "total_operations": 40
+  },
+  "summary": {
+    "summary": {
+      "total_duration_seconds": 70.3103837966919,
+      "total_operations": 40,
+      "successful_operations": 31,
+      "failed_operations": 9,
+      "success_rate": 0.775,
+      "total_records_processed": 4035,
+      "average_records_per_second": 57.38839389168356
+    },
+    "performance": {
+      "average_duration_seconds": 1.7565792202949524,
+      "max_duration_seconds": 3.8863718509674072,
+      "min_duration_seconds": 0.7243046760559082,
+      "total_api_calls": 525,
+      "cache_hit_rate": 0.6636363636363637,
+      "total_cache_hits": 219,
+      "total_cache_misses": 111
+    },
+    "memory": {
+      "peak_usage_mb": 49.438266351106755,
+      "average_usage_mb": 28.903961992412768,
+      "memory_samples": 31
+    },
+    "operations_by_scope": {
+      "users": {
+        "total": 7,
+        "success": 6,
+        "errors": 1
+      },
+      "projects": {
+        "total": 7,
+        "success": 4,
+        "errors": 3
+      },
+      "companies": {
+        "total": 6,
+        "success": 5,
+        "errors": 1
+      },
+      "departments": {
+        "total": 5,
+        "success": 2,
+        "errors": 3
+      },
+      "batch_1": {
+        "total": 1,
+        "success": 1,
+        "errors": 0
+      },
+      "batch_2": {
+        "total": 1,
+        "success": 1,
+        "errors": 0
+      },
+      "batch_3": {
+        "total": 1,
+        "success": 1,
+        "errors": 0
+      },
+      "batch_4": {
+        "total": 1,
+        "success": 1,
+        "errors": 0
+      },
+      "batch_5": {
+        "total": 1,
+        "success": 1,
+        "errors": 0
+      },
+      "test_scope_0": {
+        "total": 4,
+        "success": 4,
+        "errors": 0
+      },
+      "test_scope_1": {
+        "total": 3,
+        "success": 3,
+        "errors": 0
+      },
+      "test_scope_2": {
+        "total": 3,
+        "success": 2,
+        "errors": 1
+      }
+    },
+    "operations_by_action": {
+      "create": {
+        "count": 10,
+        "total_duration": 22.00659966468811,
+        "success_count": 9,
+        "total_records": 1489,
+        "total_api_calls": 126,
+        "average_duration": 2.200659966468811,
+        "success_rate": 0.9
+      },
+      "update": {
+        "count": 10,
+        "total_duration": 17.240395069122314,
+        "success_count": 7,
+        "total_records": 689,
+        "total_api_calls": 124,
+        "average_duration": 1.7240395069122314,
+        "success_rate": 0.7
+      },
+      "delete": {
+        "count": 9,
+        "total_duration": 13.643131732940674,
+        "success_count": 6,
+        "total_records": 704,
+        "total_api_calls": 96,
+        "average_duration": 1.515903525882297,
+        "success_rate": 0.6666666666666666
+      },
+      "sync": {
+        "count": 11,
+        "total_duration": 17.373042345046997,
+        "success_count": 9,
+        "total_records": 1153,
+        "total_api_calls": 179,
+        "average_duration": 1.5793674859133633,
+        "success_rate": 0.8181818181818182
+      }
+    },
+    "error_summary": {
+      "Erreur simulée pour projects": 2,
+      "Erreur simulée pour departments": 2,
+      "Erreur de validation des données": 1,
+      "Erreur de connexion API": 1,
+      "Erreur de permissions": 1,
+      "Timeout de la requête": 1,
+      "Erreur simulée pour test_scope_2": 1
+    },
+    "api_call_summary": {
+      "users": {
+        "total_calls": 82,
+        "total_duration": 11.738525629043579,
+        "average_duration_per_call": 0.1431527515737022
+      },
+      "projects": {
+        "total_calls": 78,
+        "total_duration": 13.56258749961853,
+        "average_duration_per_call": 0.17387932691818628
+      },
+      "companies": {
+        "total_calls": 62,
+        "total_duration": 13.962907314300537,
+        "average_duration_per_call": 0.22520818248871835
+      },
+      "departments": {
+        "total_calls": 45,
+        "total_duration": 8.812670230865479,
+        "average_duration_per_call": 0.19583711624145508
+      },
+      "batch_1": {
+        "total_calls": 10,
+        "total_duration": 1.5028603076934814,
+        "average_duration_per_call": 0.15028603076934816
+      },
+      "batch_2": {
+        "total_calls": 21,
+        "total_duration": 1.5021400451660156,
+        "average_duration_per_call": 0.07153047834123884
+      },
+      "batch_3": {
+        "total_calls": 27,
+        "total_duration": 1.5021471977233887,
+        "average_duration_per_call": 0.05563508139716254
+      },
+      "batch_4": {
+        "total_calls": 30,
+        "total_duration": 1.5021672248840332,
+        "average_duration_per_call": 0.050072240829467776
+      },
+      "batch_5": {
+        "total_calls": 21,
+        "total_duration": 1.5018510818481445,
+        "average_duration_per_call": 0.07151671818324498
+      },
+      "test_scope_0": {
+        "total_calls": 65,
+        "total_duration": 5.950277805328369,
+        "average_duration_per_call": 0.0915427354665903
+      },
+      "test_scope_1": {
+        "total_calls": 37,
+        "total_duration": 4.2067530155181885,
+        "average_duration_per_call": 0.11369602744643753
+      },
+      "test_scope_2": {
+        "total_calls": 47,
+        "total_duration": 4.51828145980835,
+        "average_duration_per_call": 0.09613364808102871
+      }
+    }
+  },
+  "operations": [
+    {
+      "scope": "users",
+      "action": "create",
+      "start_time": 1756469191.527153,
+      "end_time": 1756469193.5278883,
+      "duration_seconds": 2.000735282897949,
+      "success": true,
+      "error_message": null,
+      "records_processed": 150,
+      "records_per_second": 74.97243702461911,
+      "memory_usage_mb": 34.15914597648384,
+      "api_calls": 8,
+      "cache_hits": 2,
+      "cache_misses": 2
+    },
+    {
+      "scope": "users",
+      "action": "update",
+      "start_time": 1756469193.5281692,
+      "end_time": 1756469195.0290718,
+      "duration_seconds": 1.5009026527404785,
+      "success": true,
+      "error_message": null,
+      "records_processed": 75,
+      "records_per_second": 49.96992967069415,
+      "memory_usage_mb": 17.27635245391462,
+      "api_calls": 8,
+      "cache_hits": 4,
+      "cache_misses": 2
+    },
+    {
+      "scope": "projects",
+      "action": "create",
+      "start_time": 1756469195.0293274,
+      "end_time": 1756469198.0306358,
+      "duration_seconds": 3.0013084411621094,
+      "success": true,
+      "error_message": null,
+      "records_processed": 200,
+      "records_per_second": 66.63760287248579,
+      "memory_usage_mb": 19.937951517130784,
+      "api_calls": 5,
+      "cache_hits": 7,
+      "cache_misses": 1
+    },
+    {
+      "scope": "projects",
+      "action": "delete",
+      "start_time": 1756469198.0310557,
+      "end_time": 1756469199.032131,
+      "duration_seconds": 1.001075267791748,
+      "success": false,
+      "error_message": "Erreur simulée pour projects",
+      "records_processed": 0,
+      "records_per_second": 0.0,
+      "memory_usage_mb": 12.075462217448312,
+      "api_calls": 18,
+      "cache_hits": 7,
+      "cache_misses": 2
+    },
+    {
+      "scope": "companies",
+      "action": "sync",
+      "start_time": 1756469199.03262,
+      "end_time": 1756469201.5335774,
+      "duration_seconds": 2.500957489013672,
+      "success": true,
+      "error_message": null,
+      "records_processed": 50,
+      "records_per_second": 19.99234302048013,
+      "memory_usage_mb": 18.83410011787557,
+      "api_calls": 8,
+      "cache_hits": 9,
+      "cache_misses": 2
+    },
+    {
+      "scope": "users",
+      "action": "create",
+      "start_time": 1756469201.540025,
+      "end_time": 1756469204.0255616,
+      "duration_seconds": 2.485536575317383,
+      "success": true,
+      "error_message": null,
+      "records_processed": 215,
+      "records_per_second": 86.50043702235452,
+      "memory_usage_mb": 20.20694797596537,
+      "api_calls": 20,
+      "cache_hits": 5,
+      "cache_misses": 1
+    },
+    {
+      "scope": "users",
+      "action": "update",
+      "start_time": 1756469204.0260096,
+      "end_time": 1756469204.7503142,
+      "duration_seconds": 0.7243046760559082,
+      "success": true,
+      "error_message": null,
+      "records_processed": 137,
+      "records_per_second": 189.14692190862667,
+      "memory_usage_mb": 31.631915150247213,
+      "api_calls": 20,
+      "cache_hits": 1,
+      "cache_misses": 1
+    },
+    {
+      "scope": "users",
+      "action": "delete",
+      "start_time": 1756469204.7506502,
+      "end_time": 1756469207.3762856,
+      "duration_seconds": 2.6256353855133057,
+      "success": true,
+      "error_message": null,
+      "records_processed": 28,
+      "records_per_second": 10.66408540747407,
+      "memory_usage_mb": 36.64483998062682,
+      "api_calls": 5,
+      "cache_hits": 8,
+      "cache_misses": 4
+    },
+    {
+      "scope": "users",
+      "action": "sync",
+      "start_time": 1756469207.3766296,
+      "end_time": 1756469208.7776957,
+      "duration_seconds": 1.4010660648345947,
+      "success": true,
+      "error_message": null,
+      "records_processed": 71,
+      "records_per_second": 50.67569744356204,
+      "memory_usage_mb": 35.878858950778564,
+      "api_calls": 17,
+      "cache_hits": 9,
+      "cache_misses": 0
+    },
+    {
+      "scope": "projects",
+      "action": "create",
+      "start_time": 1756469208.7779791,
+      "end_time": 1756469211.1929436,
+      "duration_seconds": 2.414964437484741,
+      "success": true,
+      "error_message": null,
+      "records_processed": 221,
+      "records_per_second": 91.51273475073538,
+      "memory_usage_mb": 12.001501928274134,
+      "api_calls": 16,
+      "cache_hits": 7,
+      "cache_misses": 4
+    },
+    {
+      "scope": "projects",
+      "action": "update",
+      "start_time": 1756469211.193124,
+      "end_time": 1756469214.0473685,
+      "duration_seconds": 2.8542444705963135,
+      "success": false,
+      "error_message": "Erreur simulée pour projects",
+      "records_processed": 0,
+      "records_per_second": 0.0,
+      "memory_usage_mb": 32.751441790778316,
+      "api_calls": 10,
+      "cache_hits": 1,
+      "cache_misses": 5
+    },
+    {
+      "scope": "projects",
+      "action": "delete",
+      "start_time": 1756469214.0476384,
+      "end_time": 1756469214.9124553,
+      "duration_seconds": 0.8648169040679932,
+      "success": true,
+      "error_message": null,
+      "records_processed": 56,
+      "records_per_second": 64.75359088910362,
+      "memory_usage_mb": 46.58977699254566,
+      "api_calls": 14,
+      "cache_hits": 2,
+      "cache_misses": 1
+    },
+    {
+      "scope": "projects",
+      "action": "sync",
+      "start_time": 1756469214.912685,
+      "end_time": 1756469217.338416,
+      "duration_seconds": 2.4257311820983887,
+      "success": true,
+      "error_message": null,
+      "records_processed": 254,
+      "records_per_second": 104.71069584069751,
+      "memory_usage_mb": 42.937103328026645,
+      "api_calls": 11,
+      "cache_hits": 9,
+      "cache_misses": 3
+    },
+    {
+      "scope": "companies",
+      "action": "create",
+      "start_time": 1756469217.3385909,
+      "end_time": 1756469221.023187,
+      "duration_seconds": 3.684596061706543,
+      "success": true,
+      "error_message": null,
+      "records_processed": 147,
+      "records_per_second": 39.89582508860308,
+      "memory_usage_mb": 20.054284016007877,
+      "api_calls": 20,
+      "cache_hits": 8,
+      "cache_misses": 4
+    },
+    {
+      "scope": "companies",
+      "action": "update",
+      "start_time": 1756469221.0233123,
+      "end_time": 1756469224.9096842,
+      "duration_seconds": 3.8863718509674072,
+      "success": true,
+      "error_message": null,
+      "records_processed": 173,
+      "records_per_second": 44.51452579272267,
+      "memory_usage_mb": 49.381096282267684,
+      "api_calls": 8,
+      "cache_hits": 5,
+      "cache_misses": 5
+    },
+    {
+      "scope": "companies",
+      "action": "delete",
+      "start_time": 1756469224.9099426,
+      "end_time": 1756469226.2505112,
+      "duration_seconds": 1.3405685424804688,
+      "success": true,
+      "error_message": null,
+      "records_processed": 273,
+      "records_per_second": 203.6449397021245,
+      "memory_usage_mb": 15.143959725562727,
+      "api_calls": 9,
+      "cache_hits": 10,
+      "cache_misses": 1
+    },
+    {
+      "scope": "companies",
+      "action": "sync",
+      "start_time": 1756469226.2507803,
+      "end_time": 1756469227.800696,
+      "duration_seconds": 1.5499155521392822,
+      "success": true,
+      "error_message": null,
+      "records_processed": 37,
+      "records_per_second": 23.87226836257658,
+      "memory_usage_mb": 49.438266351106755,
+      "api_calls": 16,
+      "cache_hits": 1,
+      "cache_misses": 1
+    },
+    {
+      "scope": "departments",
+      "action": "create",
+      "start_time": 1756469227.801017,
+      "end_time": 1756469230.2121365,
+      "duration_seconds": 2.4111194610595703,
+      "success": true,
+      "error_message": null,
+      "records_processed": 285,
+      "records_per_second": 118.20235562893109,
+      "memory_usage_mb": 35.28647669951769,
+      "api_calls": 7,
+      "cache_hits": 5,
+      "cache_misses": 2
+    },
+    {
+      "scope": "departments",
+      "action": "update",
+      "start_time": 1756469230.2126405,
+      "end_time": 1756469232.581801,
+      "duration_seconds": 2.3691604137420654,
+      "success": false,
+      "error_message": "Erreur simulée pour departments",
+      "records_processed": 0,
+      "records_per_second": 0.0,
+      "memory_usage_mb": 24.999037633961606,
+      "api_calls": 13,
+      "cache_hits": 4,
+      "cache_misses": 4
+    },
+    {
+      "scope": "departments",
+      "action": "delete",
+      "start_time": 1756469232.581985,
+      "end_time": 1756469234.6301692,
+      "duration_seconds": 2.0481841564178467,
+      "success": true,
+      "error_message": null,
+      "records_processed": 183,
+      "records_per_second": 89.34743461743021,
+      "memory_usage_mb": 44.85069670678497,
+      "api_calls": 7,
+      "cache_hits": 4,
+      "cache_misses": 0
+    },
+    {
+      "scope": "departments",
+      "action": "sync",
+      "start_time": 1756469234.6303055,
+      "end_time": 1756469235.613955,
+      "duration_seconds": 0.983649492263794,
+      "success": false,
+      "error_message": "Erreur simulée pour departments",
+      "records_processed": 0,
+      "records_per_second": 0.0,
+      "memory_usage_mb": 25.72828140675896,
+      "api_calls": 14,
+      "cache_hits": 6,
+      "cache_misses": 3
+    },
+    {
+      "scope": "batch_1",
+      "action": "sync",
+      "start_time": 1756469235.6269808,
+      "end_time": 1756469237.129841,
+      "duration_seconds": 1.5028603076934814,
+      "success": true,
+      "error_message": null,
+      "records_processed": 175,
+      "records_per_second": 116.4446217017879,
+      "memory_usage_mb": 22.295299143416845,
+      "api_calls": 10,
+      "cache_hits": 8,
+      "cache_misses": 8
+    },
+    {
+      "scope": "batch_2",
+      "action": "sync",
+      "start_time": 1756469237.130295,
+      "end_time": 1756469238.632435,
+      "duration_seconds": 1.5021400451660156,
+      "success": true,
+      "error_message": null,
+      "records_processed": 171,
+      "records_per_second": 113.83758827966082,
+      "memory_usage_mb": 68.58581858827587,
+      "api_calls": 21,
+      "cache_hits": 12,
+      "cache_misses": 0
+    },
+    {
+      "scope": "batch_3",
+      "action": "sync",
+      "start_time": 1756469238.632984,
+      "end_time": 1756469240.1351311,
+      "duration_seconds": 1.5021471977233887,
+      "success": true,
+      "error_message": null,
+      "records_processed": 193,
+      "records_per_second": 128.48274809053686,
+      "memory_usage_mb": 20.245677414276887,
+      "api_calls": 27,
+      "cache_hits": 15,
+      "cache_misses": 6
+    },
+    {
+      "scope": "batch_4",
+      "action": "sync",
+      "start_time": 1756469240.1355946,
+      "end_time": 1756469241.6377618,
+      "duration_seconds": 1.5021672248840332,
+      "success": true,
+      "error_message": null,
+      "records_processed": 51,
+      "records_per_second": 33.950947108393464,
+      "memory_usage_mb": 57.2550981450227,
+      "api_calls": 30,
+      "cache_hits": 7,
+      "cache_misses": 3
+    },
+    {
+      "scope": "batch_5",
+      "action": "sync",
+      "start_time": 1756469241.638077,
+      "end_time": 1756469243.139928,
+      "duration_seconds": 1.5018510818481445,
+      "success": true,
+      "error_message": null,
+      "records_processed": 151,
+      "records_per_second": 100.54259162245485,
+      "memory_usage_mb": 30.346728373441195,
+      "api_calls": 21,
+      "cache_hits": 5,
+      "cache_misses": 8
+    },
+    {
+      "scope": "users",
+      "action": "create",
+      "start_time": 1756469243.143693,
+      "end_time": 1756469244.144038,
+      "duration_seconds": 1.00034499168396,
+      "success": false,
+      "error_message": "Erreur de validation des données",
+      "records_processed": 0,
+      "records_per_second": 0.0,
+      "memory_usage_mb": 9.442668307946585,
+      "api_calls": 4,
+      "cache_hits": 0,
+      "cache_misses": 1
+    },
+    {
+      "scope": "projects",
+      "action": "update",
+      "start_time": 1756469244.144295,
+      "end_time": 1756469245.1447418,
+      "duration_seconds": 1.0004467964172363,
+      "success": false,
+      "error_message": "Erreur de connexion API",
+      "records_processed": 0,
+      "records_per_second": 0.0,
+      "memory_usage_mb": 6.580030196667508,
+      "api_calls": 4,
+      "cache_hits": 0,
+      "cache_misses": 3
+    },
+    {
+      "scope": "companies",
+      "action": "delete",
+      "start_time": 1756469245.1451726,
+      "end_time": 1756469246.1456704,
+      "duration_seconds": 1.000497817993164,
+      "success": false,
+      "error_message": "Erreur de permissions",
+      "records_processed": 0,
+      "records_per_second": 0.0,
+      "memory_usage_mb": 9.531513645251227,
+      "api_calls": 1,
+      "cache_hits": 0,
+      "cache_misses": 1
+    },
+    {
+      "scope": "departments",
+      "action": "sync",
+      "start_time": 1756469246.1460686,
+      "end_time": 1756469247.1466253,
+      "duration_seconds": 1.0005567073822021,
+      "success": false,
+      "error_message": "Timeout de la requête",
+      "records_processed": 0,
+      "records_per_second": 0.0,
+      "memory_usage_mb": 8.903780616220832,
+      "api_calls": 4,
+      "cache_hits": 0,
+      "cache_misses": 3
+    },
+    {
+      "scope": "test_scope_0",
+      "action": "create",
+      "start_time": 1756469247.1592848,
+      "end_time": 1756469249.0138159,
+      "duration_seconds": 1.8545310497283936,
+      "success": true,
+      "error_message": null,
+      "records_processed": 122,
+      "records_per_second": 65.78482469617728,
+      "memory_usage_mb": 32.78271471416153,
+      "api_calls": 19,
+      "cache_hits": 4,
+      "cache_misses": 5
+    },
+    {
+      "scope": "test_scope_1",
+      "action": "delete",
+      "start_time": 1756469249.0141826,
+      "end_time": 1756469250.1254704,
+      "duration_seconds": 1.1112878322601318,
+      "success": true,
+      "error_message": null,
+      "records_processed": 110,
+      "records_per_second": 98.98425664958692,
+      "memory_usage_mb": 46.70179173206852,
+      "api_calls": 12,
+      "cache_hits": 4,
+      "cache_misses": 2
+    },
+    {
+      "scope": "test_scope_2",
+      "action": "update",
+      "start_time": 1756469250.1257126,
+      "end_time": 1756469250.9929283,
+      "duration_seconds": 0.867215633392334,
+      "success": true,
+      "error_message": null,
+      "records_processed": 106,
+      "records_per_second": 122.230268826398,
+      "memory_usage_mb": 11.79494268858277,
+      "api_calls": 17,
+      "cache_hits": 9,
+      "cache_misses": 5
+    },
+    {
+      "scope": "test_scope_0",
+      "action": "update",
+      "start_time": 1756469250.9931548,
+      "end_time": 1756469251.7184684,
+      "duration_seconds": 0.725313663482666,
+      "success": true,
+      "error_message": null,
+      "records_processed": 42,
+      "records_per_second": 57.90598207999116,
+      "memory_usage_mb": 23.29310967322644,
+      "api_calls": 9,
+      "cache_hits": 0,
+      "cache_misses": 3
+    },
+    {
+      "scope": "test_scope_1",
+      "action": "create",
+      "start_time": 1756469251.7190597,
+      "end_time": 1756469253.3548422,
+      "duration_seconds": 1.6357824802398682,
+      "success": true,
+      "error_message": null,
+      "records_processed": 105,
+      "records_per_second": 64.18946361658244,
+      "memory_usage_mb": 35.86527661220748,
+      "api_calls": 10,
+      "cache_hits": 9,
+      "cache_misses": 0
+    },
+    {
+      "scope": "test_scope_2",
+      "action": "delete",
+      "start_time": 1756469253.3549666,
+      "end_time": 1756469255.0175421,
+      "duration_seconds": 1.6625754833221436,
+      "success": false,
+      "error_message": "Erreur simulée pour test_scope_2",
+      "records_processed": 0,
+      "records_per_second": 0.0,
+      "memory_usage_mb": 21.076195709298,
+      "api_calls": 16,
+      "cache_hits": 5,
+      "cache_misses": 4
+    },
+    {
+      "scope": "test_scope_0",
+      "action": "update",
+      "start_time": 1756469255.0177474,
+      "end_time": 1756469256.8704996,
+      "duration_seconds": 1.8527522087097168,
+      "success": true,
+      "error_message": null,
+      "records_processed": 67,
+      "records_per_second": 36.16241809618986,
+      "memory_usage_mb": 20.174351150781774,
+      "api_calls": 20,
+      "cache_hits": 10,
+      "cache_misses": 1
+    },
+    {
+      "scope": "test_scope_1",
+      "action": "update",
+      "start_time": 1756469256.8706825,
+      "end_time": 1756469258.3303652,
+      "duration_seconds": 1.4596827030181885,
+      "success": true,
+      "error_message": null,
+      "records_processed": 89,
+      "records_per_second": 60.97215498681634,
+      "memory_usage_mb": 40.975574663750024,
+      "api_calls": 15,
+      "cache_hits": 9,
+      "cache_misses": 5
+    },
+    {
+      "scope": "test_scope_2",
+      "action": "delete",
+      "start_time": 1756469258.330862,
+      "end_time": 1756469260.3193524,
+      "duration_seconds": 1.988490343093872,
+      "success": true,
+      "error_message": null,
+      "records_processed": 54,
+      "records_per_second": 27.156279731276918,
+      "memory_usage_mb": 14.61268062602247,
+      "api_calls": 14,
+      "cache_hits": 0,
+      "cache_misses": 5
+    },
+    {
+      "scope": "test_scope_0",
+      "action": "create",
+      "start_time": 1756469260.319604,
+      "end_time": 1756469261.8372848,
+      "duration_seconds": 1.5176808834075928,
+      "success": true,
+      "error_message": null,
+      "records_processed": 44,
+      "records_per_second": 28.991601911205752,
+      "memory_usage_mb": 22.93868699263267,
+      "api_calls": 17,
+      "cache_hits": 8,
+      "cache_misses": 0
+    }
+  ],
+  "memory_history": [
+    {
+      "timestamp": 1756469193.5278554,
+      "usage_mb": 34.15914597648384,
+      "scope": "users"
+    },
+    {
+      "timestamp": 1756469195.02906,
+      "usage_mb": 17.27635245391462,
+      "scope": "users"
+    },
+    {
+      "timestamp": 1756469198.0306146,
+      "usage_mb": 19.937951517130784,
+      "scope": "projects"
+    },
+    {
+      "timestamp": 1756469199.0321014,
+      "usage_mb": 12.075462217448312,
+      "scope": "projects"
+    },
+    {
+      "timestamp": 1756469201.533553,
+      "usage_mb": 18.83410011787557,
+      "scope": "companies"
+    },
+    {
+      "timestamp": 1756469204.0255346,
+      "usage_mb": 20.20694797596537,
+      "scope": "users"
+    },
+    {
+      "timestamp": 1756469204.7502334,
+      "usage_mb": 31.631915150247213,
+      "scope": "users"
+    },
+    {
+      "timestamp": 1756469207.3762593,
+      "usage_mb": 36.64483998062682,
+      "scope": "users"
+    },
+    {
+      "timestamp": 1756469208.7776675,
+      "usage_mb": 35.878858950778564,
+      "scope": "users"
+    },
+    {
+      "timestamp": 1756469211.1929321,
+      "usage_mb": 12.001501928274134,
+      "scope": "projects"
+    },
+    {
+      "timestamp": 1756469214.0473487,
+      "usage_mb": 32.751441790778316,
+      "scope": "projects"
+    },
+    {
+      "timestamp": 1756469214.9124405,
+      "usage_mb": 46.58977699254566,
+      "scope": "projects"
+    },
+    {
+      "timestamp": 1756469217.3383996,
+      "usage_mb": 42.937103328026645,
+      "scope": "projects"
+    },
+    {
+      "timestamp": 1756469221.0231764,
+      "usage_mb": 20.054284016007877,
+      "scope": "companies"
+    },
+    {
+      "timestamp": 1756469224.9096735,
+      "usage_mb": 49.381096282267684,
+      "scope": "companies"
+    },
+    {
+      "timestamp": 1756469226.2504833,
+      "usage_mb": 15.143959725562727,
+      "scope": "companies"
+    },
+    {
+      "timestamp": 1756469227.800679,
+      "usage_mb": 49.438266351106755,
+      "scope": "companies"
+    },
+    {
+      "timestamp": 1756469230.2121,
+      "usage_mb": 35.28647669951769,
+      "scope": "departments"
+    },
+    {
+      "timestamp": 1756469232.581763,
+      "usage_mb": 24.999037633961606,
+      "scope": "departments"
+    },
+    {
+      "timestamp": 1756469234.6301465,
+      "usage_mb": 44.85069670678497,
+      "scope": "departments"
+    },
+    {
+      "timestamp": 1756469235.6139252,
+      "usage_mb": 25.72828140675896,
+      "scope": "departments"
+    },
+    {
+      "timestamp": 1756469249.013796,
+      "usage_mb": 32.78271471416153,
+      "scope": "test_scope_0"
+    },
+    {
+      "timestamp": 1756469250.125446,
+      "usage_mb": 46.70179173206852,
+      "scope": "test_scope_1"
+    },
+    {
+      "timestamp": 1756469250.992912,
+      "usage_mb": 11.79494268858277,
+      "scope": "test_scope_2"
+    },
+    {
+      "timestamp": 1756469251.7184367,
+      "usage_mb": 23.29310967322644,
+      "scope": "test_scope_0"
+    },
+    {
+      "timestamp": 1756469253.354817,
+      "usage_mb": 35.86527661220748,
+      "scope": "test_scope_1"
+    },
+    {
+      "timestamp": 1756469255.0175104,
+      "usage_mb": 21.076195709298,
+      "scope": "test_scope_2"
+    },
+    {
+      "timestamp": 1756469256.8704803,
+      "usage_mb": 20.174351150781774,
+      "scope": "test_scope_0"
+    },
+    {
+      "timestamp": 1756469258.3303483,
+      "usage_mb": 40.975574663750024,
+      "scope": "test_scope_1"
+    },
+    {
+      "timestamp": 1756469260.3193324,
+      "usage_mb": 14.61268062602247,
+      "scope": "test_scope_2"
+    },
+    {
+      "timestamp": 1756469261.8372679,
+      "usage_mb": 22.93868699263267,
+      "scope": "test_scope_0"
+    }
+  ],
+  "error_history": [
+    {
+      "timestamp": 1756469199.0321393,
+      "scope": "projects",
+      "action": "delete",
+      "error_message": "Erreur simulée pour projects",
+      "duration_seconds": 1.001075267791748
+    },
+    {
+      "timestamp": 1756469214.047373,
+      "scope": "projects",
+      "action": "update",
+      "error_message": "Erreur simulée pour projects",
+      "duration_seconds": 2.8542444705963135
+    },
+    {
+      "timestamp": 1756469232.5818052,
+      "scope": "departments",
+      "action": "update",
+      "error_message": "Erreur simulée pour departments",
+      "duration_seconds": 2.3691604137420654
+    },
+    {
+      "timestamp": 1756469235.6139598,
+      "scope": "departments",
+      "action": "sync",
+      "error_message": "Erreur simulée pour departments",
+      "duration_seconds": 0.983649492263794
+    },
+    {
+      "timestamp": 1756469244.1440408,
+      "scope": "users",
+      "action": "create",
+      "error_message": "Erreur de validation des données",
+      "duration_seconds": 1.00034499168396
+    },
+    {
+      "timestamp": 1756469245.1447465,
+      "scope": "projects",
+      "action": "update",
+      "error_message": "Erreur de connexion API",
+      "duration_seconds": 1.0004467964172363
+    },
+    {
+      "timestamp": 1756469246.1456764,
+      "scope": "companies",
+      "action": "delete",
+      "error_message": "Erreur de permissions",
+      "duration_seconds": 1.000497817993164
+    },
+    {
+      "timestamp": 1756469247.14663,
+      "scope": "departments",
+      "action": "sync",
+      "error_message": "Timeout de la requête",
+      "duration_seconds": 1.0005567073822021
+    },
+    {
+      "timestamp": 1756469255.0175457,
+      "scope": "test_scope_2",
+      "action": "delete",
+      "error_message": "Erreur simulée pour test_scope_2",
+      "duration_seconds": 1.6625754833221436
+    }
+  ],
+  "api_call_history": [
+    {
+      "timestamp": 1756469193.5278916,
+      "scope": "users",
+      "action": "create",
+      "api_calls": 8,
+      "duration_seconds": 2.000735282897949
+    },
+    {
+      "timestamp": 1756469195.0290751,
+      "scope": "users",
+      "action": "update",
+      "api_calls": 8,
+      "duration_seconds": 1.5009026527404785
+    },
+    {
+      "timestamp": 1756469198.0306396,
+      "scope": "projects",
+      "action": "create",
+      "api_calls": 5,
+      "duration_seconds": 3.0013084411621094
+    },
+    {
+      "timestamp": 1756469199.0321455,
+      "scope": "projects",
+      "action": "delete",
+      "api_calls": 18,
+      "duration_seconds": 1.001075267791748
+    },
+    {
+      "timestamp": 1756469201.5335817,
+      "scope": "companies",
+      "action": "sync",
+      "api_calls": 8,
+      "duration_seconds": 2.500957489013672
+    },
+    {
+      "timestamp": 1756469204.0255651,
+      "scope": "users",
+      "action": "create",
+      "api_calls": 20,
+      "duration_seconds": 2.485536575317383
+    },
+    {
+      "timestamp": 1756469204.7503173,
+      "scope": "users",
+      "action": "update",
+      "api_calls": 20,
+      "duration_seconds": 0.7243046760559082
+    },
+    {
+      "timestamp": 1756469207.3762891,
+      "scope": "users",
+      "action": "delete",
+      "api_calls": 5,
+      "duration_seconds": 2.6256353855133057
+    },
+    {
+      "timestamp": 1756469208.7776992,
+      "scope": "users",
+      "action": "sync",
+      "api_calls": 17,
+      "duration_seconds": 1.4010660648345947
+    },
+    {
+      "timestamp": 1756469211.1929452,
+      "scope": "projects",
+      "action": "create",
+      "api_calls": 16,
+      "duration_seconds": 2.414964437484741
+    },
+    {
+      "timestamp": 1756469214.047376,
+      "scope": "projects",
+      "action": "update",
+      "api_calls": 10,
+      "duration_seconds": 2.8542444705963135
+    },
+    {
+      "timestamp": 1756469214.9124584,
+      "scope": "projects",
+      "action": "delete",
+      "api_calls": 14,
+      "duration_seconds": 0.8648169040679932
+    },
+    {
+      "timestamp": 1756469217.3384182,
+      "scope": "projects",
+      "action": "sync",
+      "api_calls": 11,
+      "duration_seconds": 2.4257311820983887
+    },
+    {
+      "timestamp": 1756469221.0231886,
+      "scope": "companies",
+      "action": "create",
+      "api_calls": 20,
+      "duration_seconds": 3.684596061706543
+    },
+    {
+      "timestamp": 1756469224.9096859,
+      "scope": "companies",
+      "action": "update",
+      "api_calls": 8,
+      "duration_seconds": 3.8863718509674072
+    },
+    {
+      "timestamp": 1756469226.2505152,
+      "scope": "companies",
+      "action": "delete",
+      "api_calls": 9,
+      "duration_seconds": 1.3405685424804688
+    },
+    {
+      "timestamp": 1756469227.800699,
+      "scope": "companies",
+      "action": "sync",
+      "api_calls": 16,
+      "duration_seconds": 1.5499155521392822
+    },
+    {
+      "timestamp": 1756469230.2121427,
+      "scope": "departments",
+      "action": "create",
+      "api_calls": 7,
+      "duration_seconds": 2.4111194610595703
+    },
+    {
+      "timestamp": 1756469232.581809,
+      "scope": "departments",
+      "action": "update",
+      "api_calls": 13,
+      "duration_seconds": 2.3691604137420654
+    },
+    {
+      "timestamp": 1756469234.6301725,
+      "scope": "departments",
+      "action": "delete",
+      "api_calls": 7,
+      "duration_seconds": 2.0481841564178467
+    },
+    {
+      "timestamp": 1756469235.6139634,
+      "scope": "departments",
+      "action": "sync",
+      "api_calls": 14,
+      "duration_seconds": 0.983649492263794
+    },
+    {
+      "timestamp": 1756469237.1298451,
+      "scope": "batch_1",
+      "action": "sync",
+      "api_calls": 10,
+      "duration_seconds": 1.5028603076934814
+    },
+    {
+      "timestamp": 1756469238.6324394,
+      "scope": "batch_2",
+      "action": "sync",
+      "api_calls": 21,
+      "duration_seconds": 1.5021400451660156
+    },
+    {
+      "timestamp": 1756469240.135135,
+      "scope": "batch_3",
+      "action": "sync",
+      "api_calls": 27,
+      "duration_seconds": 1.5021471977233887
+    },
+    {
+      "timestamp": 1756469241.6377647,
+      "scope": "batch_4",
+      "action": "sync",
+      "api_calls": 30,
+      "duration_seconds": 1.5021672248840332
+    },
+    {
+      "timestamp": 1756469243.139931,
+      "scope": "batch_5",
+      "action": "sync",
+      "api_calls": 21,
+      "duration_seconds": 1.5018510818481445
+    },
+    {
+      "timestamp": 1756469244.1440434,
+      "scope": "users",
+      "action": "create",
+      "api_calls": 4,
+      "duration_seconds": 1.00034499168396
+    },
+    {
+      "timestamp": 1756469245.1447515,
+      "scope": "projects",
+      "action": "update",
+      "api_calls": 4,
+      "duration_seconds": 1.0004467964172363
+    },
+    {
+      "timestamp": 1756469246.1456816,
+      "scope": "companies",
+      "action": "delete",
+      "api_calls": 1,
+      "duration_seconds": 1.000497817993164
+    },
+    {
+      "timestamp": 1756469247.146635,
+      "scope": "departments",
+      "action": "sync",
+      "api_calls": 4,
+      "duration_seconds": 1.0005567073822021
+    },
+    {
+      "timestamp": 1756469249.0138187,
+      "scope": "test_scope_0",
+      "action": "create",
+      "api_calls": 19,
+      "duration_seconds": 1.8545310497283936
+    },
+    {
+      "timestamp": 1756469250.1254745,
+      "scope": "test_scope_1",
+      "action": "delete",
+      "api_calls": 12,
+      "duration_seconds": 1.1112878322601318
+    },
+    {
+      "timestamp": 1756469250.9929307,
+      "scope": "test_scope_2",
+      "action": "update",
+      "api_calls": 17,
+      "duration_seconds": 0.867215633392334
+    },
+    {
+      "timestamp": 1756469251.718474,
+      "scope": "test_scope_0",
+      "action": "update",
+      "api_calls": 9,
+      "duration_seconds": 0.725313663482666
+    },
+    {
+      "timestamp": 1756469253.3548455,
+      "scope": "test_scope_1",
+      "action": "create",
+      "api_calls": 10,
+      "duration_seconds": 1.6357824802398682
+    },
+    {
+      "timestamp": 1756469255.0175478,
+      "scope": "test_scope_2",
+      "action": "delete",
+      "api_calls": 16,
+      "duration_seconds": 1.6625754833221436
+    },
+    {
+      "timestamp": 1756469256.8705025,
+      "scope": "test_scope_0",
+      "action": "update",
+      "api_calls": 20,
+      "duration_seconds": 1.8527522087097168
+    },
+    {
+      "timestamp": 1756469258.330368,
+      "scope": "test_scope_1",
+      "action": "update",
+      "api_calls": 15,
+      "duration_seconds": 1.4596827030181885
+    },
+    {
+      "timestamp": 1756469260.319354,
+      "scope": "test_scope_2",
+      "action": "delete",
+      "api_calls": 14,
+      "duration_seconds": 1.988490343093872
+    },
+    {
+      "timestamp": 1756469261.8372874,
+      "scope": "test_scope_0",
+      "action": "create",
+      "api_calls": 17,
+      "duration_seconds": 1.5176808834075928
+    }
+  ]
+}

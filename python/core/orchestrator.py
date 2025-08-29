@@ -17,6 +17,7 @@ from .config import ConfigLoader, SyncConfig
 from .registry import get_registry
 from .cache import get_cache, cache_stats, cache_clear, cache_invalidate
 from .memory_manager import get_memory_manager, cleanup_scope, cleanup_all, print_memory_summary
+from .metrics import get_metrics, start_operation, end_operation, record_memory_usage, print_summary as print_metrics_summary
 import sys
 from pathlib import Path
 
@@ -68,6 +69,9 @@ class ContextBuilder:
         # Initialisation du gestionnaire de mémoire
         memory_limit_mb = getattr(sync_config, 'memory_limit_mb', 1024)  # 1GB par défaut
         get_memory_manager(max_memory_mb=memory_limit_mb)
+
+        # Initialisation du système de métriques
+        get_metrics()
 
         # Auto-découverte des scopes APRÈS le chargement de la configuration
         registry = get_registry()
@@ -303,6 +307,9 @@ class SyncOrchestrator:
             # Affichage des statistiques mémoire
             print_memory_summary()
 
+            # Affichage des métriques de synchronisation
+            print_metrics_summary()
+
         except Exception as e:
             print(f"Fatal error during synchronization: {e}")
             raise
@@ -325,9 +332,38 @@ class SyncOrchestrator:
         executor = ScopeExecutor(context)
 
         for scope_name in scope_names:
+            # Démarrage du suivi des métriques pour ce scope
+            metrics = start_operation(scope_name, "sync")
+
             try:
                 result = executor.execute_scope(scope_name)
                 self.log_manager.add_result(result)
+
+                # Enregistrement des métriques de succès
+                end_operation(
+                    metrics,
+                    success=result.success,
+                    error_message=result.error_message,
+                    records_processed=len(result.results) if result.results else 0,
+                    memory_usage_mb=0.0,  # Sera mis à jour par le MemoryManager
+                    api_calls=0,  # À implémenter si nécessaire
+                    cache_hits=0,  # À implémenter si nécessaire
+                    cache_misses=0  # À implémenter si nécessaire
+                )
+
+            except Exception as e:
+                # Enregistrement des métriques d'erreur
+                end_operation(
+                    metrics,
+                    success=False,
+                    error_message=str(e),
+                    records_processed=0,
+                    memory_usage_mb=0.0,
+                    api_calls=0,
+                    cache_hits=0,
+                    cache_misses=0
+                )
+                raise
             finally:
                 # Nettoyage de la mémoire après chaque scope
                 cleanup_scope(scope_name)

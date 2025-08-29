@@ -51,6 +51,18 @@ from .memory_manager import (
     print_memory_summary,
     get_memory_stats
 )
+from .metrics import (
+    SyncMetrics,
+    OperationMetrics,
+    ScopeMetrics,
+    get_metrics,
+    start_operation,
+    end_operation,
+    record_memory_usage,
+    get_summary,
+    print_summary,
+    export_metrics
+)
 from .exceptions import (
     SyncException,
     ApiException,
@@ -107,6 +119,18 @@ __all__ = [
     "cleanup_all",
     "print_memory_summary",
     "get_memory_stats",
+
+    # Metrics System
+    "SyncMetrics",
+    "OperationMetrics",
+    "ScopeMetrics",
+    "get_metrics",
+    "start_operation",
+    "end_operation",
+    "record_memory_usage",
+    "get_summary",
+    "print_summary",
+    "export_metrics",
 
     # Exceptions
     "SyncException",
