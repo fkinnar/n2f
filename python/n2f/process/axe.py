@@ -88,14 +88,7 @@ def update_axes(
         payload = build_axe_payload(project, sandbox)
         n2f_project = n2f_by_code.get(project["code"], {})
 
-        from business.process.helper import has_payload_changes, debug_payload_changes, log_error
-        # Debug temporaire pour voir les différences
-        if has_payload_changes(payload, n2f_project, 'axe'):
-            differences = debug_payload_changes(payload, n2f_project, 'axe')
-            if differences:
-                print(f"🔍 DEBUG - Projet {project['code']} - Différences détectées:")
-                for field, diff in differences.items():
-                    print(f"  {field}: '{diff['payload_value']}' vs '{diff['n2f_value']}' ({diff['type']})")
+        from business.process.helper import has_payload_changes, log_error
 
         if not has_payload_changes(payload, n2f_project, 'axe'):
             continue
