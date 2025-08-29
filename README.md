@@ -39,6 +39,21 @@ de manière cohérente et traçable.
 
 ### Installation
 
+#### Option 1 : Installation automatique (Recommandée)
+
+```bash
+# Cloner le repository
+git clone <repository-url>
+cd n2f
+
+# Lancer le script de setup automatique
+setup.bat                    # Windows
+# ou
+./setup.sh                   # Linux/Mac (à créer)
+```
+
+#### Option 2 : Installation manuelle
+
 ```bash
 # Cloner le repository
 git clone <repository-url>
@@ -121,6 +136,33 @@ python python/sync-agresso-n2f.py --all --clear-cache
 # Synchronisation en production
 python python/sync-agresso-n2f.py --config prod.yaml --scopes users,projects
 ```
+
+### Scripts batch (Windows)
+
+Le projet inclut des scripts batch pour faciliter l'utilisation :
+
+#### **setup.bat** - Installation automatique
+```bash
+# Crée l'environnement virtuel et installe les requirements
+setup.bat
+```
+
+#### **sync_n2f.bat** - Synchronisation avec gestion automatique
+```bash
+# Lance la synchronisation avec vérification automatique des requirements
+sync_n2f.bat
+
+# Avec options
+sync_n2f.bat --scopes users,projects
+sync_n2f.bat --all --clear-cache
+```
+
+**Avantages des scripts batch :**
+- ✅ **Vérification automatique** de l'environnement virtuel
+- ✅ **Installation automatique** des requirements si manquants
+- ✅ **Gestion des erreurs** avec messages clairs
+- ✅ **Logs automatiques** avec horodatage
+- ✅ **Ouverture automatique** des logs en cas d'erreur
 
 ## 🏗️ Architecture
 

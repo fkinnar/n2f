@@ -11,6 +11,49 @@ echo.
 REM Set environment variables for encoding
 set PYTHONIOENCODING=utf-8
 
+REM Check if virtual environment exists
+if not exist "env\Scripts\python.exe" (
+    echo ========================================
+    echo ERROR: Virtual environment not found!
+    echo ========================================
+    echo Please create a virtual environment first:
+    echo python -m venv env
+    echo.
+    echo Then activate it and install requirements:
+    echo env\Scripts\activate
+    echo pip install -r requirements.txt
+    echo.
+    pause
+    exit /b 1
+)
+
+REM Check if requirements are installed
+echo Checking if requirements are installed...
+env\Scripts\python.exe -c "import pandas, requests, yaml, sqlalchemy" 2>nul
+if %ERRORLEVEL% NEQ 0 (
+    echo ========================================
+    echo Installing requirements...
+    echo ========================================
+    echo This may take a few minutes...
+    echo.
+    env\Scripts\pip.exe install -r requirements.txt
+    if %ERRORLEVEL% NEQ 0 (
+        echo ========================================
+        echo ERROR: Failed to install requirements!
+        echo ========================================
+        echo Please check your internet connection and try again.
+        echo.
+        pause
+        exit /b 1
+    )
+    echo.
+    echo Requirements installed successfully!
+    echo.
+) else (
+    echo Requirements are already installed.
+    echo.
+)
+
 REM Create logs directory if it doesn't exist
 if not exist "python\logs" mkdir python\logs
 
