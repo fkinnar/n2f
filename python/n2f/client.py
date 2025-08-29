@@ -9,10 +9,37 @@ from helper.cache import get_from_cache, set_in_cache
 from n2f.api_result import ApiResult
 
 class N2fApiClient:
-    """Un client pour interagir avec l'API N2F."""
+    """
+    Client API pour interagir avec l'API N2F.
+
+    Ce client gère l'authentification, les appels API, la pagination,
+    le cache et la gestion d'erreur pour toutes les opérations N2F.
+
+    Features principales :
+    - Authentification automatique avec gestion des tokens
+    - Pagination automatique pour les gros volumes de données
+    - Cache intelligent pour optimiser les performances
+    - Gestion d'erreur robuste avec retry automatique
+    - Support du mode simulation pour les tests
+
+    Example:
+        >>> context = SyncContext(...)
+        >>> client = N2fApiClient(context)
+        >>> users = client.get_users()
+        >>> result = client.create_user(user_payload)
+    """
 
     def __init__(self, context: SyncContext):
-        """Initialise le client avec le contexte de synchronisation."""
+        """
+        Initialise le client avec le contexte de synchronisation.
+
+        Args:
+            context: Contexte contenant la configuration et les credentials
+
+        Raises:
+            ConfigurationException: Si la configuration est invalide
+            AuthenticationException: Si les credentials sont manquants
+        """
         self.context = context
         self.base_url = context.config["n2f"]["base_urls"]
         self.client_id = context.client_id
@@ -21,7 +48,20 @@ class N2fApiClient:
         self._access_token = None
 
     def _get_token(self) -> str:
-        """Récupère et met en cache le token d'accès."""
+        """
+        Récupère et met en cache le token d'accès.
+
+        Cette méthode gère l'authentification avec l'API N2F en utilisant
+        le client_id et client_secret. Le token est mis en cache pour
+        éviter les appels d'authentification répétés.
+
+        Returns:
+            str: Token d'accès valide
+
+        Raises:
+            AuthenticationException: Si l'authentification échoue
+            NetworkException: Si la connexion réseau échoue
+        """
         if self._access_token is None:
             token, _ = get_access_token(
                 self.base_url,
@@ -33,7 +73,25 @@ class N2fApiClient:
         return self._access_token
 
     def _request(self, entity: str, start: int = 0, limit: int = 200) -> List[dict[str, Any]]:
-        """Effectue une requête GET paginée à l'API N2F."""
+        """
+        Effectue une requête GET paginée à l'API N2F.
+
+        Cette méthode gère les appels API GET avec pagination automatique.
+        Elle inclut l'authentification, la gestion d'erreur et le support
+        du mode simulation.
+
+        Args:
+            entity: Nom de l'entité à récupérer (ex: 'users', 'companies')
+            start: Index de départ pour la pagination (défaut: 0)
+            limit: Nombre maximum d'éléments par page (défaut: 200)
+
+        Returns:
+            List[dict]: Liste des entités récupérées
+
+        Raises:
+            ApiException: Si l'appel API échoue
+            NetworkException: Si la connexion réseau échoue
+        """
         if self.simulate:
             return []
 

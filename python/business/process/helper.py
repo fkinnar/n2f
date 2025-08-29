@@ -9,8 +9,26 @@ def reporting(
     status_col     : str
 ) -> None:
     """
-    Generates a report from the results DataFrame.
-    Displays the number of successes and failures if a status column is provided.
+    Génère un rapport détaillé à partir d'un DataFrame de résultats.
+
+    Cette fonction analyse les résultats d'une opération de synchronisation
+    et affiche un résumé formaté avec les statistiques de succès/échec.
+
+    Args:
+        result_df: DataFrame contenant les résultats des opérations
+        empty_message: Message à afficher si le DataFrame est vide
+        update_message: Message de base pour les opérations avec résultats
+        status_col: Nom de la colonne contenant le statut (True=succès, False=échec)
+
+    Example:
+        >>> df = pd.DataFrame({
+        ...     'entity_id': ['user1', 'user2', 'user3'],
+        ...     'success': [True, True, False]
+        ... })
+        >>> reporting(df, "Aucune opération", "Opérations effectuées", "success")
+        Opérations effectuées :
+          Success : 2 / 3
+          Failures : 1 / 3
     """
     if result_df.empty:
         print(empty_message)
@@ -28,14 +46,26 @@ def reporting(
 
 def log_error(scope: str, action: str, entity_id: str, error: Exception, context: str = "") -> None:
     """
-    Log an error with context to facilitate debugging.
+    Enregistre une erreur avec son contexte pour faciliter le debugging.
+
+    Cette fonction formate et affiche les erreurs de manière structurée,
+    incluant toutes les informations nécessaires pour identifier et
+    résoudre le problème.
 
     Args:
-        scope: Scope (USERS, PROJECTS, PLATES, SUBPOSTS)
-        action: Action performed (CREATE, UPDATE, DELETE)
-        entity_id: Entity identifier (email for users, code for axes)
-        error: Exception raised
-        context: Optional additional context
+        scope: Périmètre de synchronisation (USERS, PROJECTS, PLATES, SUBPOSTS)
+        action: Action effectuée (CREATE, UPDATE, DELETE)
+        entity_id: Identifiant de l'entité (email pour users, code pour axes)
+        error: Exception levée
+        context: Contexte supplémentaire optionnel
+
+    Example:
+        >>> try:
+        ...     # Opération qui peut échouer
+        ...     pass
+        ... except Exception as e:
+        ...     log_error("USERS", "CREATE", "john@example.com", e, "Payload validation")
+        [ERROR] [USERS] [CREATE] [john@example.com] - Payload validation - Invalid email format
     """
     context_str = f" - {context}" if context else ""
     print(f"[ERROR] [{scope}] [{action}] [{entity_id}]{context_str} - {str(error)}")
@@ -43,16 +73,29 @@ def log_error(scope: str, action: str, entity_id: str, error: Exception, context
 
 def has_payload_changes(payload: Dict[str, Any], n2f_entity: Dict[str, Any], entity_type: str = None) -> bool:
     """
-    Compare payload fields with N2F data to detect changes.
-    Ignores irrelevant fields and handles data types.
+    Compare les champs du payload avec les données N2F pour détecter les changements.
+
+    Cette fonction effectue une comparaison intelligente entre les données
+    à synchroniser et les données existantes dans N2F. Elle ignore les
+    champs techniques non pertinents et gère les différents types de données.
 
     Args:
-        payload: Dictionary containing data to send to API
-        n2f_entity: Dictionary containing current N2F data
-        entity_type: Entity type ('axe' or 'user') to adapt logic
+        payload: Dictionnaire contenant les données à envoyer à l'API
+        n2f_entity: Dictionnaire contenant les données actuelles de N2F
+        entity_type: Type d'entité ('axe' ou 'user') pour adapter la logique
 
     Returns:
-        bool: True if changes are detected, False otherwise
+        bool: True si des changements sont détectés, False sinon
+
+    Example:
+        >>> payload = {'name': 'John Doe', 'email': 'john@example.com'}
+        >>> n2f_entity = {'name': 'John Doe', 'email': 'john@example.com', 'id': 123}
+        >>> has_payload_changes(payload, n2f_entity, 'user')
+        False
+
+        >>> payload = {'name': 'Jane Doe', 'email': 'jane@example.com'}
+        >>> has_payload_changes(payload, n2f_entity, 'user')
+        True
     """
     # Fields to ignore as they can change without being business changes
     ignored_fields = {

@@ -17,9 +17,28 @@ from n2f.process.helper import export_api_logs
 
 def main() -> None:
     """
-    Point d'entrée du script.
-    Gère les arguments, charge la configuration dans un contexte,
-    puis lance la synchronisation pour chaque périmètre sélectionné.
+    Point d'entrée principal du script de synchronisation Agresso-N2F.
+
+    Ce script orchestre la synchronisation complète entre les systèmes Agresso et N2F.
+    Il gère la configuration, les arguments de ligne de commande, et coordonne
+    l'exécution des synchronisations pour chaque scope sélectionné.
+
+    Workflow :
+    1. Chargement des variables d'environnement
+    2. Parsing des arguments de ligne de commande
+    3. Chargement de la configuration YAML
+    4. Construction du contexte de synchronisation
+    5. Exécution des synchronisations par scope
+    6. Export et affichage des logs d'API
+
+    Raises:
+        FileNotFoundError: Si le fichier de configuration n'existe pas
+        KeyError: Si des clés de configuration sont manquantes
+        Exception: Pour toute autre erreur non gérée
+
+    Example:
+        >>> python sync-agresso-n2f.py --scope users --create --update
+        >>> python sync-agresso-n2f.py --config prod --scope all
     """
     load_dotenv()
     args = create_arg_parser().parse_args()
@@ -112,7 +131,20 @@ def main() -> None:
 
 
 def create_arg_parser() -> argparse.ArgumentParser:
-    """Crée et retourne un parser d'arguments pour la ligne de commande."""
+    """
+    Crée et configure le parser d'arguments pour la ligne de commande.
+
+    Définit tous les arguments disponibles pour contrôler le comportement
+    de la synchronisation : actions à effectuer, scopes à traiter,
+    configuration à utiliser.
+
+    Returns:
+        argparse.ArgumentParser: Parser configuré avec tous les arguments
+
+    Example:
+        >>> parser = create_arg_parser()
+        >>> args = parser.parse_args(['--create', '--scope', 'users'])
+    """
     parser = argparse.ArgumentParser(description="Synchronisation Agresso <-> N2F")
     parser.add_argument('-c', '--create', action='store_true', help="Créer les éléments manquants dans N2F")
     parser.add_argument('-d', '--delete', action='store_true', help="Supprimer les éléments obsolètes de N2F")
