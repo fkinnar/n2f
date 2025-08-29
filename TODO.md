@@ -426,8 +426,9 @@ class RetryableApiClient:
 
 #### **Fichiers à tester :**
 
-- [ ] `PayloadComparator`
 - [ ] `EntitySynchronizer`
+- [ ] `UserSynchronizer`
+- [ ] `AxeSynchronizer`
 - [ ] `CacheManager`
 - [ ] `SyncMetrics`
 - [ ] `SyncOrchestrator`

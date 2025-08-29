@@ -1,12 +1,12 @@
 import pandas as pd
-from typing import Tuple
+from typing import Tuple, List
 
 from helper.context import SyncContext
 from business.process.helper import reporting
 from n2f.client import N2fApiClient
-from n2f.process import create_users, delete_users, update_users
 from agresso.process import select
 from business.normalize import normalize_agresso_users, normalize_n2f_users, build_mapping as build_n2f_mapping
+from .user_synchronizer import UserSynchronizer
 
 def _load_agresso_users(context: SyncContext, sql_filename: str) -> pd.DataFrame:
     """Charge et normalise les utilisateurs depuis Agresso."""
@@ -23,7 +23,7 @@ def _load_agresso_users(context: SyncContext, sql_filename: str) -> pd.DataFrame
     print(f"Number of Agresso users loaded : {len(df_agresso_users)}")
     return df_agresso_users
 
-def _load_n2f_data(n2f_client: N2fApiClient) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def _load_n2f_data(n2f_client: N2fApiClient) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Charge toutes les données nécessaires depuis N2F (utilisateurs, rôles, profils, entreprises)."""
     df_roles = n2f_client.get_roles()
     print(f"Number of N2F roles loaded : {len(df_roles)}")
@@ -44,67 +44,47 @@ def _load_n2f_data(n2f_client: N2fApiClient) -> Tuple[pd.DataFrame, pd.DataFrame
 
     return df_users, df_companies
 
-def _perform_sync_actions(
-    context: SyncContext,
-    n2f_client: N2fApiClient,
-    df_agresso_users: pd.DataFrame,
-    df_n2f_users: pd.DataFrame,
-    df_n2f_companies: pd.DataFrame
-) -> list[pd.DataFrame]:
-    """Exécute les actions de création, mise à jour et suppression."""
-    results = []
-
-    if context.args.create:
-        created, status_col = create_users(
-            df_agresso_users=df_agresso_users,
-            df_n2f_users=df_n2f_users,
-            df_n2f_companies=df_n2f_companies,
-            n2f_client=n2f_client,
-            sandbox=context.config["n2f"]["sandbox"]
-        )
-        reporting(created, "No user added", "Users added", status_col)
-        if not created.empty:
-            results.append(created)
-
-    if context.args.update:
-        updated, status_col = update_users(
-            df_agresso_users=df_agresso_users,
-            df_n2f_users=df_n2f_users,
-            df_n2f_companies=df_n2f_companies,
-            n2f_client=n2f_client,
-            sandbox=context.config["n2f"]["sandbox"]
-        )
-        reporting(updated, "No user modified", "Users modified", status_col)
-        if not updated.empty:
-            results.append(updated)
-
-    if context.args.delete:
-        deleted, status_col = delete_users(
-            df_agresso_users=df_agresso_users,
-            df_n2f_users=df_n2f_users,
-            n2f_client=n2f_client
-        )
-        reporting(deleted, "No user deleted", "Users deleted", status_col)
-        if not deleted.empty:
-            results.append(deleted)
-
-    return results
-
 def synchronize(
     context: SyncContext,
     sql_filename: str
-) -> list[pd.DataFrame]:
+) -> List[pd.DataFrame]:
     """
     Orchestre la synchronisation des utilisateurs Agresso <-> N2F.
+    
+    Utilise la nouvelle classe UserSynchronizer pour une meilleure architecture.
     """
     # Initialisation des clients et chargement des données
     n2f_client = N2fApiClient(context)
     df_agresso_users = _load_agresso_users(context, sql_filename)
     df_n2f_users, df_n2f_companies = _load_n2f_data(n2f_client)
 
+    # Création du synchroniseur
+    synchronizer = UserSynchronizer(n2f_client, context.config["n2f"]["sandbox"])
+    results = []
+
     # Exécution des actions de synchronisation
-    results = _perform_sync_actions(
-        context, n2f_client, df_agresso_users, df_n2f_users, df_n2f_companies
-    )
+    if context.args.create:
+        created, status_col = synchronizer.create_entities(
+            df_agresso_users, df_n2f_users, df_n2f_companies
+        )
+        reporting(created, "No user added", "Users added", status_col)
+        if not created.empty:
+            results.append(created)
+
+    if context.args.update:
+        updated, status_col = synchronizer.update_entities(
+            df_agresso_users, df_n2f_users, df_n2f_companies
+        )
+        reporting(updated, "No user modified", "Users modified", status_col)
+        if not updated.empty:
+            results.append(updated)
+
+    if context.args.delete:
+        deleted, status_col = synchronizer.delete_entities(
+            df_agresso_users, df_n2f_users, df_n2f_companies
+        )
+        reporting(deleted, "No user deleted", "Users deleted", status_col)
+        if not deleted.empty:
+            results.append(deleted)
 
     return results
