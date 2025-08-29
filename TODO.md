@@ -595,8 +595,9 @@ def api_call(self, endpoint: str) -> ApiResult:
 2. **✅ Tests des synchronizers terminés** - 31/31 tests passent (100% de succès)
 3. **✅ Tests de configuration terminés** - 21/21 tests passent (100% de succès)
 4. **✅ Tests du cache terminés** - 21/21 tests passent (100% de succès)
-5. **Compléter les tests unitaires manquants** - Tests des métriques, retry
-6. **Améliorer la documentation des tests** - Documentation complète et mise à jour
+5. **✅ Tests des métriques terminés** - 20/20 tests passent (100% de succès)
+6. **Compléter les tests unitaires manquants** - Tests du retry
+7. **Améliorer la documentation des tests** - Documentation complète et mise à jour
 
 ---
 
@@ -609,7 +610,7 @@ def api_call(self, endpoint: str) -> ApiResult:
 - [✅] **Tests des synchronizers** - EntitySynchronizer, UserSynchronizer, AxeSynchronizer (31 tests)
 - [✅] **Tests de configuration** - SyncConfig, ConfigLoader, SyncRegistry (21 tests)
 - [✅] **Tests du cache** - AdvancedCache avec persistance et métriques (21 tests)
-- [ ] **Tests des métriques** - SyncMetrics et export de données
+- [✅] **Tests des métriques** - SyncMetrics et export de données (20 tests)
 - [ ] **Tests du retry** - RetryManager et stratégies de retry
 
 #### **Objectifs des tests :**
