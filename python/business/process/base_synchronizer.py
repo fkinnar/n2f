@@ -3,7 +3,8 @@ from typing import Dict, List, Tuple, Any
 import pandas as pd
 from n2f.client import N2fApiClient
 from n2f.api_result import ApiResult
-from business.process.helper import log_error, add_api_logging_columns, has_payload_changes
+from business.process.helper import log_error, has_payload_changes
+from n2f.process.helper import add_api_logging_columns
 
 
 class EntitySynchronizer(ABC):
