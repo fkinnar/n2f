@@ -597,8 +597,8 @@ def api_call(self, endpoint: str) -> ApiResult:
 4. **✅ Tests du cache terminés** - 21/21 tests passent (100% de succès)
 5. **✅ Tests des métriques terminés** - 20/20 tests passent (100% de succès)
 6. **✅ Tests du retry terminés** - 34/34 tests passent (100% de succès)
-7. **Tests unitaires manquants** - Modules critiques sans tests (voir section 5.1.2)
-8. **Nettoyage du projet** - Suppression des fichiers temporaires et logs
+7. **✅ Nettoyage du projet terminé** - Suppression des fichiers temporaires et logs
+8. **Tests unitaires manquants** - Modules critiques sans tests (voir section 5.1.2)
 9. **Améliorer la documentation des tests** - Documentation complète et mise à jour
 
 ---
@@ -689,17 +689,17 @@ def api_call(self, endpoint: str) -> ApiResult:
 
 #### **Fichiers à nettoyer :**
 
-- [ ] **Fichiers de logs** - Supprimer les fichiers dans `python/logs/` (ajouter au .gitignore)
-- [ ] **Fichiers de métriques** - Supprimer les fichiers `metrics_*.json` dans la racine
-- [ ] **Fichiers de logs API** - Supprimer les fichiers `api_logs_*.csv` dans la racine
-- [ ] **Cache** - Nettoyer le dossier `cache/` et `cache_persistent/`
-- [ ] **Fichiers temporaires** - Supprimer les fichiers de test et temporaires
+- [✅] **Fichiers de logs** - Supprimé les fichiers dans `python/logs/` (ajouté au .gitignore)
+- [✅] **Fichiers de métriques** - Supprimé les fichiers `metrics_*.json` dans la racine
+- [✅] **Fichiers de logs API** - Supprimé les fichiers `api_logs_*.csv` dans la racine
+- [✅] **Cache** - Nettoyé le dossier `cache/` et `cache_persistent/`
+- [✅] **Fichiers temporaires** - Supprimé les fichiers de test et temporaires
 
 #### **Améliorations du .gitignore :**
 
-- [ ] **Ajouter les patterns** pour les fichiers de logs, métriques, cache
-- [ ] **Exclure les fichiers temporaires** de test et de développement
-- [ ] **Protéger les fichiers sensibles** (credentials, configurations)
+- [✅] **Ajouter les patterns** pour les fichiers de logs, métriques, cache
+- [✅] **Exclure les fichiers temporaires** de test et de développement
+- [✅] **Protéger les fichiers sensibles** (credentials, configurations)
 
 #### **Objectifs du nettoyage :**
 
@@ -828,8 +828,8 @@ test_config.yaml
 
 ### **🎯 Recommandations prioritaires :**
 
-1. **Nettoyer les fichiers temporaires** (1-2 heures)
-2. **Améliorer le .gitignore** (30 minutes)
+1. **✅ Nettoyer les fichiers temporaires** (TERMINÉ - 30 minutes)
+2. **✅ Améliorer le .gitignore** (TERMINÉ - 15 minutes)
 3. **Créer les tests prioritaires** (1-2 jours)
 4. **Documenter les modules manquants** (2-3 heures)
 
