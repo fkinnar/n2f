@@ -28,30 +28,30 @@ class TestEntitySynchronizer(unittest.TestCase):
         self.mock_client = Mock()
         self.sandbox = True
         self.scope = "test_scope"
-        
+
         # Créer une classe concrète pour tester la classe abstraite
         class ConcreteSynchronizer(EntitySynchronizer):
             def build_payload(self, entity, df_agresso, df_n2f, df_n2f_companies=None):
                 return {"test": "payload"}
-            
+
             def get_entity_id(self, entity):
                 return entity.get("id", "default_id")
-            
+
             def get_agresso_id_column(self):
                 return "agresso_id"
-            
+
             def get_n2f_id_column(self):
                 return "n2f_id"
-            
+
             def _perform_create_operation(self, entity, payload, df_n2f_companies=None):
                 return ApiResult(success=True, message="Created", response_data={"id": "new_id"})
-            
+
             def _perform_update_operation(self, entity, payload, n2f_entity, df_n2f_companies=None):
                 return ApiResult(success=True, message="Updated", response_data={"id": "updated_id"})
-            
+
             def _perform_delete_operation(self, entity):
                 return ApiResult(success=True, message="Deleted", response_data={"id": "deleted_id"})
-        
+
         self.synchronizer = ConcreteSynchronizer(self.mock_client, self.sandbox, self.scope)
 
     def test_initialization(self):
@@ -63,9 +63,9 @@ class TestEntitySynchronizer(unittest.TestCase):
     def test_create_entities_empty_data(self):
         """Test de création d'entités avec des données vides."""
         empty_df = pd.DataFrame()
-        
+
         result_df, status_col = self.synchronizer.create_entities(empty_df, empty_df)
-        
+
         self.assertTrue(result_df.empty)
         self.assertEqual(status_col, "created")
 
@@ -77,18 +77,18 @@ class TestEntitySynchronizer(unittest.TestCase):
             "name": ["User 1", "User 2"],
             "email": ["user1@test.com", "user2@test.com"]
         })
-        
+
         # Données N2F vides (aucune entité existante)
         df_n2f = pd.DataFrame()
-        
+
         # Mock des méthodes privées
         with patch.object(self.synchronizer, '_get_entities_to_create', return_value=df_agresso):
             with patch.object(self.synchronizer, 'build_payload', return_value={"test": "payload"}):
-                with patch.object(self.synchronizer, '_perform_create_operation', 
+                with patch.object(self.synchronizer, '_perform_create_operation',
                                 return_value=ApiResult(success=True, message="Created", response_data={"id": "new_id"})):
-                    
+
                     result_df, status_col = self.synchronizer.create_entities(df_agresso, df_n2f)
-                    
+
                     self.assertFalse(result_df.empty)
                     self.assertEqual(status_col, "created")
                     self.assertTrue(all(result_df[status_col]))
@@ -96,9 +96,9 @@ class TestEntitySynchronizer(unittest.TestCase):
     def test_update_entities_empty_data(self):
         """Test de mise à jour d'entités avec des données vides."""
         empty_df = pd.DataFrame()
-        
+
         result_df, status_col = self.synchronizer.update_entities(empty_df, empty_df)
-        
+
         self.assertTrue(result_df.empty)
         self.assertEqual(status_col, "updated")
 
@@ -110,22 +110,22 @@ class TestEntitySynchronizer(unittest.TestCase):
             "name": ["User 1", "User 2"],
             "email": ["user1@test.com", "user2@test.com"]
         })
-        
+
         # Données N2F avec entités existantes
         df_n2f = pd.DataFrame({
             "n2f_id": ["user1", "user2"],
             "name": ["Old User 1", "Old User 2"],
             "email": ["user1@test.com", "user2@test.com"]
         })
-        
+
         # Mock des méthodes privées
         with patch.object(self.synchronizer, '_get_entities_to_update', return_value=df_agresso):
             with patch.object(self.synchronizer, 'build_payload', return_value={"test": "payload"}):
-                with patch.object(self.synchronizer, '_perform_update_operation', 
+                with patch.object(self.synchronizer, '_perform_update_operation',
                                 return_value=ApiResult(success=True, message="Updated", response_data={"id": "updated_id"})):
-                    
+
                     result_df, status_col = self.synchronizer.update_entities(df_agresso, df_n2f)
-                    
+
                     self.assertFalse(result_df.empty)
                     self.assertEqual(status_col, "updated")
                     self.assertTrue(all(result_df[status_col]))
@@ -133,9 +133,9 @@ class TestEntitySynchronizer(unittest.TestCase):
     def test_delete_entities_empty_data(self):
         """Test de suppression d'entités avec des données vides."""
         empty_df = pd.DataFrame()
-        
+
         result_df, status_col = self.synchronizer.delete_entities(empty_df, empty_df)
-        
+
         self.assertTrue(result_df.empty)
         self.assertEqual(status_col, "deleted")
 
@@ -143,21 +143,21 @@ class TestEntitySynchronizer(unittest.TestCase):
         """Test de suppression d'entités avec succès."""
         # Données Agresso vides (aucune entité à supprimer)
         df_agresso = pd.DataFrame()
-        
+
         # Données N2F avec entités à supprimer
         df_n2f = pd.DataFrame({
             "n2f_id": ["user1", "user2"],
             "name": ["User 1", "User 2"],
             "email": ["user1@test.com", "user2@test.com"]
         })
-        
+
         # Mock des méthodes privées
         with patch.object(self.synchronizer, '_get_entities_to_delete', return_value=df_n2f):
-            with patch.object(self.synchronizer, '_perform_delete_operation', 
+            with patch.object(self.synchronizer, '_perform_delete_operation',
                             return_value=ApiResult(success=True, message="Deleted", response_data={"id": "deleted_id"})):
-                
+
                 result_df, status_col = self.synchronizer.delete_entities(df_agresso, df_n2f)
-                
+
                 self.assertFalse(result_df.empty)
                 self.assertEqual(status_col, "deleted")
                 self.assertTrue(all(result_df[status_col]))
@@ -185,16 +185,16 @@ class TestUserSynchronizer(unittest.TestCase):
             "Nom": "Test User",
             "Prenom": "Test"
         })
-        
+
         df_agresso = pd.DataFrame()
         df_n2f = pd.DataFrame()
-        
+
         # Mock de la fonction build_user_payload
         with patch('n2f.process.user.build_user_payload') as mock_build:
             mock_build.return_value = {"email": "test@example.com", "name": "Test User"}
-            
+
             payload = self.synchronizer.build_payload(entity, df_agresso, df_n2f)
-            
+
             mock_build.assert_called_once_with(
                 entity, df_agresso, df_n2f, self.mock_client, None, self.sandbox
             )
@@ -206,7 +206,7 @@ class TestUserSynchronizer(unittest.TestCase):
             "AdresseEmail": "test@example.com",
             "Nom": "Test User"
         })
-        
+
         entity_id = self.synchronizer.get_entity_id(entity)
         self.assertEqual(entity_id, "test@example.com")
 
@@ -224,12 +224,12 @@ class TestUserSynchronizer(unittest.TestCase):
         """Test de l'opération de création."""
         entity = pd.Series({"AdresseEmail": "test@example.com"})
         payload = {"email": "test@example.com", "name": "Test User"}
-        
+
         # Mock de la méthode create_user
         self.mock_client.create_user.return_value = ApiResult(success=True, message="Created", response_data={"id": "new_user_id"})
-        
+
         result = self.synchronizer._perform_create_operation(entity, payload)
-        
+
         self.mock_client.create_user.assert_called_once_with(payload)
         self.assertTrue(result.success)
 
@@ -238,26 +238,51 @@ class TestUserSynchronizer(unittest.TestCase):
         entity = pd.Series({"AdresseEmail": "test@example.com"})
         payload = {"email": "test@example.com", "name": "Updated User"}
         n2f_entity = {"id": "user_id", "email": "test@example.com"}
-        
+
         # Mock de la méthode update_user
         self.mock_client.update_user.return_value = ApiResult(success=True, message="Updated", response_data={"id": "updated_user_id"})
-        
+
         result = self.synchronizer._perform_update_operation(entity, payload, n2f_entity)
-        
+
         self.mock_client.update_user.assert_called_once_with(payload)
         self.assertTrue(result.success)
 
     def test_perform_delete_operation(self):
         """Test de l'opération de suppression."""
         entity = pd.Series({"AdresseEmail": "test@example.com"})
-        
+
         # Mock de la méthode delete_user
         self.mock_client.delete_user.return_value = ApiResult(success=True, message="Deleted", response_data={"id": "deleted_user_id"})
-        
+
         result = self.synchronizer._perform_delete_operation(entity)
-        
+
         self.mock_client.delete_user.assert_called_once_with("test@example.com")
         self.assertTrue(result.success)
+
+    def test_delete_entities_integration(self):
+        """Test d'intégration de suppression d'utilisateurs."""
+        # Données Agresso vides
+        df_agresso = pd.DataFrame()
+
+        # Données N2F avec utilisateurs à supprimer (utiliser AdresseEmail comme dans les données Agresso)
+        df_n2f = pd.DataFrame({
+            "AdresseEmail": ["user1@test.com", "user2@test.com"],
+            "name": ["User 1", "User 2"]
+        })
+
+        # Mock de delete_user
+        self.mock_client.delete_user.return_value = ApiResult(success=True, message="Deleted", response_data={"id": "deleted_user_id"})
+
+        # Mock de _get_entities_to_delete pour simuler la logique métier
+        with patch.object(self.synchronizer, '_get_entities_to_delete', return_value=df_n2f):
+            result_df, status_col = self.synchronizer.delete_entities(df_agresso, df_n2f)
+
+            self.assertFalse(result_df.empty)
+            self.assertEqual(status_col, "deleted")
+            self.assertTrue(all(result_df[status_col]))
+
+            # Vérifier que delete_user a été appelé pour chaque entité
+            self.assertEqual(self.mock_client.delete_user.call_count, 2)
 
 
 class TestAxeSynchronizer(unittest.TestCase):
@@ -285,16 +310,16 @@ class TestAxeSynchronizer(unittest.TestCase):
             "name": "Test Project",
             "client": "TEST_CLIENT"
         })
-        
+
         df_agresso = pd.DataFrame()
         df_n2f = pd.DataFrame()
-        
+
         # Mock de la fonction build_axe_payload
         with patch('n2f.process.axe.build_axe_payload') as mock_build:
             mock_build.return_value = {"code": "TEST001", "name": "Test Project"}
-            
+
             payload = self.synchronizer.build_payload(entity, df_agresso, df_n2f)
-            
+
             mock_build.assert_called_once_with(entity, self.sandbox)
             self.assertEqual(payload, {"code": "TEST001", "name": "Test Project"})
 
@@ -304,7 +329,7 @@ class TestAxeSynchronizer(unittest.TestCase):
             "code": "TEST001",
             "name": "Test Project"
         })
-        
+
         entity_id = self.synchronizer.get_entity_id(entity)
         self.assertEqual(entity_id, "TEST001")
 
@@ -330,16 +355,16 @@ class TestAxeSynchronizer(unittest.TestCase):
             "code": ["TEST_CLIENT"],
             "id": ["company_id_123"]
         })
-        
+
         # Mock de lookup_company_id
         with patch('n2f.process.user.lookup_company_id') as mock_lookup:
             mock_lookup.return_value = "company_id_123"
-            
+
             # Mock de upsert_axe_value
             self.mock_client.upsert_axe_value.return_value = ApiResult(success=True, message="Created", response_data={"id": "new_axe_id"})
-            
+
             result = self.synchronizer._perform_create_operation(entity, payload, df_n2f_companies)
-            
+
             mock_lookup.assert_called_once_with("TEST_CLIENT", df_n2f_companies, self.sandbox)
             self.mock_client.upsert_axe_value.assert_called_once_with(
                 "company_id_123", self.axe_id, payload, "create", self.scope
@@ -358,13 +383,13 @@ class TestAxeSynchronizer(unittest.TestCase):
             "code": ["TEST_CLIENT"],
             "id": ["company_id_123"]
         })
-        
+
         # Mock de lookup_company_id retournant None
         with patch('n2f.process.user.lookup_company_id') as mock_lookup:
             mock_lookup.return_value = None
-            
+
             result = self.synchronizer._perform_create_operation(entity, payload, df_n2f_companies)
-            
+
             mock_lookup.assert_called_once_with("UNKNOWN_CLIENT", df_n2f_companies, self.sandbox)
             self.assertFalse(result.success)
             self.assertIn("Company not found", result.error_details)
@@ -382,16 +407,16 @@ class TestAxeSynchronizer(unittest.TestCase):
             "code": ["TEST_CLIENT"],
             "id": ["company_id_123"]
         })
-        
+
         # Mock de lookup_company_id
         with patch('n2f.process.user.lookup_company_id') as mock_lookup:
             mock_lookup.return_value = "company_id_123"
-            
+
             # Mock de upsert_axe_value
             self.mock_client.upsert_axe_value.return_value = ApiResult(success=True, message="Updated", response_data={"id": "updated_axe_id"})
-            
+
             result = self.synchronizer._perform_update_operation(entity, payload, n2f_entity, df_n2f_companies)
-            
+
             mock_lookup.assert_called_once_with("TEST_CLIENT", df_n2f_companies, self.sandbox)
             self.mock_client.upsert_axe_value.assert_called_once_with(
                 "company_id_123", self.axe_id, payload, "update", self.scope
@@ -405,16 +430,16 @@ class TestAxeSynchronizer(unittest.TestCase):
             "name": "Test Project",
             "client": "TEST_CLIENT"
         })
-        
+
         # Mock de delete_axe_value pour la suppression
         self.mock_client.delete_axe_value.return_value = ApiResult(success=True, message="Deleted", response_data={"id": "deleted_axe_id"})
-        
+
         # Ajouter company_id à l'entité pour le test
         entity_with_company = entity.copy()
         entity_with_company["company_id"] = "company_id_123"
-        
+
         result = self.synchronizer._perform_delete_operation(entity_with_company)
-        
+
         self.mock_client.delete_axe_value.assert_called_once_with(
             "company_id_123", self.axe_id, "TEST001", self.scope
         )
