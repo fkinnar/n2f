@@ -53,3 +53,22 @@ coverage.xml
 # Fichiers de métriques générés automatiquement
 metrics_*.json
 example_metrics.json
+
+# Logs spécifiques au projet
+python/logs/*.log
+api_logs_*.csv
+api_logs_*.log.csv
+
+# Cache et fichiers temporaires
+cache/
+cache_persistent/
+*.tmp
+*.temp
+
+# Fichiers de configuration de test
+test_config.yaml
+
+# IDE spécifique
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
