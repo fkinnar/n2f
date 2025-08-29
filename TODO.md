@@ -111,7 +111,7 @@ class EntitySynchronizer(ABC):
 
 ---
 
-### 🔧 **1.3 Exceptions personnalisées**
+### 🔧 **1.3 Exceptions personnalisées** ✅ **TERMINÉ**
 
 #### **Problème identifié :**
 
@@ -119,10 +119,10 @@ class EntitySynchronizer(ABC):
 - Pas de distinction entre types d'erreurs
 - Messages d'erreur non structurés
 
-#### **Solution :**
+#### **Solution implémentée :**
 
 ```python
-# Créer : python/core/exceptions.py
+# Créé : python/core/exceptions.py
 class SyncException(Exception):
     """Base exception for synchronization errors."""
     pass
@@ -138,7 +138,40 @@ class ValidationException(SyncException):
 class ConfigurationException(SyncException):
     """Raised when configuration is invalid."""
     pass
+
+class DatabaseException(SyncException):
+    """Raised when database operations fail."""
+    pass
+
+class AuthenticationException(SyncException):
+    """Raised when authentication fails."""
+    pass
+
+class NetworkException(SyncException):
+    """Raised when network errors occur."""
+    pass
 ```
+
+#### **Fichiers créés :**
+
+- ✅ `python/core/exceptions.py` → Hiérarchie complète d'exceptions personnalisées
+- ✅ `python/core/exception_examples.py` → Exemples d'utilisation
+
+#### **Fonctionnalités implémentées :**
+
+- ✅ **Hiérarchie d'exceptions** : 7 types d'exceptions spécialisées
+- ✅ **Contexte riche** : Chaque exception peut contenir des détails et du contexte
+- ✅ **Sérialisation** : Méthode `to_dict()` pour convertir en dictionnaire
+- ✅ **Décorateurs** : `@wrap_api_call` et `@handle_sync_exceptions` pour automatiser la gestion
+- ✅ **Gestion hiérarchique** : Capture spécifique ou générique selon les besoins
+
+#### **Avantages obtenus :**
+
+- ✅ **Messages d'erreur structurés** : Informations détaillées et contextuelles
+- ✅ **Debugging facilité** : Distinction claire entre types d'erreurs
+- ✅ **Gestion centralisée** : Pattern cohérent pour toutes les erreurs
+- ✅ **Extensibilité** : Facile d'ajouter de nouveaux types d'exceptions
+- ✅ **Logging amélioré** : Exceptions sérialisables pour les logs
 
 ---
 
@@ -483,11 +516,11 @@ n2f/
 
 ## 📊 MÉTRIQUES DE PROGRESSION
 
-### **Phase 1 :** 2/4 tâches terminées
+### **Phase 1 :** 3/4 tâches terminées
 
 - [✅] 1.1 Extraction de la logique commune (Nettoyage effectué - PayloadComparator reporté)
 - [✅] 1.2 Classe abstraite pour la synchronisation (EntitySynchronizer implémenté)
-- [ ] 1.3 Exceptions personnalisées
+- [✅] 1.3 Exceptions personnalisées (Hiérarchie complète d'exceptions créée)
 - [ ] 1.4 Documentation complète
 
 ### **Phase 2 :** 0/4 tâches terminées
@@ -514,8 +547,9 @@ n2f/
 
 1. **✅ Phase 1, tâche 1.1 terminée** - Nettoyage effectué, PayloadComparator reporté
 2. **✅ Phase 1, tâche 1.2 terminée** - EntitySynchronizer implémenté avec UserSynchronizer et AxeSynchronizer
-3. **Continuer avec la Phase 1, tâche 1.3** - Exceptions personnalisées
-4. **Tester les nouvelles classes** - S'assurer qu'elles fonctionnent comme l'ancien code
+3. **✅ Phase 1, tâche 1.3 terminée** - Hiérarchie complète d'exceptions personnalisées créée
+4. **Continuer avec la Phase 1, tâche 1.4** - Documentation complète
+5. **Tester les nouvelles classes** - S'assurer qu'elles fonctionnent comme l'ancien code
 
 ---
 
