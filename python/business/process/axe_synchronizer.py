@@ -87,7 +87,7 @@ class AxeSynchronizer(EntitySynchronizer):
             ApiResult: Résultat de l'opération
         """
         # Import déplacé ici pour éviter les imports circulaires
-        from n2f.process.axe import lookup_company_id
+        from n2f.process.user import lookup_company_id
         company_code = entity.get("client")
         company_id = lookup_company_id(company_code, df_n2f_companies, self.sandbox)
 
@@ -112,6 +112,8 @@ class AxeSynchronizer(EntitySynchronizer):
         Returns:
             ApiResult: Résultat de l'opération
         """
+        # Import déplacé ici pour éviter les imports circulaires
+        from n2f.process.user import lookup_company_id
         company_code = entity.get("client")
         company_id = lookup_company_id(company_code, df_n2f_companies, self.sandbox)
 

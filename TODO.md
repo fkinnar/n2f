@@ -50,10 +50,10 @@ synchronisation N2F, organisées par priorité et phases d'implémentation.
 class PayloadComparator:
     @abstractmethod
     def get_entity_id(self, entity: pd.Series) -> str: pass
-    
+
     @abstractmethod
     def get_agresso_id_column(self) -> str: pass
-    
+
     @abstractmethod
     def get_n2f_id_column(self) -> str: pass
 ```
@@ -245,7 +245,7 @@ class SyncConfig:
 # python/core/registry.py
 
 class SyncRegistry:
-    def register(self, scope_name: str, sync_function: Callable, 
+    def register(self, scope_name: str, sync_function: Callable,
                  config: ScopeConfig) -> None
     def get_all_scopes(self) -> Dict[str, RegistryEntry]
     def auto_discover_scopes(self) -> None
