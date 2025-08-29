@@ -17,6 +17,7 @@ synchronisation N2F, organisées par priorité et phases d'implémentation.
 #### **Problème initial identifié :**
 
 - ~~Duplication massive entre `has_payload_changes` et `debug_payload_changes`~~
+
 ✅ **RÉSOLU**
 
 - Logique de synchronisation répétée dans `user.py` et `axe.py`
@@ -50,8 +51,6 @@ synchronisation N2F, organisées par priorité et phases d'implémentation.
 
 class PayloadComparator:
 
-
-
 @abstractmethod
 def get_entity_id(self, entity: pd.Series) -> str: pass
 @abstractmethod
@@ -59,74 +58,12 @@ def get_agresso_id_column(self) -> str: pass
 @abstractmethod
 def get_n2f_id_column(self) -> str: pass
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 return decorator
 
 """Décorateur utilisant tenacity pour les retry."""
 return retry(
 
 )
-
-
-
-
-
-
 
 ### **Exemples de demandes :**
 
@@ -155,9 +92,11 @@ return retry(
 ### **Phase 1 :** 4/4 tâches terminées ✅ **PHASE COMPLÈTE**
 
 - [✅] 1.1 Extraction de la logique commune (Nettoyage effectué -
+
 PayloadComparator reporté)
 
 - [✅] 1.2 Classe abstraite pour la synchronisation (EntitySynchronizer
+
 implémenté)
 
 - [✅] 1.3 Exceptions personnalisées (Hiérarchie complète d'exceptions créée)
@@ -169,9 +108,11 @@ implémenté)
 - [✅] 2.1 Configuration centralisée (Configuration centralisée avec dataclasses)
 
 - [✅] 2.2 Pattern Registry pour les scopes (Registry avec auto-découverte et
+
 extensibilité)
 
 - [✅] 2.3 Orchestrator principal (Séparation des responsabilités avec
+
 SyncOrchestrator)
 
 - [✅] 2.4 Système de cache amélioré (Cache avancé avec persistance et métriques)
@@ -196,29 +137,21 @@ SyncOrchestrator)
 
 1. **✅ Phase 1, tâche 1.
 
+1. **✅ Phase 1, tâche 1.
 
 1. **✅ Phase 1, tâche 1.
 
-
 1. **✅ Phase 1, tâche 1.
-
-
-1. **✅ Phase 1, tâche 1.
-
 
 1. **🎉 Phase 1 COMPLÈTE ET MERGÉE** - Architecture de base solide et maintenable
 
 1. **✅ Phase 2, tâche 2.
 
+1. **✅ Phase 2, tâche 2.
 
 1. **✅ Phase 2, tâche 2.
 
-
 1. **✅ Phase 2, tâche 2.
-
-
-1. **✅ Phase 2, tâche 2.
-
 
 1. **🎉 Phase 2 TERMINÉE** - Architecture complète et robuste
 
@@ -233,4 +166,4 @@ SyncOrchestrator)
 *Dernière mise à jour : 28 août 2025*
 *Version : 1.0*
 
-```
+```text
