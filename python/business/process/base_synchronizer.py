@@ -3,7 +3,7 @@ from typing import Dict, List, Tuple, Any
 import pandas as pd
 from n2f.client import N2fApiClient
 from n2f.api_result import ApiResult
-from business.process.helper import log_error, add_api_logging_columns
+from business.process.helper import log_error, add_api_logging_columns, has_payload_changes
 
 
 class EntitySynchronizer(ABC):
@@ -301,7 +301,6 @@ class EntitySynchronizer(ABC):
 
     def _has_changes(self, payload: Dict, n2f_entity: Dict) -> bool:
         """Vérifie s'il y a des changements entre le payload et l'entité N2F."""
-        from business.process.helper import has_payload_changes
         entity_type = self.scope.rstrip('s')  # "users" -> "user", "projects" -> "project"
         return has_payload_changes(payload, n2f_entity, entity_type)
 

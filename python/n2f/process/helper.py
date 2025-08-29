@@ -1,5 +1,6 @@
 import pandas as pd
 from typing import List
+from datetime import datetime
 from n2f.api_result import ApiResult
 
 
@@ -43,7 +44,6 @@ def export_api_logs(df: pd.DataFrame, filename: str = None) -> str:
         Chemin du fichier exporté
     """
     if filename is None:
-        from datetime import datetime
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"api_logs_{timestamp}.log.csv"
 

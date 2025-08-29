@@ -7,6 +7,7 @@ from n2f.process.user import lookup_company_id
 # Import déplacé dans la fonction pour éviter l'import circulaire
 from n2f.api_result import ApiResult
 from n2f.process.helper import add_api_logging_columns
+from business.process.helper import has_payload_changes, log_error
 
 def get_axes(
     n2f_client: N2fApiClient,
@@ -87,8 +88,6 @@ def update_axes(
     for _, project in df_agresso_projects[df_agresso_projects["code"].isin(df_n2f_projects["code"])].iterrows():
         payload = build_axe_payload(project, sandbox)
         n2f_project = n2f_by_code.get(project["code"], {})
-
-        from business.process.helper import has_payload_changes, log_error
 
         if not has_payload_changes(payload, n2f_project, 'axe'):
             continue
