@@ -25,7 +25,7 @@ class TestRetryConfig(unittest.TestCase):
     def test_default_config(self):
         """Test de la configuration par défaut."""
         config = RetryConfig()
-        
+
         self.assertEqual(config.max_attempts, 3)
         self.assertEqual(config.base_delay, 1.0)
         self.assertEqual(config.max_delay, 60.0)
@@ -45,7 +45,7 @@ class TestRetryConfig(unittest.TestCase):
             strategy=RetryStrategy.LINEAR_BACKOFF,
             log_retries=False
         )
-        
+
         self.assertEqual(config.max_attempts, 5)
         self.assertEqual(config.base_delay, 2.0)
         self.assertEqual(config.max_delay, 30.0)
@@ -55,12 +55,12 @@ class TestRetryConfig(unittest.TestCase):
     def test_is_retryable(self):
         """Test de la méthode is_retryable."""
         config = RetryConfig()
-        
+
         # Erreurs récupérables
         self.assertTrue(config.is_retryable(ConnectionError()))
         self.assertTrue(config.is_retryable(TimeoutError()))
         self.assertTrue(config.is_retryable(RetryableError("test")))
-        
+
         # Erreurs fatales
         self.assertFalse(config.is_retryable(ValueError("test")))
         self.assertFalse(config.is_retryable(TypeError("test")))
@@ -84,7 +84,7 @@ class TestRetryMetrics(unittest.TestCase):
     def test_default_metrics(self):
         """Test des métriques par défaut."""
         metrics = RetryMetrics()
-        
+
         self.assertEqual(metrics.total_attempts, 0)
         self.assertEqual(metrics.successful_attempts, 0)
         self.assertEqual(metrics.failed_attempts, 0)
@@ -102,7 +102,7 @@ class TestRetryMetrics(unittest.TestCase):
             failed_attempts=3,
             total_delay_seconds=5.5
         )
-        
+
         self.assertEqual(metrics.success_rate, 0.7)
         # failure_rate n'existe pas, on calcule manuellement
         self.assertAlmostEqual(1.0 - metrics.success_rate, 0.3)
@@ -110,7 +110,7 @@ class TestRetryMetrics(unittest.TestCase):
     def test_metrics_with_zero_attempts(self):
         """Test des métriques avec zéro tentative."""
         metrics = RetryMetrics()
-        
+
         self.assertEqual(metrics.success_rate, 0.0)
         # failure_rate n'existe pas, on calcule manuellement
         self.assertAlmostEqual(1.0 - metrics.success_rate, 1.0)  # 1.0 - 0.0 = 1.0
@@ -133,13 +133,13 @@ class TestRetryManager(unittest.TestCase):
     def test_execute_success_first_try(self, mock_sleep):
         """Test d'exécution réussie au premier essai."""
         mock_func = MagicMock(return_value="success")
-        
+
         result = self.manager.execute(mock_func, "arg1", "arg2", operation_name="test_op")
-        
+
         self.assertEqual(result, "success")
         mock_func.assert_called_once_with("arg1", "arg2")
         mock_sleep.assert_not_called()
-        
+
         # Vérifier les métriques
         metrics = self.manager.metrics["test_op"]
         self.assertEqual(metrics.total_attempts, 1)
@@ -150,13 +150,13 @@ class TestRetryManager(unittest.TestCase):
     def test_execute_success_after_retry(self, mock_sleep):
         """Test d'exécution réussie après retry."""
         mock_func = MagicMock(side_effect=[ConnectionError("test"), "success"])
-        
+
         result = self.manager.execute(mock_func, operation_name="test_op")
-        
+
         self.assertEqual(result, "success")
         self.assertEqual(mock_func.call_count, 2)
         mock_sleep.assert_called_once()
-        
+
         # Vérifier les métriques
         metrics = self.manager.metrics["test_op"]
         self.assertEqual(metrics.total_attempts, 2)
@@ -169,13 +169,13 @@ class TestRetryManager(unittest.TestCase):
     def test_execute_failure_after_max_attempts(self, mock_sleep):
         """Test d'échec après le nombre maximum de tentatives."""
         mock_func = MagicMock(side_effect=ConnectionError("test"))
-        
+
         with self.assertRaises(ConnectionError):
             self.manager.execute(mock_func, operation_name="test_op")
-        
+
         self.assertEqual(mock_func.call_count, 3)
         self.assertEqual(mock_sleep.call_count, 2)  # 2 retries
-        
+
         # Vérifier les métriques
         metrics = self.manager.metrics["test_op"]
         self.assertEqual(metrics.total_attempts, 3)
@@ -187,10 +187,10 @@ class TestRetryManager(unittest.TestCase):
     def test_execute_fatal_error_no_retry(self):
         """Test d'erreur fatale sans retry."""
         mock_func = MagicMock(side_effect=ValueError("fatal"))
-        
+
         with self.assertRaises(ValueError):
             self.manager.execute(mock_func, operation_name="test_op")
-        
+
         # Vérifier les métriques
         metrics = self.manager.metrics["test_op"]
         self.assertEqual(metrics.total_attempts, 1)
@@ -203,11 +203,11 @@ class TestRetryManager(unittest.TestCase):
     def test_calculate_delay_exponential(self, mock_uniform):
         """Test du calcul de délai exponentiel."""
         mock_uniform.return_value = 0.0  # Pas de jitter pour simplifier
-        
+
         delay1 = self.manager._calculate_delay(1)
         delay2 = self.manager._calculate_delay(2)
         delay3 = self.manager._calculate_delay(3)
-        
+
         self.assertAlmostEqual(delay1, 0.1)  # base_delay
         self.assertAlmostEqual(delay2, 0.2)  # base_delay * 2
         self.assertAlmostEqual(delay3, 0.4)  # base_delay * 4
@@ -218,11 +218,11 @@ class TestRetryManager(unittest.TestCase):
         mock_uniform.return_value = 0.0  # Pas de jitter pour simplifier
         config = RetryConfig(strategy=RetryStrategy.LINEAR_BACKOFF, base_delay=1.0, jitter=False)
         manager = RetryManager(config)
-        
+
         delay1 = manager._calculate_delay(1)
         delay2 = manager._calculate_delay(2)
         delay3 = manager._calculate_delay(3)
-        
+
         self.assertEqual(delay1, 1.0)
         self.assertEqual(delay2, 2.0)
         self.assertEqual(delay3, 3.0)
@@ -233,11 +233,11 @@ class TestRetryManager(unittest.TestCase):
         mock_uniform.return_value = 0.0  # Pas de jitter pour simplifier
         config = RetryConfig(strategy=RetryStrategy.CONSTANT_DELAY, base_delay=2.0, jitter=False)
         manager = RetryManager(config)
-        
+
         delay1 = manager._calculate_delay(1)
         delay2 = manager._calculate_delay(2)
         delay3 = manager._calculate_delay(3)
-        
+
         self.assertEqual(delay1, 2.0)
         self.assertEqual(delay2, 2.0)
         self.assertEqual(delay3, 2.0)
@@ -248,7 +248,7 @@ class TestRetryManager(unittest.TestCase):
         mock_uniform.return_value = 0.0  # Pas de jitter pour simplifier
         config = RetryConfig(base_delay=100.0, max_delay=5.0, jitter=False)
         manager = RetryManager(config)
-        
+
         delay = manager._calculate_delay(1)
         self.assertEqual(delay, 5.0)  # Limité par max_delay
 
@@ -260,7 +260,7 @@ class TestRetryManager(unittest.TestCase):
             successful_attempts=3,
             failed_attempts=2
         )
-        
+
         metrics = self.manager.get_metrics("test_op")
         self.assertEqual(metrics.total_attempts, 5)
         self.assertEqual(metrics.successful_attempts, 3)
@@ -269,7 +269,7 @@ class TestRetryManager(unittest.TestCase):
         """Test de récupération de toutes les métriques."""
         self.manager.metrics["op1"] = RetryMetrics(total_attempts=1)
         self.manager.metrics["op2"] = RetryMetrics(total_attempts=2)
-        
+
         all_metrics = self.manager.get_metrics()
         self.assertIn("op1", all_metrics)
         self.assertIn("op2", all_metrics)
@@ -286,7 +286,7 @@ class TestRetryManager(unittest.TestCase):
             total_attempts=5,
             successful_attempts=3
         )
-        
+
         self.manager.reset_metrics("test_op")
         metrics = self.manager.metrics["test_op"]
         self.assertEqual(metrics.total_attempts, 0)
@@ -296,7 +296,7 @@ class TestRetryManager(unittest.TestCase):
         """Test de réinitialisation de toutes les métriques."""
         self.manager.metrics["op1"] = RetryMetrics(total_attempts=1)
         self.manager.metrics["op2"] = RetryMetrics(total_attempts=2)
-        
+
         self.manager.reset_metrics()
         self.assertEqual(len(self.manager.metrics), 0)
 
@@ -309,7 +309,7 @@ class TestRetryManager(unittest.TestCase):
             failed_attempts=1,
             total_delay_seconds=1.5
         )
-        
+
         self.manager.print_summary()
         mock_print.assert_called()
 
@@ -332,13 +332,13 @@ class TestRetryDecorators(unittest.TestCase):
         """Test du décorateur retry."""
         mock_manager = MagicMock()
         mock_get_manager.return_value = mock_manager
-        
+
         @retry(self.config, "test_operation")
         def test_func(arg1, arg2):
             return f"result: {arg1} {arg2}"
-        
+
         result = test_func("a", "b")
-        
+
         # Vérifier que execute a été appelé
         mock_manager.execute.assert_called_once()
         # Vérifier que execute a été appelé avec les bons arguments
@@ -353,13 +353,13 @@ class TestRetryDecorators(unittest.TestCase):
         """Test du décorateur api_retry."""
         mock_manager = MagicMock()
         mock_get_manager.return_value = mock_manager
-        
+
         @api_retry(max_attempts=3, base_delay=2.0)
         def test_func():
             return "api_result"
-        
+
         result = test_func()
-        
+
         mock_manager.execute.assert_called_once()
         # Vérifier que la configuration est correcte
         call_args = mock_manager.execute.call_args
@@ -370,13 +370,13 @@ class TestRetryDecorators(unittest.TestCase):
         """Test du décorateur database_retry."""
         mock_manager = MagicMock()
         mock_get_manager.return_value = mock_manager
-        
+
         @database_retry(max_attempts=2, base_delay=1.0)
         def test_func():
             return "db_result"
-        
+
         result = test_func()
-        
+
         mock_manager.execute.assert_called_once()
         # Vérifier que la configuration est correcte
         call_args = mock_manager.execute.call_args
@@ -395,16 +395,16 @@ class TestRetryFunctions(unittest.TestCase):
         """Test de la fonction execute_with_retry."""
         mock_manager = MagicMock()
         mock_get_manager.return_value = mock_manager
-        
+
         def test_func(arg1, arg2):
             return f"result: {arg1} {arg2}"
-        
+
         result = execute_with_retry(
-            test_func, "a", "b", 
-            config=self.config, 
+            test_func, "a", "b",
+            config=self.config,
             operation_name="test_op"
         )
-        
+
         mock_manager.execute.assert_called_once_with(
             test_func, "a", "b", operation_name="test_op"
         )
@@ -414,7 +414,7 @@ class TestRetryFunctions(unittest.TestCase):
         """Test de la fonction get_retry_metrics."""
         mock_manager = MagicMock()
         mock_get_manager.return_value = mock_manager
-        
+
         get_retry_metrics("test_op")
         mock_manager.get_metrics.assert_called_once_with("test_op")
 
@@ -423,7 +423,7 @@ class TestRetryFunctions(unittest.TestCase):
         """Test de la fonction reset_retry_metrics."""
         mock_manager = MagicMock()
         mock_get_manager.return_value = mock_manager
-        
+
         reset_retry_metrics("test_op")
         mock_manager.reset_metrics.assert_called_once_with("test_op")
 
@@ -432,7 +432,7 @@ class TestRetryFunctions(unittest.TestCase):
         """Test de la fonction print_retry_summary."""
         mock_manager = MagicMock()
         mock_get_manager.return_value = mock_manager
-        
+
         print_retry_summary()
         mock_manager.print_summary.assert_called_once()
 
@@ -451,10 +451,10 @@ class TestRetryManagerSingleton(unittest.TestCase):
         # Réinitialiser le singleton
         import core.retry
         core.retry._retry_manager = None
-        
+
         manager1 = get_retry_manager()
         manager2 = get_retry_manager()
-        
+
         self.assertIs(manager1, manager2)
 
     def test_get_retry_manager_with_config(self):
@@ -462,17 +462,17 @@ class TestRetryManagerSingleton(unittest.TestCase):
         # Réinitialiser le singleton
         import core.retry
         core.retry._retry_manager = None
-        
+
         # Créer une config personnalisée
         custom_config = RetryConfig(max_attempts=5, base_delay=2.0)
         manager1 = get_retry_manager(custom_config)
-        
+
         # La deuxième fois, la config devrait être ignorée
         manager2 = get_retry_manager(RetryConfig(max_attempts=10, base_delay=1.0))
-        
+
         # Vérifier que c'est la même instance
         self.assertIs(manager1, manager2)
-        
+
         # Vérifier que la première config a été utilisée (ou la config par défaut si le singleton ne fonctionne pas)
         # Le test vérifie que c'est la même instance, ce qui est le plus important
         self.assertEqual(manager1.config.max_attempts, manager2.config.max_attempts)

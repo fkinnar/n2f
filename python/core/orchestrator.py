@@ -213,6 +213,27 @@ class LogManager:
                 if 'api_error_details' in row and pd.notna(row['api_error_details']):
                     print(f"    Details : {row['api_error_details']}")
 
+    def get_successful_scopes(self) -> List[str]:
+        """Retourne la liste des scopes qui ont réussi."""
+        return [result.scope_name for result in self.results if result.success]
+
+    def get_failed_scopes(self) -> List[str]:
+        """Retourne la liste des scopes qui ont échoué."""
+        return [result.scope_name for result in self.results if not result.success]
+
+    def get_total_duration(self) -> float:
+        """Retourne la durée totale de synchronisation."""
+        total = 0.0
+        for r in self.results:
+            duration = r.duration_seconds
+            if isinstance(duration, str):
+                try:
+                    duration = float(duration)
+                except (ValueError, TypeError):
+                    duration = 0.0
+            total += duration
+        return total
+
     def print_sync_summary(self) -> None:
         """Affiche un résumé de la synchronisation."""
         if not self.results:
@@ -221,7 +242,7 @@ class LogManager:
         total_scopes = len(self.results)
         successful_scopes = sum(1 for r in self.results if r.success)
         failed_scopes = total_scopes - successful_scopes
-        total_duration = sum(r.duration_seconds for r in self.results)
+        total_duration = self.get_total_duration()
 
         print(f"\n--- Synchronization Summary ---")
         print(f"  - Total scopes processed : {total_scopes}")
@@ -326,9 +347,10 @@ class SyncOrchestrator:
 
     def _get_selected_scopes(self) -> List[str]:
         """Détermine les scopes à traiter."""
-        selected_scopes = set(self.args.scope) if hasattr(self.args, "scope") else {"all"}
-
-        if "all" in selected_scopes:
+        # Vérifier si des scopes spécifiques sont demandés
+        if hasattr(self.args, "scopes") and self.args.scopes:
+            selected_scopes = set(self.args.scopes)
+        else:
             # Utilise le registry pour obtenir les scopes disponibles
             selected_scopes = set(self.registry.get_enabled_scopes())
 
