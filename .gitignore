@@ -25,6 +25,7 @@ wheelhouse/
 *.log
 *.sqlite3
 *.db
+*log.csv
 
 # Fichiers de dépendances
 Pipfile.lock

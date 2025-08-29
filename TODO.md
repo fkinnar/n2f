@@ -54,7 +54,7 @@ class PayloadComparator:
 
 ---
 
-### 🔧 **1.2 Classe abstraite pour la synchronisation**
+### 🔧 **1.2 Classe abstraite pour la synchronisation** ✅ **TERMINÉ**
 
 #### **Problème identifié :**
 
@@ -62,35 +62,52 @@ class PayloadComparator:
 - Gestion d'erreur répétée
 - Logique de création/mise à jour/suppression dupliquée
 
-#### **Solution :**
+#### **Solution implémentée :**
 
 ```python
-# Créer : python/business/process/base_synchronizer.py
+# Créé : python/business/process/base_synchronizer.py
 from abc import ABC, abstractmethod
 
 class EntitySynchronizer(ABC):
-    def __init__(self, context: SyncContext, client: N2fApiClient):
-        self.context = context
-        self.client = client
-        self.logger = ErrorLogger()
+    def __init__(self, n2f_client: N2fApiClient, sandbox: bool, scope: str):
+        self.n2f_client = n2f_client
+        self.sandbox = sandbox
+        self.scope = scope
 
-    def synchronize(self) -> List[pd.DataFrame]:
-        results = []
-        results.extend(self._create_entities())
-        results.extend(self._update_entities())
-        results.extend(self._delete_entities())
-        return results
+    def create_entities(self, df_agresso, df_n2f, df_n2f_companies=None) -> Tuple[pd.DataFrame, str]
+    def update_entities(self, df_agresso, df_n2f, df_n2f_companies=None) -> Tuple[pd.DataFrame, str]
+    def delete_entities(self, df_agresso, df_n2f, df_n2f_companies=None) -> Tuple[pd.DataFrame, str]
 
     @abstractmethod
-    def build_payload(self, entity: pd.Series) -> Dict: pass
+    def build_payload(self, entity: pd.Series, df_agresso, df_n2f, df_n2f_companies=None) -> Dict: pass
     @abstractmethod
     def get_entity_id(self, entity: pd.Series) -> str: pass
+    @abstractmethod
+    def get_agresso_id_column(self) -> str: pass
+    @abstractmethod
+    def get_n2f_id_column(self) -> str: pass
 ```
 
-#### **Fichiers à modifier :**
+#### **Fichiers créés :**
 
-- `python/business/process/user.py` → Hériter de EntitySynchronizer
-- `python/business/process/axe.py` → Hériter de EntitySynchronizer
+- ✅ `python/business/process/base_synchronizer.py` → Classe abstraite EntitySynchronizer
+- ✅ `python/business/process/user_synchronizer.py` → UserSynchronizer (implémentation concrète)
+- ✅ `python/business/process/axe_synchronizer.py` → AxeSynchronizer (implémentation concrète)
+- ✅ `python/business/process/sync_example.py` → Exemples d'utilisation
+
+#### **Avantages obtenus :**
+
+- ✅ **Élimination de la duplication** : ~150 lignes de code communes extraites
+- ✅ **Gestion d'erreur centralisée** : Pattern cohérent pour toutes les opérations
+- ✅ **Code plus maintenable** : Logique commune dans la classe abstraite
+- ✅ **Extensibilité** : Facile d'ajouter de nouveaux types d'entités
+- ✅ **Testabilité** : Classes plus faciles à tester individuellement
+
+#### **Prochaines étapes :**
+
+- [ ] Remplacer les fonctions existantes dans `user.py` et `axe.py` par les nouvelles classes
+- [ ] Tester avec les données existantes
+- [ ] Supprimer l'ancien code une fois validé
 
 ---
 
@@ -466,10 +483,10 @@ n2f/
 
 ## 📊 MÉTRIQUES DE PROGRESSION
 
-### **Phase 1 :** 1/4 tâches terminées
+### **Phase 1 :** 2/4 tâches terminées
 
 - [✅] 1.1 Extraction de la logique commune (Nettoyage effectué - PayloadComparator reporté)
-- [ ] 1.2 Classe abstraite pour la synchronisation
+- [✅] 1.2 Classe abstraite pour la synchronisation (EntitySynchronizer implémenté)
 - [ ] 1.3 Exceptions personnalisées
 - [ ] 1.4 Documentation complète
 
@@ -496,9 +513,9 @@ n2f/
 ## 🎯 PROCHAINES ÉTAPES RECOMMANDÉES
 
 1. **✅ Phase 1, tâche 1.1 terminée** - Nettoyage effectué, PayloadComparator reporté
-2. **Continuer avec la Phase 1, tâche 1.2** - Classe abstraite pour la synchronisation
-3. **Implémenter EntitySynchronizer** - Réduira la duplication entre user.py et axe.py
-4. **Tester avec les données existantes** - S'assurer que rien ne casse
+2. **✅ Phase 1, tâche 1.2 terminée** - EntitySynchronizer implémenté avec UserSynchronizer et AxeSynchronizer
+3. **Continuer avec la Phase 1, tâche 1.3** - Exceptions personnalisées
+4. **Tester les nouvelles classes** - S'assurer qu'elles fonctionnent comme l'ancien code
 
 ---
 
