@@ -1,14 +1,14 @@
+from unittest.mock import Mock, patch, MagicMock
+
+import helper.cache as cache_helper
+import pandas as pd
+
 import unittest
 import sys
 import os
 
-# Ajouter le répertoire python au path pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-
-import pandas as pd
 from unittest.mock import Mock, patch
 import helper.cache as cache_module
-
 
 class TestCacheSimple(unittest.TestCase):
     """Tests pour le module de cache simple helper/cache.py."""
@@ -242,7 +242,6 @@ class TestCacheSimple(unittest.TestCase):
 
         # S'assurer que l'ancienne valeur n'est plus là
         self.assertFalse(result2.equals(self.df1))
-
 
 if __name__ == '__main__':
     unittest.main()

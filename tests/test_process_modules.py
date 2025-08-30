@@ -1,20 +1,18 @@
+import business.process.helper as business_helper
+import n2f.process.user as user_process
+
 import unittest
 import sys
 import os
 from unittest.mock import Mock, patch, MagicMock
 import pandas as pd
 
-# Ajouter le répertoire python au path pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-
-import n2f.process.user as user_process
 import n2f.process.axe as axe_process
 import n2f.process.helper as helper_process
 import n2f.process.company as company_process
 import n2f.process.customaxe as customaxe_process
 import n2f.process.userprofile as userprofile_process
 import n2f.process.role as role_process
-
 
 class TestUserProcess(unittest.TestCase):
     """Tests pour n2f.process.user."""
@@ -182,7 +180,6 @@ class TestUserProcess(unittest.TestCase):
         self.assertEqual(len(result_df), 1)
         self.assertEqual(status_col, "created")
 
-
 class TestAxeProcess(unittest.TestCase):
     """Tests pour n2f.process.axe."""
 
@@ -314,7 +311,6 @@ class TestAxeProcess(unittest.TestCase):
         # Vérifions plutôt que la fonction s'exécute sans erreur
         self.assertEqual(status_col, "updated")
 
-
 class TestHelperProcess(unittest.TestCase):
     """Tests pour n2f.process.helper."""
 
@@ -394,7 +390,6 @@ class TestHelperProcess(unittest.TestCase):
         call_args = mock_to_csv.call_args[0][0]
         self.assertEqual(call_args, "test.csv")
 
-
 class TestCompanyProcess(unittest.TestCase):
     """Tests pour n2f.process.company."""
 
@@ -413,7 +408,6 @@ class TestCompanyProcess(unittest.TestCase):
             result = company_process.get_companies("https://api.test.com", "client_id", "client_secret")
             
             self.assertEqual(len(result), 2)
-
 
 class TestCustomAxeProcess(unittest.TestCase):
     """Tests pour n2f.process.customaxe."""
@@ -444,7 +438,6 @@ class TestCustomAxeProcess(unittest.TestCase):
             
             self.assertEqual(len(result), 2)
 
-
 class TestUserProfileProcess(unittest.TestCase):
     """Tests pour n2f.process.userprofile."""
 
@@ -463,7 +456,6 @@ class TestUserProfileProcess(unittest.TestCase):
             
             self.assertEqual(len(result), 2)
 
-
 class TestRoleProcess(unittest.TestCase):
     """Tests pour n2f.process.role."""
 
@@ -481,7 +473,6 @@ class TestRoleProcess(unittest.TestCase):
             result = role_process.get_roles("https://api.test.com", "client_id", "client_secret")
             
             self.assertEqual(len(result), 2)
-
 
 if __name__ == '__main__':
     unittest.main()

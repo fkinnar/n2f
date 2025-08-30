@@ -1,11 +1,11 @@
+from unittest.mock import Mock, patch, MagicMock
+
+import n2f.payload
+
 import unittest
 import sys
 import os
 
-# Ajouter le répertoire python au path pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-
-from unittest.mock import Mock, patch
 import pandas as pd
 from datetime import datetime
 
@@ -29,7 +29,6 @@ from business.constants import (
     N2F_COL_UPDATE_PERSONAL, N2F_COL_VALIDITY_DATE_FROM, N2F_COL_VALIDITY_DATE_TO,
     DEFAULT_AUTH_MODE_SANDBOX, CULTURE_FR, CULTURE_NL
 )
-
 
 class TestPayloads(unittest.TestCase):
     """Tests unitaires pour les fonctions de construction de payloads."""
@@ -341,7 +340,6 @@ class TestPayloads(unittest.TestCase):
         names = payload[COL_NAMES]
         for name_entry in names:
             self.assertEqual(name_entry[COL_VALUE], "")
-
 
 if __name__ == '__main__':
     unittest.main()

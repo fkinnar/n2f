@@ -1,3 +1,18 @@
+import n2f.client
+import business.process.user as user_process
+import business.process.axe as axe_process
+import helper.context
+import agresso.database as agresso_db
+from core.config import DatabaseConfig
+from core.config import ApiConfig
+from core.config import CacheConfig
+from core.config import ScopeConfig
+from core.config import ConfigLoader
+from core.orchestrator import SyncOrchestrator
+from core.orchestrator import ContextBuilder
+from core.orchestrator import ScopeExecutor
+from core.orchestrator import SyncResult
+
 """
 Tests d'intégration pour la synchronisation N2F.
 
@@ -27,15 +42,11 @@ import json
 from datetime import datetime, timedelta
 
 # Ajout du chemin du projet pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-
-from core.orchestrator import SyncOrchestrator, SyncResult
 from core.config import SyncConfig, DatabaseConfig, ApiConfig, ScopeConfig, CacheConfig
 from core.registry import SyncRegistry, RegistryEntry
 from business.process.user_synchronizer import UserSynchronizer
 from business.process.axe_synchronizer import AxeSynchronizer
 from helper.context import SyncContext
-
 
 class TestIntegrationBase(unittest.TestCase):
     """Classe de base pour les tests d'intégration."""
@@ -124,7 +135,6 @@ class TestIntegrationBase(unittest.TestCase):
         import yaml
         with open(self.test_config_path, 'w') as f:
             yaml.dump(config, f)
-
 
 class TestEndToEndIntegration(TestIntegrationBase):
     """Tests d'intégration end-to-end."""
@@ -254,7 +264,6 @@ class TestEndToEndIntegration(TestIntegrationBase):
         # Vérifier que les résultats ont été ajoutés
         self.assertEqual(mock_log_manager.return_value.add_result.call_count, 2)
 
-
 class TestDatabaseIntegration(TestIntegrationBase):
     """Tests d'intégration avec la base de données."""
 
@@ -291,7 +300,6 @@ class TestDatabaseIntegration(TestIntegrationBase):
         self.assertEqual(len(users_data), 2)
         self.assertIn("user1@test.com", users_data["AdresseEmail"].values)
         self.assertIn("user2@test.com", users_data["AdresseEmail"].values)
-
 
 class TestAPIIntegration(TestIntegrationBase):
     """Tests d'intégration avec l'API N2F."""
@@ -346,7 +354,6 @@ class TestAPIIntegration(TestIntegrationBase):
         # Vérifier que l'erreur a été levée
         mock_client.get_users.assert_called_once()
 
-
 class TestSynchronizerIntegration(TestIntegrationBase):
     """Tests d'intégration des synchroniseurs."""
 
@@ -385,7 +392,6 @@ class TestSynchronizerIntegration(TestIntegrationBase):
         test_entity = pd.Series({"code": "AXE001", "name": "Test Axe"})
         entity_id = synchronizer.get_entity_id(test_entity)
         self.assertEqual(entity_id, "AXE001")
-
 
 class TestPerformanceIntegration(TestIntegrationBase):
     """Tests d'intégration de performance."""
@@ -521,7 +527,6 @@ class TestPerformanceIntegration(TestIntegrationBase):
         # mock_memory_manager.register_dataframe.assert_called()
         mock_memory_manager.cleanup_scope.assert_called()
 
-
 class TestErrorRecoveryIntegration(TestIntegrationBase):
     """Tests d'intégration de récupération d'erreur."""
 
@@ -604,7 +609,6 @@ class TestErrorRecoveryIntegration(TestIntegrationBase):
             orchestrator = SyncOrchestrator(self.test_config_path, self.args)
             orchestrator.run()
 
-
 class TestCacheIntegration(TestIntegrationBase):
     """Tests d'intégration du cache."""
 
@@ -667,7 +671,6 @@ class TestCacheIntegration(TestIntegrationBase):
 
         # Vérifications
         mock_cache.clear.assert_called_once()
-
 
 if __name__ == '__main__':
     unittest.main()

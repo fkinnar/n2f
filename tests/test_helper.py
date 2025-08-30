@@ -1,16 +1,14 @@
+from unittest.mock import Mock, patch, MagicMock
+
+
 import unittest
 import sys
 import os
 
-# Ajouter le répertoire python au path pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-
-from unittest.mock import Mock, patch
 import pandas as pd
 from datetime import datetime
 
 from n2f.helper import to_bool, normalize_date_for_payload
-
 
 class TestHelper(unittest.TestCase):
     """Tests unitaires pour les fonctions helper."""
@@ -283,7 +281,6 @@ class TestHelper(unittest.TestCase):
         
         # Le test ne devrait pas prendre plus de 1 seconde
         self.assertLess(duration, 1.0, f"to_bool a pris {duration:.3f}s, ce qui est trop lent")
-
 
 if __name__ == '__main__':
     unittest.main()

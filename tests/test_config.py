@@ -1,3 +1,10 @@
+from core.config import SyncConfig
+from core.config import DatabaseConfig
+from core.config import ApiConfig
+from core.config import CacheConfig
+from core.config import ScopeConfig
+from core.config import ConfigLoader
+
 """
 Tests unitaires pour le module de configuration.
 
@@ -14,13 +21,9 @@ import sys
 import os
 
 # Ajout du chemin du projet pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-
-from core.config import (
     SyncConfig, DatabaseConfig, ApiConfig, CacheConfig, ScopeConfig, ConfigLoader
 )
 from core.registry import SyncRegistry, RegistryEntry
-
 
 class TestSyncConfig(unittest.TestCase):
     """Tests pour la classe SyncConfig."""
@@ -116,7 +119,6 @@ class TestSyncConfig(unittest.TestCase):
         errors = config.validate()
         self.assertIn("sql_path ne peut pas être vide", errors)
 
-
 class TestConfigLoader(unittest.TestCase):
     """Tests pour la classe ConfigLoader."""
 
@@ -198,7 +200,6 @@ class TestConfigLoader(unittest.TestCase):
         
         self.assertIn("sql_path ne peut pas être vide", str(context.exception))
 
-
 class TestRegistryEntry(unittest.TestCase):
     """Tests pour la classe RegistryEntry."""
 
@@ -275,7 +276,6 @@ class TestRegistryEntry(unittest.TestCase):
         self.assertEqual(scope_config.display_name, "Test Entity")
         self.assertEqual(scope_config.enabled, True)
         self.assertEqual(scope_config.sql_column_filter, "active = 1")
-
 
 class TestSyncRegistry(unittest.TestCase):
     """Tests pour la classe SyncRegistry."""
@@ -394,7 +394,6 @@ class TestSyncRegistry(unittest.TestCase):
         configs = self.registry.get_all_scope_configs()
         self.assertIn("test_scope", configs)
         self.assertEqual(configs["test_scope"].entity_type, "test_entity")
-
 
 if __name__ == '__main__':
     unittest.main()

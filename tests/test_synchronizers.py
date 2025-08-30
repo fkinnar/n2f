@@ -1,3 +1,10 @@
+import n2f.api_result
+import business.process.user as user_process
+import business.process.axe as axe_process
+import n2f.process.user as user_process
+import n2f.process.axe as axe_process
+from business.process.base_synchronizer import EntitySynchronizer
+
 """
 Tests unitaires pour les synchronizers.
 
@@ -16,13 +23,9 @@ import os
 from pathlib import Path
 
 # Ajout du chemin du projet pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-
-from business.process.base_synchronizer import EntitySynchronizer
 from business.process.user_synchronizer import UserSynchronizer
 from business.process.axe_synchronizer import AxeSynchronizer
 from n2f.api_result import ApiResult
-
 
 class TestEntitySynchronizer(unittest.TestCase):
     """Tests pour la classe abstraite EntitySynchronizer."""
@@ -263,7 +266,6 @@ class TestEntitySynchronizer(unittest.TestCase):
         self.assertFalse(result.success)
         self.assertEqual(result.error_details, "Test error")
 
-
 class TestUserSynchronizer(unittest.TestCase):
     """Tests pour la classe UserSynchronizer."""
 
@@ -350,7 +352,6 @@ class TestUserSynchronizer(unittest.TestCase):
         
         self.mock_n2f_client.delete_user.assert_called_once_with("test@example.com")
         self.assertEqual(result, mock_result)
-
 
 class TestAxeSynchronizer(unittest.TestCase):
     """Tests pour la classe AxeSynchronizer."""
@@ -537,7 +538,6 @@ class TestAxeSynchronizer(unittest.TestCase):
         
         self.assertFalse(result.success)
         self.assertIn("Company ID not found", result.error_details)
-
 
 if __name__ == '__main__':
     unittest.main()

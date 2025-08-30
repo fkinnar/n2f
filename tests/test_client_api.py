@@ -1,3 +1,7 @@
+import n2f.client
+import n2f.api_result
+from helper.context import SyncContext
+
 import unittest
 from unittest.mock import Mock, patch, MagicMock
 import pandas as pd
@@ -6,13 +10,8 @@ import sys
 import os
 from datetime import datetime
 
-# Ajouter le répertoire python au path pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-
-from helper.context import SyncContext
 from n2f.client import N2fApiClient
 from n2f.api_result import ApiResult
-
 
 class TestN2fApiClient(unittest.TestCase):
     """Tests unitaires pour N2fApiClient."""
@@ -606,7 +605,6 @@ class TestN2fApiClient(unittest.TestCase):
 
         self.assertTrue(result.empty)
         self.assertEqual(len(result), 0)
-
 
 if __name__ == '__main__':
     unittest.main()

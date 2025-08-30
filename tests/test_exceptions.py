@@ -1,3 +1,10 @@
+from unittest.mock import Mock, patch, MagicMock
+
+from core.exceptions import SyncException
+from core.exceptions import ApiException
+from core.exceptions import ValidationException
+from core.exceptions import ConfigurationException
+
 """
 Tests unitaires pour la hiérarchie d'exceptions personnalisées.
 """
@@ -6,14 +13,9 @@ import unittest
 import sys
 import os
 
-# Ajouter le répertoire python au path pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-
-from core.exceptions import (
     SyncException, ApiException, ValidationException, ConfigurationException,
     DatabaseException, AuthenticationException, NetworkException
 )
-
 
 class TestSyncException(unittest.TestCase):
     """Tests pour la classe de base SyncException."""
@@ -43,7 +45,6 @@ class TestSyncException(unittest.TestCase):
         """Test de la représentation string de l'exception."""
         exception = SyncException("Test message")
         self.assertIn("Test message", str(exception))
-
 
 class TestApiException(unittest.TestCase):
     """Tests pour ApiException."""
@@ -83,7 +84,6 @@ class TestApiException(unittest.TestCase):
         }
         self.assertEqual(result, expected)
 
-
 class TestValidationException(unittest.TestCase):
     """Tests pour ValidationException."""
 
@@ -122,7 +122,6 @@ class TestValidationException(unittest.TestCase):
         }
         self.assertEqual(result, expected)
 
-
 class TestConfigurationException(unittest.TestCase):
     """Tests pour ConfigurationException."""
 
@@ -137,7 +136,6 @@ class TestConfigurationException(unittest.TestCase):
         self.assertEqual(exception.message, "Missing config")
         self.assertEqual(exception.config_key, "database.host")
         self.assertEqual(exception.config_file, "dev.yaml")
-
 
 class TestDatabaseException(unittest.TestCase):
     """Tests pour DatabaseException."""
@@ -154,7 +152,6 @@ class TestDatabaseException(unittest.TestCase):
         self.assertEqual(exception.sql_query, "SELECT * FROM users")
         self.assertEqual(exception.table, "users")
 
-
 class TestAuthenticationException(unittest.TestCase):
     """Tests pour AuthenticationException."""
 
@@ -169,7 +166,6 @@ class TestAuthenticationException(unittest.TestCase):
         self.assertEqual(exception.message, "Token expired")
         self.assertEqual(exception.service, "N2F API")
         self.assertEqual(exception.credentials_type, "OAuth2")
-
 
 class TestNetworkException(unittest.TestCase):
     """Tests pour NetworkException."""
@@ -187,7 +183,6 @@ class TestNetworkException(unittest.TestCase):
         self.assertEqual(exception.url, "https://api.n2f.com/users")
         self.assertEqual(exception.timeout, 30.0)
         self.assertEqual(exception.retry_count, 3)
-
 
 class TestExceptionHierarchy(unittest.TestCase):
     """Tests pour vérifier la hiérarchie d'exceptions."""
@@ -216,7 +211,6 @@ class TestExceptionHierarchy(unittest.TestCase):
         
         validation_exception = ValidationException("Validation Error", context=context)
         self.assertEqual(validation_exception.context, context)
-
 
 if __name__ == '__main__':
     unittest.main()

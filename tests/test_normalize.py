@@ -1,11 +1,10 @@
+from unittest.mock import Mock, patch, MagicMock
+
+
 import unittest
 import sys
 import os
 
-# Ajouter le répertoire python au path pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-
-from unittest.mock import Mock, patch
 import pandas as pd
 import numpy as np
 
@@ -16,7 +15,6 @@ from business.constants import (
     COL_NAMES, COL_CULTURE, COL_VALUE, DEFAULT_STRUCTURE, DEFAULT_PROFILE,
     DEFAULT_ROLE, DEFAULT_SSO_METHOD, CULTURE_FR, CULTURE_NL
 )
-
 
 class TestNormalize(unittest.TestCase):
     """Tests unitaires pour les fonctions de normalisation."""
@@ -375,7 +373,6 @@ class TestNormalize(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             normalize_n2f_users(df)
         self.assertIn("Colonnes manquantes", str(context.exception))
-
 
 if __name__ == '__main__':
     unittest.main()

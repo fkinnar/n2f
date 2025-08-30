@@ -1,0 +1,14 @@
+{
+    "include": [
+        "python",
+        "tests"
+    ],
+    "extraPaths": [
+        "python"
+    ],
+    "pythonVersion": "3.11",
+    "typeCheckingMode": "basic",
+    "useLibraryCodeForTypes": true,
+    "reportMissingImports": "warning",
+    "reportMissingTypeStubs": false
+}

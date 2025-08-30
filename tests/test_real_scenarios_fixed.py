@@ -1,3 +1,15 @@
+import business.process.user as user_process
+import business.process.axe as axe_process
+import helper.context
+from core.config import DatabaseConfig
+from core.config import ApiConfig
+from core.config import CacheConfig
+from core.config import ScopeConfig
+from core.config import ConfigLoader
+from core.orchestrator import SyncOrchestrator
+from core.orchestrator import ScopeExecutor
+from core.orchestrator import SyncResult
+
 """
 Tests d'intégration pour des scénarios réels de synchronisation N2F.
 
@@ -29,15 +41,11 @@ from datetime import datetime, timedelta
 import time
 
 # Ajout du chemin du projet pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-
-from core.orchestrator import SyncOrchestrator, SyncResult
 from core.config import SyncConfig, DatabaseConfig, ApiConfig, ScopeConfig, CacheConfig
 from core.registry import SyncRegistry, RegistryEntry
 from business.process.user_synchronizer import UserSynchronizer
 from business.process.axe_synchronizer import AxeSynchronizer
 from helper.context import SyncContext
-
 
 class TestRealScenariosBase(unittest.TestCase):
     """Classe de base pour les tests de scénarios réels."""
@@ -168,7 +176,6 @@ class TestRealScenariosBase(unittest.TestCase):
 
         return pd.DataFrame(axes)
 
-
 class TestUserSynchronizationScenario(TestRealScenariosBase):
     """Tests de scénarios de synchronisation d'utilisateurs."""
 
@@ -291,7 +298,6 @@ class TestUserSynchronizationScenario(TestRealScenariosBase):
         # Vérifier la gestion des conflits
         self.assertEqual(len(user_data), 21)  # 20 + 1 doublon
 
-
 class TestAxeSynchronizationScenario(TestRealScenariosBase):
     """Tests de scénarios de synchronisation d'axes."""
 
@@ -356,7 +362,6 @@ class TestAxeSynchronizationScenario(TestRealScenariosBase):
         self.assertEqual(len(axe_data), 30)
         self.assertIn("code", axe_data.columns)
         self.assertIn("name", axe_data.columns)
-
 
 class TestMultiScopeSynchronizationScenario(TestRealScenariosBase):
     """Tests de scénarios de synchronisation multi-scopes."""
@@ -424,7 +429,6 @@ class TestMultiScopeSynchronizationScenario(TestRealScenariosBase):
 
         # Vérifier que les résultats ont été ajoutés
         self.assertEqual(mock_log_manager.return_value.add_result.call_count, 2)
-
 
 class TestLoadTestingScenario(TestRealScenariosBase):
     """Tests de scénarios de charge."""
@@ -553,7 +557,6 @@ class TestLoadTestingScenario(TestRealScenariosBase):
         self.assertEqual(mock_executor.execute_scope.call_count, 2)
         self.assertLess(total_duration, 5.0)  # L'exécution totale doit être rapide
 
-
 class TestErrorRecoveryScenario(TestRealScenariosBase):
     """Tests de scénarios de récupération d'erreur."""
 
@@ -621,7 +624,6 @@ class TestErrorRecoveryScenario(TestRealScenariosBase):
         # Vérifier que le premier scope a réussi malgré l'échec du second
         self.assertTrue(success_result.success)
         self.assertFalse(failure_result.success)
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,3 +1,7 @@
+from core.metrics import SyncMetrics
+from core.metrics import OperationMetrics
+from core.metrics import ScopeMetrics
+
 """
 Tests unitaires pour le système de métriques.
 
@@ -17,10 +21,6 @@ import os
 from pathlib import Path
 
 # Ajout du chemin du projet pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-
-from core.metrics import SyncMetrics, OperationMetrics, ScopeMetrics
-
 
 class TestOperationMetrics(unittest.TestCase):
     """Tests pour la classe OperationMetrics."""
@@ -130,7 +130,6 @@ class TestOperationMetrics(unittest.TestCase):
         self.assertEqual(data['cache_hits'], 3)
         self.assertEqual(data['cache_misses'], 2)
 
-
 class TestScopeMetrics(unittest.TestCase):
     """Tests pour la classe ScopeMetrics."""
 
@@ -220,7 +219,6 @@ class TestScopeMetrics(unittest.TestCase):
         self.assertEqual(data['total_cache_hits'], 15)
         self.assertEqual(data['total_cache_misses'], 5)
         self.assertEqual(data['operations_by_action'], {"create": 5, "update": 3, "delete": 2})
-
 
 class TestSyncMetrics(unittest.TestCase):
     """Tests pour la classe SyncMetrics."""
@@ -381,7 +379,6 @@ class TestSyncMetrics(unittest.TestCase):
             self.metrics.print_summary()
         except Exception as e:
             self.fail(f"print_summary() a levé une exception: {e}")
-
 
 if __name__ == '__main__':
     unittest.main()

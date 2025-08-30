@@ -1,3 +1,5 @@
+from core.cache import AdvancedCache
+
 """
 Tests unitaires pour le système de cache avancé.
 
@@ -18,10 +20,6 @@ import os
 from pathlib import Path
 
 # Ajout du chemin du projet pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-
-from core.cache import AdvancedCache, CacheEntry, CacheMetrics
-
 
 class TestCacheEntry(unittest.TestCase):
     """Tests pour la classe CacheEntry."""
@@ -78,7 +76,6 @@ class TestCacheEntry(unittest.TestCase):
         self.assertIsInstance(size, int)
         self.assertGreater(size, 0)
 
-
 class TestCacheMetrics(unittest.TestCase):
     """Tests pour la classe CacheMetrics."""
 
@@ -118,7 +115,6 @@ class TestCacheMetrics(unittest.TestCase):
         self.assertIn("hits=10", str_repr)
         self.assertIn("misses=5", str_repr)
         self.assertIn("sets=8", str_repr)
-
 
 class TestAdvancedCache(unittest.TestCase):
     """Tests pour la classe AdvancedCache."""
@@ -365,7 +361,6 @@ class TestAdvancedCache(unittest.TestCase):
         size = self.cache._calculate_size(str_data)
         self.assertIsInstance(size, int)
         self.assertGreater(size, 0)
-
 
 if __name__ == '__main__':
     unittest.main()

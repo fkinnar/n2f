@@ -5,12 +5,6 @@ import sys
 import os
 from datetime import datetime
 
-# Ajouter le répertoire python au path pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-
-import n2f.api.token as token_module
-
-
 class TestCacheToken(unittest.TestCase):
     """Tests pour le décorateur cache_token."""
 
@@ -144,7 +138,6 @@ class TestCacheToken(unittest.TestCase):
                 # Vérifie que la date a été convertie en timestamp
                 self.assertIsInstance(result[1], float)
                 self.assertGreater(result[1], 0)
-
 
 class TestGetAccessToken(unittest.TestCase):
     """Tests pour la fonction get_access_token."""
@@ -292,7 +285,6 @@ class TestGetAccessToken(unittest.TestCase):
         # Vérifications de base
         self.assertEqual(result1[0], "test_access_token")
         self.assertIsInstance(result1[1], float)  # expires_at converti en timestamp
-
 
 if __name__ == '__main__':
     unittest.main()

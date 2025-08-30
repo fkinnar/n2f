@@ -3,14 +3,10 @@ import sys
 import os
 from unittest.mock import Mock, patch, MagicMock
 
-# Ajouter le répertoire python au path pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-
 import n2f.api.user as user_api
 import n2f.api.company as company_api
 import n2f.api.customaxe as customaxe_api
 import n2f.api.project as project_api
-
 
 class TestUserApi(unittest.TestCase):
     """Tests pour n2f.api.user."""
@@ -119,7 +115,6 @@ class TestUserApi(unittest.TestCase):
 
         mock_delete.assert_called_once_with(self.base_url, "/users", self.client_id, self.client_secret, "test@example.com", True)
 
-
 class TestCompanyApi(unittest.TestCase):
     """Tests pour n2f.api.company."""
 
@@ -177,7 +172,6 @@ class TestCompanyApi(unittest.TestCase):
         result = company_api.get_companies(self.base_url, self.client_id, self.client_secret)
 
         self.assertEqual(result, [])
-
 
 class TestCustomAxeApi(unittest.TestCase):
     """Tests pour n2f.api.customaxe."""
@@ -296,7 +290,6 @@ class TestCustomAxeApi(unittest.TestCase):
         with self.assertRaises(Exception):
             customaxe_api.get_customaxes_values(self.base_url, self.client_id, self.client_secret, self.company_id, self.axe_id, 0, 100)
 
-
 class TestProjectApi(unittest.TestCase):
     """Tests pour n2f.api.project."""
 
@@ -385,7 +378,6 @@ class TestProjectApi(unittest.TestCase):
             self.base_url, f"/companies/{self.company_id}/axes/projects/", 
             self.client_id, self.client_secret, "PROJ001", False
         )
-
 
 if __name__ == '__main__':
     unittest.main()

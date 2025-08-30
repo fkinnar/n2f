@@ -1,16 +1,14 @@
+import business.process.helper as business_helper
+import business.process.axe as axe_process
+
 import unittest
 import sys
 import os
 from unittest.mock import Mock, patch, MagicMock
 import pandas as pd
 
-# Ajouter le répertoire python au path pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-
-import business.process.helper as business_helper
 import business.process.axe_types as axe_types
 import business.process.department as department
-
 
 class TestBusinessHelper(unittest.TestCase):
     """Tests pour business.process.helper."""
@@ -125,7 +123,6 @@ class TestBusinessHelper(unittest.TestCase):
         # Le résultat peut varier selon l'implémentation exacte
         # Testons que la fonction ne lève pas d'exception
         self.assertIsInstance(result, bool)
-
 
 class TestAxeTypes(unittest.TestCase):
     """Tests pour business.process.axe_types."""
@@ -270,7 +267,6 @@ class TestAxeTypes(unittest.TestCase):
         # Le client ne doit être appelé qu'une seule fois
         self.n2f_client.get_custom_axes.assert_called_once()
 
-
 class TestDepartment(unittest.TestCase):
     """Tests pour business.process.department."""
 
@@ -326,7 +322,6 @@ class TestDepartment(unittest.TestCase):
         # Cette vérification peut être faite en vérifiant que le module a été importé
         # et que register_scope a été appelé
         self.assertTrue(hasattr(department, 'synchronize_departments'))
-
 
 if __name__ == '__main__':
     unittest.main()

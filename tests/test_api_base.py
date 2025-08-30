@@ -1,13 +1,9 @@
+import n2f.api.base as base_api
+
 import unittest
 import sys
 import os
 from unittest.mock import Mock, patch, MagicMock
-
-# Ajouter le répertoire python au path pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-
-import n2f.api.base as base_module
-
 
 class TestRetrieve(unittest.TestCase):
     """Tests pour la fonction retreive."""
@@ -107,7 +103,6 @@ class TestRetrieve(unittest.TestCase):
             base_module.retreive(
                 self.entity, self.base_url, self.client_id, self.client_secret
             )
-
 
 class TestUpsert(unittest.TestCase):
     """Tests pour la fonction upsert."""
@@ -230,7 +225,6 @@ class TestUpsert(unittest.TestCase):
                     json=self.payload
                 )
 
-
 class TestDelete(unittest.TestCase):
     """Tests pour la fonction delete."""
 
@@ -348,7 +342,6 @@ class TestDelete(unittest.TestCase):
                     expected_url,
                     headers={"Authorization": "Bearer test_token"}
                 )
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,14 +1,12 @@
+import agresso.database as agresso_db
+import pandas as pd
+
 import unittest
 import sys
 import os
 
-# Ajouter le répertoire python au path pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-
-import pandas as pd
 from unittest.mock import Mock, patch, MagicMock
 import agresso.database as database_module
-
 
 class TestExecuteQuery(unittest.TestCase):
     """Tests pour la fonction execute_query."""
@@ -223,7 +221,6 @@ class TestExecuteQuery(unittest.TestCase):
 
         mock_read_sql.assert_called_once_with(special_query, self.mock_sqlalchemy_engine)
         pd.testing.assert_frame_equal(result, self.df_users)
-
 
 if __name__ == '__main__':
     unittest.main()

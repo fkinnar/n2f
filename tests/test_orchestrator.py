@@ -1,3 +1,12 @@
+from helper.context import SyncContext
+from core.config import DatabaseConfig
+from core.config import ApiConfig
+from core.config import ConfigLoader
+from core.orchestrator import SyncOrchestrator
+from core.orchestrator import ContextBuilder
+from core.orchestrator import ScopeExecutor
+from core.orchestrator import SyncResult
+
 """
 Tests unitaires pour l'orchestrateur principal.
 
@@ -16,14 +25,10 @@ import os
 from pathlib import Path
 
 # Ajout du chemin du projet pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-
-from core.orchestrator import (
     SyncOrchestrator, ContextBuilder, ScopeExecutor,
     LogManager, SyncResult
 )
 from core.config import SyncConfig, DatabaseConfig, ApiConfig
-
 
 class TestSyncResult(unittest.TestCase):
     """Tests pour la classe SyncResult."""
@@ -57,7 +62,6 @@ class TestSyncResult(unittest.TestCase):
         self.assertFalse(result.success)
         self.assertEqual(result.error_message, "Test error")
         self.assertEqual(result.duration_seconds, 2.0)
-
 
 class TestContextBuilder(unittest.TestCase):
     """Tests pour la classe ContextBuilder."""
@@ -157,7 +161,6 @@ class TestContextBuilder(unittest.TestCase):
         # Vérifier que le cache persistant a été configuré
         mock_get_cache.assert_called_once()
 
-
 class TestScopeExecutor(unittest.TestCase):
     """Tests pour la classe ScopeExecutor."""
 
@@ -255,7 +258,6 @@ class TestScopeExecutor(unittest.TestCase):
         self.assertFalse(result.success)
         self.assertIn("Test error", result.error_message)
         self.assertEqual(result.duration_seconds, 1.5)
-
 
 class TestLogManager(unittest.TestCase):
     """Tests pour la classe LogManager."""
@@ -362,7 +364,6 @@ class TestLogManager(unittest.TestCase):
             self.log_manager.print_sync_summary()
         except Exception as e:
             self.fail(f"print_sync_summary() a levé une exception: {e}")
-
 
 class TestSyncOrchestrator(unittest.TestCase):
     """Tests pour la classe SyncOrchestrator."""
@@ -622,7 +623,6 @@ class TestSyncOrchestrator(unittest.TestCase):
 
         # Vérifier que les scopes spécifiés sont retournés (l'ordre peut varier)
         self.assertEqual(set(selected_scopes), {"scope1", "scope3"})
-
 
 if __name__ == '__main__':
     unittest.main()

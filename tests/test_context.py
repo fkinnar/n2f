@@ -1,3 +1,10 @@
+from unittest.mock import Mock, patch, MagicMock
+
+import agresso.database as agresso_db
+from helper.context import SyncContext
+from core.config import DatabaseConfig
+from core.config import ApiConfig
+
 """
 Tests unitaires pour le module de contexte.
 
@@ -15,11 +22,7 @@ import os
 from pathlib import Path
 
 # Ajout du chemin du projet pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-
-from helper.context import SyncContext
 from core.config import SyncConfig, DatabaseConfig, ApiConfig
-
 
 class TestSyncContext(unittest.TestCase):
     """Tests pour la classe SyncContext."""
@@ -420,7 +423,6 @@ class TestSyncContext(unittest.TestCase):
         context_repr = repr(context)
         self.assertIsInstance(context_repr, str)
         self.assertIn("SyncContext", context_repr)
-
 
 if __name__ == '__main__':
     unittest.main()
