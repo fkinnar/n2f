@@ -371,34 +371,62 @@ class TestSyncOrchestrator(unittest.TestCase):
         """Configuration initiale pour les tests."""
         self.config_path = Path("test_config.yaml")
         self.args = Mock(spec=argparse.Namespace)
-        self.orchestrator = SyncOrchestrator(self.config_path, self.args)
-        # Mock le registry pour les tests
-        self.orchestrator.registry = Mock()
+
+        # Mock ConfigLoader pour éviter les appels à la configuration réelle
+        self.config_loader_patcher = patch('core.orchestrator.ConfigLoader')
+        self.mock_config_loader_class = self.config_loader_patcher.start()
+
+        # Mock la configuration
+        mock_config = Mock()
+        mock_config.cache.enabled = True
+        self.mock_config_loader_class.return_value.load.return_value = mock_config
+
+        # Mock le ContextBuilder avant de créer l'orchestrateur
+        with patch('core.orchestrator.ContextBuilder') as mock_context_builder_class:
+            mock_context_builder = Mock()
+            mock_context_builder_class.return_value = mock_context_builder
+
+            # Mock le contexte
+            mock_context = Mock()
+            mock_context_builder.build.return_value = mock_context
+
+            self.orchestrator = SyncOrchestrator(self.config_path, self.args)
+
+            # Mock le registry pour les tests
+            self.orchestrator.registry = Mock()
+
+            # Stocker les mocks pour les tests
+            self.mock_context_builder = mock_context_builder
+            self.mock_context = mock_context
+            self.mock_config = mock_config
+
+    def tearDown(self):
+        """Nettoyage après les tests."""
+        self.config_loader_patcher.stop()
 
     def test_initialization(self):
         """Test de l'initialisation de l'orchestrateur."""
         self.assertEqual(self.orchestrator.config_path, self.config_path)
         self.assertEqual(self.orchestrator.args, self.args)
-        self.assertIsInstance(self.orchestrator.context_builder, ContextBuilder)
+        # Le context_builder est maintenant mocké
+        self.assertIsInstance(self.orchestrator.context_builder, Mock)
         self.assertIsInstance(self.orchestrator.log_manager, LogManager)
         # Le registry est maintenant mocké pour les tests
         self.assertIsInstance(self.orchestrator.registry, Mock)
 
     @patch('core.orchestrator.cache_clear')
     @patch('core.orchestrator.cache_invalidate')
-    @patch('core.orchestrator.ContextBuilder')
     @patch('core.orchestrator.ScopeExecutor')
     @patch('core.orchestrator.LogManager')
     def test_run_with_clear_cache(self, mock_log_manager, mock_scope_executor,
-                                 mock_context_builder, mock_cache_invalidate,
-                                 mock_cache_clear):
+                                 mock_cache_invalidate, mock_cache_clear):
         """Test d'exécution avec nettoyage du cache."""
         # Configurer les mocks
         self.args.clear_cache = True
         self.args.invalidate_cache = None
 
-        mock_context = Mock()
-        mock_context_builder.return_value.build.return_value = mock_context
+        # Utiliser le mock_context déjà configuré dans setUp
+        mock_context = self.mock_context
 
         mock_executor = Mock()
         mock_scope_executor.return_value = mock_executor
@@ -437,19 +465,17 @@ class TestSyncOrchestrator(unittest.TestCase):
 
     @patch('core.orchestrator.cache_clear')
     @patch('core.orchestrator.cache_invalidate')
-    @patch('core.orchestrator.ContextBuilder')
     @patch('core.orchestrator.ScopeExecutor')
     @patch('core.orchestrator.LogManager')
     def test_run_with_invalidate_cache(self, mock_log_manager, mock_scope_executor,
-                                      mock_context_builder, mock_cache_invalidate,
-                                      mock_cache_clear):
+                                      mock_cache_invalidate, mock_cache_clear):
         """Test d'exécution avec invalidation sélective du cache."""
         # Configurer les mocks
         self.args.clear_cache = False
         self.args.invalidate_cache = ["function1", "function2"]
 
-        mock_context = Mock()
-        mock_context_builder.return_value.build.return_value = mock_context
+        # Utiliser le mock_context déjà configuré dans setUp
+        mock_context = self.mock_context
 
         mock_executor = Mock()
         mock_scope_executor.return_value = mock_executor
@@ -480,19 +506,17 @@ class TestSyncOrchestrator(unittest.TestCase):
         # Vérifier que le cache n'a pas été complètement nettoyé
         mock_cache_clear.assert_not_called()
 
-    @patch('core.orchestrator.ContextBuilder')
     @patch('core.orchestrator.ScopeExecutor')
     @patch('core.orchestrator.LogManager')
-    def test_run_with_specific_scopes(self, mock_log_manager, mock_scope_executor,
-                                     mock_context_builder):
+    def test_run_with_specific_scopes(self, mock_log_manager, mock_scope_executor):
         """Test d'exécution avec des scopes spécifiques."""
         # Configurer les mocks
         self.args.scopes = ["scope1", "scope2"]
         self.args.clear_cache = False
         self.args.invalidate_cache = None
 
-        mock_context = Mock()
-        mock_context_builder.return_value.build.return_value = mock_context
+        # Utiliser le mock_context déjà configuré dans setUp
+        mock_context = self.mock_context
 
         mock_executor = Mock()
         mock_scope_executor.return_value = mock_executor

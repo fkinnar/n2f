@@ -17,6 +17,11 @@ def cache_token(timeout_seconds: int = n2f.TIMEOUT_TOKEN, safety_margin: int = n
             ):
                 return cache["token"], cache["expires_at"]
             token, validity = func(*args, **kwargs)
+
+            # Si on est en mode simulation, validity peut être vide
+            if not validity:  # Si validity est vide ou None
+                return token, validity
+
             # validity est une date ISO, ex: '2025-08-20T09:54:35.8185075Z'
             expires_at = datetime.fromisoformat(validity.replace("Z", "+00:00")).timestamp()
             cache["token"] = token
