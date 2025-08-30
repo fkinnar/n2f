@@ -25,6 +25,7 @@ import os
 from pathlib import Path
 
 # Ajout du chemin du projet pour les imports
+from core.orchestrator import (
     SyncOrchestrator, ContextBuilder, ScopeExecutor,
     LogManager, SyncResult
 )

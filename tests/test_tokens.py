@@ -5,6 +5,8 @@ import sys
 import os
 from datetime import datetime
 
+import n2f.api.token as token_module
+
 class TestCacheToken(unittest.TestCase):
     """Tests pour le décorateur cache_token."""
 

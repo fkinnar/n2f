@@ -1,5 +1,3 @@
-from core.cache import AdvancedCache
-
 """
 Tests unitaires pour le système de cache avancé.
 
@@ -20,6 +18,7 @@ import os
 from pathlib import Path
 
 # Ajout du chemin du projet pour les imports
+from core.cache import AdvancedCache, CacheEntry, CacheMetrics
 
 class TestCacheEntry(unittest.TestCase):
     """Tests pour la classe CacheEntry."""

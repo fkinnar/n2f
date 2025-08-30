@@ -1,9 +1,9 @@
-import n2f.api.base as base_api
-
 import unittest
 import sys
 import os
 from unittest.mock import Mock, patch, MagicMock
+
+import n2f.api.base as base_api
 
 class TestRetrieve(unittest.TestCase):
     """Tests pour la fonction retreive."""
@@ -26,7 +26,7 @@ class TestRetrieve(unittest.TestCase):
 
     def test_retreive_simulation_mode(self):
         """Test du mode simulation."""
-        result = base_module.retreive(
+        result = base_api.retreive(
             self.entity, self.base_url, self.client_id, self.client_secret, simulate=True
         )
 
@@ -42,7 +42,7 @@ class TestRetrieve(unittest.TestCase):
         mock_session.get.return_value = self.mock_response
         mock_get_session.return_value = mock_session
 
-        result = base_module.retreive(
+        result = base_api.retreive(
             self.entity, self.base_url, self.client_id, self.client_secret
         )
 
@@ -76,7 +76,7 @@ class TestRetrieve(unittest.TestCase):
         mock_session.get.return_value = self.mock_response
         mock_get_session.return_value = mock_session
 
-        result = base_module.retreive(
+        result = base_api.retreive(
             "companies", self.base_url, self.client_id, self.client_secret,
             start=50, limit=100
         )
@@ -100,7 +100,7 @@ class TestRetrieve(unittest.TestCase):
         mock_get_session.return_value = mock_session
 
         with self.assertRaises(Exception):
-            base_module.retreive(
+            base_api.retreive(
                 self.entity, self.base_url, self.client_id, self.client_secret
             )
 
@@ -117,7 +117,7 @@ class TestUpsert(unittest.TestCase):
 
     def test_upsert_simulation_mode(self):
         """Test du mode simulation."""
-        result = base_module.upsert(
+        result = base_api.upsert(
             self.base_url, self.endpoint, self.client_id, self.client_secret,
             self.payload, simulate=True
         )
@@ -135,7 +135,7 @@ class TestUpsert(unittest.TestCase):
         mock_session.post.return_value = mock_response
         mock_get_session.return_value = mock_session
 
-        result = base_module.upsert(
+        result = base_api.upsert(
             self.base_url, self.endpoint, self.client_id, self.client_secret, self.payload
         )
 
@@ -173,7 +173,7 @@ class TestUpsert(unittest.TestCase):
                 mock_response.status_code = status_code
                 mock_session.post.return_value = mock_response
 
-                result = base_module.upsert(
+                result = base_api.upsert(
                     self.base_url, self.endpoint, self.client_id, self.client_secret, self.payload
                 )
 
@@ -187,7 +187,7 @@ class TestUpsert(unittest.TestCase):
                 mock_response.status_code = status_code
                 mock_session.post.return_value = mock_response
 
-                result = base_module.upsert(
+                result = base_api.upsert(
                     self.base_url, self.endpoint, self.client_id, self.client_secret, self.payload
                 )
 
@@ -208,7 +208,7 @@ class TestUpsert(unittest.TestCase):
 
         for endpoint in endpoints:
             with self.subTest(endpoint=endpoint):
-                result = base_module.upsert(
+                result = base_api.upsert(
                     self.base_url, endpoint, self.client_id, self.client_secret, self.payload
                 )
 
@@ -238,7 +238,7 @@ class TestDelete(unittest.TestCase):
 
     def test_delete_simulation_mode(self):
         """Test du mode simulation."""
-        result = base_module.delete(
+        result = base_api.delete(
             self.base_url, self.endpoint, self.client_id, self.client_secret,
             self.id, simulate=True
         )
@@ -256,7 +256,7 @@ class TestDelete(unittest.TestCase):
         mock_session.delete.return_value = mock_response
         mock_get_session.return_value = mock_session
 
-        result = base_module.delete(
+        result = base_api.delete(
             self.base_url, self.endpoint, self.client_id, self.client_secret, self.id
         )
 
@@ -290,7 +290,7 @@ class TestDelete(unittest.TestCase):
                 mock_response.status_code = status_code
                 mock_session.delete.return_value = mock_response
 
-                result = base_module.delete(
+                result = base_api.delete(
                     self.base_url, self.endpoint, self.client_id, self.client_secret, self.id
                 )
 
@@ -304,7 +304,7 @@ class TestDelete(unittest.TestCase):
                 mock_response.status_code = status_code
                 mock_session.delete.return_value = mock_response
 
-                result = base_module.delete(
+                result = base_api.delete(
                     self.base_url, self.endpoint, self.client_id, self.client_secret, self.id
                 )
 
@@ -330,7 +330,7 @@ class TestDelete(unittest.TestCase):
 
         for endpoint, identifier in test_cases:
             with self.subTest(endpoint=endpoint, identifier=identifier):
-                result = base_module.delete(
+                result = base_api.delete(
                     self.base_url, endpoint, self.client_id, self.client_secret, identifier
                 )
 

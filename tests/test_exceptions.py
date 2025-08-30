@@ -13,6 +13,7 @@ import unittest
 import sys
 import os
 
+from core.exceptions import (
     SyncException, ApiException, ValidationException, ConfigurationException,
     DatabaseException, AuthenticationException, NetworkException
 )
