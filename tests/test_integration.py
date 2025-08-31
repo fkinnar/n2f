@@ -148,11 +148,8 @@ class TestEndToEndIntegration(TestIntegrationBase):
     @patch('core.orchestrator.SyncContext')
     @patch('core.orchestrator.ScopeExecutor')
     @patch('core.orchestrator.LogManager')
-    def test_full_synchronization_workflow(self, mock_log_manager, mock_scope_executor,
-                                         mock_sync_context, mock_get_registry,
-                                         mock_get_retry_manager, mock_get_metrics,
-                                         mock_get_memory_manager, mock_get_cache,
-                                         mock_config_loader):
+    @patch('core.orchestrator.print_memory_summary')
+    def test_full_synchronization_workflow(self, mock_print_memory_summary, mock_log_manager, mock_scope_executor, mock_sync_context, mock_get_registry, mock_get_retry_manager, mock_get_metrics, mock_get_memory_manager, mock_get_cache, mock_config_loader):
         """Test du workflow complet de synchronisation."""
 
         # Configuration des mocks
@@ -211,11 +208,8 @@ class TestEndToEndIntegration(TestIntegrationBase):
     @patch('core.orchestrator.SyncContext')
     @patch('core.orchestrator.ScopeExecutor')
     @patch('core.orchestrator.LogManager')
-    def test_synchronization_with_multiple_scopes(self, mock_log_manager, mock_scope_executor,
-                                                mock_sync_context, mock_get_registry,
-                                                mock_get_retry_manager, mock_get_metrics,
-                                                mock_get_memory_manager, mock_get_cache,
-                                                mock_config_loader):
+    @patch('core.orchestrator.print_memory_summary')
+    def test_synchronization_with_multiple_scopes(self, mock_print_memory_summary, mock_log_manager, mock_scope_executor, mock_sync_context, mock_get_registry, mock_get_retry_manager, mock_get_metrics, mock_get_memory_manager, mock_get_cache, mock_config_loader):
         """Test de synchronisation avec plusieurs scopes."""
 
         # Configuration pour plusieurs scopes
@@ -402,11 +396,8 @@ class TestPerformanceIntegration(TestIntegrationBase):
     @patch('core.orchestrator.SyncContext')
     @patch('core.orchestrator.ScopeExecutor')
     @patch('core.orchestrator.LogManager')
-    def test_large_dataset_performance(self, mock_log_manager, mock_scope_executor,
-                                     mock_sync_context, mock_get_registry,
-                                     mock_get_retry_manager, mock_get_metrics,
-                                     mock_get_memory_manager, mock_get_cache,
-                                     mock_config_loader):
+    @patch('core.orchestrator.print_memory_summary')
+    def test_large_dataset_performance(self, mock_print_memory_summary, mock_log_manager, mock_scope_executor, mock_sync_context, mock_get_registry, mock_get_retry_manager, mock_get_metrics, mock_get_memory_manager, mock_get_cache, mock_config_loader):
         """Test de performance avec un grand volume de données."""
 
         # Configuration des mocks
@@ -465,11 +456,8 @@ class TestPerformanceIntegration(TestIntegrationBase):
     @patch('core.orchestrator.ScopeExecutor')
     @patch('core.orchestrator.LogManager')
     @patch('core.orchestrator.cleanup_scope')
-    def test_memory_usage_integration(self, mock_cleanup_scope, mock_log_manager, mock_scope_executor,
-                                    mock_sync_context, mock_get_registry,
-                                    mock_get_retry_manager, mock_get_metrics,
-                                    mock_get_memory_manager, mock_get_cache,
-                                    mock_config_loader):
+    @patch('core.orchestrator.print_memory_summary')
+    def test_memory_usage_integration(self, mock_print_memory_summary, mock_cleanup_scope, mock_log_manager, mock_scope_executor, mock_sync_context, mock_get_registry, mock_get_retry_manager, mock_get_metrics, mock_get_memory_manager, mock_get_cache, mock_config_loader):
         """Test d'intégration de l'utilisation mémoire."""
 
         # Configuration des mocks
@@ -534,11 +522,8 @@ class TestErrorRecoveryIntegration(TestIntegrationBase):
     @patch('core.orchestrator.SyncContext')
     @patch('core.orchestrator.ScopeExecutor')
     @patch('core.orchestrator.LogManager')
-    def test_partial_failure_recovery(self, mock_log_manager, mock_scope_executor,
-                                    mock_sync_context, mock_get_registry,
-                                    mock_get_retry_manager, mock_get_metrics,
-                                    mock_get_memory_manager, mock_get_cache,
-                                    mock_config_loader):
+    @patch('core.orchestrator.print_memory_summary')
+    def test_partial_failure_recovery(self, mock_print_memory_summary, mock_log_manager, mock_scope_executor, mock_sync_context, mock_get_registry, mock_get_retry_manager, mock_get_metrics, mock_get_memory_manager, mock_get_cache, mock_config_loader):
         """Test de récupération après échec partiel."""
 
         # Configuration des mocks
@@ -588,10 +573,8 @@ class TestErrorRecoveryIntegration(TestIntegrationBase):
     @patch('core.orchestrator.get_retry_manager')
     @patch('core.orchestrator.get_registry')
     @patch('core.orchestrator.SyncContext')
-    def test_configuration_error_handling(self, mock_sync_context, mock_get_registry,
-                                        mock_get_retry_manager, mock_get_metrics,
-                                        mock_get_memory_manager, mock_get_cache,
-                                        mock_config_loader):
+    @patch('core.orchestrator.print_memory_summary')
+    def test_configuration_error_handling(self, mock_print_memory_summary, mock_sync_context, mock_get_registry, mock_get_retry_manager, mock_get_metrics, mock_get_memory_manager, mock_get_cache, mock_config_loader):
         """Test de gestion d'erreur de configuration."""
 
         # Mock d'une erreur de configuration
@@ -615,11 +598,8 @@ class TestCacheIntegration(TestIntegrationBase):
     @patch('core.orchestrator.ScopeExecutor')
     @patch('core.orchestrator.LogManager')
     @patch('core.orchestrator.cache_clear')
-    def test_cache_integration_with_clear_cache(self, mock_cache_clear, mock_log_manager, mock_scope_executor,
-                                              mock_sync_context, mock_get_registry,
-                                              mock_get_retry_manager, mock_get_metrics,
-                                              mock_get_memory_manager, mock_get_cache,
-                                              mock_config_loader):
+    @patch('core.orchestrator.print_memory_summary')
+    def test_cache_integration_with_clear_cache(self, mock_print_memory_summary, mock_cache_clear, mock_log_manager, mock_scope_executor, mock_sync_context, mock_get_registry, mock_get_retry_manager, mock_get_metrics, mock_get_memory_manager, mock_get_cache, mock_config_loader):
         """Test d'intégration du cache avec nettoyage."""
 
         # Configuration pour nettoyer le cache

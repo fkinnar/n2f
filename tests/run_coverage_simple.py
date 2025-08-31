@@ -29,6 +29,8 @@ def run_coverage_analysis():
             '*/venv/*',
             '*/example*.py',
             '*/_example*.py',
+            '*_example.py',
+            '*/sync_example.py',
             '*/test_*.py'
         ]
     )

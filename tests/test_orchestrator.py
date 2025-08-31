@@ -80,10 +80,8 @@ class TestContextBuilder(unittest.TestCase):
     @patch('core.orchestrator.get_retry_manager')
     @patch('core.orchestrator.get_registry')
     @patch('core.orchestrator.SyncContext')
-    def test_build_context(self, mock_sync_context, mock_get_registry,
-                          mock_get_retry_manager, mock_get_metrics,
-                          mock_get_memory_manager, mock_get_cache,
-                          mock_config_loader):
+    @patch('core.orchestrator.print_memory_summary')
+    def test_build_context(self, mock_print_memory_summary, mock_sync_context, mock_get_registry, mock_get_retry_manager, mock_get_metrics, mock_get_memory_manager, mock_get_cache, mock_config_loader):
         """Test de construction du contexte."""
         # Mock de la configuration
         mock_config = Mock(spec=SyncConfig)
@@ -124,13 +122,8 @@ class TestContextBuilder(unittest.TestCase):
     @patch('core.orchestrator.get_retry_manager')
     @patch('core.orchestrator.get_registry')
     @patch('core.orchestrator.SyncContext')
-    def test_build_context_with_persistent_cache(self, mock_sync_context,
-                                                mock_get_registry,
-                                                mock_get_retry_manager,
-                                                mock_get_metrics,
-                                                mock_get_memory_manager,
-                                                mock_get_cache,
-                                                mock_config_loader):
+    @patch('core.orchestrator.print_memory_summary')
+    def test_build_context_with_persistent_cache(self, mock_print_memory_summary, mock_sync_context, mock_get_registry, mock_get_retry_manager, mock_get_metrics, mock_get_memory_manager, mock_get_cache, mock_config_loader):
         """Test de construction du contexte avec cache persistant."""
         # Mock de la configuration avec cache persistant
         mock_config = Mock(spec=SyncConfig)
@@ -416,7 +409,8 @@ class TestSyncOrchestrator(unittest.TestCase):
     @patch('core.orchestrator.cache_invalidate')
     @patch('core.orchestrator.ScopeExecutor')
     @patch('core.orchestrator.LogManager')
-    def test_run_with_clear_cache(self, mock_log_manager, mock_scope_executor,
+    @patch('core.orchestrator.print_memory_summary')
+    def test_run_with_clear_cache(self, mock_print_memory_summary, mock_log_manager, mock_scope_executor,
                                  mock_cache_invalidate, mock_cache_clear):
         """Test d'exécution avec nettoyage du cache."""
         # Configurer les mocks
@@ -465,7 +459,8 @@ class TestSyncOrchestrator(unittest.TestCase):
     @patch('core.orchestrator.cache_invalidate')
     @patch('core.orchestrator.ScopeExecutor')
     @patch('core.orchestrator.LogManager')
-    def test_run_with_invalidate_cache(self, mock_log_manager, mock_scope_executor,
+    @patch('core.orchestrator.print_memory_summary')
+    def test_run_with_invalidate_cache(self, mock_print_memory_summary, mock_log_manager, mock_scope_executor,
                                       mock_cache_invalidate, mock_cache_clear):
         """Test d'exécution avec invalidation sélective du cache."""
         # Configurer les mocks
@@ -506,7 +501,8 @@ class TestSyncOrchestrator(unittest.TestCase):
 
     @patch('core.orchestrator.ScopeExecutor')
     @patch('core.orchestrator.LogManager')
-    def test_run_with_specific_scopes(self, mock_log_manager, mock_scope_executor):
+    @patch('core.orchestrator.print_memory_summary')
+    def test_run_with_specific_scopes(self, mock_print_memory_summary, mock_log_manager, mock_scope_executor):
         """Test d'exécution avec des scopes spécifiques."""
         # Configurer les mocks
         self.args.scopes = ["scope1", "scope2"]
