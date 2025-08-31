@@ -73,7 +73,6 @@ class TestContextBuilder(unittest.TestCase):
         self.config_path = Path("test_config.yaml")
         self.builder = ContextBuilder(self.args, self.config_path)
 
-    @patch('core.orchestrator.load_dotenv')
     @patch('core.orchestrator.ConfigLoader')
     @patch('core.orchestrator.get_cache')
     @patch('core.orchestrator.get_memory_manager')
@@ -84,7 +83,7 @@ class TestContextBuilder(unittest.TestCase):
     def test_build_context(self, mock_sync_context, mock_get_registry,
                           mock_get_retry_manager, mock_get_metrics,
                           mock_get_memory_manager, mock_get_cache,
-                          mock_config_loader, mock_load_dotenv):
+                          mock_config_loader):
         """Test de construction du contexte."""
         # Mock de la configuration
         mock_config = Mock(spec=SyncConfig)
@@ -110,7 +109,6 @@ class TestContextBuilder(unittest.TestCase):
             context = self.builder.build()
 
         # Vérifier que les composants ont été initialisés
-        mock_load_dotenv.assert_called_once()
         mock_config_loader.assert_called_once_with(self.config_path)
         mock_get_cache.assert_called_once()
         mock_get_memory_manager.assert_called_once()
@@ -119,7 +117,6 @@ class TestContextBuilder(unittest.TestCase):
         mock_get_registry.assert_called_once()
         mock_sync_context.assert_called_once()
 
-    @patch('core.orchestrator.load_dotenv')
     @patch('core.orchestrator.ConfigLoader')
     @patch('core.orchestrator.get_cache')
     @patch('core.orchestrator.get_memory_manager')
@@ -133,8 +130,7 @@ class TestContextBuilder(unittest.TestCase):
                                                 mock_get_metrics,
                                                 mock_get_memory_manager,
                                                 mock_get_cache,
-                                                mock_config_loader,
-                                                mock_load_dotenv):
+                                                mock_config_loader):
         """Test de construction du contexte avec cache persistant."""
         # Mock de la configuration avec cache persistant
         mock_config = Mock(spec=SyncConfig)

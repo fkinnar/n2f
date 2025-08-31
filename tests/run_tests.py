@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
 
 def run_all_tests():
     """Exécute tous les tests unitaires."""
-    print("🧪 N2F Synchronization - Tests Unitaires")
+    print("N2F Synchronization - Tests Unitaires")
     print("=" * 50)
 
     # Découvrir et charger tous les tests
@@ -33,31 +33,32 @@ def run_all_tests():
 
     # Afficher le résumé
     print("\n" + "=" * 50)
-    print("📊 RÉSUMÉ DES TESTS")
+    print("RÉSUMÉ DES TESTS")
     print("=" * 50)
-    print(f"⏱️  Durée totale : {duration:.2f} secondes")
-    print(f"✅ Tests réussis : {result.testsRun - len(result.failures) - len(result.errors)}")
-    print(f"❌ Échecs : {len(result.failures)}")
-    print(f"🚨 Erreurs : {len(result.errors)}")
-    print(f"📈 Total : {result.testsRun}")
+    print(f"Durée totale : {duration:.2f} secondes")
+    print(f"Tests réussis : {result.testsRun - len(result.failures) - len(result.errors)}")
+    print(f"Échecs : {len(result.failures)}")
+    print(f"Erreurs : {len(result.errors)}")
+    print(f"Total : {result.testsRun}")
 
     if result.failures:
-        print("\n❌ ÉCHECS :")
+        print("\nÉCHECS :")
         for test, traceback in result.failures:
             print(f"  - {test}: {traceback.split('AssertionError:')[-1].strip()}")
 
     if result.errors:
-        print("\n🚨 ERREURS :")
+        print("\nERREURS :")
         for test, traceback in result.errors:
             print(f"  - {test}: {traceback.split('Exception:')[-1].strip()}")
 
     # Code de sortie
     if result.failures or result.errors:
-        print("\n❌ Certains tests ont échoué !")
+        print("\nCertains tests ont échoué !")
         return 1
     else:
-        print("\n✅ Tous les tests ont réussi !")
+        print("\nTous les tests ont réussi !")
         return 0
+
 
 
 def run_specific_test(test_module):

@@ -1,3 +1,5 @@
+import pandas as pd
+
 def to_bool(val) -> bool:
     """
     Convertit une valeur en booléen.
@@ -21,7 +23,6 @@ def normalize_date_for_payload(value):
     Accepte datetime/date ou chaîne (jour/mois/année OK).
     Retourne une chaîne ISO formatée (YYYY-MM-DD) ou None.
     """
-    import pandas as pd
     if pd.isna(value) or value is None:
         return None
     try:

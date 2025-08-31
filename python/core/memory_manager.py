@@ -88,7 +88,7 @@ class MemoryManager:
 
         # Si toujours trop de mémoire après nettoyage, refuser l'enregistrement
         if self.metrics.current_usage_mb + size_mb > self.max_memory_mb:
-            print(f"⚠️  Impossible d'enregistrer {name} - Mémoire insuffisante "
+            print(f"Impossible d'enregistrer {name} - Mémoire insuffisante "
                   f"({self.metrics.current_usage_mb:.1f}MB + {size_mb:.1f}MB > {self.max_memory_mb}MB)")
             return False
 
@@ -106,7 +106,7 @@ class MemoryManager:
         self.metrics.total_dataframes += 1
         self.metrics.peak_usage_mb = max(self.metrics.peak_usage_mb, self.metrics.current_usage_mb)
 
-        print(f"📊 DataFrame '{name}' enregistré - Taille: {size_mb:.1f}MB, "
+        print(f"DataFrame '{name}' enregistré - Taille: {size_mb:.1f}MB, "
               f"Total: {self.metrics.current_usage_mb:.1f}MB/{self.max_memory_mb}MB")
 
         return True
@@ -154,7 +154,7 @@ class MemoryManager:
         self.metrics.last_cleanup_time = time.time()
 
         if freed_memory > 0:
-            print(f"🧹 Scope '{scope_name}' nettoyé - {freed_memory:.1f}MB libérés, "
+            print(f"Scope '{scope_name}' nettoyé - {freed_memory:.1f}MB libérés, "
                   f"Reste: {self.metrics.current_usage_mb:.1f}MB")
 
         return freed_memory
@@ -180,7 +180,7 @@ class MemoryManager:
         # Forcer le garbage collector
         gc.collect()
 
-        print(f"🧹 Nettoyage complet - {freed_memory:.1f}MB libérés")
+        print(f"Nettoyage complet - {freed_memory:.1f}MB libérés")
         return freed_memory
 
     def get_memory_stats(self) -> Dict:
@@ -218,25 +218,25 @@ class MemoryManager:
         stats = self.get_memory_stats()
 
         print("\n" + "="*60)
-        print("📊 RÉSUMÉ MÉMOIRE")
+        print("RÉSUMÉ MÉMOIRE")
         print("="*60)
 
         # Mémoire du gestionnaire
         mm = stats["memory_manager"]
-        print(f"🔹 Utilisation actuelle: {mm['current_usage_mb']:.1f}MB / {mm['max_memory_mb']}MB ({mm['usage_percentage']:.1f}%)")
-        print(f"🔹 Pic d'utilisation: {mm['peak_usage_mb']:.1f}MB")
-        print(f"🔹 DataFrames actifs: {mm['active_dataframes']} / {mm['total_dataframes']} total")
-        print(f"🔹 Mémoire libérée: {mm['freed_memory_mb']:.1f}MB ({mm['cleanup_count']} nettoyages)")
+        print(f"Utilisation actuelle: {mm['current_usage_mb']:.1f}MB / {mm['max_memory_mb']}MB ({mm['usage_percentage']:.1f}%)")
+        print(f"Pic d'utilisation: {mm['peak_usage_mb']:.1f}MB")
+        print(f"DataFrames actifs: {mm['active_dataframes']} / {mm['total_dataframes']} total")
+        print(f"Mémoire libérée: {mm['freed_memory_mb']:.1f}MB ({mm['cleanup_count']} nettoyages)")
 
         # Mémoire système
         sys = stats["system"]
-        print(f"🔹 Mémoire système: {sys['memory_percentage']:.1f}% utilisée")
-        print(f"🔹 Processus: {sys['process_memory_mb']:.1f}MB")
+        print(f"Mémoire système: {sys['memory_percentage']:.1f}% utilisée")
+        print(f"Processus: {sys['process_memory_mb']:.1f}MB")
 
         # DataFrames par scope
-        print("\n📁 DataFrames par scope:")
+        print("\nDataFrames par scope:")
         for scope, info in stats["dataframes_by_scope"].items():
-            print(f"   • {scope}: {info['count']} DataFrames, {info['size_mb']:.1f}MB")
+            print(f"   - {scope}: {info['count']} DataFrames, {info['size_mb']:.1f}MB")
 
         print("="*60)
 
@@ -273,7 +273,7 @@ class MemoryManager:
         self.metrics.last_cleanup_time = time.time()
 
         if freed_memory > 0:
-            print(f"🧹 Nettoyage LRU - {freed_memory:.1f}MB libérés, "
+            print(f"Nettoyage LRU - {freed_memory:.1f}MB libérés, "
                   f"Reste: {self.metrics.current_usage_mb:.1f}MB")
 
     def _get_dataframes_by_scope(self) -> Dict[str, Dict]:
@@ -314,26 +314,21 @@ def register_dataframe(name: str, df: pd.DataFrame, scope: str = "default") -> b
     """Fonction utilitaire pour enregistrer un DataFrame."""
     return get_memory_manager().register_dataframe(name, df, scope)
 
-
 def get_dataframe(name: str) -> Optional[pd.DataFrame]:
     """Fonction utilitaire pour récupérer un DataFrame."""
     return get_memory_manager().get_dataframe(name)
-
 
 def cleanup_scope(scope_name: str) -> float:
     """Fonction utilitaire pour nettoyer un scope."""
     return get_memory_manager().cleanup_scope(scope_name)
 
-
 def cleanup_all() -> float:
     """Fonction utilitaire pour nettoyer toute la mémoire."""
     return get_memory_manager().cleanup_all()
 
-
 def print_memory_summary():
     """Fonction utilitaire pour afficher le résumé mémoire."""
     get_memory_manager().print_memory_summary()
-
 
 def get_memory_stats() -> Dict:
     """Fonction utilitaire pour obtenir les statistiques mémoire."""

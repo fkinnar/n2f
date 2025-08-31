@@ -347,38 +347,38 @@ class SyncMetrics:
         summary = self.get_summary()
 
         print("\n" + "="*70)
-        print("📊 RÉSUMÉ DES MÉTRIQUES DE SYNCHRONISATION")
+        print("RÉSUMÉ DES MÉTRIQUES DE SYNCHRONISATION")
         print("="*70)
 
         # Résumé général
-        print(f"⏱️  Durée totale: {summary['summary']['total_duration_seconds']:.2f} secondes")
-        print(f"🔄 Opérations: {summary['summary']['successful_operations']}/{summary['summary']['total_operations']} réussies ({summary['summary']['success_rate']*100:.1f}%)")
-        print(f"📝 Enregistrements traités: {summary['summary']['total_records_processed']:,}")
-        print(f"⚡ Performance: {summary['summary']['average_records_per_second']:.1f} enregistrements/seconde")
+        print(f"Durée totale: {summary['summary']['total_duration_seconds']:.2f} secondes")
+        print(f"Opérations: {summary['summary']['successful_operations']}/{summary['summary']['total_operations']} réussies ({summary['summary']['success_rate']*100:.1f}%)")
+        print(f"Enregistrements traités: {summary['summary']['total_records_processed']:,}")
+        print(f"Performance: {summary['summary']['average_records_per_second']:.1f} enregistrements/seconde")
 
         # Performance
-        print(f"\n🚀 PERFORMANCE:")
-        print(f"   • Durée moyenne: {summary['performance']['average_duration_seconds']:.2f}s")
-        print(f"   • Durée max: {summary['performance']['max_duration_seconds']:.2f}s")
-        print(f"   • Appels API: {summary['performance']['total_api_calls']}")
-        print(f"   • Cache hit rate: {summary['performance']['cache_hit_rate']*100:.1f}%")
+        print(f"\nPERFORMANCE:")
+        print(f"   - Durée moyenne: {summary['performance']['average_duration_seconds']:.2f}s")
+        print(f"   - Durée max: {summary['performance']['max_duration_seconds']:.2f}s")
+        print(f"   - Appels API: {summary['performance']['total_api_calls']}")
+        print(f"   - Cache hit rate: {summary['performance']['cache_hit_rate']*100:.1f}%")
 
         # Mémoire
-        print(f"\n💾 MÉMOIRE:")
-        print(f"   • Pic d'utilisation: {summary['memory']['peak_usage_mb']:.1f}MB")
-        print(f"   • Utilisation moyenne: {summary['memory']['average_usage_mb']:.1f}MB")
+        print(f"\nMÉMOIRE:")
+        print(f"   - Pic d'utilisation: {summary['memory']['peak_usage_mb']:.1f}MB")
+        print(f"   - Utilisation moyenne: {summary['memory']['average_usage_mb']:.1f}MB")
 
         # Par scope
-        print(f"\n📁 PAR SCOPE:")
+        print(f"\nPAR SCOPE:")
         for scope, scope_data in summary['operations_by_scope'].items():
             success_rate = scope_data['success'] / scope_data['total'] * 100 if scope_data['total'] > 0 else 0
-            print(f"   • {scope}: {scope_data['success']}/{scope_data['total']} ({success_rate:.1f}%)")
+            print(f"   - {scope}: {scope_data['success']}/{scope_data['total']} ({success_rate:.1f}%)")
 
         # Erreurs
         if summary['error_summary']:
-            print(f"\n❌ ERREURS:")
+            print(f"\nERREURS:")
             for error, count in summary['error_summary'].items():
-                print(f"   • {error}: {count} occurrence(s)")
+                print(f"   - {error}: {count} occurrence(s)")
 
         print("="*70)
 
@@ -485,3 +485,8 @@ def print_summary():
 def export_metrics(output_path: Optional[Path] = None) -> Path:
     """Fonction utilitaire pour exporter les métriques."""
     return get_metrics().export_metrics(output_path)
+
+def reset_metrics():
+    """Réinitialise les métriques globales."""
+    global _metrics
+    _metrics = SyncMetrics()

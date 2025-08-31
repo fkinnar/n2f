@@ -8,6 +8,8 @@ de la synchronisation : configuration, contexte, exécution et reporting.
 import argparse
 import os
 import sys
+import time
+import numpy as np
 import pandas as pd
 from pathlib import Path
 from typing import List, Optional, Dict, Any
@@ -102,7 +104,6 @@ class ScopeExecutor:
 
     def execute_scope(self, scope_name: str) -> SyncResult:
         """Exécute la synchronisation pour un scope donné."""
-        import time
         start_time = time.time()
 
         try:
@@ -208,10 +209,12 @@ class LogManager:
             errors_df = combined_df.query("api_success == False")
             for _, row in errors_df.iterrows():
                 print(f"  - {row.get('api_message', 'Unknown error')}")
-                if 'api_error_details' in row and pd.notna(row['api_error_details']):
-                    print(f"    Details : {row['api_error_details']}")
+                details = row.get('api_error_details')
+                if np.any(pd.notna(details)):
+                    print(f"    Details : {details}")
 
     def get_successful_scopes(self) -> List[str]:
+
         """Retourne la liste des scopes qui ont réussi."""
         return [result.scope_name for result in self.results if result.success]
 

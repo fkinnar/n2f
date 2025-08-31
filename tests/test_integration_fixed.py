@@ -139,7 +139,6 @@ class TestIntegrationBase(unittest.TestCase):
 class TestEndToEndIntegration(TestIntegrationBase):
     """Tests d'intégration end-to-end."""
 
-    @patch('core.orchestrator.load_dotenv')
     @patch('core.orchestrator.ConfigLoader')
     @patch('core.orchestrator.get_cache')
     @patch('core.orchestrator.get_memory_manager')
@@ -153,7 +152,7 @@ class TestEndToEndIntegration(TestIntegrationBase):
                                          mock_sync_context, mock_get_registry,
                                          mock_get_retry_manager, mock_get_metrics,
                                          mock_get_memory_manager, mock_get_cache,
-                                         mock_config_loader, mock_load_dotenv):
+                                         mock_config_loader):
         """Test du workflow complet de synchronisation."""
 
         # Configuration des mocks
@@ -189,7 +188,6 @@ class TestEndToEndIntegration(TestIntegrationBase):
         orchestrator.run()
 
         # Vérifications
-        mock_load_dotenv.assert_called_once()
         # ConfigLoader est appelé 2 fois : une fois dans ContextBuilder.build() et une fois dans run()
         self.assertEqual(mock_config_loader.call_count, 2)
         mock_config_loader.assert_any_call(self.test_config_path)
@@ -204,7 +202,6 @@ class TestEndToEndIntegration(TestIntegrationBase):
         mock_executor.execute_scope.assert_called_once_with("users")
         mock_log_manager.return_value.add_result.assert_called_once_with(success_result)
 
-    @patch('core.orchestrator.load_dotenv')
     @patch('core.orchestrator.ConfigLoader')
     @patch('core.orchestrator.get_cache')
     @patch('core.orchestrator.get_memory_manager')
@@ -218,7 +215,7 @@ class TestEndToEndIntegration(TestIntegrationBase):
                                                 mock_sync_context, mock_get_registry,
                                                 mock_get_retry_manager, mock_get_metrics,
                                                 mock_get_memory_manager, mock_get_cache,
-                                                mock_config_loader, mock_load_dotenv):
+                                                mock_config_loader):
         """Test de synchronisation avec plusieurs scopes."""
 
         # Configuration pour plusieurs scopes
@@ -396,7 +393,6 @@ class TestSynchronizerIntegration(TestIntegrationBase):
 class TestPerformanceIntegration(TestIntegrationBase):
     """Tests d'intégration de performance."""
 
-    @patch('core.orchestrator.load_dotenv')
     @patch('core.orchestrator.ConfigLoader')
     @patch('core.orchestrator.get_cache')
     @patch('core.orchestrator.get_memory_manager')
@@ -410,7 +406,7 @@ class TestPerformanceIntegration(TestIntegrationBase):
                                      mock_sync_context, mock_get_registry,
                                      mock_get_retry_manager, mock_get_metrics,
                                      mock_get_memory_manager, mock_get_cache,
-                                     mock_config_loader, mock_load_dotenv):
+                                     mock_config_loader):
         """Test de performance avec un grand volume de données."""
 
         # Configuration des mocks
@@ -459,7 +455,6 @@ class TestPerformanceIntegration(TestIntegrationBase):
         self.assertLess(duration, 5.0)  # Doit s'exécuter en moins de 5 secondes
         self.assertEqual(len(large_df), 1000)  # Vérifier le volume de données
 
-    @patch('core.orchestrator.load_dotenv')
     @patch('core.orchestrator.ConfigLoader')
     @patch('core.orchestrator.get_cache')
     @patch('core.orchestrator.get_memory_manager')
@@ -474,7 +469,7 @@ class TestPerformanceIntegration(TestIntegrationBase):
                                     mock_sync_context, mock_get_registry,
                                     mock_get_retry_manager, mock_get_metrics,
                                     mock_get_memory_manager, mock_get_cache,
-                                    mock_config_loader, mock_load_dotenv):
+                                    mock_config_loader):
         """Test d'intégration de l'utilisation mémoire."""
 
         # Configuration des mocks
@@ -530,7 +525,6 @@ class TestPerformanceIntegration(TestIntegrationBase):
 class TestErrorRecoveryIntegration(TestIntegrationBase):
     """Tests d'intégration de récupération d'erreur."""
 
-    @patch('core.orchestrator.load_dotenv')
     @patch('core.orchestrator.ConfigLoader')
     @patch('core.orchestrator.get_cache')
     @patch('core.orchestrator.get_memory_manager')
@@ -544,7 +538,7 @@ class TestErrorRecoveryIntegration(TestIntegrationBase):
                                     mock_sync_context, mock_get_registry,
                                     mock_get_retry_manager, mock_get_metrics,
                                     mock_get_memory_manager, mock_get_cache,
-                                    mock_config_loader, mock_load_dotenv):
+                                    mock_config_loader):
         """Test de récupération après échec partiel."""
 
         # Configuration des mocks
@@ -587,7 +581,6 @@ class TestErrorRecoveryIntegration(TestIntegrationBase):
         mock_log_manager.return_value.add_result.assert_any_call(success_result)
         mock_log_manager.return_value.add_result.assert_any_call(failure_result)
 
-    @patch('core.orchestrator.load_dotenv')
     @patch('core.orchestrator.ConfigLoader')
     @patch('core.orchestrator.get_cache')
     @patch('core.orchestrator.get_memory_manager')
@@ -598,7 +591,7 @@ class TestErrorRecoveryIntegration(TestIntegrationBase):
     def test_configuration_error_handling(self, mock_sync_context, mock_get_registry,
                                         mock_get_retry_manager, mock_get_metrics,
                                         mock_get_memory_manager, mock_get_cache,
-                                        mock_config_loader, mock_load_dotenv):
+                                        mock_config_loader):
         """Test de gestion d'erreur de configuration."""
 
         # Mock d'une erreur de configuration
@@ -612,7 +605,6 @@ class TestErrorRecoveryIntegration(TestIntegrationBase):
 class TestCacheIntegration(TestIntegrationBase):
     """Tests d'intégration du cache."""
 
-    @patch('core.orchestrator.load_dotenv')
     @patch('core.orchestrator.ConfigLoader')
     @patch('core.orchestrator.get_cache')
     @patch('core.orchestrator.get_memory_manager')
@@ -627,7 +619,7 @@ class TestCacheIntegration(TestIntegrationBase):
                                               mock_sync_context, mock_get_registry,
                                               mock_get_retry_manager, mock_get_metrics,
                                               mock_get_memory_manager, mock_get_cache,
-                                              mock_config_loader, mock_load_dotenv):
+                                              mock_config_loader):
         """Test d'intégration du cache avec nettoyage."""
 
         # Configuration pour nettoyer le cache

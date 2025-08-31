@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from pathlib import Path
 import importlib
 import inspect
+import pkgutil
 
 
 @dataclass
@@ -145,7 +146,6 @@ class SyncRegistry:
             self._scan_module_for_scopes(module, modules_path)
 
             # Import des sous-modules pour découvrir les nouveaux scopes
-            import pkgutil
             for finder, name, ispkg in pkgutil.iter_modules(module.__path__):
                 if not ispkg:  # Seulement les modules, pas les packages
                     submodule_path = f"{modules_path}.{name}"

@@ -179,7 +179,6 @@ class TestRealScenariosBase(unittest.TestCase):
 class TestUserSynchronizationScenario(TestRealScenariosBase):
     """Tests de scénarios de synchronisation d'utilisateurs."""
 
-    @patch('core.orchestrator.load_dotenv')
     @patch('core.orchestrator.ConfigLoader')
     @patch('core.orchestrator.get_cache')
     @patch('core.orchestrator.get_memory_manager')
@@ -193,7 +192,7 @@ class TestUserSynchronizationScenario(TestRealScenariosBase):
                                               mock_sync_context, mock_get_registry,
                                               mock_get_retry_manager, mock_get_metrics,
                                               mock_get_memory_manager, mock_get_cache,
-                                              mock_config_loader, mock_load_dotenv):
+                                              mock_config_loader):
         """Test de synchronisation complète d'utilisateurs (scénario réel)."""
         
         # Configuration des mocks
@@ -238,7 +237,6 @@ class TestUserSynchronizationScenario(TestRealScenariosBase):
         self.assertIn("AdresseEmail", user_data.columns)
         self.assertIn("Nom", user_data.columns)
 
-    @patch('core.orchestrator.load_dotenv')
     @patch('core.orchestrator.ConfigLoader')
     @patch('core.orchestrator.get_cache')
     @patch('core.orchestrator.get_memory_manager')
@@ -252,7 +250,7 @@ class TestUserSynchronizationScenario(TestRealScenariosBase):
                                                mock_sync_context, mock_get_registry,
                                                mock_get_retry_manager, mock_get_metrics,
                                                mock_get_memory_manager, mock_get_cache,
-                                               mock_config_loader, mock_load_dotenv):
+                                               mock_config_loader):
         """Test de synchronisation d'utilisateurs avec conflits de données."""
         
         # Configuration des mocks
@@ -301,7 +299,6 @@ class TestUserSynchronizationScenario(TestRealScenariosBase):
 class TestAxeSynchronizationScenario(TestRealScenariosBase):
     """Tests de scénarios de synchronisation d'axes."""
 
-    @patch('core.orchestrator.load_dotenv')
     @patch('core.orchestrator.ConfigLoader')
     @patch('core.orchestrator.get_cache')
     @patch('core.orchestrator.get_memory_manager')
@@ -315,7 +312,7 @@ class TestAxeSynchronizationScenario(TestRealScenariosBase):
                                              mock_sync_context, mock_get_registry,
                                              mock_get_retry_manager, mock_get_metrics,
                                              mock_get_memory_manager, mock_get_cache,
-                                             mock_config_loader, mock_load_dotenv):
+                                             mock_config_loader):
         """Test de synchronisation complète d'axes (scénario réel)."""
         
         # Configuration pour les axes
@@ -366,7 +363,6 @@ class TestAxeSynchronizationScenario(TestRealScenariosBase):
 class TestMultiScopeSynchronizationScenario(TestRealScenariosBase):
     """Tests de scénarios de synchronisation multi-scopes."""
 
-    @patch('core.orchestrator.load_dotenv')
     @patch('core.orchestrator.ConfigLoader')
     @patch('core.orchestrator.get_cache')
     @patch('core.orchestrator.get_memory_manager')
@@ -380,7 +376,7 @@ class TestMultiScopeSynchronizationScenario(TestRealScenariosBase):
                                                 mock_sync_context, mock_get_registry,
                                                 mock_get_retry_manager, mock_get_metrics,
                                                 mock_get_memory_manager, mock_get_cache,
-                                                mock_config_loader, mock_load_dotenv):
+                                                mock_config_loader):
         """Test de synchronisation multi-scopes (scénario réel)."""
         
         # Configuration pour plusieurs scopes
@@ -433,7 +429,6 @@ class TestMultiScopeSynchronizationScenario(TestRealScenariosBase):
 class TestLoadTestingScenario(TestRealScenariosBase):
     """Tests de scénarios de charge."""
 
-    @patch('core.orchestrator.load_dotenv')
     @patch('core.orchestrator.ConfigLoader')
     @patch('core.orchestrator.get_cache')
     @patch('core.orchestrator.get_memory_manager')
@@ -447,7 +442,7 @@ class TestLoadTestingScenario(TestRealScenariosBase):
                                             mock_sync_context, mock_get_registry,
                                             mock_get_retry_manager, mock_get_metrics,
                                             mock_get_memory_manager, mock_get_cache,
-                                            mock_config_loader, mock_load_dotenv):
+                                            mock_config_loader):
         """Test de charge avec un grand volume d'utilisateurs."""
         
         # Configuration des mocks
@@ -492,7 +487,6 @@ class TestLoadTestingScenario(TestRealScenariosBase):
         self.assertLess(duration, 10.0)  # Doit s'exécuter en moins de 10 secondes
         self.assertEqual(len(large_user_data), 1000)  # Vérifier le volume de données
 
-    @patch('core.orchestrator.load_dotenv')
     @patch('core.orchestrator.ConfigLoader')
     @patch('core.orchestrator.get_cache')
     @patch('core.orchestrator.get_memory_manager')
@@ -506,7 +500,7 @@ class TestLoadTestingScenario(TestRealScenariosBase):
                                       mock_sync_context, mock_get_registry,
                                       mock_get_retry_manager, mock_get_metrics,
                                       mock_get_memory_manager, mock_get_cache,
-                                      mock_config_loader, mock_load_dotenv):
+                                      mock_config_loader):
         """Test d'exécution concurrente de plusieurs scopes."""
         
         # Configuration pour plusieurs scopes
@@ -560,7 +554,6 @@ class TestLoadTestingScenario(TestRealScenariosBase):
 class TestErrorRecoveryScenario(TestRealScenariosBase):
     """Tests de scénarios de récupération d'erreur."""
 
-    @patch('core.orchestrator.load_dotenv')
     @patch('core.orchestrator.ConfigLoader')
     @patch('core.orchestrator.get_cache')
     @patch('core.orchestrator.get_memory_manager')
@@ -574,7 +567,7 @@ class TestErrorRecoveryScenario(TestRealScenariosBase):
                                          mock_sync_context, mock_get_registry,
                                          mock_get_retry_manager, mock_get_metrics,
                                          mock_get_memory_manager, mock_get_cache,
-                                         mock_config_loader, mock_load_dotenv):
+                                         mock_config_loader):
         """Test de récupération après échec partiel (scénario réel)."""
         
         # Configuration pour plusieurs scopes
