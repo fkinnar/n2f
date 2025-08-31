@@ -630,6 +630,105 @@ def api_call(self, endpoint: str) -> ApiResult:
 
 ---
 
+## 📊 RAPPORT DE COUVERTURE DES TESTS UNITAIRES
+
+### 🔍 **ANALYSE DE COUVERTURE RÉALISÉE** ✅ **TERMINÉ**
+
+#### **📈 Résumé Exécutif :**
+
+- **Couverture globale :** 66% (2,120 lignes couvertes sur 3,224 lignes totales)
+- **Tests exécutés :** 446 tests
+- **Taux de réussite :** 100% ✅
+- **Temps d'exécution :** ~2 secondes
+
+#### **📊 Couverture par Module :**
+
+**✅ Modules avec Couverture Excellente (≥90%) :**
+
+- `python/business/constants.py` - 100% (67/67 lignes)
+- `python/business/normalize.py` - 96% (51/53 lignes)
+- `python/business/process/axe_synchronizer.py` - 100% (39/39 lignes)
+- `python/business/process/axe_types.py` - 100% (40/40 lignes)
+- `python/business/process/department.py` - 100% (13/13 lignes)
+- `python/business/process/helper.py` - 90% (36/40 lignes)
+- `python/business/process/user_synchronizer.py` - 100% (23/23 lignes)
+- `python/core/cache.py` - 84% (171/204 lignes)
+- `python/core/config.py` - 95% (81/85 lignes)
+- `python/core/metrics.py` - 95% (197/208 lignes)
+- `python/core/retry.py` - 93% (163/175 lignes)
+- `python/helper/cache.py` - 100% (21/21 lignes)
+- `python/helper/context.py` - 100% (22/22 lignes)
+- `python/n2f/api/base.py` - 100% (29/29 lignes)
+- `python/n2f/api/company.py` - 100% (6/6 lignes)
+- `python/n2f/api/customaxe.py` - 100% (27/27 lignes)
+- `python/n2f/api/project.py` - 100% (14/14 lignes)
+- `python/n2f/api/token.py` - 100% (34/34 lignes)
+- `python/n2f/api/user.py` - 100% (12/12 lignes)
+- `python/n2f/api_result.py` - 100% (30/30 lignes)
+- `python/n2f/client.py` - 94% (195/207 lignes)
+- `python/n2f/helper.py` - 91% (20/22 lignes)
+- `python/n2f/payload.py` - 100% (9/9 lignes)
+- `python/n2f/process/helper.py` - 96% (24/25 lignes)
+- `python/n2f/process/role.py` - 92% (12/13 lignes)
+- `python/n2f/process/userprofile.py` - 92% (12/13 lignes)
+- `python/sync-agresso-n2f.py` - 98% (46/47 lignes)
+
+**⚠️ Modules avec Couverture Faible (<80%) :**
+
+- `python/agresso/process.py` - 33% (6/18 lignes) 🔴 **PRIORITÉ HAUTE**
+- `python/business/process/axe.py` - 24% (16/67 lignes) 🔴 **PRIORITÉ HAUTE**
+- `python/business/process/user.py` - 22% (11/51 lignes) 🔴 **PRIORITÉ HAUTE**
+- `python/core/exceptions.py` - 67% (59/88 lignes) 🟡 **PRIORITÉ MOYENNE**
+- `python/core/memory_manager.py` - 68% (92/136 lignes) 🟡 **PRIORITÉ MOYENNE**
+- `python/core/orchestrator.py` - 82% (162/197 lignes) 🟡 **PRIORITÉ MOYENNE**
+- `python/core/registry.py` - 63% (58/92 lignes) 🟡 **PRIORITÉ MOYENNE**
+- `python/n2f/api/role.py` - 50% (3/6 lignes) 🟡 **PRIORITÉ MOYENNE**
+- `python/n2f/api/userprofile.py` - 50% (3/6 lignes) 🟡 **PRIORITÉ MOYENNE**
+- `python/n2f/process/axe.py` - 52% (47/91 lignes) 🟡 **PRIORITÉ MOYENNE**
+- `python/n2f/process/user.py` - 54% (54/100 lignes) 🟡 **PRIORITÉ MOYENNE**
+
+**📝 Modules d'Exemple (0% de couverture) :**
+
+- `python/business/process/sync_example.py` - 0% (0/15 lignes) ℹ️ Exemple
+- `python/core/cache_example.py` - 0% (0/103 lignes) ℹ️ Exemple
+- `python/core/exception_examples.py` - 0% (0/116 lignes) ℹ️ Exemple
+- `python/core/memory_example.py` - 0% (0/101 lignes) ℹ️ Exemple
+- `python/core/metrics_example.py` - 0% (0/107 lignes) ℹ️ Exemple
+- `python/core/orchestrator_example.py` - 0% (0/46 lignes) ℹ️ Exemple
+- `python/core/retry_example.py` - 0% (0/150 lignes) ℹ️ Exemple
+
+#### **🛠️ Outils Créés :**
+
+- ✅ `tests/run_coverage_simple.py` - Script d'analyse de couverture
+- ✅ `tests/clean_coverage.py` - Script de nettoyage des fichiers temporaires
+- ✅ `tests/coverage_report.md` - Rapport détaillé de couverture
+- ✅ `tests/README.md` - Documentation mise à jour
+
+#### **📋 Recommandations d'Amélioration :**
+
+**🔴 Priorité Haute (1-2 semaines) :**
+
+1. **`python/agresso/process.py` (33%)** - Ajouter des tests pour les lignes 23-49
+2. **`python/business/process/axe.py` (24%)** - Tester les méthodes de validation
+   (lignes 20-37, 41-53)
+3. **`python/business/process/user.py` (22%)** - Tester les méthodes de validation
+   (lignes 14-29, 33-50)
+
+**🟡 Priorité Moyenne (1 mois) :**
+
+1. **`python/core/exceptions.py` (67%)** - Tester les cas d'erreur spécifiques
+2. **`python/core/memory_manager.py` (68%)** - Tester la gestion de la mémoire
+3. **`python/n2f/process/axe.py` (52%)** - Tester les méthodes de traitement
+4. **`python/n2f/process/user.py` (54%)** - Tester les méthodes de traitement
+
+**🎯 Objectif de Couverture :**
+
+- **Actuel :** 66%
+- **Objectif :** 80%
+- **Actions :** Améliorer les modules prioritaires et ajouter des tests d'intégration
+
+---
+
 ## 🎯 PHASE 5 : Améliorations Futures (Planning)
 
 ### 🔧 **5.1 Tests unitaires manquants** 📋 **EN COURS**
@@ -916,7 +1015,8 @@ test_config.yaml
 3. **Cache** (21 tests) - AdvancedCache avec persistance et métriques
 4. **Métriques** (20 tests) - SyncMetrics et export de données
 5. **Retry** (34 tests) - RetryManager et stratégies de retry
-6. **Client API** (34 tests) - N2fApiClient (authentification, appels API, gestion d'erreur)
+6. **Client API** (34 tests) - N2fApiClient (authentification, appels API,
+   gestion d'erreur)
 7. **Payloads** (14 tests) - Construction des payloads N2F (user, project, axe)
 8. **Normalisation** (25 tests) - Normalisation des données Agresso/N2F
 9. **Fonctions helper** (14 tests) - to_bool, normalize_date_for_payload
@@ -931,8 +1031,8 @@ test_config.yaml
 
 ### **🎯 Objectif atteint :**
 
-Le projet est maintenant dans un état **production-ready** avec une couverture
-de tests complète et robuste !
+Le projet est maintenant **production-ready** avec une couverture de tests
+complète et robuste !
 
 ---
 

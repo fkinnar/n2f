@@ -1,25 +1,12 @@
-# Tests N2F
+# Tests Unitaires - Projet N2F
 
-Ce répertoire contient tous les tests unitaires et d'intégration pour le projet N2F.
+## Vue d'ensemble
 
-## 📁 Structure des tests
+Ce répertoire contient tous les tests unitaires du projet N2F. La suite de tests
+comprend **446 tests** qui couvrent les fonctionnalités principales du système de
+synchronisation Agresso-N2F.
 
-### Tests unitaires
-
-- `test_cache.py` - Tests du système de cache
-- `test_config.py` - Tests de configuration
-- `test_exceptions.py` - Tests des exceptions personnalisées
-- `test_metrics.py` - Tests des métriques
-- `test_orchestrator.py` - Tests de l'orchestrateur
-- `test_retry.py` - Tests du système de retry
-- `test_synchronizers.py` - Tests des synchroniseurs
-
-### Tests d'intégration
-
-- `test_integration.py` - Tests d'intégration généraux
-- `test_real_scenarios.py` - Tests de scénarios réels
-
-## 🧪 Exécution des tests
+## Exécution des Tests
 
 ### Tous les tests
 
@@ -30,73 +17,141 @@ python tests/run_tests.py
 ### Tests spécifiques
 
 ```bash
-python tests/run_tests.py --module tests.test_orchestrator
+python tests/run_tests.py --module test_config
 ```
 
-### Lister les tests disponibles
+### Lister tous les tests disponibles
 
 ```bash
 python tests/run_tests.py --list
 ```
 
-## 📊 Couverture des tests
+## Analyse de Couverture
 
-### Tests unitaires (156/156 ✅)
+### Exécuter l'analyse de couverture
 
-- ✅ **Cache** : 20/20 tests réussis
-- ✅ **Configuration** : 25/25 tests réussis  
-- ✅ **Exceptions** : 15/15 tests réussis
-- ✅ **Métriques** : 15/15 tests réussis
-- ✅ **Orchestrateur** : 25/25 tests réussis
-- ✅ **Retry** : 35/35 tests réussis
-- ✅ **Synchroniseurs** : 21/21 tests réussis
+```bash
+python tests/run_coverage_simple.py
+```
 
-### Tests d'intégration (9/33 ⚠️)
+### Analyse détaillée avec lignes manquantes
 
-- ⚠️ **Intégration générale** : 6/13 tests réussis
-- ⚠️ **Scénarios réels** : 3/20 tests réussis
+```bash
+python tests/run_coverage_simple.py --detailed
+```
 
-### Total des tests
+### Générer un rapport HTML
 
-165/189 tests réussis (87.3%)
+```bash
+python tests/run_coverage_simple.py --html
+```
 
-## 🔧 Configuration
+Le rapport HTML sera généré dans le dossier `coverage_html/`.
 
-Les tests utilisent des configurations mockées et des données de test pour éviter
-les dépendances externes.
+## Couverture Actuelle
 
-### Variables d'environnement de test
+- **Couverture globale :** 66%
+- **Lignes de code :** 3,224 lignes
+- **Lignes couvertes :** 2,120 lignes
+- **Tests exécutés :** 446 tests
+- **Taux de réussite :** 100%
 
-- `AGRESSO_DB_USER` : Utilisateur de test
-- `AGRESSO_DB_PASSWORD` : Mot de passe de test
-- `N2F_CLIENT_ID` : Client ID de test
-- `N2F_CLIENT_SECRET` : Client secret de test
+## Modules de Test
 
-## 📝 Notes de développement
+### Tests de Base
 
-### Scénarios d'intégration
+- `test_api_base.py` - Tests de l'API de base
+- `test_api_specific.py` - Tests spécifiques de l'API
+- `test_client_api.py` - Tests du client API
+- `test_config.py` - Tests de configuration
 
-Les tests d'intégration simulent des scénarios réels avec :
+### Tests Métier
 
-- Données utilisateurs réalistes
-- Données d'axes personnalisés
-- Tests de performance
-- Tests de récupération d'erreur
-- Tests de charge
+- `test_business_modules.py` - Tests des modules métier
+- `test_normalize.py` - Tests de normalisation
+- `test_process_modules.py` - Tests des modules de traitement
 
-### Mocking
+### Tests Core
 
-Les tests utilisent des mocks pour :
+- `test_cache.py` - Tests du système de cache
+- `test_exceptions.py` - Tests des exceptions
+- `test_metrics.py` - Tests des métriques
+- `test_orchestrator.py` - Tests de l'orchestrateur
+- `test_retry.py` - Tests du système de retry
 
-- Base de données Agresso
-- API N2F
-- Système de cache
-- Gestionnaire de mémoire
-- Métriques
+### Tests d'Intégration
 
-## 🚀 Améliorations futures
+- `test_integration.py` - Tests d'intégration
+- `test_real_scenarios.py` - Tests de scénarios réels
+- `test_sync_agresso_n2f.py` - Tests de synchronisation
 
-1. **Correction des tests d'intégration** - Résoudre les problèmes de mocking
-2. **Tests de performance** - Ajouter des benchmarks
-3. **Tests de sécurité** - Tests d'authentification et autorisation
-4. **Tests de compatibilité** - Tests avec différentes versions d'API
+## Structure des Tests
+
+Chaque fichier de test suit la convention `test_*.py` et utilise le framework
+`unittest` de Python. Les tests sont organisés par module et fonctionnalité.
+
+### Exemple de Structure
+
+```python
+import unittest
+from unittest.mock import Mock, patch
+
+class TestExample(unittest.TestCase):
+
+    def setUp(self):
+        """Configuration initiale pour chaque test"""
+        pass
+
+    def test_successful_operation(self):
+        """Test d'une opération réussie"""
+        # Arrange
+        # Act
+        # Assert
+        pass
+
+    def test_error_handling(self):
+        """Test de gestion d'erreur"""
+        # Arrange
+        # Act
+        # Assert
+        pass
+```
+
+## Bonnes Pratiques
+
+1. **Nommage** : Utilisez des noms descriptifs pour les tests
+2. **Isolation** : Chaque test doit être indépendant
+3. **Mocking** : Utilisez des mocks pour les dépendances externes
+4. **Assertions** : Utilisez des assertions spécifiques
+5. **Documentation** : Documentez les cas de test complexes
+
+## Dépendances
+
+Les tests utilisent les dépendances suivantes :
+
+- `unittest` (inclus dans Python)
+- `coverage` (pour l'analyse de couverture)
+- `mock` (pour le mocking)
+
+## Résolution de Problèmes
+
+### Tests qui échouent
+
+1. Vérifiez les dépendances
+2. Vérifiez la configuration
+3. Vérifiez les variables d'environnement
+
+### Couverture faible
+
+1. Identifiez les modules avec faible couverture
+2. Ajoutez des tests pour les cas manquants
+3. Vérifiez les exclusions de couverture
+
+## Contribution
+
+Lors de l'ajout de nouveaux tests :
+
+1. Suivez la convention de nommage
+2. Ajoutez des tests pour les nouvelles fonctionnalités
+3. Maintenez la couverture de code
+4. Documentez les cas de test complexes

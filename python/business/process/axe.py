@@ -74,11 +74,11 @@ def _perform_sync_actions(
     """Exécute les actions de création, mise à jour et suppression pour les axes."""
     results = []
 
-    if context.args.create:
-        # Utilise la méthode get_config_value pour supporter l'ancien et le nouveau format
-        n2f_config = context.get_config_value("n2f")
-        sandbox = n2f_config.sandbox if hasattr(n2f_config, 'sandbox') else n2f_config["sandbox"]
+    # Récupérer la configuration N2F une seule fois
+    n2f_config = context.get_config_value("n2f")
+    sandbox = n2f_config.sandbox if hasattr(n2f_config, 'sandbox') else n2f_config["sandbox"]
 
+    if context.args.create:
         created_df, status_col = create_n2f_axes(
             n2f_client=n2f_client, axe_id=n2f_code, df_agresso_projects=df_agresso_axes,
             df_n2f_projects=df_n2f_axes, df_n2f_companies=df_n2f_companies,
