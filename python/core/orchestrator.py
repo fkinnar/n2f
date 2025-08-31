@@ -7,11 +7,11 @@ de la synchronisation : configuration, contexte, exécution et reporting.
 
 import argparse
 import os
+import sys
 import pandas as pd
 from pathlib import Path
 from typing import List, Optional, Dict, Any
 from dataclasses import dataclass
-from dotenv import load_dotenv
 
 from .config import ConfigLoader, SyncConfig
 from .registry import get_registry
@@ -19,8 +19,6 @@ from .cache import get_cache, cache_stats, cache_clear, cache_invalidate
 from .memory_manager import get_memory_manager, cleanup_scope, cleanup_all, print_memory_summary
 from .metrics import get_metrics, start_operation, end_operation, record_memory_usage, print_summary as print_metrics_summary
 from .retry import get_retry_manager, print_retry_summary
-import sys
-from pathlib import Path
 
 # Ajout du répertoire parent au path pour les imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -48,9 +46,6 @@ class ContextBuilder:
 
     def build(self) -> SyncContext:
         """Construit le contexte de synchronisation."""
-        # Chargement des variables d'environnement
-        load_dotenv()
-
         # Chargement de la configuration
         config_loader = ConfigLoader(self.config_path)
         sync_config = config_loader.load()
@@ -65,7 +60,7 @@ class ContextBuilder:
                     cache_dir = Path(__file__).resolve().parent.parent.parent / cache_dir_value
 
             get_cache(
-                cache_dir=cache_dir,
+                cache_dir=cache_dir,  # type: ignore
                 max_size_mb=sync_config.cache.max_size_mb,
                 default_ttl=sync_config.cache.default_ttl
             )
@@ -200,7 +195,7 @@ class LogManager:
         if "api_success" not in combined_df.columns:
             return
 
-        success_count = combined_df["api_success"].sum()
+        success_count = int(combined_df["api_success"].sum())
         total_count = len(combined_df)
         error_count = total_count - success_count
 
@@ -210,7 +205,7 @@ class LogManager:
 
         if error_count > 0:
             print(f"\nError Details :")
-            errors_df = combined_df[~combined_df["api_success"]]
+            errors_df = combined_df.query("api_success == False")
             for _, row in errors_df.iterrows():
                 print(f"  - {row.get('api_message', 'Unknown error')}")
                 if 'api_error_details' in row and pd.notna(row['api_error_details']):

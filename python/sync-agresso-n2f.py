@@ -1,6 +1,9 @@
 import argparse
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 from core import SyncOrchestrator
+from core.config import ConfigLoader
 
 def main() -> None:
     """
@@ -11,12 +14,14 @@ def main() -> None:
 
     Workflow :
     1. Parsing des arguments de ligne de commande
-    2. Construction du chemin de configuration
-    3. Exécution de l'orchestrateur
-    4. Gestion des erreurs globales
+    2. Chargement de la configuration et des variables d'environnement
+    3. Validation des variables d'environnement requises
+    4. Exécution de l'orchestrateur
+    5. Gestion des erreurs globales
 
     Raises:
         FileNotFoundError: Si le fichier de configuration n'existe pas
+        ValueError: Si les variables d'environnement requises sont manquantes
         Exception: Pour toute autre erreur non gérée
 
     Example:
@@ -35,9 +40,49 @@ def main() -> None:
     config_filename = f"{args.config}.yaml"
     config_path = base_dir.parent / config_filename
 
+    # Chargement de la configuration pour déterminer si on est en sandbox
+    config_loader = ConfigLoader(config_path)
+    sync_config = config_loader.load()
+
+    # Chargement des variables d'environnement seulement si en mode sandbox
+    if sync_config.api.sandbox:
+        load_dotenv()
+        print("Environment variables loaded from .env file (sandbox mode)")
+
+    # Validation des variables d'environnement requises
+    validate_environment_variables()
+
     # Création et exécution de l'orchestrateur
     orchestrator = SyncOrchestrator(config_path, args)
     orchestrator.run()
+
+
+def validate_environment_variables() -> None:
+    """
+    Valide que toutes les variables d'environnement requises sont présentes.
+
+    Raises:
+        ValueError: Si une variable d'environnement requise est manquante
+    """
+    required_vars = [
+        "AGRESSO_DB_USER",
+        "AGRESSO_DB_PASSWORD",
+        "N2F_CLIENT_ID",
+        "N2F_CLIENT_SECRET"
+    ]
+
+    missing_vars = []
+    for var in required_vars:
+        if not os.getenv(var):
+            missing_vars.append(var)
+
+    if missing_vars:
+        error_msg = f"Missing required environment variables: {', '.join(missing_vars)}"
+        print(f"ERROR: {error_msg}")
+        print("Please ensure these variables are set in your environment or .env file")
+        raise ValueError(error_msg)
+
+    print("All required environment variables are present")
 
 
 def create_arg_parser() -> argparse.ArgumentParser:
@@ -75,8 +120,4 @@ def create_arg_parser() -> argparse.ArgumentParser:
 
 
 if __name__ == "__main__":
-    # Forcer l'encodage UTF-8 pour la sortie
-    import sys
-    import os
-    os.environ['PYTHONIOENCODING'] = 'utf-8'
     main()
