@@ -1,24 +1,14 @@
 @echo off
-REM ========================================
-REM N2F Project Setup Script
-REM ========================================
-REM This batch file sets up the N2F project environment
-REM Creates virtual environment and installs requirements
 
 echo ========================================
-echo N2F Project Setup
+echo N2F Project Setup Script
 echo ========================================
 echo.
 
 REM Check if Python is installed
 python --version >nul 2>&1
 if %ERRORLEVEL% NEQ 0 (
-    echo ========================================
     echo ERROR: Python is not installed or not in PATH!
-    echo ========================================
-    echo Please install Python 3.8+ from https://python.org
-    echo Make sure to check "Add Python to PATH" during installation.
-    echo.
     pause
     exit /b 1
 )
@@ -27,11 +17,9 @@ echo Python found:
 python --version
 echo.
 
-REM Check if virtual environment already exists
+REM Check if virtual environment exists
 if exist "env\Scripts\python.exe" (
-    echo ========================================
     echo Virtual environment already exists!
-    echo ========================================
     echo Do you want to recreate it? (y/n)
     set /p choice=
     if /i "%choice%"=="y" (
@@ -39,80 +27,45 @@ if exist "env\Scripts\python.exe" (
         rmdir /s /q env
         goto :create_venv
     ) else (
-        echo Skipping virtual environment creation.
+        echo Using existing virtual environment.
         goto :install_requirements
     )
+) else (
+    echo Virtual environment not found, creating new one...
+    goto :create_venv
 )
 
 :create_venv
-REM Create virtual environment
-echo ========================================
 echo Creating virtual environment...
-echo ========================================
 python -m venv env
 if %ERRORLEVEL% NEQ 0 (
-    echo ========================================
     echo ERROR: Failed to create virtual environment!
-    echo ========================================
-    echo Please check your Python installation.
-    echo.
     pause
     exit /b 1
 )
-
 echo Virtual environment created successfully!
 echo.
 
 :install_requirements
+echo Installing requirements...
+echo.
 
-REM Check if virtual environment exists before installing requirements
-if not exist "env\Scripts\pip.exe" (
-    echo ========================================
-    echo ERROR: Virtual environment not found!
-    echo ========================================
-    echo Please run the setup again and create the virtual environment.
-    echo.
-    pause
-    exit /b 1
-)
+REM Upgrade pip
+echo Upgrading pip...
+env\Scripts\python.exe -m pip install --upgrade pip
 
 REM Install requirements
-echo ========================================
-echo Installing requirements...
-echo ========================================
-echo This may take a few minutes...
-echo.
-
-env\Scripts\pip.exe install --upgrade pip
-if %ERRORLEVEL% NEQ 0 (
-    echo ========================================
-    echo ERROR: Failed to upgrade pip!
-    echo ========================================
-    echo.
-    pause
-    exit /b 1
-)
-
+echo Installing project requirements...
 env\Scripts\pip.exe install -r requirements.txt
 if %ERRORLEVEL% NEQ 0 (
-    echo ========================================
     echo ERROR: Failed to install requirements!
-    echo ========================================
-    echo Please check your internet connection and try again.
-    echo.
     pause
     exit /b 1
 )
 
 echo.
-echo ========================================
 echo Setup completed successfully!
-echo ========================================
 echo.
-echo You can now run the synchronization with:
-echo   sync_n2f.bat
-echo.
-echo Or run tests with:
-echo   python tests\run_tests.py
+echo You can now run: sync_n2f.bat
 echo.
 pause
