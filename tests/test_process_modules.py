@@ -361,7 +361,7 @@ class TestHelperProcess(unittest.TestCase):
         
         result = helper_process.export_api_logs(df_with_logs)
         
-        self.assertTrue(result.startswith("api_logs_"))
+        self.assertTrue("logs" in result and "api_logs_" in result)
         self.assertTrue(result.endswith(".log.csv"))
         mock_to_csv.assert_called_once()
 
@@ -373,8 +373,10 @@ class TestHelperProcess(unittest.TestCase):
         
         result = helper_process.export_api_logs(df_with_logs, "custom_log.csv")
         
-        self.assertEqual(result, "custom_log.csv")
-        mock_to_csv.assert_called_once_with("custom_log.csv", index=False)
+        self.assertTrue("logs" in result and "custom_log.csv" in result)
+        # Vérifier que le mock a été appelé avec le bon chemin
+        mock_call_args = str(mock_to_csv.call_args[0][0])
+        self.assertTrue("logs" in mock_call_args and "custom_log.csv" in mock_call_args)
 
     @patch('pandas.DataFrame.to_csv')
     def test_export_api_logs_only_logging_columns(self, mock_to_csv):
@@ -387,8 +389,8 @@ class TestHelperProcess(unittest.TestCase):
         result = helper_process.export_api_logs(df_with_logs, "test.csv")
         
         # Vérifier que to_csv a été appelé avec les bonnes colonnes
-        call_args = mock_to_csv.call_args[0][0]
-        self.assertEqual(call_args, "test.csv")
+        call_args = str(mock_to_csv.call_args[0][0])
+        self.assertTrue("logs" in call_args and "test.csv" in call_args)
 
 class TestCompanyProcess(unittest.TestCase):
     """Tests pour n2f.process.company."""

@@ -1,6 +1,7 @@
 import pandas as pd
 from typing import List
 from datetime import datetime
+from pathlib import Path
 from n2f.api_result import ApiResult
 
 
@@ -34,7 +35,7 @@ def add_api_logging_columns(df: pd.DataFrame, api_results: List[ApiResult]) -> p
 
 def export_api_logs(df: pd.DataFrame, filename: str = None) -> str:
     """
-    Exporte les logs d'API vers un fichier CSV.
+    Exporte les logs d'API vers un fichier CSV dans le dossier logs.
 
     Args:
         df: DataFrame contenant les logs d'API
@@ -47,6 +48,13 @@ def export_api_logs(df: pd.DataFrame, filename: str = None) -> str:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"api_logs_{timestamp}.log.csv"
 
+    # Créer le dossier logs s'il n'existe pas
+    logs_dir = Path("logs")
+    logs_dir.mkdir(exist_ok=True)
+    
+    # Construire le chemin complet dans le dossier logs
+    filepath = logs_dir / filename
+
     # Sélectionner seulement les colonnes de logging si elles existent
     logging_columns = [col for col in df.columns if col.startswith("api_")]
     if logging_columns:
@@ -54,5 +62,5 @@ def export_api_logs(df: pd.DataFrame, filename: str = None) -> str:
     else:
         df_export = df.copy()
 
-    df_export.to_csv(filename, index=False)
-    return filename
+    df_export.to_csv(filepath, index=False)
+    return str(filepath)
