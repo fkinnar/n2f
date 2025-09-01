@@ -12,19 +12,12 @@ de manière cohérente et traçable.
 ### 🎯 Fonctionnalités principales
 
 - ✅ **Synchronisation multi-scopes** : Users, Projects, Plates, Subposts
-
 - ✅ **Gestion d'erreur robuste** : Exceptions personnalisées avec contexte riche
-
 - ✅ **Architecture modulaire** : Classes abstraites pour extensibilité
-
 - ✅ **Logging détaillé** : Export des logs d'API avec métriques
-
 - ✅ **Configuration flexible** : Support dev/prod avec fichiers YAML
-
 - ✅ **Cache intelligent** : Optimisation des performances API
-
 - ✅ **Métriques avancées** : Monitoring des performances et statistiques
-
 - ✅ **Retry automatique** : Gestion intelligente des erreurs réseau
 
 ## 🚀 Installation et configuration
@@ -32,9 +25,7 @@ de manière cohérente et traçable.
 ### Prérequis
 
 - Python 3.13+
-
 - Accès aux bases de données Agresso
-
 - Credentials N2F API
 
 ### Installation
@@ -174,7 +165,7 @@ sync_n2f.bat --all --clear-cache
 ```text
 n2f/
 ├── python/
-│   ├── core/                    # Composants principaux
+│   ├── core/                   # Composants principaux
 │   │   ├── config.py           # Configuration centralisée
 │   │   ├── exceptions.py       # Hiérarchie d'exceptions
 │   │   ├── orchestrator.py     # Orchestrator principal
