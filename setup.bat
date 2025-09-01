@@ -23,7 +23,7 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b 1
 )
 
-echo Python found: 
+echo Python found:
 python --version
 echo.
 
@@ -37,12 +37,14 @@ if exist "env\Scripts\python.exe" (
     if /i "%choice%"=="y" (
         echo Removing existing virtual environment...
         rmdir /s /q env
+        goto :create_venv
     ) else (
         echo Skipping virtual environment creation.
         goto :install_requirements
     )
 )
 
+:create_venv
 REM Create virtual environment
 echo ========================================
 echo Creating virtual environment...
@@ -63,6 +65,17 @@ echo.
 
 :install_requirements
 
+REM Check if virtual environment exists before installing requirements
+if not exist "env\Scripts\pip.exe" (
+    echo ========================================
+    echo ERROR: Virtual environment not found!
+    echo ========================================
+    echo Please run the setup again and create the virtual environment.
+    echo.
+    pause
+    exit /b 1
+)
+
 REM Install requirements
 echo ========================================
 echo Installing requirements...
@@ -71,8 +84,16 @@ echo This may take a few minutes...
 echo.
 
 env\Scripts\pip.exe install --upgrade pip
-env\Scripts\pip.exe install -r requirements.txt
+if %ERRORLEVEL% NEQ 0 (
+    echo ========================================
+    echo ERROR: Failed to upgrade pip!
+    echo ========================================
+    echo.
+    pause
+    exit /b 1
+)
 
+env\Scripts\pip.exe install -r requirements.txt
 if %ERRORLEVEL% NEQ 0 (
     echo ========================================
     echo ERROR: Failed to install requirements!
