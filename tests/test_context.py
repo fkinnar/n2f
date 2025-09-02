@@ -1,7 +1,7 @@
 from unittest.mock import Mock, patch, MagicMock
 
 import agresso.database as agresso_db
-from helper.context import SyncContext
+from core import SyncContext
 from core.config import DatabaseConfig
 from core.config import ApiConfig
 

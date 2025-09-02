@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
 
 import business.process.axe as axe_process
 from business.process.axe_types import AxeType
-from helper.context import SyncContext
+from core import SyncContext
 
 
 class TestBusinessAxe(unittest.TestCase):

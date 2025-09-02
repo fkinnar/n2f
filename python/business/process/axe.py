@@ -1,6 +1,6 @@
 import pandas as pd
 
-from helper.context import SyncContext
+from core import SyncContext
 from n2f.client import N2fApiClient
 from business.process.helper import reporting
 from business.process.axe_types import AxeType, get_axe_mapping

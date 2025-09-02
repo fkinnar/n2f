@@ -1,6 +1,6 @@
 import n2f.client
 import n2f.api_result
-from helper.context import SyncContext
+from core import SyncContext
 
 import unittest
 from unittest.mock import Mock, patch, MagicMock

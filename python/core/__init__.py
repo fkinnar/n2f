@@ -39,6 +39,18 @@ from .cache import (
     cache_clear,
     cache_stats
 )
+from .cache_compat import (
+    make_cache_key,
+    get_from_cache,
+    set_in_cache,
+    invalidate_cache_key,
+    clear_cache
+)
+from .context import SyncContext
+from .logging import (
+    add_api_logging_columns,
+    export_api_logs
+)
 from .memory_manager import (
     MemoryManager,
     DataFrameInfo,
@@ -123,6 +135,20 @@ __all__ = [
     "cache_invalidate",
     "cache_clear",
     "cache_stats",
+    
+    # Cache Compatibility Layer
+    "make_cache_key",
+    "get_from_cache",
+    "set_in_cache",
+    "invalidate_cache_key",
+    "clear_cache",
+    
+    # Context
+    "SyncContext",
+    
+    # Logging
+    "add_api_logging_columns",
+    "export_api_logs",
 
     # Memory Manager
     "MemoryManager",

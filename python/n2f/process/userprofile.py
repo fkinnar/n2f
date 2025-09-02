@@ -1,7 +1,7 @@
 import pandas as pd
 
 from n2f.api.userprofile import get_userprofiles as get_userprofiles_api
-from helper.cache import get_from_cache, set_in_cache
+from core import get_from_cache, set_in_cache
 
 
 def get_userprofiles(

@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
 from core.orchestrator import SyncOrchestrator, LogManager, SyncResult
 from core.config import SyncConfig, DatabaseConfig, ApiConfig, CacheConfig
 from core.registry import SyncRegistry
-from helper.context import SyncContext
+from core import SyncContext
 
 
 class TestLogManagerAdvanced(unittest.TestCase):

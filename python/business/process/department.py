@@ -7,7 +7,7 @@ un nouveau scope sans modification du code existant.
 
 import pandas as pd
 from typing import List, Optional
-from helper.context import SyncContext
+from core import SyncContext
 from core import register_scope
 
 

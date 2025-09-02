@@ -1,4 +1,4 @@
-from helper.context import SyncContext
+from core import SyncContext
 from core.config import DatabaseConfig
 from core.config import ApiConfig
 from core.config import ConfigLoader

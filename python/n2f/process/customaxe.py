@@ -5,7 +5,7 @@ from n2f.api.customaxe import (
     get_customaxes as get_customaxes_api,
     get_customaxes_values as get_customaxes_values_api
 )
-from helper.cache import get_from_cache, set_in_cache
+from core import get_from_cache, set_in_cache
 
 
 def get_customaxes(

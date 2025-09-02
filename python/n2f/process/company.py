@@ -2,7 +2,7 @@ import pandas as pd
 from typing import List
 
 from n2f.api.company import get_companies as get_companies_api
-from helper.cache import get_from_cache, set_in_cache
+from core import get_from_cache, set_in_cache
 
 
 def get_companies(

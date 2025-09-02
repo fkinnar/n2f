@@ -25,8 +25,8 @@ from .retry import get_retry_manager, print_retry_summary
 # Ajout du répertoire parent au path pour les imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from helper.context import SyncContext
-from n2f.process.helper import export_api_logs
+from .context import SyncContext
+from .logging import export_api_logs
 
 
 @dataclass

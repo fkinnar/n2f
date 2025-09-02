@@ -1,7 +1,7 @@
 import pandas as pd
 from typing import Tuple, List
 
-from helper.context import SyncContext
+from core import SyncContext
 from business.process.helper import reporting
 from n2f.client import N2fApiClient
 from agresso.process import select

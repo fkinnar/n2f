@@ -13,7 +13,7 @@ from unittest.mock import Mock, patch, MagicMock
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
 
 import business.process.user as user_process
-from helper.context import SyncContext
+from core import SyncContext
 
 
 class TestBusinessUser(unittest.TestCase):

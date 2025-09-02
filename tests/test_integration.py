@@ -46,7 +46,7 @@ from core.config import SyncConfig, DatabaseConfig, ApiConfig, ScopeConfig, Cach
 from core.registry import SyncRegistry, RegistryEntry
 from business.process.user_synchronizer import UserSynchronizer
 from business.process.axe_synchronizer import AxeSynchronizer
-from helper.context import SyncContext
+from core import SyncContext
 
 class TestIntegrationBase(unittest.TestCase):
     """Classe de base pour les tests d'intégration."""

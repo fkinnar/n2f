@@ -3,7 +3,7 @@ import pandas as pd
 
 from Iris.Database.IrisConnect import IrisConnect
 from agresso.database import execute_query
-from helper.cache import get_from_cache, set_in_cache
+from core import get_from_cache, set_in_cache
 
 
 def select(
