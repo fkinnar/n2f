@@ -55,7 +55,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 REM Create logs directory if it doesn't exist
-if not exist "python\logs" mkdir python\logs
+if not exist "logs" mkdir logs
 
 REM Generate timestamp for log files
 for /f "tokens=2 delims==" %%a in ('wmic OS Get localdatetime /value') do set "dt=%%a"
@@ -70,7 +70,7 @@ set "timestamp=%YYYY%%MM%%DD%_%HH%%Min%%Sec%"
 REM Run the synchronization script with log redirection using virtual environment Python
 echo Running synchronization script...
 echo Using Python from virtual environment...
-env\Scripts\python.exe python\sync-agresso-n2f.py %* > "python\logs\sync_%timestamp%.log" 2>&1
+env\Scripts\python.exe src\sync-agresso-n2f.py %* > "logs\sync_%timestamp%.log" 2>&1
 
 REM Check if the script ran successfully
 if %ERRORLEVEL% EQU 0 (
@@ -78,21 +78,21 @@ if %ERRORLEVEL% EQU 0 (
     echo ========================================
     echo Synchronization completed successfully!
     echo ========================================
-    echo Log file: python\logs\sync_%timestamp%.log
+    echo Log file: logs\sync_%timestamp%.log
     echo.
     echo Press any key to open the log file...
     pause > nul
-    start notepad "python\logs\sync_%timestamp%.log"
+    start notepad "logs\sync_%timestamp%.log"
 ) else (
     echo.
     echo ========================================
     echo Synchronization failed with error code: %ERRORLEVEL%
     echo ========================================
-    echo Log file: python\logs\sync_%timestamp%.log
+    echo Log file: logs\sync_%timestamp%.log
     echo.
     echo Press any key to open the log file...
     pause > nul
-    start notepad "python\logs\sync_%timestamp%.log"
+    start notepad "logs\sync_%timestamp%.log"
 )
 
 echo.
