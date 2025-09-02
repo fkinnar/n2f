@@ -1,7 +1,6 @@
 import argparse
 import os
 from pathlib import Path
-from dotenv import load_dotenv
 from core import SyncOrchestrator
 from core.config import ConfigLoader
 
@@ -46,6 +45,7 @@ def main() -> None:
 
     # Chargement des variables d'environnement seulement si en mode sandbox
     if sync_config.api.sandbox:
+        from dotenv import load_dotenv
         load_dotenv()
         print("Environment variables loaded from .env file (sandbox mode)")
 
