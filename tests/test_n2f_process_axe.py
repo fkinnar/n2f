@@ -1,5 +1,5 @@
 """
-Tests unitaires pour le module python/n2f/process/axe.py.
+Tests unitaires pour le module src/n2f/process/axe.py.
 
 Ce module teste les fonctions de traitement des axes N2F.
 """

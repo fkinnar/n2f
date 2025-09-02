@@ -139,7 +139,7 @@ Options:
   --verbose              Mode verbeux
 ```
 
-### Exemples d'utilisation
+### Exemples d\'utilisation
 
 ```bash
 # Synchronisation rapide des utilisateurs
@@ -154,12 +154,12 @@ python python/sync-agresso-n2f.py --config prod.yaml --scopes users,projects
 
 ### Scripts batch (Windows)
 
-Le projet inclut des scripts batch pour faciliter l'utilisation :
+Le projet inclut des scripts batch pour faciliter l\'utilisation :
 
 #### **setup.bat** - Installation automatique
 
 ```bash
-# Crée l'environnement virtuel et installe les requirements
+# Crée l\'environnement virtuel et installe les requirements
 setup.bat
 ```
 
@@ -176,11 +176,11 @@ sync_n2f.bat --all --clear-cache
 
 **Avantages des scripts batch :**
 
-- ✅ **Vérification automatique** de l'environnement virtuel
+- ✅ **Vérification automatique** de l\'environnement virtuel
 - ✅ **Installation automatique** des requirements si manquants
 - ✅ **Gestion des erreurs** avec messages clairs
 - ✅ **Logs automatiques** avec horodatage
-- ✅ **Ouverture automatique** des logs en cas d'erreur
+- ✅ **Ouverture automatique** des logs en cas d\'erreur
 
 ## 🏗️ Architecture
 
@@ -191,7 +191,7 @@ n2f/
 ├── python/
 │   ├── core/                   # Composants principaux
 │   │   ├── config.py           # Configuration centralisée
-│   │   ├── exceptions.py       # Hiérarchie d'exceptions
+│   │   ├── exceptions.py       # Hiérarchie d\'exceptions
 │   │   ├── orchestrator.py     # Orchestrator principal
 │   │   ├── cache.py            # Système de cache
 │   │   ├── metrics.py          # Métriques et monitoring
@@ -215,7 +215,7 @@ n2f/
 
 #### **EntitySynchronizer** (Classe abstraite)
 
-Classe de base pour toutes les synchronisations d'entités :
+Classe de base pour toutes les synchronisations d\'entités :
 
 ```python
 class EntitySynchronizer(ABC):
@@ -231,7 +231,7 @@ class EntitySynchronizer(ABC):
 
 #### **SyncOrchestrator**
 
-Orchestrateur principal gérant l'exécution des synchronisations :
+Orchestrateur principal gérant l\'exécution des synchronisations :
 
 ```python
 class SyncOrchestrator:
@@ -254,9 +254,9 @@ class AdvancedCache:
 
 ### Métriques collectées
 
-- **Durée des opérations** : Temps d'exécution par scope
-- **Taux de succès** : Pourcentage d'opérations réussies
-- **Appels API** : Nombre et durée des appels à l'API N2F
+- **Durée des opérations** : Temps d\'exécution par scope
+- **Taux de succès** : Pourcentage d\'opérations réussies
+- **Appels API** : Nombre et durée des appels à l\'API N2F
 - **Cache hits/misses** : Efficacité du cache
 - **Utilisation mémoire** : Consommation RAM par scope
 
@@ -303,10 +303,10 @@ python tests/run_tests.py --list
 
 ### Couverture des tests
 
-- ✅ **Tests d'exceptions** : Hiérarchie complète
+- ✅ **Tests d\'exceptions** : Hiérarchie complète
 - 🔄 **Tests de synchronisation** : En cours
 - 🔄 **Tests de configuration** : En cours
-- ⏳ **Tests d'intégration** : À implémenter
+- ⏳ **Tests d\'intégration** : À implémenter
 
 ## 🔧 Développement
 

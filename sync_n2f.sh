@@ -49,8 +49,8 @@ else
 fi
 
 # Create logs directory if it doesn't exist
-if [ ! -d "python/logs" ]; then
-    mkdir -p python/logs
+if [ ! -d "src/logs" ]; then
+    mkdir -p src/logs
 fi
 
 # Generate timestamp for log files
@@ -59,12 +59,46 @@ timestamp=$(date +"%y%m%d_%H%M%S")
 # Run the synchronization script with log redirection using virtual environment Python
 echo "Running synchronization script..."
 echo "Using Python from virtual environment..."
-env/bin/python python/sync-agresso-n2f.py "$@" > "python/logs/sync_${timestamp}.log" 2>&1
+env/bin/python src/sync-agresso-n2f.py "$@" > "src/logs/sync_${timestamp}.log" 2>&1
 
 # Check if the script ran successfully
 if [ $? -eq 0 ]; then
     echo
     echo "========================================"
+    echo "Synchronization completed successfully!"
+    echo "========================================"
+    echo "Log file: src/logs/sync_${timestamp}.log"
+    echo
+    echo "Press Enter to open the log file..."
+    read
+    if command -v xdg-open &> /dev/null; then
+        xdg-open "src/logs/sync_${timestamp}.log"
+    elif command -v open &> /dev/null; then
+        open "src/logs/sync_${timestamp}.log"
+    else
+        echo "Log file: src/logs/sync_${timestamp}.log"
+    fi
+else
+    echo
+    echo "========================================"
+    echo "Synchronization failed with error code: $?"
+    echo "========================================"
+    echo "Log file: src/logs/sync_${timestamp}.log"
+    echo
+    echo "Press Enter to open the log file..."
+    read
+    if command -v xdg-open &> /dev/null; then
+        xdg-open "src/logs/sync_${timestamp}.log"
+    elif command -v open &> /dev/null; then
+        open "src/logs/sync_${timestamp}.log"
+    else
+        echo "Log file: src/logs/sync_${timestamp}.log"
+    fi
+fi
+
+echo
+echo "Shell script completed."
+"
     echo "Synchronization completed successfully!"
     echo "========================================"
     echo "Log file: python/logs/sync_${timestamp}.log"

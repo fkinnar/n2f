@@ -1,5 +1,5 @@
 """
-Tests unitaires pour le module python/core/exceptions.py.
+Tests unitaires pour le module src/core/exceptions.py.
 
 Ce module teste toutes les classes d'exceptions personnalisées et les fonctions utilitaires.
 """

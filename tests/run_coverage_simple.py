@@ -10,7 +10,7 @@ import os
 import time
 
 # Ajouter le répertoire python au path pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 
 def run_coverage_analysis():
@@ -20,7 +20,7 @@ def run_coverage_analysis():
 
     # Initialiser coverage
     cov = coverage.Coverage(
-        source=['python'],
+        source=['src'],
         omit=[
             '*/tests/*',
             '*/__pycache__/*',
@@ -73,7 +73,7 @@ def run_coverage_analysis():
     data = cov.get_data()
 
     for filename in data.measured_files():
-        if filename.startswith('python/'):
+        if filename.startswith('src/'):
             # Obtenir les statistiques pour ce fichier
             file_coverage = data.get_file_coverage(filename)
             if file_coverage:
@@ -119,7 +119,7 @@ def analyze_missing_coverage():
     data = cov.get_data()
 
     for filename in data.measured_files():
-        if filename.startswith('python/'):
+        if filename.startswith('src/'):
             file_coverage = data.get_file_coverage(filename)
             if file_coverage:
                 missing_lines = [i+1 for i, line in enumerate(file_coverage) if line == 0]

@@ -1,5 +1,5 @@
 """
-Tests unitaires pour le module python/core/memory_manager.py.
+Tests unitaires pour le module src/core/memory_manager.py.
 
 Ce module teste le gestionnaire de mémoire intelligent pour les DataFrames.
 """

@@ -55,7 +55,7 @@ metrics_*.json
 example_metrics.json
 
 # Logs spécifiques au projet
-python/logs/*.log
+src/logs/*.log
 api_logs_*.csv
 api_logs_*.log.csv
 
