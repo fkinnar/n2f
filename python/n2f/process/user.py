@@ -5,7 +5,7 @@ from n2f.client import N2fApiClient
 from n2f.payload import create_user_upsert_payload
 # Import déplacé dans la fonction pour éviter l'import circulaire
 from n2f.api_result import ApiResult
-from n2f.process.helper import add_api_logging_columns
+from core.logging import add_api_logging_columns
 from business.process.helper import has_payload_changes, log_error
 
 # Note: get_users is now in the client, but we keep the process file for business logic

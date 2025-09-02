@@ -8,7 +8,7 @@ from unittest.mock import Mock, patch, MagicMock
 import pandas as pd
 
 import n2f.process.axe as axe_process
-import n2f.process.helper as helper_process
+from core.logging import add_api_logging_columns, export_api_logs
 import n2f.process.company as company_process
 import n2f.process.customaxe as customaxe_process
 import n2f.process.userprofile as userprofile_process
@@ -328,13 +328,13 @@ class TestHelperProcess(unittest.TestCase):
 
     def test_add_api_logging_columns_empty_results(self):
         """Test d'ajout de colonnes de logging avec résultats vides."""
-        result = helper_process.add_api_logging_columns(self.df, [])
+        result = add_api_logging_columns(self.df, [])
         self.assertEqual(len(result.columns), 2)  # id, name
         self.assertNotIn("api_success", result.columns)
 
     def test_add_api_logging_columns_success(self):
         """Test d'ajout de colonnes de logging réussie."""
-        result = helper_process.add_api_logging_columns(self.df, self.api_results)
+        result = add_api_logging_columns(self.df, self.api_results)
         
         self.assertIn("api_success", result.columns)
         self.assertIn("api_status", result.columns)
@@ -348,7 +348,7 @@ class TestHelperProcess(unittest.TestCase):
         df_with_existing = self.df.copy()
         df_with_existing["api_success"] = [False, False, False]
         
-        result = helper_process.add_api_logging_columns(df_with_existing, self.api_results)
+        result = add_api_logging_columns(df_with_existing, self.api_results)
         
         self.assertEqual(result["api_success"].tolist(), [True, False, True])
 
@@ -359,7 +359,7 @@ class TestHelperProcess(unittest.TestCase):
         df_with_logs["api_success"] = [True, False, True]
         df_with_logs["api_status"] = ["success", "error", "success"]
         
-        result = helper_process.export_api_logs(df_with_logs)
+        result = export_api_logs(df_with_logs)
         
         self.assertTrue("logs" in result and "api_logs_" in result)
         self.assertTrue(result.endswith(".log.csv"))
@@ -371,7 +371,7 @@ class TestHelperProcess(unittest.TestCase):
         df_with_logs = self.df.copy()
         df_with_logs["api_success"] = [True, False, True]
         
-        result = helper_process.export_api_logs(df_with_logs, "custom_log.csv")
+        result = export_api_logs(df_with_logs, "custom_log.csv")
         
         self.assertTrue("logs" in result and "custom_log.csv" in result)
         # Vérifier que le mock a été appelé avec le bon chemin
@@ -386,7 +386,7 @@ class TestHelperProcess(unittest.TestCase):
         df_with_logs["api_status"] = ["success", "error", "success"]
         df_with_logs["other_column"] = ["other1", "other2", "other3"]
         
-        result = helper_process.export_api_logs(df_with_logs, "test.csv")
+        result = export_api_logs(df_with_logs, "test.csv")
         
         # Vérifier que to_csv a été appelé avec les bonnes colonnes
         call_args = str(mock_to_csv.call_args[0][0])

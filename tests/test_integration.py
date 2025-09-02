@@ -1,7 +1,7 @@
 import n2f.client
 import business.process.user as user_process
 import business.process.axe as axe_process
-import helper.context
+from core import SyncContext
 import agresso.database as agresso_db
 from core.config import DatabaseConfig
 from core.config import ApiConfig

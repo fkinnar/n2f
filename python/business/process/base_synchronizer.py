@@ -4,7 +4,7 @@ import pandas as pd
 from n2f.client import N2fApiClient
 from n2f.api_result import ApiResult
 from business.process.helper import log_error, has_payload_changes
-from n2f.process.helper import add_api_logging_columns
+from core.logging import add_api_logging_columns
 
 
 class EntitySynchronizer(ABC):
