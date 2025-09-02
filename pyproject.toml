@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "n2f-sync"
+version = "2.0.0"
+authors = [
+  { name="N2F Team" },
+]
+description = "Système de synchronisation entre Agresso et N2F"
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "certifi==2025.8.3",
+    "charset-normalizer==3.4.3",
+    "greenlet==3.2.4",
+    "idna==3.10",
+    "inflection==0.5.1",
+    "numpy==2.3.2",
+    "pandas==2.3.1",
+    "psutil==6.1.0",
+    "pyodbc==5.2.0",
+    "pyrate-limiter==2.10.0",
+    "python-dateutil==2.9.0.post0",
+    "pytz==2025.2",
+    "PyYAML==6.0.2",
+    "requests==2.32.4",
+    "requests-ratelimiter==0.7.0",
+    "six==1.17.0",
+    "SQLAlchemy==2.0.43",
+    "typing_extensions==4.14.1",
+    "tzdata==2025.2",
+    "urllib3==2.5.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+    "pyright",
+    "python-dotenv==1.1.1",
+]
+
+[project.scripts]
+n2f-sync = "src.sync_agresso_n2f:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
