@@ -62,6 +62,30 @@ pip install -r requirements.txt
 
 ### Configuration
 
+#### Configuration du PYTHONPATH
+
+Le projet nécessite l'accès au module `Iris` qui se trouve dans `D:\Users\kinnar\source\repos\common\Python\Packages`.
+
+**Option 1 : Script automatique (Recommandée)**
+```bash
+# Windows (CMD)
+set_env.bat
+
+# Windows (PowerShell)
+.\set_env.ps1
+```
+
+**Option 2 : Configuration manuelle**
+```bash
+# Windows (CMD)
+set PYTHONPATH=python;D:\Users\kinnar\source\repos\common\Python\Packages
+
+# Windows (PowerShell)
+$env:PYTHONPATH="python;D:\Users\kinnar\source\repos\common\Python\Packages"
+```
+
+#### Fichiers de configuration
+
 1. **Copier les fichiers de configuration :**
 
 ```bash
@@ -69,7 +93,7 @@ cp dev.yaml.example dev.yaml
 cp prod.yaml.example prod.yaml
 ```
 
-1. **Configurer les paramètres :**
+2. **Configurer les paramètres :**
 
 ```yaml
 # dev.yaml
