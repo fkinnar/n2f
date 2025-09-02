@@ -37,8 +37,23 @@ echo.
 echo Upgrading pip...
 env\Scripts\python.exe -m pip install --upgrade pip
 
-echo Installing project requirements...
-env\Scripts\pip.exe install -r requirements.txt
+echo.
+echo Which environment do you want to install?
+echo   [1] Development (includes tools for testing, linting, etc.)
+echo   [2] Production  (only includes packages needed to run the application)
+choice /c 12 /n /d 1 /t 15 /m "Enter your choice (default is 1):"
+
+if errorlevel 2 (
+    echo Installing PRODUCTION requirements...
+    set "REQ_FILE=requirements.txt"
+) else (
+    echo Installing DEVELOPMENT requirements...
+    set "REQ_FILE=requirements-dev.txt"
+)
+
+echo.
+echo Installing project requirements from %REQ_FILE%...
+env\Scripts\pip.exe install -r %REQ_FILE%
 if errorlevel 1 (
     echo ERROR: Failed to install requirements!
     pause

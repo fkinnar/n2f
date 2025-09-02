@@ -63,8 +63,6 @@ fi
 echo "========================================"
 echo "Installing requirements..."
 echo "========================================"
-echo "This may take a few minutes..."
-echo
 
 # Activate virtual environment
 source env/bin/activate
@@ -72,8 +70,31 @@ source env/bin/activate
 # Upgrade pip
 pip install --upgrade pip
 
-# Install requirements
-pip install -r requirements.txt
+# Ask for environment type
+echo
+echo "Which environment do you want to install?"
+echo "  1) Development (includes testing/linting tools) - Default"
+echo "  2) Production  (application only)"
+read -r -t 15 -p "Enter your choice [1]: " env_choice
+
+case $env_choice in
+    2)
+        echo
+        echo "Installing PRODUCTION requirements..."
+        REQ_FILE="requirements.txt"
+        ;;
+    *)
+        echo
+        echo "Installing DEVELOPMENT requirements..."
+        REQ_FILE="requirements-dev.txt"
+        ;;
+esac
+
+echo "This may take a few minutes..."
+echo
+
+# Install requirements from the selected file
+pip install -r "$REQ_FILE"
 
 if [ $? -ne 0 ]; then
     echo "========================================"
