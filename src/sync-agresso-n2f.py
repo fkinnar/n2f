@@ -43,6 +43,10 @@ def main() -> None:
     config_loader = ConfigLoader(config_path)
     sync_config = config_loader.load()
 
+    # Si --skip-dotenv-loading est utilisé, forcer le mode non-sandbox
+    if args.skip_dotenv_loading:
+        sync_config.api.sandbox = False
+
     # Chargement des variables d'environnement seulement si en mode sandbox
     if sync_config.api.sandbox:
         from dotenv import load_dotenv
@@ -115,6 +119,7 @@ def create_arg_parser() -> argparse.ArgumentParser:
     # Arguments de cache
     parser.add_argument('--clear-cache', action='store_true', help="Vider complètement le cache avant la synchronisation")
     parser.add_argument('--invalidate-cache', nargs='+', metavar='FUNCTION', help="Invalider des entrées spécifiques du cache (ex: get_users get_companies)")
+    parser.add_argument('--skip-dotenv-loading', action='store_true', help="Désactiver le chargement du fichier .env, même si le mode sandbox est configuré dans le YAML. Utile pour tester le comportement de production des dépendances.")
 
     return parser
 
