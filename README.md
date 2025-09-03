@@ -400,4 +400,6 @@ This project uses pre-commit hooks to ensure code quality:
 - **Large files**: Prevents large files from being committed
 - **Merge conflicts**: Detects unresolved merge conflicts
 
+For detailed configuration and usage, see [PRE_COMMIT_HOOKS.md](PRE_COMMIT_HOOKS.md).
+
 Test line for pre-commit hooks.
