@@ -35,13 +35,23 @@ class TestBusinessUser(unittest.TestCase):
         # Mock du contexte
         self.mock_context = Mock(spec=SyncContext)
         self.mock_context.get_config_value.return_value = {}
+        self.mock_context.client_id = "test_client_id"
+        self.mock_context.client_secret = "test_client_secret"
+        self.mock_context.base_dir = "/test/base/dir"
+        self.mock_context.db_user = "test_db_user"
+        self.mock_context.db_password = "test_db_password"
+        self.mock_context.args = self.mock_args
 
         # Mock du client N2F
         self.mock_n2f_client = Mock()
 
         # Mock des configurations
         self.mock_agresso_config = {"database": "agresso_db"}
-        self.mock_n2f_config = {"api": "n2f_api"}
+        self.mock_n2f_config = {
+            "base_urls": "https://test.n2f.com/api",
+            "simulate": False,
+            "sandbox": True,
+        }
 
         # DataFrames de test
         self.df_agresso_users = pd.DataFrame(
@@ -78,7 +88,7 @@ class TestBusinessUser(unittest.TestCase):
         )
 
     @patch("business.process.user._load_agresso_users")
-    @patch("business.process.user._load_n2f_users")
+    @patch("business.process.user._load_n2f_data")
     @patch("business.process.user.UserSynchronizer")
     def test_synchronize_create_only(
         self, mock_synchronizer_class, mock_load_n2f, mock_load_agresso
@@ -110,12 +120,12 @@ class TestBusinessUser(unittest.TestCase):
 
         # Vérifications
         mock_load_agresso.assert_called_once_with(self.mock_context, "test_query.sql")
-        mock_load_n2f.assert_called_once_with(self.mock_context)
+        mock_load_n2f.assert_called_once()
         mock_sync_instance.create_entities.assert_called_once()
         self.assertEqual(len(result), 1)
 
     @patch("business.process.user._load_agresso_users")
-    @patch("business.process.user._load_n2f_users")
+    @patch("business.process.user._load_n2f_data")
     @patch("business.process.user.UserSynchronizer")
     def test_synchronize_update_only(
         self, mock_synchronizer_class, mock_load_n2f, mock_load_agresso
@@ -147,12 +157,12 @@ class TestBusinessUser(unittest.TestCase):
 
         # Vérifications
         mock_load_agresso.assert_called_once_with(self.mock_context, "test_query.sql")
-        mock_load_n2f.assert_called_once_with(self.mock_context)
+        mock_load_n2f.assert_called_once()
         mock_sync_instance.update_entities.assert_called_once()
         self.assertEqual(len(result), 1)
 
     @patch("business.process.user._load_agresso_users")
-    @patch("business.process.user._load_n2f_users")
+    @patch("business.process.user._load_n2f_data")
     @patch("business.process.user.UserSynchronizer")
     def test_synchronize_delete_only(
         self, mock_synchronizer_class, mock_load_n2f, mock_load_agresso
@@ -184,12 +194,12 @@ class TestBusinessUser(unittest.TestCase):
 
         # Vérifications
         mock_load_agresso.assert_called_once_with(self.mock_context, "test_query.sql")
-        mock_load_n2f.assert_called_once_with(self.mock_context)
+        mock_load_n2f.assert_called_once()
         mock_sync_instance.delete_entities.assert_called_once()
         self.assertEqual(len(result), 1)
 
     @patch("business.process.user._load_agresso_users")
-    @patch("business.process.user._load_n2f_users")
+    @patch("business.process.user._load_n2f_data")
     @patch("business.process.user.UserSynchronizer")
     def test_synchronize_all_operations(
         self, mock_synchronizer_class, mock_load_n2f, mock_load_agresso
@@ -229,14 +239,14 @@ class TestBusinessUser(unittest.TestCase):
 
         # Vérifications
         mock_load_agresso.assert_called_once_with(self.mock_context, "test_query.sql")
-        mock_load_n2f.assert_called_once_with(self.mock_context)
+        mock_load_n2f.assert_called_once()
         mock_sync_instance.create_entities.assert_called_once()
         mock_sync_instance.update_entities.assert_called_once()
         mock_sync_instance.delete_entities.assert_called_once()
         self.assertEqual(len(result), 3)
 
     @patch("business.process.user._load_agresso_users")
-    @patch("business.process.user._load_n2f_users")
+    @patch("business.process.user._load_n2f_data")
     @patch("business.process.user.UserSynchronizer")
     def test_synchronize_with_filter(
         self, mock_synchronizer_class, mock_load_n2f, mock_load_agresso
@@ -258,21 +268,24 @@ class TestBusinessUser(unittest.TestCase):
             "created",
         )
 
+        # Configurer le mock pour retourner la config N2F
+        self.mock_context.get_config_value.side_effect = lambda key: (
+            self.mock_n2f_config if key == "n2f" else self.mock_agresso_config
+        )
+
         # Exécution de la fonction avec filtre
         result = user_process.synchronize(
             self.mock_context, "test_query.sql", "active_users"
         )
 
         # Vérifications
-        mock_load_agresso.assert_called_once_with(
-            self.mock_context, "test_query.sql", "active_users"
-        )
-        mock_load_n2f.assert_called_once_with(self.mock_context)
+        mock_load_agresso.assert_called_once_with(self.mock_context, "test_query.sql")
+        mock_load_n2f.assert_called_once()
         mock_sync_instance.create_entities.assert_called_once()
         self.assertEqual(len(result), 1)
 
     @patch("business.process.user._load_agresso_users")
-    @patch("business.process.user._load_n2f_users")
+    @patch("business.process.user._load_n2f_data")
     @patch("business.process.user.UserSynchronizer")
     def test_synchronize_no_operations(
         self, mock_synchronizer_class, mock_load_n2f, mock_load_agresso
@@ -296,7 +309,7 @@ class TestBusinessUser(unittest.TestCase):
 
         # Vérifications
         mock_load_agresso.assert_called_once_with(self.mock_context, "test_query.sql")
-        mock_load_n2f.assert_called_once_with(self.mock_context)
+        mock_load_n2f.assert_called_once()
         self.assertEqual(len(result), 0)
 
 

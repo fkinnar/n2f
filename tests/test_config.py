@@ -68,7 +68,7 @@ class TestSyncConfig(unittest.TestCase):
         self.assertEqual(config.database.prod, True)
         self.assertEqual(config.database.sql_path, "sql")
         self.assertEqual(
-            config.api.base_urls, "https://sandbox.n2f.com / services/api / v2/"
+            config.api.base_urls, "https://sandbox.n2f.com/services/api/v2/"
         )
         self.assertEqual(config.api.sandbox, True)
 
@@ -144,9 +144,9 @@ class TestConfigLoader(unittest.TestCase):
         config_data = {
             "agresso": {
                 "prod": False,
-                "sql - path": "test_sql",
-                "sql - filename-users": "test_users.sql",
-                "sql - filename-customaxes": "test_axes.sql",
+                "sql-path": "test_sql",
+                "sql-filename-users": "test_users.sql",
+                "sql-filename-customaxes": "test_axes.sql",
             },
             "n2f": {
                 "base_urls": "https://test.n2f.com / api/",
@@ -189,9 +189,9 @@ class TestConfigLoader(unittest.TestCase):
         """Test de validation de configuration."""
         config_data = {
             "agresso": {
-                "sql - path": "",  # Invalide
-                "sql - filename-users": "test_users.sql",
-                "sql - filename-customaxes": "test_axes.sql",
+                "sql-path": "",  # Invalide
+                "sql-filename-users": "test_users.sql",
+                "sql-filename-customaxes": "test_axes.sql",
             },
             "n2f": {"base_urls": "https://test.n2f.com / api/"},
         }

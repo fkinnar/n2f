@@ -454,8 +454,8 @@ class TestCompanyProcess(unittest.TestCase):
         mock_df = pd.DataFrame({"id": ["1", "2"], "name": ["Comp1", "Comp2"]})
         # Mock les fonctions de cache
         with (
-            patch("n2f.process.company.get_from_cache", return_value=None),
-            patch("n2f.process.company.set_in_cache"),
+            patch("n2f.process.company.cache_get", return_value=None),
+            patch("n2f.process.company.cache_set"),
             patch(
                 "n2f.process.company.get_companies_api",
                 return_value=[{"id": "1"}, {"id": "2"}],
@@ -480,8 +480,8 @@ class TestCustomAxeProcess(unittest.TestCase):
         """Test de récupération d'axes personnalisés."""
         # Mock les fonctions de cache
         with (
-            patch("n2f.process.customaxe.get_from_cache", return_value=None),
-            patch("n2f.process.customaxe.set_in_cache"),
+            patch("n2f.process.customaxe.cache_get", return_value=None),
+            patch("n2f.process.customaxe.cache_set"),
             patch(
                 "n2f.process.customaxe.get_customaxes_api",
                 return_value=[{"id": "1"}, {"id": "2"}],
@@ -498,8 +498,8 @@ class TestCustomAxeProcess(unittest.TestCase):
         """Test de récupération de valeurs d'axes personnalisés."""
         # Mock les fonctions de cache
         with (
-            patch("n2f.process.customaxe.get_from_cache", return_value=None),
-            patch("n2f.process.customaxe.set_in_cache"),
+            patch("n2f.process.customaxe.cache_get", return_value=None),
+            patch("n2f.process.customaxe.cache_set"),
             patch(
                 "n2f.process.customaxe.get_customaxes_values_api",
                 return_value=[{"code": "VAL1"}, {"code": "VAL2"}],
@@ -528,8 +528,8 @@ class TestUserProfileProcess(unittest.TestCase):
         """Test de récupération de profils utilisateur."""
         # Mock les fonctions de cache
         with (
-            patch("n2f.process.userprofile.get_from_cache", return_value=None),
-            patch("n2f.process.userprofile.set_in_cache"),
+            patch("n2f.process.userprofile.cache_get", return_value=None),
+            patch("n2f.process.userprofile.cache_set"),
             patch(
                 "n2f.process.userprofile.get_userprofiles_api",
                 return_value=[{"id": "1"}, {"id": "2"}],
@@ -554,8 +554,8 @@ class TestRoleProcess(unittest.TestCase):
         """Test de récupération de rôles."""
         # Mock les fonctions de cache
         with (
-            patch("n2f.process.role.get_from_cache", return_value=None),
-            patch("n2f.process.role.set_in_cache"),
+            patch("n2f.process.role.cache_get", return_value=None),
+            patch("n2f.process.role.cache_set"),
             patch(
                 "n2f.process.role.get_roles_api",
                 return_value=[{"id": "1"}, {"id": "2"}],

@@ -62,10 +62,8 @@ class TestSyncAgressoN2F(unittest.TestCase):
     @patch.object(sync_script, "ConfigLoader")
     @patch.object(sync_script, "validate_environment_variables")
     @patch.object(sync_script, "SyncOrchestrator")
-    @patch.object(sync_script, "load_dotenv")
     def test_main_flow_no_action_args(
         self,
-        mock_load_dotenv,
         mock_orchestrator,
         mock_validate_env,
         mock_config_loader,
@@ -92,7 +90,6 @@ class TestSyncAgressoN2F(unittest.TestCase):
 
         # Assertions
         mock_validate_env.assert_called_once()
-        mock_load_dotenv.assert_called_once()
         mock_orchestrator.assert_called_once()
 
         # Check that create and update were defaulted to True

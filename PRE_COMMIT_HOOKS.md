@@ -1,15 +1,17 @@
-# Pre-commit Hooks Configuration
+﻿# Pre-commit Hooks Configuration
 
-Ce projet utilise des hooks Git pre-commit pour assurer la qualité du code automatiquement avant chaque commit.
+Ce projet utilise des hooks Git pre-commit pour assurer la qualitÃ© du code
+automatiquement avant chaque commit.
 
-## 🚀 Installation
+## ðŸš€ Installation
 
-### Installation des dépendances de développement
+### Installation des dÃ©pendances de dÃ©veloppement
 
-Si vous clonez le projet sur une nouvelle machine, installez d'abord toutes les dépendances de développement :
+Si vous clonez le projet sur une nouvelle machine, installez d'abord toutes les
+dÃ©pendances de dÃ©veloppement :
 
 ```bash
-# Option 1: Via pyproject.toml (recommandé)
+# Option 1: Via pyproject.toml (recommandÃ©)
 python -m pip install -e ".[dev]"
 
 # Option 2: Via requirements-dev.txt
@@ -18,62 +20,73 @@ python -m pip install -r requirements-dev.txt
 
 ### Installation des hooks pre-commit
 
-Une fois les dépendances installées, installez les hooks :
+Une fois les dÃ©pendances installÃ©es, installez les hooks :
 
 ```bash
 pre-commit install
 ```
 
-## 🔧 Hooks Configurés
+## ðŸ”§ Hooks ConfigurÃ©s
 
 ### 1. **Black** - Formatage automatique du code
+
 - **Version** : 25.1.0
-- **Configuration** : Longueur de ligne = 88 caractères
+- **Configuration** : Longueur de ligne = 88 caractÃ¨res
 - **Action** : Formate automatiquement le code Python selon les standards Black
 - **Fichiers** : Tous les fichiers `.py`
 
-### 2. **Flake8** - Vérification de la qualité du code
+### 2. **Flake8** - VÃ©rification de la qualitÃ© du code
+
 - **Version** : 7.1.1
-- **Configuration** : Fichier `.flake8` avec règles personnalisées
-- **Action** : Vérifie le style, les erreurs et la complexité du code Python
+- **Configuration** : Fichier `.flake8` avec rÃ¨gles personnalisÃ©es
+- **Action** : VÃ©rifie le style, les erreurs et la complexitÃ© du code Python
 - **Fichiers** : Tous les fichiers `.py`
 
 ### 3. **Trailing Whitespace** - Suppression des espaces en fin de ligne
+
 - **Action** : Supprime automatiquement les espaces et tabulations en fin de ligne
 - **Fichiers** : Tous les fichiers
 
 ### 3. **End of File Fixer** - Correction des fins de fichier
+
 - **Action** : S'assure que chaque fichier se termine par une nouvelle ligne
 - **Fichiers** : Tous les fichiers
 
 ### 4. **YAML Validation** - Validation de la syntaxe YAML
-- **Action** : Vérifie que les fichiers YAML sont syntaxiquement corrects
+
+- **Action** : VÃ©rifie que les fichiers YAML sont syntaxiquement corrects
 - **Fichiers** : `.yaml`, `.yml`
 
-### 5. **Large Files Check** - Vérification des gros fichiers
-- **Action** : Empêche le commit de fichiers trop volumineux
+### 5. **Large Files Check** - VÃ©rification des gros fichiers
+
+- **Action** : EmpÃªche le commit de fichiers trop volumineux
 - **Fichiers** : Tous les fichiers
 
-### 6. **Merge Conflicts Check** - Détection des conflits
-- **Action** : Détecte les marqueurs de conflit Git non résolus
+### 6. **Merge Conflicts Check** - DÃ©tection des conflits
+
+- **Action** : DÃ©tecte les marqueurs de conflit Git non rÃ©solus
 - **Fichiers** : Tous les fichiers
 
-## 📝 Utilisation
+## ðŸ“ Utilisation
 
 ### Commits automatiques
-Les hooks se déclenchent automatiquement lors de chaque `git commit`. Si un hook échoue :
-- Le commit est bloqué
-- Les erreurs sont affichées
-- Corrigez les problèmes et recommencez le commit
 
-### Exécution manuelle
-Pour exécuter les hooks manuellement sur tous les fichiers :
+Les hooks se dÃ©clenchent automatiquement lors de chaque `git commit`. Si un hook Ã©choue
+:
+
+- Le commit est bloquÃ©
+- Les erreurs sont affichÃ©es
+- Corrigez les problÃ¨mes et recommencez le commit
+
+### ExÃ©cution manuelle
+
+Pour exÃ©cuter les hooks manuellement sur tous les fichiers :
 
 ```bash
 pre-commit run --all-files
 ```
 
-Pour exécuter un hook spécifique :
+Pour exÃ©cuter un hook spÃ©cifique :
 
 ```bash
 pre-commit run black --all-files
@@ -81,49 +94,57 @@ pre-commit run flake8 --all-files
 pre-commit run trailing-whitespace --all-files
 ```
 
-### Mise à jour des hooks
-Pour mettre à jour les versions des hooks :
+### Mise Ã  jour des hooks
+
+Pour mettre Ã  jour les versions des hooks :
 
 ```bash
 pre-commit autoupdate
 ```
 
-## ⚠️ Dépannage
+## âš ï¸ DÃ©pannage
 
-### Hooks ignorés
-Si les hooks semblent ignorés, vérifiez que :
-1. `pre-commit install` a été exécuté
+### Hooks ignorÃ©s
+
+Si les hooks semblent ignorÃ©s, vÃ©rifiez que :
+
+1. `pre-commit install` a Ã©tÃ© exÃ©cutÃ©
 2. Le fichier `.git/hooks/pre-commit` existe
-3. Vous êtes dans le bon repository Git
+3. Vous Ãªtes dans le bon repository Git
 
 ### Erreurs de formatage
-Si Black échoue :
-1. Vérifiez la syntaxe Python
-2. Exécutez `black .` manuellement pour voir les erreurs
+
+Si Black Ã©choue :
+
+1. VÃ©rifiez la syntaxe Python
+2. ExÃ©cutez `black .` manuellement pour voir les erreurs
 3. Corrigez le code et recommencez
 
-### Fichiers ignorés
+### Fichiers ignorÃ©s
+
 Certains fichiers sont automatiquement exclus :
+
 - `.git/`
 - `.mypy_cache/`
 - `__pycache__/`
 - Fichiers de build et distribution
 
-## 🔄 Workflow recommandé
+## ðŸ”„ Workflow recommandÃ©
 
-1. **Développement** : Codez normalement
+1. **DÃ©veloppement** : Codez normalement
 2. **Staging** : `git add <fichiers>`
 3. **Commit** : `git commit -m "message"`
-4. **Hooks automatiques** : Black formate, autres hooks vérifient
-5. **Succès** : Commit créé avec code formaté
-6. **Échec** : Corrigez et recommencez
+4. **Hooks automatiques** : Black formate, autres hooks vÃ©rifient
+5. **SuccÃ¨s** : Commit crÃ©Ã© avec code formatÃ©
+6. **Ã‰chec** : Corrigez et recommencez
 
-## 📚 Ressources
+## ðŸ“š Ressources
 
 - [Documentation pre-commit](https://pre-commit.com/)
 - [Documentation Black](https://black.readthedocs.io/)
 - [Configuration du projet](.pre-commit-config.yaml)
 
----
+______________________________________________________________________
 
-**Note** : Ces hooks garantissent que chaque commit respecte les standards de qualité du projet.
+**Note** : Ces hooks garantissent que chaque commit respecte les standards de qualitÃ© du
+projet.

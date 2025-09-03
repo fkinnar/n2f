@@ -141,7 +141,7 @@ class TestRegistryAdvanced(unittest.TestCase):
 
                 # Vérifier que l'erreur est affichée
                 mock_print.assert_called_with(
-                    "Warning: Could not import business.process.test_main for "
+                    "Warning: Could not import business.process.test_module for "
                     "auto-discovery: Submodule not found"
                 )
             finally:

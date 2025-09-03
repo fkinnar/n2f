@@ -166,8 +166,8 @@ class TestN2fApiClient(unittest.TestCase):
         with self.assertRaises(Exception):
             self.client._request("users", 0, 100)
 
-    @patch("n2f.client.get_from_cache")
-    @patch("n2f.client.set_in_cache")
+    @patch("n2f.client.cache_get")
+    @patch("n2f.client.cache_set")
     @patch("n2f.client.n2f.get_session_get")
     @patch("n2f.client.get_access_token")
     def test_get_users_with_cache_hit(
@@ -185,8 +185,8 @@ class TestN2fApiClient(unittest.TestCase):
         # Pas d'appel API car données en cache
         mock_session.return_value.get.assert_not_called()
 
-    @patch("n2f.client.get_from_cache")
-    @patch("n2f.client.set_in_cache")
+    @patch("n2f.client.cache_get")
+    @patch("n2f.client.cache_set")
     @patch("n2f.client.n2f.get_session_get")
     @patch("n2f.client.get_access_token")
     def test_get_users_with_cache_miss(
@@ -217,8 +217,8 @@ class TestN2fApiClient(unittest.TestCase):
         # Vérification que les données ont été mises en cache
         mock_set_cache.assert_called_once()
 
-    @patch("n2f.client.get_from_cache")
-    @patch("n2f.client.set_in_cache")
+    @patch("n2f.client.cache_get")
+    @patch("n2f.client.cache_set")
     @patch("n2f.client.n2f.get_session_get")
     @patch("n2f.client.get_access_token")
     def test_get_users_pagination(
@@ -255,8 +255,8 @@ class TestN2fApiClient(unittest.TestCase):
         # Vérification que deux appels API ont été faits
         self.assertEqual(mock_session.return_value.get.call_count, 2)
 
-    @patch("n2f.client.get_from_cache")
-    @patch("n2f.client.set_in_cache")
+    @patch("n2f.client.cache_get")
+    @patch("n2f.client.cache_set")
     @patch("n2f.client.n2f.get_session_get")
     @patch("n2f.client.get_access_token")
     def test_get_roles(
@@ -284,8 +284,8 @@ class TestN2fApiClient(unittest.TestCase):
             "https://api.n2f.test/roles", headers={"Authorization": "Bearer test_token"}
         )
 
-    @patch("n2f.client.get_from_cache")
-    @patch("n2f.client.set_in_cache")
+    @patch("n2f.client.cache_get")
+    @patch("n2f.client.cache_set")
     @patch("n2f.client.n2f.get_session_get")
     @patch("n2f.client.get_access_token")
     def test_get_userprofiles(
@@ -477,8 +477,8 @@ class TestN2fApiClient(unittest.TestCase):
                 "users",
             )
 
-    @patch("n2f.client.get_from_cache")
-    @patch("n2f.client.set_in_cache")
+    @patch("n2f.client.cache_get")
+    @patch("n2f.client.cache_set")
     @patch("n2f.client.n2f.get_session_get")
     @patch("n2f.client.get_access_token")
     def test_get_custom_axes(
@@ -509,8 +509,8 @@ class TestN2fApiClient(unittest.TestCase):
             headers={"Authorization": "Bearer test_token"},
         )
 
-    @patch("n2f.client.get_from_cache")
-    @patch("n2f.client.set_in_cache")
+    @patch("n2f.client.cache_get")
+    @patch("n2f.client.cache_set")
     @patch("n2f.client.n2f.get_session_get")
     @patch("n2f.client.get_access_token")
     def test_get_axe_values(
@@ -594,8 +594,8 @@ class TestN2fApiClient(unittest.TestCase):
 
     def test_get_companies_with_cache_miss(self):
         """Test la récupération d'entreprises avec cache miss."""
-        with patch("n2f.client.get_from_cache") as mock_get_cache:
-            with patch("n2f.client.set_in_cache") as mock_set_cache:
+        with patch("n2f.client.cache_get") as mock_get_cache:
+            with patch("n2f.client.cache_set") as mock_set_cache:
                 with patch.object(self.client, "_request") as mock_request:
                     mock_get_cache.return_value = None
                     mock_request.return_value = [{"id": "1", "name": "Company 1"}]

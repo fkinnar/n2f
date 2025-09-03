@@ -1,0 +1,27 @@
+# Configuration markdownlint
+# Règles activées et désactivées pour maintenir la qualité des fichiers Markdown
+
+# Règles activées (par défaut)
+default: true
+
+# Règles désactivées
+MD013: false  # Désactiver la limite de longueur de ligne (gérée par mdformat)
+MD033: false  # Permettre le HTML inline si nécessaire
+MD041: false  # Permettre les fichiers sans titre principal
+MD024: false  # Permettre les titres en double (utile pour la documentation)
+
+# Règles personnalisées
+MD007:
+  indent: 2  # Indentation de 2 espaces pour les listes
+
+MD012:
+  maximum: 1  # Maximum 1 ligne vide consécutive
+
+MD029:
+  style: "ordered"  # Style de liste ordonnée
+
+MD030:
+  ul_single: 1  # Un seul caractère pour les listes non ordonnées
+  ol_single: 1  # Un seul caractère pour les listes ordonnées
+  ul_multi: 1   # Un seul caractère pour les listes multi-niveaux
+  ol_multi: 1   # Un seul caractère pour les listes multi-niveaux

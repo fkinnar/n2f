@@ -1,11 +1,10 @@
-# Documentation de la Logique Metier - Synchronisation N2F
+﻿# Documentation de la Logique Metier - Synchronisation N2F
 
 ## Vue d'ensemble
 
-Ce document decrit la logique metier derriere le script de synchronisation
-entre le systeme Agresso et la plateforme N2F.
-Il s'agit d'un processus de synchronisation unidirectionnelle qui transfere
-les donnees d'Agresso vers N2F.
+Ce document decrit la logique metier derriere le script de synchronisation entre le
+systeme Agresso et la plateforme N2F. Il s'agit d'un processus de synchronisation
+unidirectionnelle qui transfere les donnees d'Agresso vers N2F.
 
 ## Architecture generale
 
@@ -44,8 +43,8 @@ graph TB
 
 ### 1. Base de donnees Agresso
 
-**Type :** Base de donnees SQL Server (AgrProd)
-**Connexion :** Via variables d'environnement
+**Type :** Base de donnees SQL Server (AgrProd) **Connexion :** Via variables
+d'environnement
 
 - `AGRESSO_DB_USER` : Nom d'utilisateur
 - `AGRESSO_DB_PASSWORD` : Mot de passe
@@ -57,8 +56,7 @@ graph TB
 
 ### 2. Fichiers SQL de requetes
 
-**Emplacement :** Dossier `sql/`
-**Fichiers :**
+**Emplacement :** Dossier `sql/` **Fichiers :**
 
 - `get-agresso-n2f-users.dev.sql` : Requete utilisateurs (developpement)
 - `get-agresso-n2f-users.prod.sql` : Requete utilisateurs (production)
@@ -108,8 +106,7 @@ n2f:
 
 ### 1. API N2F
 
-**Type :** API REST avec authentification OAuth2
-**Base URLs :**
+**Type :** API REST avec authentification OAuth2 **Base URLs :**
 
 - **Sandbox (developpement) :** `https://sandbox.n2f.com/services/api/v2/`
 - **Production :** `https://www.n2f.com/services/api/v2/`
@@ -174,7 +171,7 @@ n2f:
 - Sessions rate-limited avec `requests_ratelimiter`
 - Adaptation automatique selon l'heure (jour/nuit)
 - Gestion automatique des tokens d'authentification
-- Retry automatique en cas de dépassement de quota
+- Retry automatique en cas de dÃ©passement de quota
 
 ### 2. Contraintes de la base Agresso
 
@@ -195,10 +192,10 @@ n2f:
 **Sandbox vs Production :**
 
 - **URLs differentes :** Sandbox et production utilisent des endpoints separes
-- **Quotas identiques :** Les quotas d'appels API sont les memes
-  dans les deux environnements
-- **Donnees :** Sandbox utilise des donnees de test, production utilise
-  les vraies donnees
+- **Quotas identiques :** Les quotas d'appels API sont les memes dans les deux
+  environnements
+- **Donnees :** Sandbox utilise des donnees de test, production utilise les vraies
+  donnees
 - **Simulation :** Mode simulation disponible en sandbox pour les tests
 
 ### 4. Contraintes techniques
@@ -249,10 +246,9 @@ flowchart TD
 
 ### 1. Scope "users"
 
-**Fonction :** `synchronize_users`
-**Fichier SQL :** `get-agresso-n2f-users.*.sql`
-**Entite type :** `user`
-**Description :** Synchronisation des utilisateurs Agresso vers N2F
+**Fonction :** `synchronize_users` **Fichier SQL :** `get-agresso-n2f-users.*.sql`
+**Entite type :** `user` **Description :** Synchronisation des utilisateurs Agresso vers
+N2F
 
 **Champs synchronises :**
 
@@ -264,34 +260,27 @@ flowchart TD
 
 ### 2. Scope "projects"
 
-**Fonction :** `synchronize_projects`
-**Fichier SQL :** `get-agresso-n2f-customaxes.*.sql`
-**Entite type :** `project`
-**Filtre SQL :** `projects`
-**Description :** Synchronisation des projets (axes personnalises)
+**Fonction :** `synchronize_projects` **Fichier SQL :**
+`get-agresso-n2f-customaxes.*.sql` **Entite type :** `project` **Filtre SQL :**
+`projects` **Description :** Synchronisation des projets (axes personnalises)
 
 ### 3. Scope "plates"
 
-**Fonction :** `synchronize_plates`
-**Fichier SQL :** `get-agresso-n2f-customaxes.*.sql`
-**Entite type :** `plate`
-**Filtre SQL :** `plates`
-**Description :** Synchronisation des plaques
+**Fonction :** `synchronize_plates` **Fichier SQL :** `get-agresso-n2f-customaxes.*.sql`
+**Entite type :** `plate` **Filtre SQL :** `plates` **Description :** Synchronisation
+des plaques
 
 ### 4. Scope "subposts"
 
-**Fonction :** `synchronize_subposts`
-**Fichier SQL :** `get-agresso-n2f-customaxes.*.sql`
-**Entite type :** `subpost`
-**Filtre SQL :** `subposts`
-**Description :** Synchronisation des sous-posts
+**Fonction :** `synchronize_subposts` **Fichier SQL :**
+`get-agresso-n2f-customaxes.*.sql` **Entite type :** `subpost` **Filtre SQL :**
+`subposts` **Description :** Synchronisation des sous-posts
 
 ## Orchestration et execution
 
 ### 1. Orchestrator principal
 
-**Classe :** `SyncOrchestrator`
-**Responsabilites :**
+**Classe :** `SyncOrchestrator` **Responsabilites :**
 
 - Coordination de tous les composants
 - Gestion du cycle de vie des scopes
@@ -300,8 +289,7 @@ flowchart TD
 
 ### 2. Synchronizers
 
-**Classe abstraite :** `EntitySynchronizer`
-**Implementations :**
+**Classe abstraite :** `EntitySynchronizer` **Implementations :**
 
 - `UserSynchronizer` : Synchronisation utilisateurs
 - `AxeSynchronizer` : Synchronisation axes/projets
@@ -385,9 +373,7 @@ graph TD
 
 ### 2. Export des metriques
 
-**Format :** JSON
-**Fichier :** `metrics_YYYYMMDD_HHMMSS.json`
-**Contenu :**
+**Format :** JSON **Fichier :** `metrics_YYYYMMDD_HHMMSS.json` **Contenu :**
 
 ```json
 {
@@ -528,16 +514,14 @@ N2F_SANDBOX=true
 - `prod.yaml` : Configuration production
 - `sql/` : Requetes SQL de recuperation des donnees
 
----
+______________________________________________________________________
 
-*Cette documentation couvre les aspects metier essentiels pour comprendre et
-adapter le script de synchronisation N2F vers un autre environnement.*
-
+*Cette documentation couvre les aspects metier essentiels pour comprendre et adapter le
+script de synchronisation N2F vers un autre environnement.*
 
 ### 2. Fichiers SQL de requetes
 
-**Emplacement :** Dossier `sql/`
-**Fichiers :**
+**Emplacement :** Dossier `sql/` **Fichiers :**
 
 - `get-agresso-n2f-users.dev.sql` : Requete utilisateurs (developpement)
 - `get-agresso-n2f-users.prod.sql` : Requete utilisateurs (production)
@@ -587,8 +571,7 @@ n2f:
 
 ### 1. API N2F
 
-**Type :** API REST avec authentification OAuth2
-**Base URLs :**
+**Type :** API REST avec authentification OAuth2 **Base URLs :**
 
 - **Sandbox (developpement) :** `https://sandbox.n2f.com/services/api/v2/`
 - **Production :** `https://www.n2f.com/services/api/v2/`
@@ -653,7 +636,7 @@ n2f:
 - Sessions rate-limited avec `requests_ratelimiter`
 - Adaptation automatique selon l'heure (jour/nuit)
 - Gestion automatique des tokens d'authentification
-- Retry automatique en cas de dépassement de quota
+- Retry automatique en cas de dÃ©passement de quota
 
 ### 2. Contraintes de la base Agresso
 
@@ -674,10 +657,10 @@ n2f:
 **Sandbox vs Production :**
 
 - **URLs differentes :** Sandbox et production utilisent des endpoints separes
-- **Quotas identiques :** Les quotas d'appels API sont les memes
-  dans les deux environnements
-- **Donnees :** Sandbox utilise des donnees de test, production utilise
-  les vraies donnees
+- **Quotas identiques :** Les quotas d'appels API sont les memes dans les deux
+  environnements
+- **Donnees :** Sandbox utilise des donnees de test, production utilise les vraies
+  donnees
 - **Simulation :** Mode simulation disponible en sandbox pour les tests
 
 ### 4. Contraintes techniques
@@ -728,10 +711,9 @@ flowchart TD
 
 ### 1. Scope "users"
 
-**Fonction :** `synchronize_users`
-**Fichier SQL :** `get-agresso-n2f-users.*.sql`
-**Entite type :** `user`
-**Description :** Synchronisation des utilisateurs Agresso vers N2F
+**Fonction :** `synchronize_users` **Fichier SQL :** `get-agresso-n2f-users.*.sql`
+**Entite type :** `user` **Description :** Synchronisation des utilisateurs Agresso vers
+N2F
 
 **Champs synchronises :**
 
@@ -743,34 +725,27 @@ flowchart TD
 
 ### 2. Scope "projects"
 
-**Fonction :** `synchronize_projects`
-**Fichier SQL :** `get-agresso-n2f-customaxes.*.sql`
-**Entite type :** `project`
-**Filtre SQL :** `projects`
-**Description :** Synchronisation des projets (axes personnalises)
+**Fonction :** `synchronize_projects` **Fichier SQL :**
+`get-agresso-n2f-customaxes.*.sql` **Entite type :** `project` **Filtre SQL :**
+`projects` **Description :** Synchronisation des projets (axes personnalises)
 
 ### 3. Scope "plates"
 
-**Fonction :** `synchronize_plates`
-**Fichier SQL :** `get-agresso-n2f-customaxes.*.sql`
-**Entite type :** `plate`
-**Filtre SQL :** `plates`
-**Description :** Synchronisation des plaques
+**Fonction :** `synchronize_plates` **Fichier SQL :** `get-agresso-n2f-customaxes.*.sql`
+**Entite type :** `plate` **Filtre SQL :** `plates` **Description :** Synchronisation
+des plaques
 
 ### 4. Scope "subposts"
 
-**Fonction :** `synchronize_subposts`
-**Fichier SQL :** `get-agresso-n2f-customaxes.*.sql`
-**Entite type :** `subpost`
-**Filtre SQL :** `subposts`
-**Description :** Synchronisation des sous-posts
+**Fonction :** `synchronize_subposts` **Fichier SQL :**
+`get-agresso-n2f-customaxes.*.sql` **Entite type :** `subpost` **Filtre SQL :**
+`subposts` **Description :** Synchronisation des sous-posts
 
 ## Orchestration et execution
 
 ### 1. Orchestrator principal
 
-**Classe :** `SyncOrchestrator`
-**Responsabilites :**
+**Classe :** `SyncOrchestrator` **Responsabilites :**
 
 - Coordination de tous les composants
 - Gestion du cycle de vie des scopes
@@ -779,8 +754,7 @@ flowchart TD
 
 ### 2. Synchronizers
 
-**Classe abstraite :** `EntitySynchronizer`
-**Implementations :**
+**Classe abstraite :** `EntitySynchronizer` **Implementations :**
 
 - `UserSynchronizer` : Synchronisation utilisateurs
 - `AxeSynchronizer` : Synchronisation axes/projets
@@ -864,9 +838,7 @@ graph TD
 
 ### 2. Export des metriques
 
-**Format :** JSON
-**Fichier :** `metrics_YYYYMMDD_HHMMSS.json`
-**Contenu :**
+**Format :** JSON **Fichier :** `metrics_YYYYMMDD_HHMMSS.json` **Contenu :**
 
 ```json
 {
@@ -1007,7 +979,7 @@ N2F_SANDBOX=true
 - `prod.yaml` : Configuration production
 - `sql/` : Requetes SQL de recuperation des donnees
 
----
+______________________________________________________________________
 
-*Cette documentation couvre les aspects metier essentiels pour comprendre et
-adapter le script de synchronisation N2F vers un autre environnement.*
+*Cette documentation couvre les aspects metier essentiels pour comprendre et adapter le
+script de synchronisation N2F vers un autre environnement.*

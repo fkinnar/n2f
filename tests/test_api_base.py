@@ -166,7 +166,7 @@ class TestUpsert(unittest.TestCase):
             "https://api.n2f.com/users",
             headers={
                 "Authorization": "Bearer test_token",
-                "Content-Type": "application/json",
+                "Content - Type": "application / json",
             },
             json=self.payload,
         )
@@ -246,7 +246,7 @@ class TestUpsert(unittest.TestCase):
                     expected_url,
                     headers={
                         "Authorization": "Bearer test_token",
-                        "Content-Type": "application/json",
+                        "Content - Type": "application / json",
                     },
                     json=self.payload,
                 )

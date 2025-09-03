@@ -1,36 +1,36 @@
-# 🔄 N2F Synchronization Tool
+﻿# ðŸ”„ N2F Synchronization Tool
 
-Outil de synchronisation entre Agresso et N2F pour la gestion des utilisateurs,
-projets, plaques et sous-posts.
+Outil de synchronisation entre Agresso et N2F pour la gestion des utilisateurs, projets,
+plaques et sous-posts.
 
-## 📋 Vue d'ensemble
+## ðŸ“‹ Vue d'ensemble
 
-Ce projet permet de synchroniser automatiquement les données entre le système
-Agresso et l'API N2F. Il gère la création, mise à jour et suppression d'entités
-de manière cohérente et traçable.
+Ce projet permet de synchroniser automatiquement les donnÃ©es entre le systÃ¨me Agresso et
+l'API N2F. Il gÃ¨re la crÃ©ation, mise Ã  jour et suppression d'entitÃ©s de maniÃ¨re
+cohÃ©rente et traÃ§able.
 
-### 🎯 Fonctionnalités principales
+### ðŸŽ¯ FonctionnalitÃ©s principales
 
-- ✅ **Synchronisation multi-scopes** : Users, Projects, Plates, Subposts
-- ✅ **Gestion d'erreur robuste** : Exceptions personnalisées avec contexte riche
-- ✅ **Architecture modulaire** : Classes abstraites pour extensibilité
-- ✅ **Logging détaillé** : Export des logs d'API avec métriques
-- ✅ **Configuration flexible** : Support dev/prod avec fichiers YAML
-- ✅ **Cache intelligent** : Optimisation des performances API
-- ✅ **Métriques avancées** : Monitoring des performances et statistiques
-- ✅ **Retry automatique** : Gestion intelligente des erreurs réseau
+- âœ… **Synchronisation multi-scopes** : Users, Projects, Plates, Subposts
+- âœ… **Gestion d'erreur robuste** : Exceptions personnalisÃ©es avec contexte riche
+- âœ… **Architecture modulaire** : Classes abstraites pour extensibilitÃ©
+- âœ… **Logging dÃ©taillÃ©** : Export des logs d'API avec mÃ©triques
+- âœ… **Configuration flexible** : Support dev/prod avec fichiers YAML
+- âœ… **Cache intelligent** : Optimisation des performances API
+- âœ… **MÃ©triques avancÃ©es** : Monitoring des performances et statistiques
+- âœ… **Retry automatique** : Gestion intelligente des erreurs rÃ©seau
 
-## 🚀 Installation et configuration
+## ðŸš€ Installation et configuration
 
-### Prérequis
+### PrÃ©requis
 
 - Python 3.13+
-- Accès aux bases de données Agresso
+- AccÃ¨s aux bases de donnÃ©es Agresso
 - Credentials N2F API
 
 ### Installation
 
-#### Option 1 : Installation automatique (Recommandée)
+#### Option 1 : Installation automatique (RecommandÃ©e)
 
 ```bash
 # Cloner le repository
@@ -40,7 +40,7 @@ cd n2f
 # Lancer le script de setup automatique
 setup.bat                    # Windows
 # ou
-./setup.sh                   # Linux/Mac (à créer)
+./setup.sh                   # Linux/Mac (Ã  crÃ©er)
 ```
 
 #### Option 2 : Installation manuelle
@@ -50,13 +50,13 @@ setup.bat                    # Windows
 git clone <repository-url>
 cd n2f
 
-# Créer un environnement virtuel
+# CrÃ©er un environnement virtuel
 python -m venv env
 source env/bin/activate  # Linux/Mac
 # ou
 env\Scripts\activate     # Windows
 
-# Installer les dépendances
+# Installer les dÃ©pendances
 pip install -r requirements.txt
 ```
 
@@ -64,9 +64,11 @@ pip install -r requirements.txt
 
 #### Configuration du PYTHONPATH
 
-Le projet nécessite l'accès au module `Iris` qui se trouve dans `D:\Users\kinnar\source\repos\common\Python\Packages`.
+Le projet nÃ©cessite l'accÃ¨s au module `Iris` qui se trouve dans
+`D:\Users\kinnar\source\repos\common\Python\Packages`.
 
-**Option 1 : Script automatique (Recommandée)**
+##### Option 1 : Script automatique (RecommandÃ©e)
+
 ```bash
 # Windows (CMD)
 set_env.bat
@@ -75,7 +77,8 @@ set_env.bat
 .\set_env.ps1
 ```
 
-**Option 2 : Configuration manuelle**
+##### Option 2 : Configuration manuelle
+
 ```bash
 # Windows (CMD)
 set PYTHONPATH=python;D:\Users\kinnar\source\repos\common\Python\Packages
@@ -93,7 +96,7 @@ cp dev.yaml.example dev.yaml
 cp prod.yaml.example prod.yaml
 ```
 
-2. **Configurer les paramètres :**
+1. **Configurer les paramÃ¨tres :**
 
 ```yaml
 # dev.yaml
@@ -110,15 +113,15 @@ api:
   sandbox: true
 ```
 
-## 🎯 Utilisation
+## ðŸŽ¯ Utilisation
 
-### Synchronisation complète
+### Synchronisation complÃ¨te
 
 ```bash
 # Synchroniser tous les scopes
 python python/sync-agresso-n2f.py --all
 
-# Synchroniser des scopes spécifiques
+# Synchroniser des scopes spÃ©cifiques
 python python/sync-agresso-n2f.py --scopes users projects
 
 # Synchroniser en mode production
@@ -131,21 +134,21 @@ python python/sync-agresso-n2f.py --config prod.yaml --scopes users
 python python/sync-agresso-n2f.py --help
 
 Options:
-  --config FILE          Fichier de configuration (dev.yaml par défaut)
-  --scopes SCOPE1,SCOPE2 Scopes à synchroniser
+  --config FILE          Fichier de configuration (dev.yaml par dÃ©faut)
+  --scopes SCOPE1,SCOPE2 Scopes Ã  synchroniser
   --all                  Synchroniser tous les scopes
   --clear-cache          Vider le cache avant synchronisation
   --invalidate-cache     Invalider le cache
   --verbose              Mode verbeux
 ```
 
-### Exemples d\'utilisation
+### Exemples d'utilisation
 
 ```bash
 # Synchronisation rapide des utilisateurs
 python python/sync-agresso-n2f.py --scopes users
 
-# Synchronisation complète avec cache vidé
+# Synchronisation complÃ¨te avec cache vidÃ©
 python python/sync-agresso-n2f.py --all --clear-cache
 
 # Synchronisation en production
@@ -154,19 +157,19 @@ python python/sync-agresso-n2f.py --config prod.yaml --scopes users,projects
 
 ### Scripts batch (Windows)
 
-Le projet inclut des scripts batch pour faciliter l\'utilisation :
+Le projet inclut des scripts batch pour faciliter l'utilisation :
 
 #### **setup.bat** - Installation automatique
 
 ```bash
-# Crée l\'environnement virtuel et installe les requirements
+# CrÃ©e l\'environnement virtuel et installe les requirements
 setup.bat
 ```
 
 #### **sync_n2f.bat** - Synchronisation avec gestion automatique
 
 ```bash
-# Lance la synchronisation avec vérification automatique des requirements
+# Lance la synchronisation avec vÃ©rification automatique des requirements
 sync_n2f.bat
 
 # Avec options
@@ -176,46 +179,46 @@ sync_n2f.bat --all --clear-cache
 
 **Avantages des scripts batch :**
 
-- ✅ **Vérification automatique** de l\'environnement virtuel
-- ✅ **Installation automatique** des requirements si manquants
-- ✅ **Gestion des erreurs** avec messages clairs
-- ✅ **Logs automatiques** avec horodatage
-- ✅ **Ouverture automatique** des logs en cas d\'erreur
+- âœ… **VÃ©rification automatique** de l'environnement virtuel
+- âœ… **Installation automatique** des requirements si manquants
+- âœ… **Gestion des erreurs** avec messages clairs
+- âœ… **Logs automatiques** avec horodatage
+- âœ… **Ouverture automatique** des logs en cas d'erreur
 
-## 🏗️ Architecture
+## ðŸ—ï¸ Architecture
 
 ### Structure du projet
 
 ```text
 n2f/
-├── python/
-│   ├── core/                   # Composants principaux
-│   │   ├── config.py           # Configuration centralisée
-│   │   ├── exceptions.py       # Hiérarchie d\'exceptions
-│   │   ├── orchestrator.py     # Orchestrator principal
-│   │   ├── cache.py            # Système de cache
-│   │   ├── metrics.py          # Métriques et monitoring
-│   │   └── retry.py            # Système de retry
-│   ├── business/
-│   │   └── process/            # Logique métier
-│   │       ├── base_synchronizer.py
-│   │       ├── user_synchronizer.py
-│   │       └── axe_synchronizer.py
-│   ├── n2f/                    # Client API N2F
-│   └── agresso/                # Accès base Agresso
-├── tests/                      # Tests unitaires
-├── scripts/                    # Scripts utilitaires
-├── docs/                       # Documentation
-├── dev.yaml                    # Configuration développement
-├── prod.yaml                   # Configuration production
-└── requirements.txt            # Dépendances Python
+â”œâ”€â”€ python/
+â”‚   â”œâ”€â”€ core/                   # Composants principaux
+â”‚   â”‚   â”œâ”€â”€ config.py           # Configuration centralisÃ©e
+â”‚   â”‚   â”œâ”€â”€ exceptions.py       # HiÃ©rarchie d\'exceptions
+â”‚   â”‚   â”œâ”€â”€ orchestrator.py     # Orchestrator principal
+â”‚   â”‚   â”œâ”€â”€ cache.py            # SystÃ¨me de cache
+â”‚   â”‚   â”œâ”€â”€ metrics.py          # MÃ©triques et monitoring
+â”‚   â”‚   â””â”€â”€ retry.py            # SystÃ¨me de retry
+â”‚   â”œâ”€â”€ business/
+â”‚   â”‚   â””â”€â”€ process/            # Logique mÃ©tier
+â”‚   â”‚       â”œâ”€â”€ base_synchronizer.py
+â”‚   â”‚       â”œâ”€â”€ user_synchronizer.py
+â”‚   â”‚       â””â”€â”€ axe_synchronizer.py
+â”‚   â”œâ”€â”€ n2f/                    # Client API N2F
+â”‚   â””â”€â”€ agresso/                # AccÃ¨s base Agresso
+â”œâ”€â”€ tests/                      # Tests unitaires
+â”œâ”€â”€ scripts/                    # Scripts utilitaires
+â”œâ”€â”€ docs/                       # Documentation
+â”œâ”€â”€ dev.yaml                    # Configuration dÃ©veloppement
+â”œâ”€â”€ prod.yaml                   # Configuration production
+â””â”€â”€ requirements.txt            # DÃ©pendances Python
 ```
 
 ### Composants principaux
 
 #### **EntitySynchronizer** (Classe abstraite)
 
-Classe de base pour toutes les synchronisations d\'entités :
+Classe de base pour toutes les synchronisations d'entitÃ©s :
 
 ```python
 class EntitySynchronizer(ABC):
@@ -231,7 +234,7 @@ class EntitySynchronizer(ABC):
 
 #### **SyncOrchestrator**
 
-Orchestrateur principal gérant l\'exécution des synchronisations :
+Orchestrateur principal gÃ©rant l'exÃ©cution des synchronisations :
 
 ```python
 class SyncOrchestrator:
@@ -241,7 +244,7 @@ class SyncOrchestrator:
 
 #### **AdvancedCache**
 
-Système de cache intelligent avec persistance :
+SystÃ¨me de cache intelligent avec persistance :
 
 ```python
 class AdvancedCache:
@@ -250,24 +253,24 @@ class AdvancedCache:
     def invalidate(self, pattern: str) -> None
 ```
 
-## 📊 Monitoring et métriques
+## ðŸ“Š Monitoring et mÃ©triques
 
-### Métriques collectées
+### MÃ©triques collectÃ©es
 
-- **Durée des opérations** : Temps d\'exécution par scope
-- **Taux de succès** : Pourcentage d\'opérations réussies
-- **Appels API** : Nombre et durée des appels à l\'API N2F
-- **Cache hits/misses** : Efficacité du cache
-- **Utilisation mémoire** : Consommation RAM par scope
+- **DurÃ©e des opÃ©rations** : Temps d'exÃ©cution par scope
+- **Taux de succÃ¨s** : Pourcentage d'opÃ©rations rÃ©ussies
+- **Appels API** : Nombre et durÃ©e des appels Ã  l'API N2F
+- **Cache hits/misses** : EfficacitÃ© du cache
+- **Utilisation mÃ©moire** : Consommation RAM par scope
 
-### Export des métriques
+### Export des mÃ©triques
 
 ```bash
-# Les métriques sont automatiquement exportées
+# Les mÃ©triques sont automatiquement exportÃ©es
 # Format : metrics_YYYYMMDD_HHMMSS.json
 ```
 
-### Exemple de métriques
+### Exemple de mÃ©triques
 
 ```json
 {
@@ -285,15 +288,15 @@ class AdvancedCache:
 }
 ```
 
-## 🧪 Tests
+## ðŸ§ª Tests
 
-### Exécution des tests
+### ExÃ©cution des tests
 
 ```bash
 # Tous les tests
 python tests/run_tests.py
 
-# Tests spécifiques
+# Tests spÃ©cifiques
 python tests/run_tests.py test_exceptions
 python tests/run_tests.py test_synchronizers
 
@@ -303,16 +306,16 @@ python tests/run_tests.py --list
 
 ### Couverture des tests
 
-- ✅ **Tests d\'exceptions** : Hiérarchie complète
-- 🔄 **Tests de synchronisation** : En cours
-- 🔄 **Tests de configuration** : En cours
-- ⏳ **Tests d\'intégration** : À implémenter
+- âœ… **Tests d'exceptions** : HiÃ©rarchie complÃ¨te
+- ðŸ”„ **Tests de synchronisation** : En cours
+- ðŸ”„ **Tests de configuration** : En cours
+- â³ **Tests d'intÃ©gration** : Ã€ implÃ©menter
 
-## 🔧 Développement
+## ðŸ”§ DÃ©veloppement
 
 ### Ajouter un nouveau scope
 
-1. **Créer le synchronizer :**
+1. **CrÃ©er le synchronizer :**
 
 ```python
 # python/business/process/new_entity_synchronizer.py
@@ -332,32 +335,32 @@ def synchronize_new_entities(context, sql_filename):
     synchronizer = NewEntitySynchronizer(context.n2f_client, context.sandbox, "new_entities")
     return synchronizer.synchronize(context, sql_filename)
 
-# Auto-découverte automatique
+# Auto-dÃ©couverte automatique
 ```
 
 ### Scripts utilitaires
 
 ```bash
-# Vérification Markdown
+# VÃ©rification Markdown
 python scripts/check_markdown.py
 
 # Correction automatique Markdown
 python scripts/fix_markdown.py
 ```
 
-## 📝 Logs et debugging
+## ðŸ“ Logs et debugging
 
 ### Niveaux de log
 
-- **INFO** : Opérations normales
-- **WARNING** : Problèmes non critiques
+- **INFO** : OpÃ©rations normales
+- **WARNING** : ProblÃ¨mes non critiques
 - **ERROR** : Erreurs de synchronisation
-- **DEBUG** : Informations détaillées
+- **DEBUG** : Informations dÃ©taillÃ©es
 
 ### Fichiers de log
 
 - `logs/sync_YYYYMMDD_HHMMSS.log` : Logs de synchronisation
-- `logs/api_logs_YYYYMMDD_HHMMSS.log.csv` : Logs détaillés API
+- `logs/api_logs_YYYYMMDD_HHMMSS.log.csv` : Logs dÃ©taillÃ©s API
 
 ### Mode debug
 
@@ -365,7 +368,7 @@ python scripts/fix_markdown.py
 python python/sync-agresso-n2f.py --verbose --scopes users
 ```
 
-## 🤝 Contribution
+## ðŸ¤ Contribution
 
 ### Standards de code
 
@@ -376,23 +379,23 @@ python python/sync-agresso-n2f.py --verbose --scopes users
 
 ### Workflow Git
 
-1. Créer une branche feature : `git checkout -b feature/nouvelle-fonctionnalite`
-2. Développer et tester
-3. Vérifier les fichiers Markdown : `python scripts/check_markdown.py`
-4. Créer une pull request
+1. CrÃ©er une branche feature : `git checkout -b feature/nouvelle-fonctionnalite`
+2. DÃ©velopper et tester
+3. VÃ©rifier les fichiers Markdown : `python scripts/check_markdown.py`
+4. CrÃ©er une pull request
 
-## 📄 Licence
+## ðŸ“„ Licence
 
-Ce projet est propriétaire et confidentiel.
+Ce projet est propriÃ©taire et confidentiel.
 
----
+______________________________________________________________________
 
-*Dernière mise à jour : 28 août 2025*
-*Version : 1.0*
+*DerniÃ¨re mise Ã  jour : 28 aoÃ»t 2025* *Version : 1.0*
 
 ## Pre-commit Hooks
 
 This project uses pre-commit hooks to ensure code quality:
+
 - **Black**: Automatic code formatting
 - **Trailing whitespace**: Removes trailing spaces
 - **End of file**: Ensures files end with newline
@@ -416,11 +419,13 @@ python -m pip install -e ".[dev]"
 python -m pip install -r requirements-dev.txt
 ```
 
-**Note**: After installing dev dependencies, run `pre-commit install` to set up Git hooks.
+**Note**: After installing dev dependencies, run `pre-commit install` to set up Git
+hooks.
 
 ### Pre-commit Hooks
 
 This project uses pre-commit hooks to ensure code quality:
+
 - **Black**: Automatic code formatting
 - **Trailing whitespace**: Removes trailing spaces
 - **End of file**: Ensures files end with newline

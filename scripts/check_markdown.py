@@ -1,92 +1,87 @@
 #!/usr/bin/env python3
 """
-Script pour vérifier automatiquement les erreurs de linting Markdown.
-À exécuter après chaque modification de fichiers .md pour s'assurer de la qualité.
+Script de vérification des fichiers Markdown.
+
+Ce script vérifie rapidement la qualité de tous les fichiers Markdown
+du projet sans les modifier.
 """
 
 import subprocess
 import sys
-import os
-import shutil
 from pathlib import Path
 
 
-def find_markdown_files():
-    """Trouve tous les fichiers Markdown du projet (excluant env/)."""
-    markdown_files = []
-
-    # Chercher dans le répertoire racine et les sous-répertoires
-    for root, dirs, files in os.walk("."):
-        # Ignorer le répertoire env/
-        if "env" in dirs:
-            dirs.remove("env")
-
-        for file in files:
-            if file.endswith(".md"):
-                file_path = os.path.join(root, file)
-                markdown_files.append(file_path)
-
-    return markdown_files
-
-
-def check_markdown_files():
-    """Vérifie les erreurs de linting dans tous les fichiers Markdown."""
-    print("🔍 Vérification des erreurs de linting Markdown")
-    print("=" * 50)
-
-    markdown_files = find_markdown_files()
-
-    if not markdown_files:
-        print("✅ Aucun fichier Markdown trouvé")
-        return True
-
-    print(f"📁 Fichiers Markdown trouvés : {len(markdown_files)}")
-    for file_path in markdown_files:
-        print(f"   - {file_path}")
-
-    print("\n🔍 Vérification en cours...")
-
-    # Vérifier si markdownlint est disponible
-    markdownlint_cmd = shutil.which("markdownlint")
-    if not markdownlint_cmd:
-        print("❌ markdownlint-cli n'est pas installé ou n'est pas dans le PATH.")
-        print("Installez-le avec : npm install -g markdownlint-cli")
-        return False
-
-    # Construire la commande markdownlint
-    cmd = [markdownlint_cmd] + markdown_files
-
+def check_markdown_file(file_path):
+    """Vérifie un fichier Markdown avec markdownlint."""
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+        result = subprocess.run(
+            f'markdownlint "{file_path}"',
+            shell=True,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
 
         if result.returncode == 0:
-            print("✅ Tous les fichiers Markdown passent la validation !")
+            print(f"✅ {file_path.name} - Aucun problème")
             return True
         else:
-            print("❌ Erreurs de linting détectées :")
-            print(result.stdout)
+            print(f"❌ {file_path.name} - Problèmes détectés:")
             if result.stderr:
-                print("Erreurs :", result.stderr)
+                print(f"   {result.stderr.strip()}")
             return False
-
     except Exception as e:
-        print(f"❌ Erreur lors de la vérification : {e}")
+        print(f"❌ {file_path.name} - Erreur: {e}")
         return False
 
 
 def main():
     """Fonction principale."""
-    success = check_markdown_files()
+    print("🔍 Vérification des fichiers Markdown")
+    print("=" * 50)
 
-    if not success:
-        print("\n💡 Conseils pour corriger les erreurs :")
-        print(
-            "   - Utilisez le script fix_all_markdown.py pour corriger automatiquement"
+    # Trouver tous les fichiers Markdown
+    project_root = Path(__file__).parent.parent
+    markdown_files = [
+        f
+        for f in project_root.rglob("*.md")
+        if not any(
+            part.startswith(".") or part in ["env", "venv", "__pycache__"]
+            for part in f.parts
         )
-        print("   - Ou corrigez manuellement selon les messages d'erreur")
-        sys.exit(1)
-    else:
+    ]
+
+    print(f"\n📁 {len(markdown_files)} fichiers Markdown trouvés")
+
+    if not markdown_files:
+        print("❌ Aucun fichier Markdown trouvé")
+        return
+
+    # Vérifier chaque fichier
+    print("\n🔍 Vérification en cours...")
+    print("-" * 50)
+
+    total_files = len(markdown_files)
+    valid_files = 0
+
+    for file in markdown_files:
+
+        if check_markdown_file(file):
+            valid_files += 1
+
+    # Résumé
+    print("\n" + "=" * 50)
+    print("📊 RÉSUMÉ")
+    print("=" * 50)
+    print(f"Total de fichiers: {total_files}")
+    print(f"Fichiers valides: {valid_files}")
+    print(f"Fichiers avec problèmes: {total_files - valid_files}")
+
+    if valid_files == total_files:
         print("\n🎉 Tous les fichiers Markdown sont conformes !")
+    else:
+        print(f"\n⚠️  {total_files - valid_files} fichier(s) ont des problèmes.")
+        print("   Exécutez 'python scripts/fix_markdown.py' pour les corriger.")
 
 
 if __name__ == "__main__":

@@ -41,8 +41,8 @@ class TestAgressoProcess(unittest.TestCase):
         self.sql_filename = "test_query.sql"
         self.test_query = "SELECT * FROM users WHERE active = 1"
 
-    @patch("agresso.process.get_from_cache")
-    @patch("agresso.process.set_in_cache")
+    @patch("agresso.process.cache_get")
+    @patch("agresso.process.cache_set")
     @patch("agresso.process.execute_query")
     @patch("agresso.process.IrisConnect")
     @patch("builtins.open", new_callable=mock_open, read_data="SELECT * FROM users")
@@ -79,8 +79,8 @@ class TestAgressoProcess(unittest.TestCase):
         mock_set_cache.assert_not_called()
         pd.testing.assert_frame_equal(result, self.test_df)
 
-    @patch("agresso.process.get_from_cache")
-    @patch("agresso.process.set_in_cache")
+    @patch("agresso.process.cache_get")
+    @patch("agresso.process.cache_set")
     @patch("agresso.process.execute_query")
     @patch("agresso.process.IrisConnect")
     @patch("builtins.open", new_callable=mock_open, read_data="SELECT * FROM users")
@@ -120,8 +120,8 @@ class TestAgressoProcess(unittest.TestCase):
         mock_set_cache.assert_called_once()
         pd.testing.assert_frame_equal(result, self.test_df)
 
-    @patch("agresso.process.get_from_cache")
-    @patch("agresso.process.set_in_cache")
+    @patch("agresso.process.cache_get")
+    @patch("agresso.process.cache_set")
     @patch("agresso.process.execute_query")
     @patch("agresso.process.IrisConnect")
     @patch("builtins.open", new_callable=mock_open, read_data="SELECT * FROM users")
@@ -160,8 +160,8 @@ class TestAgressoProcess(unittest.TestCase):
         mock_set_cache.assert_not_called()
         pd.testing.assert_frame_equal(result, self.test_df)
 
-    @patch("agresso.process.get_from_cache")
-    @patch("agresso.process.set_in_cache")
+    @patch("agresso.process.cache_get")
+    @patch("agresso.process.cache_set")
     @patch("agresso.process.execute_query")
     @patch("agresso.process.IrisConnect")
     @patch("builtins.open", new_callable=mock_open, read_data="SELECT * FROM users")
@@ -201,8 +201,8 @@ class TestAgressoProcess(unittest.TestCase):
         )
         pd.testing.assert_frame_equal(result, self.test_df)
 
-    @patch("agresso.process.get_from_cache")
-    @patch("agresso.process.set_in_cache")
+    @patch("agresso.process.cache_get")
+    @patch("agresso.process.cache_set")
     @patch("agresso.process.execute_query")
     @patch("agresso.process.IrisConnect")
     @patch("builtins.open", new_callable=mock_open, read_data="SELECT * FROM users")
@@ -242,8 +242,8 @@ class TestAgressoProcess(unittest.TestCase):
         )
         pd.testing.assert_frame_equal(result, self.test_df)
 
-    @patch("agresso.process.get_from_cache")
-    @patch("agresso.process.set_in_cache")
+    @patch("agresso.process.cache_get")
+    @patch("agresso.process.cache_set")
     @patch("agresso.process.execute_query")
     @patch("agresso.process.IrisConnect")
     @patch("builtins.open", new_callable=mock_open, read_data="SELECT * FROM users")
@@ -288,8 +288,8 @@ class TestAgressoProcess(unittest.TestCase):
         mock_execute_query.assert_called_once_with(mock_iris_instance, complex_query)
         pd.testing.assert_frame_equal(result, self.test_df)
 
-    @patch("agresso.process.get_from_cache")
-    @patch("agresso.process.set_in_cache")
+    @patch("agresso.process.cache_get")
+    @patch("agresso.process.cache_set")
     @patch("agresso.process.execute_query")
     @patch("agresso.process.IrisConnect")
     def test_select_file_not_found(
@@ -317,8 +317,8 @@ class TestAgressoProcess(unittest.TestCase):
         mock_iris_connect.assert_not_called()
         mock_execute_query.assert_not_called()
 
-    @patch("agresso.process.get_from_cache")
-    @patch("agresso.process.set_in_cache")
+    @patch("agresso.process.cache_get")
+    @patch("agresso.process.cache_set")
     @patch("agresso.process.execute_query")
     @patch("agresso.process.IrisConnect")
     @patch("builtins.open", new_callable=mock_open, read_data="SELECT * FROM users")
@@ -354,8 +354,8 @@ class TestAgressoProcess(unittest.TestCase):
         mock_set_cache.assert_called_once()
         pd.testing.assert_frame_equal(result, empty_df)
 
-    @patch("agresso.process.get_from_cache")
-    @patch("agresso.process.set_in_cache")
+    @patch("agresso.process.cache_get")
+    @patch("agresso.process.cache_set")
     @patch("agresso.process.execute_query")
     @patch("agresso.process.IrisConnect")
     @patch("builtins.open", new_callable=mock_open, read_data="SELECT * FROM users")

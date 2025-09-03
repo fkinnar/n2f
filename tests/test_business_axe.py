@@ -36,13 +36,14 @@ class TestBusinessAxe(unittest.TestCase):
         # Mock du contexte
         self.mock_context = Mock(spec=SyncContext)
         self.mock_context.get_config_value.return_value = {}
+        self.mock_context.args = self.mock_args
 
         # Mock du client N2F
         self.mock_n2f_client = Mock()
 
         # Mock des configurations
         self.mock_agresso_config = {"database": "agresso_db"}
-        self.mock_n2f_config = {"api": "n2f_api"}
+        self.mock_n2f_config = {"api": "n2f_api", "sandbox": True}
 
         # DataFrames de test
         self.df_agresso_axes = pd.DataFrame(
@@ -223,7 +224,9 @@ class TestBusinessAxe(unittest.TestCase):
         mock_create_axes.assert_called_once()
         mock_update_axes.assert_called_once()
         mock_delete_axes.assert_called_once()
-        mock_reporting.assert_called_once()
+        self.assertEqual(
+            mock_reporting.call_count, 3
+        )  # Appelé 3 fois pour create, update, delete
         self.assertEqual(len(result), 3)
 
     @patch("business.process.axe.create_n2f_axes")
@@ -260,7 +263,7 @@ class TestBusinessAxe(unittest.TestCase):
         mock_create_axes.assert_not_called()
         mock_update_axes.assert_not_called()
         mock_delete_axes.assert_not_called()
-        mock_reporting.assert_called_once()
+        mock_reporting.assert_not_called()  # Aucune opération = aucun appel reporting
         self.assertEqual(len(result), 0)
 
 

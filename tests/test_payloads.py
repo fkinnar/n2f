@@ -255,8 +255,8 @@ class TestPayloads(unittest.TestCase):
         self.assertEqual(nl_name[COL_VALUE], "Test Project")
 
         # Vérification des dates
-        self.assertEqual(payload[N2F_COL_VALIDITY_DATE_FROM], "2025 - 01-01T00:00:00Z")
-        self.assertEqual(payload[N2F_COL_VALIDITY_DATE_TO], "2025 - 12-31T00:00:00Z")
+        self.assertEqual(payload[N2F_COL_VALIDITY_DATE_FROM], "2025-01-01T00:00:00Z")
+        self.assertEqual(payload[N2F_COL_VALIDITY_DATE_TO], "2025-12-31T00:00:00Z")
 
     def test_create_project_upsert_payload_with_missing_dates(self):
         """Test la création d'un payload projet avec des dates manquantes."""

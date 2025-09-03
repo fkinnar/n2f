@@ -1,10 +1,10 @@
-# Formatage du code avec Black
+﻿# Formatage du code avec Black
 
-Ce projet utilise [Black](https://black.readthedocs.io/) pour maintenir un formatage de code Python cohérent et automatique.
+Ce projet utilise [Black](https://black.readthedocs.io/) pour maintenir un formatage de code Python cohÃ©rent et automatique.
 
 ## Qu'est-ce que Black ?
 
-Black est un formateur de code Python qui applique automatiquement un style de code cohérent. Il suit les recommandations PEP 8 et d'autres conventions Python, en se concentrant sur la lisibilité et la cohérence.
+Black est un formateur de code Python qui applique automatiquement un style de code cohÃ©rent. Il suit les recommandations PEP 8 et d'autres conventions Python, en se concentrant sur la lisibilitÃ© et la cohÃ©rence.
 
 ## Configuration
 
@@ -46,9 +46,9 @@ Pour formater tous les fichiers Python du projet :
 black src/ tests/ python/ scripts/
 ```
 
-### Vérification du formatage
+### VÃ©rification du formatage
 
-Pour vérifier que tous les fichiers sont correctement formatés sans les modifier :
+Pour vÃ©rifier que tous les fichiers sont correctement formatÃ©s sans les modifier :
 
 ```bash
 black --check src/ tests/ python/ scripts/
@@ -56,19 +56,19 @@ black --check src/ tests/ python/ scripts/
 
 ### Script de formatage
 
-Le projet inclut un script de formatage personnalisé :
+Le projet inclut un script de formatage personnalisÃ© :
 
 ```bash
 # Formater le code
 python scripts/format_code.py
 
-# Vérifier le formatage
+# VÃ©rifier le formatage
 python scripts/format_code.py --check
 ```
 
-## Intégration avec pre-commit
+## IntÃ©gration avec pre-commit
 
-Le projet est configuré avec pre-commit pour automatiser le formatage lors des commits. Pour l'installer :
+Le projet est configurÃ© avec pre-commit pour automatiser le formatage lors des commits. Pour l'installer :
 
 ```bash
 # Installer pre-commit
@@ -78,14 +78,14 @@ pip install pre-commit
 pre-commit install
 ```
 
-Après l'installation, Black s'exécutera automatiquement sur tous les fichiers Python modifiés lors de chaque commit.
+AprÃ¨s l'installation, Black s'exÃ©cutera automatiquement sur tous les fichiers Python modifiÃ©s lors de chaque commit.
 
-## Règles de formatage
+## RÃ¨gles de formatage
 
-Black applique automatiquement les règles suivantes :
+Black applique automatiquement les rÃ¨gles suivantes :
 
-- **Longueur de ligne** : 88 caractères (conforme à PEP 8)
-- **Guillemets** : Double guillemets pour les chaînes
+- **Longueur de ligne** : 88 caractÃ¨res (conforme Ã  PEP 8)
+- **Guillemets** : Double guillemets pour les chaÃ®nes
 - **Espaces** : Suppression des espaces en fin de ligne
 - **Virgules** : Ajout automatique des virgules finales
 - **Imports** : Tri et formatage automatique des imports
@@ -93,38 +93,41 @@ Black applique automatiquement les règles suivantes :
 
 ## Avantages
 
-- **Cohérence** : Tous les développeurs utilisent le même style
-- **Lisibilité** : Code plus facile à lire et maintenir
+- **CohÃ©rence** : Tous les dÃ©veloppeurs utilisent le mÃªme style
+- **LisibilitÃ©** : Code plus facile Ã  lire et maintenir
 - **Automatisation** : Pas besoin de penser au formatage
-- **Intégration** : Fonctionne avec la plupart des éditeurs et IDEs
+- **IntÃ©gration** : Fonctionne avec la plupart des Ã©diteurs et IDEs
 - **Standards** : Respecte les conventions Python officielles
 
-## Résolution des conflits
+## RÃ©solution des conflits
 
-Si Black modifie un fichier et que vous avez des modifications non commitées, vous pouvez :
+Si Black modifie un fichier et que vous avez des modifications non commitÃ©es, vous pouvez :
 
-1. **Accepter les changements de Black** (recommandé)
+1. **Accepter les changements de Black** (recommandÃ©)
 2. **Reformater manuellement** avec `black <fichier>`
-3. **Utiliser l'option `--skip-string-normalization`** si nécessaire
+3. **Utiliser l'option `--skip-string-normalization`** si nÃ©cessaire
 
-## Support des éditeurs
+## Support des Ã©diteurs
 
 ### VS Code
-Installez l'extension Python et configurez Black comme formateur par défaut.
+
+Installez l'extension Python et configurez Black comme formateur par dÃ©faut.
 
 ### PyCharm
-Configurez Black comme formateur externe dans les paramètres.
+
+Configurez Black comme formateur externe dans les paramÃ¨tres.
 
 ### Vim/Neovim
+
 Utilisez des plugins comme `black.vim` ou `ale`.
 
 ## Maintenance
 
 Pour maintenir le formatage du projet :
 
-1. **Avant chaque commit** : Black s'exécute automatiquement
-2. **Régulièrement** : Exécutez `black --check` pour vérifier
-3. **CI/CD** : Intégrez Black dans votre pipeline de build
+1. **Avant chaque commit** : Black s'exÃ©cute automatiquement
+2. **RÃ©guliÃ¨rement** : ExÃ©cutez `black --check` pour vÃ©rifier
+3. **CI/CD** : IntÃ©grez Black dans votre pipeline de build
 
 ## Ressources
 
