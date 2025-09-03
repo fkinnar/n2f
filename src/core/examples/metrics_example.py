@@ -29,7 +29,7 @@ def simulate_sync_operation(
     records: int = 100,
 ) -> None:
     """Simule une opération de synchronisation."""
-    print(f"🔄 Démarrage {action} pour {scope}...")
+    print(f"[SYNC] Démarrage {action} pour {scope}...")
 
     # Démarrage du suivi
     metrics = start_operation(scope, action)
@@ -40,9 +40,9 @@ def simulate_sync_operation(
     # Simulation d'erreur aléatoire
     if not success:
         error_message = f"Erreur simulée pour {scope} - {action}"
-        print(f"❌ {error_message}")
+        print(f"[ERROR] {error_message}")
     else:
-        print(f"✅ {action} terminé pour {scope} ({records} enregistrements)")
+        print(f"[OK] {action} terminé pour {scope} ({records} enregistrements)")
 
     # Enregistrement de l'utilisation mémoire simulée
     memory_usage = random.uniform(10.0, 50.0)
@@ -103,7 +103,7 @@ def example_detailed_metrics() -> None:
 
     # Export des métriques
     output_path = export_metrics()
-    print(f"\n📊 Métriques exportées vers: {output_path}")
+    print(f"\n[INFO] Métriques exportées vers: {output_path}")
 
 
 def example_performance_monitoring() -> None:
@@ -118,7 +118,7 @@ def example_performance_monitoring() -> None:
         scope = f"batch_{i + 1}"
         action = "sync"
 
-        print(f"\n📊 Monitoring batch {i + 1}...")
+        print(f"\n[INFO] Monitoring batch {i + 1}...")
 
         # Démarrage avec métriques
         op_metrics = start_operation(scope, action)
@@ -158,7 +158,7 @@ def example_error_tracking() -> None:
     ]
 
     for scope, action, error_msg in error_scenarios:
-        print(f"🔄 Test d'erreur: {action} pour {scope}")
+        print(f"[SYNC] Test d'erreur: {action} pour {scope}")
 
         metrics = start_operation(scope, action)
 
@@ -199,7 +199,7 @@ def example_export_and_analysis() -> None:
 
     # Export des métriques
     output_path = export_metrics(Path("example_metrics.json"))
-    print(f"📊 Métriques exportées vers: {output_path}")
+    print(f"[INFO] Métriques exportées vers: {output_path}")
 
     # Affichage du résumé
     print_summary()
@@ -208,7 +208,7 @@ def example_export_and_analysis() -> None:
     metrics = get_metrics()
     summary = metrics.get_summary()
 
-    print("\n📈 ANALYSE DÉTAILLÉE:")
+    print("\n[ANALYSIS] ANALYSE DÉTAILLÉE:")
     print(f"   • Scopes traités: {len(summary['operations_by_scope'])}")
     print(f"   • Actions effectuées: {len(summary['operations_by_action'])}")
     print(
@@ -235,7 +235,7 @@ def example_memory_monitoring() -> None:
         else:
             memory_usage = 80.0 - (i - 4) * 15.0  # Décroissance
 
-        print(f"🔄 {action} pour {scope} (mémoire: {memory_usage:.1f}MB)")
+        print(f"[SYNC] {action} pour {scope} (mémoire: {memory_usage:.1f}MB)")
 
         metrics = start_operation(scope, action)
         time.sleep(0.5)
@@ -254,7 +254,7 @@ def example_memory_monitoring() -> None:
 
     # Affichage du résumé avec focus mémoire
     summary = get_metrics().get_summary()
-    print("\n💾 ANALYSE MÉMOIRE:")
+    print("\n[MEMORY] ANALYSE MÉMOIRE:")
     print(f"   • Pic d'utilisation: {summary['memory']['peak_usage_mb']:.1f}MB")
     print(f"   • Utilisation moyenne: {summary['memory']['average_usage_mb']:.1f}MB")
     print(f"   • Échantillons mémoire: {summary['memory']['memory_samples']}")
