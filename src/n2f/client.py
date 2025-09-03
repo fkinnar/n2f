@@ -3,7 +3,7 @@ import time
 from typing import List, Any
 
 import n2f
-from core import SyncContext, get_from_cache, set_in_cache
+from core import SyncContext, cache_get, cache_set
 from n2f.api.token import get_access_token
 from n2f.api_result import ApiResult
 
@@ -113,7 +113,7 @@ class N2fApiClient:
         """
         cache_key_args = (self.base_url, self.client_id, self.simulate)
         if use_cache:
-            cached = get_from_cache("get_companies", *cache_key_args)
+            cached = cache_get("get_companies", *cache_key_args)
             if cached is not None:
                 return cached
 
@@ -134,7 +134,7 @@ class N2fApiClient:
         result = pd.concat(all_companies_list, ignore_index=True) if all_companies_list else pd.DataFrame()
 
         if use_cache:
-            set_in_cache(result, "get_companies", *cache_key_args)
+            cache_set(result, "get_companies", *cache_key_args)
 
         return result.copy(deep=True)
 
@@ -142,7 +142,7 @@ class N2fApiClient:
         """Récupère les rôles et les met en cache."""
         cache_key_args = (self.base_url, self.client_id, self.simulate)
         if use_cache:
-            cached = get_from_cache("get_roles", *cache_key_args)
+            cached = cache_get("get_roles", *cache_key_args)
             if cached is not None:
                 return cached
 
@@ -161,7 +161,7 @@ class N2fApiClient:
         result = pd.DataFrame(roles_data)
 
         if use_cache:
-            set_in_cache(result, "get_roles", *cache_key_args)
+            cache_set(result, "get_roles", *cache_key_args)
 
         return result.copy(deep=True)
 
@@ -169,7 +169,7 @@ class N2fApiClient:
         """Récupère les profils utilisateurs et les met en cache."""
         cache_key_args = (self.base_url, self.client_id, self.simulate)
         if use_cache:
-            cached = get_from_cache("get_userprofiles", *cache_key_args)
+            cached = cache_get("get_userprofiles", *cache_key_args)
             if cached is not None:
                 return cached
 
@@ -187,7 +187,7 @@ class N2fApiClient:
         result = pd.DataFrame(profiles_data)
 
         if use_cache:
-            set_in_cache(result, "get_userprofiles", *cache_key_args)
+            cache_set(result, "get_userprofiles", *cache_key_args)
 
         return result.copy(deep=True)
 
@@ -195,7 +195,7 @@ class N2fApiClient:
         """Récupère tous les utilisateurs (gère la pagination et le cache)."""
         cache_key_args = (self.base_url, self.client_id, self.simulate)
         if use_cache:
-            cached = get_from_cache("get_users", *cache_key_args)
+            cached = cache_get("get_users", *cache_key_args)
             if cached is not None:
                 return cached
 
@@ -216,7 +216,7 @@ class N2fApiClient:
         result = pd.concat(all_users_list, ignore_index=True) if all_users_list else pd.DataFrame()
 
         if use_cache:
-            set_in_cache(result, "get_users", *cache_key_args)
+            cache_set(result, "get_users", *cache_key_args)
 
         return result.copy(deep=True)
 
@@ -338,7 +338,7 @@ class N2fApiClient:
         """Récupère les axes personnalisés pour une société."""
         cache_key_args = (self.base_url, self.client_id, company_id, self.simulate)
         if use_cache:
-            cached = get_from_cache(f"get_custom_axes_{company_id}", *cache_key_args)
+            cached = cache_get(f"get_custom_axes_{company_id}", *cache_key_args)
             if cached is not None:
                 return cached
 
@@ -357,7 +357,7 @@ class N2fApiClient:
         result = pd.DataFrame(axes_data)
 
         if use_cache:
-            set_in_cache(result, f"get_custom_axes_{company_id}", *cache_key_args)
+            cache_set(result, f"get_custom_axes_{company_id}", *cache_key_args)
 
         return result.copy(deep=True)
 
@@ -365,7 +365,7 @@ class N2fApiClient:
         """Récupère les valeurs d'un axe pour une société (gère pagination et cache)."""
         cache_key_args = (self.base_url, self.client_id, company_id, axe_id, self.simulate)
         if use_cache:
-            cached = get_from_cache(f"get_axe_values_{axe_id}", *cache_key_args)
+            cached = cache_get(f"get_axe_values_{axe_id}", *cache_key_args)
             if cached is not None:
                 return cached
 
@@ -398,7 +398,7 @@ class N2fApiClient:
         result = pd.concat(all_values_list, ignore_index=True) if all_values_list else pd.DataFrame()
 
         if use_cache:
-            set_in_cache(result, f"get_axe_values_{axe_id}", *cache_key_args)
+            cache_set(result, f"get_axe_values_{axe_id}", *cache_key_args)
 
         return result.copy(deep=True)
 

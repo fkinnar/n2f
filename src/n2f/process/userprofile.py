@@ -1,7 +1,7 @@
 import pandas as pd
 
 from n2f.api.userprofile import get_userprofiles as get_userprofiles_api
-from core import get_from_cache, set_in_cache
+from core import cache_get, cache_set
 
 
 def get_userprofiles(
@@ -15,7 +15,7 @@ def get_userprofiles(
     Récupère les profils d'utilisateurs depuis l'API N2F et retourne un DataFrame.
     """
     if cache:
-        cached = get_from_cache("get_userprofiles", base_url, client_id, simulate)
+        cached = cache_get("get_userprofiles", base_url, client_id, simulate)
         if cached is not None:
             return cached
 
@@ -27,5 +27,5 @@ def get_userprofiles(
     )
     result = pd.DataFrame(profiles)
     if cache:
-        set_in_cache(result, "get_userprofiles", base_url, client_id, simulate)
+        cache_set(result, "get_userprofiles", base_url, client_id, simulate)
     return result.copy(deep=True)

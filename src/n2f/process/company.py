@@ -2,7 +2,7 @@ import pandas as pd
 from typing import List
 
 from n2f.api.company import get_companies as get_companies_api
-from core import get_from_cache, set_in_cache
+from core import cache_get, cache_set
 
 
 def get_companies(
@@ -19,7 +19,7 @@ def get_companies(
     """
 
     if cache:
-        cached = get_from_cache("get_companies", base_url, client_id, simulate)
+        cached = cache_get("get_companies", base_url, client_id, simulate)
         if cached is not None:
             return cached
 
@@ -52,5 +52,5 @@ def get_companies(
         result = pd.DataFrame()
 
     if cache:
-        set_in_cache(result, "get_companies", base_url, client_id, simulate)
+        cache_set(result, "get_companies", base_url, client_id, simulate)
     return result.copy(deep=True)

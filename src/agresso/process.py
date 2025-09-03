@@ -3,7 +3,7 @@ import pandas as pd
 
 from Iris.Database.IrisConnect import IrisConnect
 from agresso.database import execute_query
-from core import get_from_cache, set_in_cache
+from core import cache_get, cache_set
 
 
 def select(
@@ -27,7 +27,7 @@ def select(
         query = f.read()
 
     if cache:
-        cached = get_from_cache("agresso_select", sql_file, prod, db_user, query)
+        cached = cache_get("agresso_select", sql_file, prod, db_user, query)
         if cached is not None:
             return cached
 
@@ -44,6 +44,6 @@ def select(
     df = execute_query(db, query)
 
     if cache:
-        set_in_cache(df, "agresso_select", sql_file, prod, db_user, query)
+        cache_set(df, "agresso_select", sql_file, prod, db_user, query)
 
     return df

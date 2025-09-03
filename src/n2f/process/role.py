@@ -1,7 +1,7 @@
 import pandas as pd
 
 from n2f.api.role import get_roles as get_roles_api
-from core import get_from_cache, set_in_cache
+from core import cache_get, cache_set
 
 
 def get_roles(
@@ -15,7 +15,7 @@ def get_roles(
     Récupère les rôles depuis l'API N2F et retourne un DataFrame.
     """
     if cache:
-        cached = get_from_cache("get_roles", base_url, client_id, simulate)
+        cached = cache_get("get_roles", base_url, client_id, simulate)
         if cached is not None:
             return cached
 
@@ -27,5 +27,5 @@ def get_roles(
     )
     result = pd.DataFrame(roles)
     if cache:
-        set_in_cache(result, "get_roles", base_url, client_id, simulate)
+        cache_set(result, "get_roles", base_url, client_id, simulate)
     return result.copy(deep=True)

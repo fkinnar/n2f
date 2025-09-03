@@ -5,7 +5,7 @@ from n2f.api.customaxe import (
     get_customaxes as get_customaxes_api,
     get_customaxes_values as get_customaxes_values_api
 )
-from core import get_from_cache, set_in_cache
+from core import cache_get, cache_set
 
 
 def get_customaxes(
@@ -21,7 +21,7 @@ def get_customaxes(
     La pagination est gérée automatiquement.
     """
     if cache:
-        cached = get_from_cache("get_customaxes", base_url, client_id, company_id, simulate)
+        cached = cache_get("get_customaxes", base_url, client_id, company_id, simulate)
         if cached is not None:
             return cached
 
@@ -55,7 +55,7 @@ def get_customaxes(
         result = pd.DataFrame()
 
     if cache:
-        set_in_cache(result, "get_customaxes", base_url, client_id, company_id, simulate)
+        cache_set(result, "get_customaxes", base_url, client_id, company_id, simulate)
     return result.copy(deep=True)
 
 
@@ -73,7 +73,7 @@ def get_customaxes_values(
     La pagination est gérée automatiquement.
     """
     if cache:
-        cached = get_from_cache("get_customaxes_values", base_url, client_id, company_id, axe_id, simulate)
+        cached = cache_get("get_customaxes_values", base_url, client_id, company_id, axe_id, simulate)
         if cached is not None:
             return cached
 
@@ -108,5 +108,5 @@ def get_customaxes_values(
         result = pd.DataFrame()
 
     if cache:
-        set_in_cache(result, "get_customaxes_values", base_url, client_id, company_id, axe_id, simulate)
+        cache_set(result, "get_customaxes_values", base_url, client_id, company_id, axe_id, simulate)
     return result.copy(deep=True)
