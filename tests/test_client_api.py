@@ -9,6 +9,7 @@ import json
 import sys
 import os
 from datetime import datetime
+from typing import Dict, List, Any
 
 from n2f.client import N2fApiClient
 from n2f.api_result import ApiResult
@@ -17,15 +18,15 @@ from n2f.api_result import ApiResult
 class TestN2fApiClient(unittest.TestCase):
     """Tests unitaires pour N2fApiClient."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Configure l'environnement de test."""
         # Mock du contexte
-        self.mock_context = Mock(spec=SyncContext)
+        self.mock_context: Mock = Mock(spec=SyncContext)
         self.mock_context.client_id = "test_client_id"
         self.mock_context.client_secret = "test_client_secret"
 
         # Mock de la configuration N2F
-        self.mock_n2f_config = Mock()
+        self.mock_n2f_config: Mock = Mock()
         self.mock_n2f_config.base_urls = "https://api.n2f.test"
         self.mock_n2f_config.simulate = False
 
@@ -33,9 +34,9 @@ class TestN2fApiClient(unittest.TestCase):
         self.mock_context.get_config_value.return_value = self.mock_n2f_config
 
         # Création du client
-        self.client = N2fApiClient(self.mock_context)
+        self.client: N2fApiClient = N2fApiClient(self.mock_context)
 
-    def test_init_with_valid_context(self):
+    def test_init_with_valid_context(self) -> None:
         """Test l'initialisation avec un contexte valide."""
         self.assertEqual(self.client.base_url, "https://api.n2f.test")
         self.assertEqual(self.client.client_id, "test_client_id")
@@ -43,28 +44,28 @@ class TestN2fApiClient(unittest.TestCase):
         self.assertFalse(self.client.simulate)
         self.assertIsNone(self.client._access_token)
 
-    def test_init_with_simulation_mode(self):
+    def test_init_with_simulation_mode(self) -> None:
         """Test l'initialisation en mode simulation."""
         self.mock_n2f_config.simulate = True
-        client = N2fApiClient(self.mock_context)
+        client: N2fApiClient = N2fApiClient(self.mock_context)
         self.assertTrue(client.simulate)
 
-    def test_init_with_dict_config_format(self):
+    def test_init_with_dict_config_format(self) -> None:
         """Test l'initialisation avec l'ancien format de configuration (dict)."""
         # Mock de l'ancien format
-        dict_config = {"base_urls": "https://api.n2f.old", "simulate": True}
+        dict_config: dict = {"base_urls": "https://api.n2f.old", "simulate": True}
         self.mock_context.get_config_value.return_value = dict_config
 
-        client = N2fApiClient(self.mock_context)
+        client: N2fApiClient = N2fApiClient(self.mock_context)
         self.assertEqual(client.base_url, "https://api.n2f.old")
         self.assertTrue(client.simulate)
 
     @patch("n2f.client.get_access_token")
-    def test_get_token_success(self, mock_get_token):
+    def test_get_token_success(self, mock_get_token: Mock) -> None:
         """Test la récupération réussie d'un token."""
         mock_get_token.return_value = ("test_token", "2025-12-31T23:59:59Z")
 
-        token = self.client._get_token()
+        token: str = self.client._get_token()
 
         self.assertEqual(token, "test_token")
         mock_get_token.assert_called_once_with(
@@ -75,26 +76,26 @@ class TestN2fApiClient(unittest.TestCase):
         )
 
     @patch("n2f.client.get_access_token")
-    def test_get_token_cached(self, mock_get_token):
+    def test_get_token_cached(self, mock_get_token: Mock) -> None:
         """Test que le token est mis en cache après la première récupération."""
         mock_get_token.return_value = ("test_token", "2025-12-31T23:59:59Z")
 
         # Premier appel
-        token1 = self.client._get_token()
+        token1: str = self.client._get_token()
         # Deuxième appel
-        token2 = self.client._get_token()
+        token2: str = self.client._get_token()
 
         self.assertEqual(token1, token2)
         # get_access_token ne doit être appelé qu'une seule fois
         mock_get_token.assert_called_once()
 
     @patch("n2f.client.get_access_token")
-    def test_get_token_simulation_mode(self, mock_get_token):
+    def test_get_token_simulation_mode(self, mock_get_token: Mock) -> None:
         """Test la récupération de token en mode simulation."""
         self.client.simulate = True
         mock_get_token.return_value = ("", "")
 
-        token = self.client._get_token()
+        token: str = self.client._get_token()
 
         self.assertEqual(token, "")
         mock_get_token.assert_called_once_with(
@@ -106,13 +107,13 @@ class TestN2fApiClient(unittest.TestCase):
 
     @patch("n2f.client.n2f.get_session_get")
     @patch("n2f.client.get_access_token")
-    def test_request_success(self, mock_get_token, mock_session):
+    def test_request_success(self, mock_get_token: Mock, mock_session: Mock) -> None:
         """Test une requête API réussie."""
         # Mock du token
         mock_get_token.return_value = ("test_token", "2025-12-31T23:59:59Z")
 
         # Mock de la réponse
-        mock_response = Mock()
+        mock_response: Mock = Mock()
         mock_response.json.return_value = {
             "response": {
                 "data": [
@@ -124,7 +125,7 @@ class TestN2fApiClient(unittest.TestCase):
         mock_response.raise_for_status.return_value = None
         mock_session.return_value.get.return_value = mock_response
 
-        result = self.client._request("users", 0, 100)
+        result: List[Dict[str, str]] = self.client._request("users", 0, 100)
 
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0]["id"], "1")
@@ -139,11 +140,13 @@ class TestN2fApiClient(unittest.TestCase):
 
     @patch("n2f.client.n2f.get_session_get")
     @patch("n2f.client.get_access_token")
-    def test_request_simulation_mode(self, mock_get_token, mock_session):
+    def test_request_simulation_mode(
+        self, mock_get_token: Mock, mock_session: Mock
+    ) -> None:
         """Test une requête en mode simulation."""
         self.client.simulate = True
 
-        result = self.client._request("users", 0, 100)
+        result: List[Dict[str, str]] = self.client._request("users", 0, 100)
 
         self.assertEqual(result, [])
         # Aucun appel API ne doit être fait en mode simulation
@@ -151,12 +154,12 @@ class TestN2fApiClient(unittest.TestCase):
 
     @patch("n2f.client.n2f.get_session_get")
     @patch("n2f.client.get_access_token")
-    def test_request_http_error(self, mock_get_token, mock_session):
+    def test_request_http_error(self, mock_get_token: Mock, mock_session: Mock) -> None:
         """Test la gestion d'erreur HTTP."""
         mock_get_token.return_value = ("test_token", "2025-12-31T23:59:59Z")
 
         # Mock d'une erreur HTTP
-        mock_response = Mock()
+        mock_response: Mock = Mock()
         mock_response.raise_for_status.side_effect = Exception("HTTP Error")
         mock_session.return_value.get.return_value = mock_response
 

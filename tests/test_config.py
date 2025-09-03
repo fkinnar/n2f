@@ -19,6 +19,7 @@ import yaml
 from pathlib import Path
 import sys
 import os
+from typing import Dict, List, Any
 
 # Ajout du chemin du projet pour les imports
 from core.config import (
@@ -35,18 +36,18 @@ from core.registry import SyncRegistry, RegistryEntry
 class TestSyncConfig(unittest.TestCase):
     """Tests pour la classe SyncConfig."""
 
-    def test_sync_config_creation(self):
+    def test_sync_config_creation(self) -> None:
         """Test de création d'une configuration de synchronisation."""
-        db_config = DatabaseConfig(
+        db_config: DatabaseConfig = DatabaseConfig(
             prod=False,
             sql_path="test_sql",
             sql_filename_users="test_users.sql",
             sql_filename_customaxes="test_axes.sql",
         )
-        api_config = ApiConfig(
+        api_config: ApiConfig = ApiConfig(
             base_urls="https://test.n2f.com/api/", simulate=True, sandbox=True
         )
-        cache_config = CacheConfig(
+        cache_config: CacheConfig = CacheConfig(
             enabled=True,
             cache_dir="test_cache",
             max_size_mb=50,
@@ -54,19 +55,21 @@ class TestSyncConfig(unittest.TestCase):
             persist_cache=False,
         )
 
-        config = SyncConfig(database=db_config, api=api_config, cache=cache_config)
+        config: SyncConfig = SyncConfig(
+            database=db_config, api=api_config, cache=cache_config
+        )
 
         self.assertEqual(config.database.prod, False)
         self.assertEqual(config.database.sql_path, "test_sql")
         self.assertEqual(config.api.base_urls, "https://test.n2f.com/api/")
         self.assertEqual(config.cache.max_size_mb, 50)
 
-    def test_sync_config_defaults(self):
+    def test_sync_config_defaults(self) -> None:
         """Test des valeurs par défaut de SyncConfig."""
-        db_config = DatabaseConfig()
-        api_config = ApiConfig()
+        db_config: DatabaseConfig = DatabaseConfig()
+        api_config: ApiConfig = ApiConfig()
 
-        config = SyncConfig(database=db_config, api=api_config)
+        config: SyncConfig = SyncConfig(database=db_config, api=api_config)
 
         # Vérification des valeurs par défaut
         self.assertEqual(config.database.prod, True)
@@ -76,11 +79,11 @@ class TestSyncConfig(unittest.TestCase):
         )
         self.assertEqual(config.api.sandbox, True)
 
-    def test_scope_config_creation(self):
+    def test_scope_config_creation(self) -> None:
         """Test de création d'une configuration de scope."""
-        mock_function = Mock()
+        mock_function: Mock = Mock()
 
-        scope_config = ScopeConfig(
+        scope_config: ScopeConfig = ScopeConfig(
             sync_function=mock_function,
             sql_filename="test.sql",
             entity_type="test_entity",

@@ -136,7 +136,7 @@ class SyncMetrics:
     - L'ensemble du processus de synchronisation
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialise le système de métriques."""
         self.start_time = time.time()
         self.operations: List[OperationMetrics] = []
@@ -169,7 +169,7 @@ class SyncMetrics:
         api_calls: int = 0,
         cache_hits: int = 0,
         cache_misses: int = 0,
-    ):
+    ) -> None:
         """
         Termine le suivi d'une opération.
 
@@ -216,7 +216,7 @@ class SyncMetrics:
                 }
             )
 
-    def record_memory_usage(self, usage_mb: float, scope: str = "global"):
+    def record_memory_usage(self, usage_mb: float, scope: str = "global") -> None:
         """
         Enregistre l'utilisation mémoire.
 
@@ -379,7 +379,7 @@ class SyncMetrics:
 
         return output_path
 
-    def print_summary(self):
+    def print_summary(self) -> None:
         """Affiche un résumé des métriques dans la console."""
         summary = self.get_summary()
 

@@ -1,6 +1,6 @@
 import argparse
 from pathlib import Path
-from typing import Any, Union
+from typing import Any, Union, Dict
 from dataclasses import dataclass
 
 
@@ -10,13 +10,13 @@ class SyncContext:
 
     args: argparse.Namespace
     config: Union[
-        dict[str, Any], "SyncConfig"
+        Dict[str, Any], "SyncConfig"
     ]  # Supporte l'ancien format dict et le nouveau SyncConfig
     base_dir: Path
-    db_user: str | None
-    db_password: str | None
-    client_id: str | None
-    client_secret: str | None
+    db_user: Union[str, None]
+    db_password: Union[str, None]
+    client_id: Union[str, None]
+    client_secret: Union[str, None]
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
         """Récupère une valeur de configuration de manière compatible avec l'ancien et le nouveau format."""

@@ -22,7 +22,7 @@ def get_companies(
         simulate (bool): Si True, simule la récupération sans l'exécuter.
 
     Returns:
-        list[dict[str, Any]]: Liste de dictionnaires représentant les entreprises récupérées.
+        List[Dict[str, Any]]: Liste de dictionnaires représentant les entreprises récupérées.
 
     Raises:
         Exception: En cas d'erreur HTTP ou de parsing.

@@ -1,0 +1,583 @@
+Analyse des type hints dans le projet N2F
+Repertoire: D:\Users\kinnar\source\repos\n2f
+Analyse de 97 fichiers Python...
+
+============================================================
+RESUME DE L'ANALYSE DES TYPE HINTS
+============================================================
+Fichiers analyses: 97
+Fichiers avec erreurs: 0
+Fonctions totales: 1103
+Classes totales: 164
+
+Fonctions avec type hints complets: 151 (13.7%)
+Fonctions avec type hints partiels: 267 (24.2%)
+Fonctions sans type hints: 685 (62.1%)
+
+============================================================
+
+ANALYSE DETAILLEE PAR FICHIER
+============================================================
+
+Fichier: D:\Users\kinnar\source\repos\n2f\scripts\analyze_type_hints.py
+   Fonctions: 11
+   Classes: 1
+   Fonctions sans type hints: 1
+      - __init__ (ligne 18)
+   Fonctions avec type hints partiels: 6
+
+Fichier: D:\Users\kinnar\source\repos\n2f\scripts\check_markdown.py
+   Fonctions: 3
+   Classes: 0
+   Fonctions avec type hints partiels: 3
+
+Fichier: D:\Users\kinnar\source\repos\n2f\scripts\format_code.py
+   Fonctions: 2
+   Classes: 0
+   Fonctions sans type hints: 1
+      - run_black (ligne 13)
+   Fonctions avec type hints partiels: 1
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\sync-agresso-n2f.py
+   Fonctions: 3
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\clean_coverage.py
+   Fonctions: 1
+   Classes: 0
+   Fonctions avec type hints partiels: 1
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\run_coverage_simple.py
+   Fonctions: 2
+   Classes: 0
+   Fonctions avec type hints partiels: 2
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\run_tests.py
+   Fonctions: 3
+   Classes: 0
+   Fonctions sans type hints: 1
+      - run_specific_test (ligne 65)
+   Fonctions avec type hints partiels: 2
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_agresso_process.py
+   Fonctions: 10
+   Classes: 1
+   Fonctions sans type hints: 5
+      - test_select_development_mode (ligne 206)
+      - test_select_complex_query (ligne 247)
+      - test_select_file_not_found (ligne 292)
+      ... et 2 autres
+   Fonctions avec type hints partiels: 5
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_api_base.py
+   Fonctions: 15
+   Classes: 3
+   Fonctions sans type hints: 9
+      - test_retreive_with_pagination (ligne 71)
+      - test_retreive_http_error (ligne 96)
+      - test_upsert_different_status_codes (ligne 174)
+      ... et 6 autres
+   Fonctions avec type hints partiels: 6
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_api_specific.py
+   Fonctions: 29
+   Classes: 4
+   Fonctions sans type hints: 11
+      - test_get_customaxes_values_success (ligne 328)
+      - test_get_customaxes_values_simulation_mode (ligne 365)
+      - test_get_customaxes_http_error (ligne 386)
+      ... et 8 autres
+   Fonctions avec type hints partiels: 18
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_business_axe.py
+   Fonctions: 20
+   Classes: 1
+   Fonctions sans type hints: 17
+      - test_load_agresso_axes_filtered_result (ligne 107)
+      - test_load_n2f_axes_success (ligne 132)
+      - test_load_n2f_axes_empty_companies (ligne 147)
+      ... et 14 autres
+   Fonctions avec type hints partiels: 3
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_business_modules.py
+   Fonctions: 30
+   Classes: 4
+   Fonctions sans type hints: 22
+      - test_has_payload_changes_ignore_technical_fields (ligne 102)
+      - test_has_payload_changes_empty_n2f_entity (ligne 111)
+      - test_has_payload_changes_different_types (ligne 120)
+      ... et 19 autres
+   Fonctions avec type hints partiels: 8
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_business_user.py
+   Fonctions: 12
+   Classes: 1
+   Fonctions sans type hints: 10
+      - test_load_agresso_users_empty_result (ligne 103)
+      - test_load_n2f_data_success (ligne 121)
+      - test_load_n2f_data_empty_results (ligne 152)
+      ... et 7 autres
+   Fonctions avec type hints partiels: 2
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_cache.py
+   Fonctions: 23
+   Classes: 3
+   Fonctions sans type hints: 17
+      - setUp (ligne 112)
+      - tearDown (ligne 120)
+      - test_initialization (ligne 126)
+      ... et 14 autres
+   Fonctions avec type hints partiels: 6
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_client_api.py
+   Fonctions: 35
+   Classes: 1
+   Fonctions sans type hints: 25
+      - test_get_users_with_cache_hit (ligne 171)
+      - test_get_users_with_cache_miss (ligne 190)
+      - test_get_users_pagination (ligne 222)
+      ... et 22 autres
+   Fonctions avec type hints partiels: 10
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_config.py
+   Fonctions: 24
+   Classes: 4
+   Fonctions sans type hints: 24
+      - test_sync_config_creation (ligne 38)
+      - test_sync_config_defaults (ligne 64)
+      - test_scope_config_creation (ligne 79)
+      ... et 21 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_context.py
+   Fonctions: 14
+   Classes: 1
+   Fonctions sans type hints: 14
+      - setUp (ligne 31)
+      - test_initialization_with_dict_config (ligne 40)
+      - test_initialization_with_syncconfig (ligne 66)
+      ... et 11 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_core_exceptions.py
+   Fonctions: 40
+   Classes: 8
+   Fonctions sans type hints: 34
+      - test_sync_exception_basic (ligne 27)
+      - test_sync_exception_with_details (ligne 34)
+      - test_sync_exception_with_context (ligne 41)
+      ... et 31 autres
+   Fonctions avec type hints partiels: 6
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_core_memory_manager.py
+   Fonctions: 28
+   Classes: 4
+   Fonctions sans type hints: 28
+      - test_dataframe_info_creation (ligne 31)
+      - test_memory_metrics_default_values (ligne 52)
+      - setUp (ligne 67)
+      ... et 25 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_core_registry_advanced.py
+   Fonctions: 30
+   Classes: 2
+   Fonctions sans type hints: 25
+      - setUp (ligne 23)
+      - test_unregister_existing_scope (ligne 33)
+      - test_unregister_nonexistent_scope (ligne 54)
+      ... et 22 autres
+   Fonctions avec type hints partiels: 5
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_database.py
+   Fonctions: 14
+   Classes: 1
+   Fonctions sans type hints: 14
+      - setUp (ligne 15)
+      - test_execute_query_success (ligne 45)
+      - test_execute_query_complex (ligne 60)
+      ... et 11 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_exceptions.py
+   Fonctions: 13
+   Classes: 8
+   Fonctions sans type hints: 13
+      - test_sync_exception_creation (ligne 30)
+      - test_sync_exception_to_dict (ligne 38)
+      - test_sync_exception_str_representation (ligne 51)
+      ... et 10 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_helper.py
+   Fonctions: 14
+   Classes: 1
+   Fonctions sans type hints: 14
+      - test_to_bool_true_values (ligne 17)
+      - test_to_bool_false_values (ligne 42)
+      - test_to_bool_with_whitespace (ligne 71)
+      ... et 11 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_integration.py
+   Fonctions: 17
+   Classes: 8
+   Fonctions sans type hints: 17
+      - setUp (ligne 55)
+      - tearDown (ligne 86)
+      - _setup_mock_cache_config (ligne 91)
+      ... et 14 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_metrics.py
+   Fonctions: 21
+   Classes: 3
+   Fonctions sans type hints: 21
+      - test_operation_metrics_creation (ligne 29)
+      - test_duration_seconds (ligne 47)
+      - test_duration_seconds_without_end_time (ligne 58)
+      ... et 18 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_n2f_api_role_userprofile.py
+   Fonctions: 11
+   Classes: 2
+   Fonctions sans type hints: 11
+      - setUp (ligne 21)
+      - test_get_roles_success (ligne 28)
+      - test_get_roles_with_simulate (ligne 53)
+      ... et 8 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_n2f_process_axe.py
+   Fonctions: 22
+   Classes: 5
+   Fonctions sans type hints: 22
+      - test_get_axes_success (ligne 24)
+      - test_build_axe_payload_sandbox_true (ligne 44)
+      - test_build_axe_payload_sandbox_false (ligne 66)
+      ... et 19 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_n2f_process_axe_fixed.py
+   Fonctions: 22
+   Classes: 5
+   Fonctions sans type hints: 22
+      - test_get_axes_success (ligne 24)
+      - test_build_axe_payload_sandbox_true (ligne 44)
+      - test_build_axe_payload_sandbox_false (ligne 66)
+      ... et 19 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_n2f_process_user.py
+   Fonctions: 33
+   Classes: 6
+   Fonctions sans type hints: 33
+      - test_lookup_company_id_found (ligne 25)
+      - test_lookup_company_id_not_found (ligne 34)
+      - test_lookup_company_id_empty_dataframe (ligne 43)
+      ... et 30 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_n2f_process_user_fixed.py
+   Fonctions: 33
+   Classes: 6
+   Fonctions sans type hints: 33
+      - test_lookup_company_id_found (ligne 25)
+      - test_lookup_company_id_not_found (ligne 34)
+      - test_lookup_company_id_empty_dataframe (ligne 43)
+      ... et 30 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_normalize.py
+   Fonctions: 26
+   Classes: 1
+   Fonctions sans type hints: 26
+      - setUp (ligne 39)
+      - test_normalize_agresso_users_email_lowercase (ligne 74)
+      - test_normalize_agresso_users_manager_lowercase (ligne 83)
+      ... et 23 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_orchestrator.py
+   Fonctions: 27
+   Classes: 5
+   Fonctions sans type hints: 27
+      - test_sync_result_creation (ligne 41)
+      - test_sync_result_with_error (ligne 53)
+      - setUp (ligne 72)
+      ... et 24 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_orchestrator_advanced.py
+   Fonctions: 19
+   Classes: 2
+   Fonctions sans type hints: 19
+      - setUp (ligne 28)
+      - test_export_api_logs_with_data (ligne 57)
+      - test_export_api_logs_no_data (ligne 77)
+      ... et 16 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_payloads.py
+   Fonctions: 15
+   Classes: 1
+   Fonctions sans type hints: 15
+      - setUp (ligne 76)
+      - test_create_user_upsert_payload_production (ligne 111)
+      - test_create_user_upsert_payload_sandbox (ligne 144)
+      ... et 12 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_process_modules.py
+   Fonctions: 40
+   Classes: 7
+   Fonctions sans type hints: 40
+      - setUp (ligne 21)
+      - test_lookup_company_id_success (ligne 36)
+      - test_lookup_company_id_not_found (ligne 41)
+      ... et 37 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_real_scenarios.py
+   Fonctions: 13
+   Classes: 6
+   Fonctions sans type hints: 13
+      - setUp (ligne 54)
+      - tearDown (ligne 85)
+      - _setup_mock_cache_config (ligne 90)
+      ... et 10 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_retry.py
+   Fonctions: 42
+   Classes: 8
+   Fonctions sans type hints: 40
+      - test_default_config (ligne 39)
+      - test_custom_config (ligne 53)
+      - test_is_retryable (ligne 69)
+      ... et 37 autres
+   Fonctions avec type hints partiels: 2
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_synchronizers.py
+   Fonctions: 41
+   Classes: 4
+   Fonctions sans type hints: 41
+      - setUp (ligne 34)
+      - build_payload (ligne 42)
+      - get_entity_id (ligne 45)
+      ... et 38 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_sync_agresso_n2f.py
+   Fonctions: 4
+   Classes: 1
+   Fonctions sans type hints: 4
+      - test_validate_environment_variables_success (ligne 26)
+      - test_validate_environment_variables_failure (ligne 45)
+      - test_create_arg_parser (ligne 51)
+      ... et 1 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\tests\test_tokens.py
+   Fonctions: 16
+   Classes: 2
+   Fonctions sans type hints: 16
+      - setUp (ligne 14)
+      - test_cache_token_decorator_creation (ligne 19)
+      - test_cache_token_first_call (ligne 27)
+      ... et 13 autres
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\agresso\database.py
+   Fonctions: 1
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\agresso\process.py
+   Fonctions: 1
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\business\normalize.py
+   Fonctions: 3
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\core\cache.py
+   Fonctions: 25
+   Classes: 3
+   Fonctions avec type hints partiels: 19
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\core\config.py
+   Fonctions: 9
+   Classes: 6
+   Fonctions avec type hints partiels: 8
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\core\context.py
+   Fonctions: 1
+   Classes: 1
+   Fonctions avec type hints partiels: 1
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\core\exceptions.py
+   Fonctions: 19
+   Classes: 7
+   Fonctions avec type hints partiels: 15
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\core\logging.py
+   Fonctions: 2
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\core\memory_manager.py
+   Fonctions: 17
+   Classes: 3
+   Fonctions avec type hints partiels: 11
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\core\metrics.py
+   Fonctions: 27
+   Classes: 3
+   Fonctions avec type hints partiels: 23
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\core\orchestrator.py
+   Fonctions: 17
+   Classes: 5
+   Fonctions avec type hints partiels: 17
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\core\registry.py
+   Fonctions: 17
+   Classes: 2
+   Fonctions avec type hints partiels: 15
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\core\retry.py
+   Fonctions: 21
+   Classes: 6
+   Fonctions avec type hints partiels: 15
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\n2f\api_result.py
+   Fonctions: 5
+   Classes: 1
+   Fonctions avec type hints partiels: 5
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\n2f\client.py
+   Fonctions: 16
+   Classes: 1
+   Fonctions avec type hints partiels: 16
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\n2f\helper.py
+   Fonctions: 2
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\n2f\payload.py
+   Fonctions: 2
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\n2f\__init__.py
+   Fonctions: 3
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\n2f\api\base.py
+   Fonctions: 3
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\n2f\api\company.py
+   Fonctions: 1
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\n2f\api\customaxe.py
+   Fonctions: 2
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\n2f\api\project.py
+   Fonctions: 4
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\n2f\api\role.py
+   Fonctions: 1
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\n2f\api\token.py
+   Fonctions: 4
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\n2f\api\user.py
+   Fonctions: 4
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\n2f\api\userprofile.py
+   Fonctions: 1
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\n2f\process\axe.py
+   Fonctions: 5
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\n2f\process\company.py
+   Fonctions: 1
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\n2f\process\customaxe.py
+   Fonctions: 2
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\n2f\process\role.py
+   Fonctions: 1
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\n2f\process\user.py
+   Fonctions: 6
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\n2f\process\userprofile.py
+   Fonctions: 1
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\core\examples\cache_example.py
+   Fonctions: 6
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\core\examples\exception_examples.py
+   Fonctions: 11
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\core\examples\memory_example.py
+   Fonctions: 6
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\core\examples\metrics_example.py
+   Fonctions: 7
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\core\examples\orchestrator_example.py
+   Fonctions: 4
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\core\examples\retry_example.py
+   Fonctions: 13
+   Classes: 2
+   Fonctions avec type hints partiels: 2
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\business\process\axe.py
+   Fonctions: 8
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\business\process\axe_synchronizer.py
+   Fonctions: 8
+   Classes: 1
+   Fonctions avec type hints partiels: 8
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\business\process\axe_types.py
+   Fonctions: 3
+   Classes: 1
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\business\process\base_synchronizer.py
+   Fonctions: 18
+   Classes: 1
+   Fonctions avec type hints partiels: 18
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\business\process\department.py
+   Fonctions: 1
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\business\process\helper.py
+   Fonctions: 3
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\business\process\sync_example.py
+   Fonctions: 2
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\business\process\user.py
+   Fonctions: 3
+   Classes: 0
+
+Fichier: D:\Users\kinnar\source\repos\n2f\src\business\process\user_synchronizer.py
+   Fonctions: 8
+   Classes: 1
+   Fonctions avec type hints partiels: 8
+
+============================================================
+RECOMMANDATIONS
+============================================================
+Priorite HAUTE: Le projet a tres peu de type hints
+   - Commencer par les fonctions publiques des modules principaux
+   - Ajouter des types pour les param�tres et valeurs de retour
+
+Ressources pour am�liorer les type hints:
+   - PEP 484: Type Hints (https://www.python.org/dev/peps/pep-0484/)
+   - mypy: Static Type Checker (https://mypy.readthedocs.io/)
+   - typing module: https://docs.python.org/3/library/typing.html

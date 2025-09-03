@@ -23,9 +23,10 @@ def synchronize_departments(
     Args:
         context: Contexte de synchronisation
         sql_filename: Nom du fichier SQL à utiliser
+        sql_column_filter: Filtre de colonne SQL (optionnel)
 
     Returns:
-        Liste des DataFrames de résultats
+        List[pd.DataFrame]: Liste des DataFrames de résultats
     """
     print(f"--- Synchronisation des départements avec {sql_filename} ---")
 

@@ -20,34 +20,34 @@ from core import SyncContext
 class TestBusinessAxe(unittest.TestCase):
     """Tests pour le module business.process.axe."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Configuration initiale pour les tests."""
         # Mock du contexte
-        self.mock_context = Mock(spec=SyncContext)
+        self.mock_context: Mock = Mock(spec=SyncContext)
         self.mock_context.base_dir = "/test/base/dir"
         self.mock_context.db_user = "test_user"
         self.mock_context.db_password = "test_password"
 
         # Mock des arguments
-        self.mock_args = Mock()
+        self.mock_args: Mock = Mock()
         self.mock_args.create = True
         self.mock_args.update = True
         self.mock_args.delete = True
         self.mock_context.args = self.mock_args
 
         # Mock de la configuration
-        self.mock_agresso_config = Mock()
+        self.mock_agresso_config: Mock = Mock()
         self.mock_agresso_config.sql_path = "sql"
         self.mock_agresso_config.prod = False
 
-        self.mock_n2f_config = Mock()
+        self.mock_n2f_config: Mock = Mock()
         self.mock_n2f_config.sandbox = False
 
         # Mock du client N2F
-        self.mock_n2f_client = Mock()
+        self.mock_n2f_client: Mock = Mock()
 
         # DataFrames de test
-        self.df_agresso_axes = pd.DataFrame(
+        self.df_agresso_axes: pd.DataFrame = pd.DataFrame(
             {
                 "code": ["PROJ1", "PROJ2", "PROJ3"],
                 "name": ["Project 1", "Project 2", "Project 3"],
@@ -59,16 +59,16 @@ class TestBusinessAxe(unittest.TestCase):
             }
         )
 
-        self.df_n2f_companies = pd.DataFrame(
+        self.df_n2f_companies: pd.DataFrame = pd.DataFrame(
             {"uuid": ["uuid1", "uuid2"], "name": ["Company 1", "Company 2"]}
         )
 
-        self.df_n2f_axes = pd.DataFrame(
+        self.df_n2f_axes: pd.DataFrame = pd.DataFrame(
             {"code": ["EXISTING"], "name": ["Existing Project"]}
         )
 
     @patch("business.process.axe.select")
-    def test_load_agresso_axes_success(self, mock_select):
+    def test_load_agresso_axes_success(self, mock_select: Mock) -> None:
         """Test de chargement des axes Agresso avec succès."""
         # Configuration du mock
         mock_select.return_value = self.df_agresso_axes
@@ -87,7 +87,7 @@ class TestBusinessAxe(unittest.TestCase):
         self.assertTrue(all(result["typ"].str.upper() == "PROJECTS"))
 
     @patch("business.process.axe.select")
-    def test_load_agresso_axes_empty_result(self, mock_select):
+    def test_load_agresso_axes_empty_result(self, mock_select: Mock) -> None:
         """Test de chargement des axes Agresso avec résultat vide."""
         # Configuration du mock
         mock_select.return_value = pd.DataFrame()

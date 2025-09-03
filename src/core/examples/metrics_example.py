@@ -27,7 +27,7 @@ def simulate_sync_operation(
     duration: float = 1.0,
     success: bool = True,
     records: int = 100,
-):
+) -> None:
     """Simule une opération de synchronisation."""
     print(f"🔄 Démarrage {action} pour {scope}...")
 
@@ -61,7 +61,7 @@ def simulate_sync_operation(
     )
 
 
-def example_metrics_basic_usage():
+def example_metrics_basic_usage() -> None:
     """Exemple d'utilisation basique du système de métriques."""
     print("=== Exemple d'utilisation basique ===")
 
@@ -81,7 +81,7 @@ def example_metrics_basic_usage():
     print_summary()
 
 
-def example_detailed_metrics():
+def example_detailed_metrics() -> None:
     """Exemple avec métriques détaillées."""
     print("\n=== Exemple avec métriques détaillées ===")
 
@@ -106,7 +106,7 @@ def example_detailed_metrics():
     print(f"\n📊 Métriques exportées vers: {output_path}")
 
 
-def example_performance_monitoring():
+def example_performance_monitoring() -> None:
     """Exemple de monitoring de performance."""
     print("\n=== Exemple de monitoring de performance ===")
 
@@ -145,7 +145,7 @@ def example_performance_monitoring():
     print_summary()
 
 
-def example_error_tracking():
+def example_error_tracking() -> None:
     """Exemple de suivi des erreurs."""
     print("\n=== Exemple de suivi des erreurs ===")
 
@@ -180,7 +180,7 @@ def example_error_tracking():
     print_summary()
 
 
-def example_export_and_analysis():
+def example_export_and_analysis() -> None:
     """Exemple d'export et d'analyse des métriques."""
     print("\n=== Exemple d'export et d'analyse ===")
 
@@ -217,7 +217,7 @@ def example_export_and_analysis():
     )
 
 
-def example_memory_monitoring():
+def example_memory_monitoring() -> None:
     """Exemple de monitoring mémoire."""
     print("\n=== Exemple de monitoring mémoire ===")
 
@@ -265,7 +265,7 @@ if __name__ == "__main__":
 
     try:
         # Exemples d'utilisation
-        example_basic_usage()
+        example_metrics_basic_usage()
         example_detailed_metrics()
         example_performance_monitoring()
         example_error_tracking()

@@ -11,10 +11,11 @@ Ce module démontre les fonctionnalités du cache avancé :
 import time
 import pandas as pd
 from pathlib import Path
+from typing import Any, Dict
 from ..cache import get_cache, cache_get, cache_set, cache_invalidate, cache_stats
 
 
-def example_cache_basic_usage():
+def example_cache_basic_usage() -> None:
     """Exemple d'utilisation basique du cache."""
     print("=== Exemple d'utilisation basique ===")
 
@@ -50,7 +51,7 @@ def example_cache_basic_usage():
     print(cache_stats())
 
 
-def example_ttl_expiration():
+def example_ttl_expiration() -> None:
     """Exemple de gestion de l'expiration TTL."""
     print("\n=== Exemple de gestion TTL ===")
 
@@ -77,7 +78,7 @@ def example_ttl_expiration():
     )
 
 
-def example_cache_invalidation():
+def example_cache_invalidation() -> None:
     """Exemple d'invalidation sélective du cache."""
     print("\n=== Exemple d'invalidation sélective ===")
 
@@ -117,7 +118,7 @@ def example_cache_invalidation():
     )
 
 
-def example_performance_metrics():
+def example_performance_metrics() -> None:
     """Exemple de métriques de performance."""
     print("\n=== Exemple de métriques de performance ===")
 
@@ -144,7 +145,7 @@ def example_performance_metrics():
             print(f"  {key}: {value}")
 
 
-def example_persistent_cache():
+def example_persistent_cache() -> None:
     """Exemple de cache persistant."""
     print("\n=== Exemple de cache persistant ===")
 
@@ -172,7 +173,7 @@ def example_persistent_cache():
         cache_file.unlink()
 
 
-def example_cache_eviction():
+def example_cache_eviction() -> None:
     """Exemple d'éviction LRU du cache."""
     print("\n=== Exemple d'éviction LRU ===")
 
@@ -203,7 +204,7 @@ if __name__ == "__main__":
 
     try:
         # Exemples d'utilisation
-        example_basic_usage()
+        example_cache_basic_usage()
         example_ttl_expiration()
         example_cache_invalidation()
         example_performance_metrics()

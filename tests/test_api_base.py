@@ -9,20 +9,20 @@ import n2f.api.base as base_api
 class TestRetrieve(unittest.TestCase):
     """Tests pour la fonction retreive."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Configuration initiale pour les tests."""
-        self.entity = "users"
-        self.base_url = "https://api.n2f.com"
-        self.client_id = "test_client_id"
-        self.client_secret = "test_client_secret"
+        self.entity: str = "users"
+        self.base_url: str = "https://api.n2f.com"
+        self.client_id: str = "test_client_id"
+        self.client_secret: str = "test_client_secret"
 
         # Mock response pour les tests
-        self.mock_response = Mock()
+        self.mock_response: Mock = Mock()
         self.mock_response.json.return_value = {
             "response": [{"id": 1, "name": "User 1"}, {"id": 2, "name": "User 2"}]
         }
 
-    def test_retreive_simulation_mode(self):
+    def test_retreive_simulation_mode(self) -> None:
         """Test du mode simulation."""
         result = base_api.retreive(
             self.entity,
@@ -36,7 +36,9 @@ class TestRetrieve(unittest.TestCase):
 
     @patch("n2f.api.base.get_access_token")
     @patch("n2f.get_session_get")
-    def test_retreive_success(self, mock_get_session, mock_get_token):
+    def test_retreive_success(
+        self, mock_get_session: Mock, mock_get_token: Mock
+    ) -> None:
         """Test de récupération réussie d'entités."""
         # Configuration des mocks
         mock_get_token.return_value = ("test_token", "2025-08-20T09:54:35.8185075Z")
@@ -111,15 +113,15 @@ class TestRetrieve(unittest.TestCase):
 class TestUpsert(unittest.TestCase):
     """Tests pour la fonction upsert."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Configuration initiale pour les tests."""
-        self.base_url = "https://api.n2f.com"
-        self.endpoint = "/users"
-        self.client_id = "test_client_id"
-        self.client_secret = "test_client_secret"
-        self.payload = {"name": "Test User", "email": "test@example.com"}
+        self.base_url: str = "https://api.n2f.com"
+        self.endpoint: str = "/users"
+        self.client_id: str = "test_client_id"
+        self.client_secret: str = "test_client_secret"
+        self.payload: dict = {"name": "Test User", "email": "test@example.com"}
 
-    def test_upsert_simulation_mode(self):
+    def test_upsert_simulation_mode(self) -> None:
         """Test du mode simulation."""
         result = base_api.upsert(
             self.base_url,
@@ -134,7 +136,7 @@ class TestUpsert(unittest.TestCase):
 
     @patch("n2f.api.base.get_access_token")
     @patch("n2f.get_session_write")
-    def test_upsert_success(self, mock_get_session, mock_get_token):
+    def test_upsert_success(self, mock_get_session: Mock, mock_get_token: Mock) -> None:
         """Test d'upsert réussi."""
         mock_get_token.return_value = ("test_token", "2025-08-20T09:54:35.8185075Z")
         mock_session = Mock()

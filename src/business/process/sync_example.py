@@ -5,13 +5,22 @@ Ce fichier montre comment utiliser UserSynchronizer et AxeSynchronizer
 pour remplacer les fonctions existantes dans user.py et axe.py.
 """
 
+import pandas as pd
+from typing import Tuple, Any
 from business.process.user_synchronizer import UserSynchronizer
 from business.process.axe_synchronizer import AxeSynchronizer
+from n2f.client import N2fApiClient
 
 
 def sync_users_with_new_classes(
-    n2f_client, df_agresso_users, df_n2f_users, df_n2f_companies, sandbox
-):
+    n2f_client: N2fApiClient,
+    df_agresso_users: pd.DataFrame,
+    df_n2f_users: pd.DataFrame,
+    df_n2f_companies: pd.DataFrame,
+    sandbox: bool,
+) -> Tuple[
+    Tuple[pd.DataFrame, str], Tuple[pd.DataFrame, str], Tuple[pd.DataFrame, str]
+]:
     """
     Exemple d'utilisation de UserSynchronizer pour remplacer les fonctions existantes.
 
@@ -23,7 +32,8 @@ def sync_users_with_new_classes(
         sandbox: Mode sandbox ou production
 
     Returns:
-        Tuple: Résultats des opérations (create, update, delete)
+        Tuple[Tuple[pd.DataFrame, str], Tuple[pd.DataFrame, str], Tuple[pd.DataFrame, str]]:
+        Résultats des opérations (create, update, delete)
     """
     # Créer le synchroniseur d'utilisateurs
     user_sync = UserSynchronizer(n2f_client, sandbox)
@@ -49,14 +59,16 @@ def sync_users_with_new_classes(
 
 
 def sync_axes_with_new_classes(
-    n2f_client,
-    axe_id,
-    df_agresso_projects,
-    df_n2f_projects,
-    df_n2f_companies,
-    sandbox,
-    scope="projects",
-):
+    n2f_client: N2fApiClient,
+    axe_id: str,
+    df_agresso_projects: pd.DataFrame,
+    df_n2f_projects: pd.DataFrame,
+    df_n2f_companies: pd.DataFrame,
+    sandbox: bool,
+    scope: str = "projects",
+) -> Tuple[
+    Tuple[pd.DataFrame, str], Tuple[pd.DataFrame, str], Tuple[pd.DataFrame, str]
+]:
     """
     Exemple d'utilisation de AxeSynchronizer pour remplacer les fonctions existantes.
 
@@ -70,7 +82,8 @@ def sync_axes_with_new_classes(
         scope: Scope de synchronisation
 
     Returns:
-        Tuple: Résultats des opérations (create, update, delete)
+        Tuple[Tuple[pd.DataFrame, str], Tuple[pd.DataFrame, str], Tuple[pd.DataFrame, str]]:
+        Résultats des opérations (create, update, delete)
     """
     # Créer le synchroniseur d'axes
     axe_sync = AxeSynchronizer(n2f_client, sandbox, axe_id, scope)

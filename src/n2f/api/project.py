@@ -25,7 +25,7 @@ def get_projects(
         simulate (bool): Si True, simule la récupération sans l'exécuter.
 
     Returns:
-        list[dict[str, Any]]: Liste de dictionnaires représentant les projets.
+        List[Dict[str, Any]]: Liste de dictionnaires représentant les projets.
 
     Raises:
         Exception: En cas d'erreur HTTP ou de parsing.
@@ -47,7 +47,7 @@ def create_project(
     client_id: str,
     client_secret: str,
     company_id: str,
-    payload: dict,
+    payload: Dict[str, Any],
     simulate: bool = False,
 ) -> bool:
     """
@@ -58,7 +58,7 @@ def create_project(
         client_id (str): ID du client pour l'API N2F.
         client_secret (str): Secret du client pour l'API N2F.
         company_id (str): UUID de la société.
-        payload (dict): Données du projet à envoyer à l'API.
+        payload (Dict[str, Any]): Données du projet à envoyer à l'API.
         simulate (bool): Si True, simule l'appel sans l'exécuter.
 
     Returns:
@@ -73,7 +73,7 @@ def update_project(
     client_id: str,
     client_secret: str,
     company_id: str,
-    payload: dict,
+    payload: Dict[str, Any],
     simulate: bool = False,
 ) -> bool:
     """
@@ -84,7 +84,7 @@ def update_project(
         client_id (str): ID du client pour l'API N2F.
         client_secret (str): Secret du client pour l'API N2F.
         company_id (str): UUID de la société.
-        payload (dict): Données du projet à envoyer à l'API.
+        payload (Dict[str, Any]): Données du projet à envoyer à l'API.
         simulate (bool): Si True, simule l'appel sans l'exécuter.
 
     Returns:

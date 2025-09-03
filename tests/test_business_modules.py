@@ -6,6 +6,7 @@ import sys
 import os
 from unittest.mock import Mock, patch, MagicMock
 import pandas as pd
+from typing import Dict, List, Any
 
 import business.process.axe_types as axe_types
 import business.process.department as department
@@ -14,9 +15,9 @@ import business.process.department as department
 class TestBusinessHelper(unittest.TestCase):
     """Tests pour business.process.helper."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Configuration initiale pour les tests."""
-        self.sample_df = pd.DataFrame(
+        self.sample_df: pd.DataFrame = pd.DataFrame(
             {
                 "entity_id": ["user1", "user2", "user3", "user4"],
                 "success": [True, True, False, True],
@@ -24,20 +25,20 @@ class TestBusinessHelper(unittest.TestCase):
         )
 
     @patch("builtins.print")
-    def test_reporting_with_results(self, mock_print):
+    def test_reporting_with_results(self, mock_print: Mock) -> None:
         """Test de reporting avec des résultats."""
         business_helper.reporting(
             self.sample_df, "Aucune opération", "Opérations effectuées", "success"
         )
 
         # Vérifier que print a été appelé avec les bonnes valeurs
-        calls = mock_print.call_args_list
+        calls: List = mock_print.call_args_list
         self.assertIn("Opérations effectuées :", [call[0][0] for call in calls])
         self.assertIn("  Success : 3 / 4", [call[0][0] for call in calls])
         self.assertIn("  Failures : 1 / 4", [call[0][0] for call in calls])
 
     @patch("builtins.print")
-    def test_reporting_empty_dataframe(self, mock_print):
+    def test_reporting_empty_dataframe(self, mock_print: Mock) -> None:
         """Test de reporting avec DataFrame vide."""
         business_helper.reporting(
             pd.DataFrame(), "Aucune opération", "Opérations effectuées", "success"
@@ -46,22 +47,22 @@ class TestBusinessHelper(unittest.TestCase):
         mock_print.assert_called_once_with("Aucune opération")
 
     @patch("builtins.print")
-    def test_reporting_without_status_column(self, mock_print):
+    def test_reporting_without_status_column(self, mock_print: Mock) -> None:
         """Test de reporting sans colonne de statut."""
-        df_no_status = pd.DataFrame({"entity_id": ["user1", "user2"]})
+        df_no_status: pd.DataFrame = pd.DataFrame({"entity_id": ["user1", "user2"]})
 
         business_helper.reporting(
             df_no_status, "Aucune opération", "Opérations effectuées", "success"
         )
 
-        calls = mock_print.call_args_list
+        calls: List = mock_print.call_args_list
         self.assertIn("Opérations effectuées :", [call[0][0] for call in calls])
         self.assertIn("  Total : 2", [call[0][0] for call in calls])
 
     @patch("builtins.print")
-    def test_log_error_basic(self, mock_print):
+    def test_log_error_basic(self, mock_print: Mock) -> None:
         """Test de log d'erreur basique."""
-        error = Exception("Test error message")
+        error: Exception = Exception("Test error message")
         business_helper.log_error("USERS", "CREATE", "test@example.com", error)
 
         mock_print.assert_called_once_with(
@@ -69,9 +70,9 @@ class TestBusinessHelper(unittest.TestCase):
         )
 
     @patch("builtins.print")
-    def test_log_error_with_context(self, mock_print):
+    def test_log_error_with_context(self, mock_print: Mock) -> None:
         """Test de log d'erreur avec contexte."""
-        error = Exception("Validation failed")
+        error: Exception = Exception("Validation failed")
         business_helper.log_error(
             "PROJECTS", "UPDATE", "PROJ001", error, "Payload validation"
         )
@@ -80,21 +81,29 @@ class TestBusinessHelper(unittest.TestCase):
             "[ERROR] [PROJECTS] [UPDATE] [PROJ001] - Payload validation - Validation failed"
         )
 
-    def test_has_payload_changes_no_changes(self):
+    def test_has_payload_changes_no_changes(self) -> None:
         """Test de détection de changements - aucun changement."""
-        payload = {"name": "John Doe", "email": "john@example.com"}
-        n2f_entity = {"name": "John Doe", "email": "john@example.com", "id": 123}
+        payload: Dict[str, str] = {"name": "John Doe", "email": "john@example.com"}
+        n2f_entity: Dict[str, Any] = {
+            "name": "John Doe",
+            "email": "john@example.com",
+            "id": 123,
+        }
 
-        result = business_helper.has_payload_changes(payload, n2f_entity, "user")
+        result: bool = business_helper.has_payload_changes(payload, n2f_entity, "user")
 
         self.assertFalse(result)
 
-    def test_has_payload_changes_with_changes(self):
+    def test_has_payload_changes_with_changes(self) -> None:
         """Test de détection de changements - avec changements."""
-        payload = {"name": "Jane Doe", "email": "jane@example.com"}
-        n2f_entity = {"name": "John Doe", "email": "john@example.com", "id": 123}
+        payload: Dict[str, str] = {"name": "Jane Doe", "email": "jane@example.com"}
+        n2f_entity: Dict[str, Any] = {
+            "name": "John Doe",
+            "email": "john@example.com",
+            "id": 123,
+        }
 
-        result = business_helper.has_payload_changes(payload, n2f_entity, "user")
+        result: bool = business_helper.has_payload_changes(payload, n2f_entity, "user")
 
         self.assertTrue(result)
 

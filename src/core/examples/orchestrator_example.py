@@ -10,7 +10,7 @@ from pathlib import Path
 from ..orchestrator import SyncOrchestrator
 
 
-def example_orchestrator_basic_usage():
+def example_orchestrator_basic_usage() -> None:
     """Exemple d'utilisation basique de l'orchestrateur."""
     print("=== Exemple d'utilisation basique ===")
 
@@ -38,7 +38,7 @@ def example_orchestrator_basic_usage():
     orchestrator.run()
 
 
-def example_multiple_scopes():
+def example_multiple_scopes() -> None:
     """Exemple avec plusieurs scopes."""
     print("\n=== Exemple avec plusieurs scopes ===")
 
@@ -55,7 +55,7 @@ def example_multiple_scopes():
     orchestrator.run()
 
 
-def example_all_scopes():
+def example_all_scopes() -> None:
     """Exemple avec tous les scopes."""
     print("\n=== Exemple avec tous les scopes ===")
 
@@ -68,7 +68,7 @@ def example_all_scopes():
     orchestrator.run()
 
 
-def example_error_handling():
+def example_error_handling() -> None:
     """Exemple de gestion d'erreur."""
     print("\n=== Exemple de gestion d'erreur ===")
 
@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
     try:
         # Exemples d'utilisation
-        example_basic_usage()
+        example_orchestrator_basic_usage()
         example_multiple_scopes()
         example_all_scopes()
         example_error_handling()

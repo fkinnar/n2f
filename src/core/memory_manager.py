@@ -11,7 +11,7 @@ Ce module fournit un gestionnaire de mémoire intelligent qui :
 import time
 import gc
 import psutil
-from typing import Dict, Optional, List, Tuple
+from typing import Dict, Optional, List, Tuple, Any
 from dataclasses import dataclass, field
 from pathlib import Path
 import pandas as pd
@@ -53,7 +53,9 @@ class MemoryManager:
     - Protection contre la surconsommation
     """
 
-    def __init__(self, max_memory_mb: int = 1024, cleanup_threshold: float = 0.8):
+    def __init__(
+        self, max_memory_mb: int = 1024, cleanup_threshold: float = 0.8
+    ) -> None:
         """
         Initialise le gestionnaire de mémoire.
 
@@ -152,14 +154,17 @@ class MemoryManager:
         Returns:
             float: Mémoire libérée en MB
         """
-        keys_to_remove = [
-            k for k in self.dataframes.keys() if self.dataframes[k].scope == scope_name
-        ]
-
         freed_memory = 0.0
-        for key in keys_to_remove:
-            freed_memory += self.dataframes[key].size_mb
-            del self.dataframes[key]
+        to_remove = []
+
+        for name, info in self.dataframes.items():
+            if info.scope == scope_name:
+                freed_memory += info.size_mb
+                to_remove.append(name)
+
+        # Suppression des DataFrames du scope
+        for name in to_remove:
+            del self.dataframes[name]
 
         # Mise à jour des métriques
         self.metrics.current_usage_mb -= freed_memory
@@ -168,10 +173,7 @@ class MemoryManager:
         self.metrics.last_cleanup_time = time.time()
 
         if freed_memory > 0:
-            print(
-                f"Scope '{scope_name}' nettoyé - {freed_memory:.1f}MB libérés, "
-                f"Reste: {self.metrics.current_usage_mb:.1f}MB"
-            )
+            print(f"Nettoyage du scope '{scope_name}' - {freed_memory:.1f}MB libérés")
 
         return freed_memory
 
@@ -199,23 +201,23 @@ class MemoryManager:
         print(f"Nettoyage complet - {freed_memory:.1f}MB libérés")
         return freed_memory
 
-    def get_memory_stats(self) -> Dict:
+    def get_memory_stats(self) -> Dict[str, Any]:
         """
-        Retourne les statistiques d'utilisation mémoire.
+        Récupère les statistiques détaillées de la mémoire.
 
         Returns:
-            Dict: Statistiques détaillées
+            Dict contenant toutes les statistiques mémoire
         """
-        # Mémoire système
         system_memory = psutil.virtual_memory()
 
         return {
             "memory_manager": {
                 "current_usage_mb": self.metrics.current_usage_mb,
-                "peak_usage_mb": self.metrics.peak_usage_mb,
                 "max_memory_mb": self.max_memory_mb,
-                "usage_percentage": (self.metrics.current_usage_mb / self.max_memory_mb)
-                * 100,
+                "usage_percentage": (
+                    self.metrics.current_usage_mb / self.max_memory_mb * 100
+                ),
+                "peak_usage_mb": self.metrics.peak_usage_mb,
                 "total_dataframes": self.metrics.total_dataframes,
                 "active_dataframes": len(self.dataframes),
                 "freed_memory_mb": self.metrics.freed_memory_mb,
@@ -230,7 +232,7 @@ class MemoryManager:
             "dataframes_by_scope": self._get_dataframes_by_scope(),
         }
 
-    def print_memory_summary(self):
+    def print_memory_summary(self) -> None:
         """Affiche un résumé de l'utilisation mémoire."""
         stats = self.get_memory_stats()
 
@@ -267,7 +269,7 @@ class MemoryManager:
         """Calcule la taille d'un DataFrame en MB."""
         return df.memory_usage(deep=True).sum() / 1024 / 1024
 
-    def _cleanup_oldest(self):
+    def _cleanup_oldest(self) -> None:
         """Libère les DataFrames les plus anciens selon la stratégie LRU."""
         if not self.dataframes:
             return
@@ -302,9 +304,9 @@ class MemoryManager:
                 f"Reste: {self.metrics.current_usage_mb:.1f}MB"
             )
 
-    def _get_dataframes_by_scope(self) -> Dict[str, Dict]:
+    def _get_dataframes_by_scope(self) -> Dict[str, Dict[str, Any]]:
         """Groupe les DataFrames par scope."""
-        scope_stats = {}
+        scope_stats: Dict[str, Dict[str, Any]] = {}
 
         for info in self.dataframes.values():
             if info.scope not in scope_stats:

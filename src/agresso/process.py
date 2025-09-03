@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+from typing import Optional
 
 from Iris.Database.IrisConnect import IrisConnect
 from agresso.database import execute_query
@@ -18,6 +19,18 @@ def select(
     """
     Lit la requête SQL depuis le fichier,
     établit la connexion à la base Agresso et retourne les utilisateurs sous forme de DataFrame.
+
+    Args:
+        base_dir: Répertoire de base du projet
+        db_user: Nom d'utilisateur pour la base de données
+        db_password: Mot de passe pour la base de données
+        sql_path: Chemin vers le répertoire contenant les fichiers SQL
+        sql_filename: Nom du fichier SQL à exécuter
+        prod: Si True, utilise la base de production, sinon la base de développement
+        cache: Si True, utilise le cache pour optimiser les performances
+
+    Returns:
+        pd.DataFrame: Résultat de la requête SQL sous forme de DataFrame
     """
     # Construction du chemin vers le fichier SQL à exécuter
     sql_file = os.path.join(base_dir, "..", sql_path, sql_filename)

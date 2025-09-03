@@ -1,6 +1,7 @@
 import pandas as pd
 import time
-from typing import List, Any
+from typing import List, Any, Dict, Optional, Union
+from pathlib import Path
 
 import n2f
 from core import SyncContext, cache_get, cache_set
@@ -29,7 +30,7 @@ class N2fApiClient:
         >>> result = client.create_user(user_payload)
     """
 
-    def __init__(self, context: SyncContext):
+    def __init__(self, context: SyncContext) -> None:
         """
         Initialise le client avec le contexte de synchronisation.
 
@@ -55,7 +56,7 @@ class N2fApiClient:
             if hasattr(n2f_config, "simulate")
             else n2f_config["simulate"]
         )
-        self._access_token = None
+        self._access_token: Optional[str] = None
 
     def _get_token(self) -> str:
         """
@@ -84,7 +85,7 @@ class N2fApiClient:
 
     def _request(
         self, entity: str, start: int = 0, limit: int = 200
-    ) -> List[dict[str, Any]]:
+    ) -> List[Dict[str, Any]]:
         """
         Effectue une requête GET paginée à l'API N2F.
 
@@ -98,7 +99,7 @@ class N2fApiClient:
             limit: Nombre maximum d'éléments par page (défaut: 200)
 
         Returns:
-            List[dict]: Liste des entités récupérées
+            List[Dict[str, Any]]: Liste des entités récupérées
 
         Raises:
             ApiException: Si l'appel API échoue
@@ -356,12 +357,12 @@ class N2fApiClient:
                 scope=scope,
             )
 
-    def create_user(self, payload: dict) -> ApiResult:
+    def create_user(self, payload: Dict[str, Any]) -> ApiResult:
         """Crée un utilisateur."""
         user_email = payload.get("mail", "unknown")
         return self._upsert("/users", payload, "create", "user", user_email, "users")
 
-    def update_user(self, payload: dict) -> ApiResult:
+    def update_user(self, payload: Dict[str, Any]) -> ApiResult:
         """Met à jour un utilisateur."""
         user_email = payload.get("mail", "unknown")
         return self._upsert("/users", payload, "update", "user", user_email, "users")
@@ -381,7 +382,7 @@ class N2fApiClient:
         # Cet endpoint n'est pas paginé dans l'implémentation de référence
         endpoint = f"companies/{company_id}/axes"
         if self.simulate:
-            axes_data = []
+            axes_data: List[Dict[str, Any]] = []
         else:
             access_token = self._get_token()
             url = f"{self.base_url}/{endpoint}"
@@ -413,13 +414,13 @@ class N2fApiClient:
             if cached is not None:
                 return cached
 
-        all_values_list = []
+        all_values_list: List[pd.DataFrame] = []
         start, limit = 0, 200
         endpoint = f"companies/{company_id}/axes/{axe_id}"
         while True:
             # La méthode _request est pour les endpoints globaux, ici l'URL est spécifique
             if self.simulate:
-                values_page = []
+                values_page: List[Dict[str, Any]] = []
             else:
                 access_token = self._get_token()
                 url = f"{self.base_url}/{endpoint}"
@@ -456,9 +457,9 @@ class N2fApiClient:
         self,
         company_id: str,
         axe_id: str,
-        payload: dict,
+        payload: Dict[str, Any],
         action_type: str = "upsert",
-        scope: str = None,
+        scope: Optional[str] = None,
     ) -> ApiResult:
         """Crée ou met à jour une valeur d'axe pour une société."""
         endpoint = f"/companies/{company_id}/axes/{axe_id}"
@@ -466,7 +467,7 @@ class N2fApiClient:
         return self._upsert(endpoint, payload, action_type, "axe", object_code, scope)
 
     def delete_axe_value(
-        self, company_id: str, axe_id: str, value_code: str, scope: str = None
+        self, company_id: str, axe_id: str, value_code: str, scope: Optional[str] = None
     ) -> ApiResult:
         """Supprime une valeur d'axe pour une société par son code."""
         endpoint = f"/companies/{company_id}/axes/{value_code}"

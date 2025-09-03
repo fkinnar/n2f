@@ -1,7 +1,8 @@
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 import pandas as pd
 from n2f.api_result import ApiResult
 from business.process.base_synchronizer import EntitySynchronizer
+from n2f.client import N2fApiClient
 
 
 class AxeSynchronizer(EntitySynchronizer):
@@ -12,7 +13,13 @@ class AxeSynchronizer(EntitySynchronizer):
     pour gérer la synchronisation des axes entre Agresso et N2F.
     """
 
-    def __init__(self, n2f_client, sandbox: bool, axe_id: str, scope: str = "projects"):
+    def __init__(
+        self,
+        n2f_client: N2fApiClient,
+        sandbox: bool,
+        axe_id: str,
+        scope: str = "projects",
+    ) -> None:
         """
         Initialise le synchroniseur d'axes.
 
@@ -30,7 +37,7 @@ class AxeSynchronizer(EntitySynchronizer):
         entity: pd.Series,
         df_agresso: pd.DataFrame,
         df_n2f: pd.DataFrame,
-        df_n2f_companies: pd.DataFrame = None,
+        df_n2f_companies: Optional[pd.DataFrame] = None,
     ) -> Dict[str, Any]:
         """
         Construit le payload pour l'API N2F axe.
@@ -42,7 +49,7 @@ class AxeSynchronizer(EntitySynchronizer):
             df_n2f_companies: DataFrame des entreprises N2F (optionnel)
 
         Returns:
-            Dict: Payload pour l'API N2F axe
+            Dict[str, Any]: Payload pour l'API N2F axe
         """
         # Import déplacé ici pour éviter les imports circulaires
         from n2f.process.axe import build_axe_payload
@@ -80,7 +87,10 @@ class AxeSynchronizer(EntitySynchronizer):
         return "code"
 
     def _perform_create_operation(
-        self, entity: pd.Series, payload: Dict, df_n2f_companies: pd.DataFrame = None
+        self,
+        entity: pd.Series,
+        payload: Dict[str, Any],
+        df_n2f_companies: Optional[pd.DataFrame] = None,
     ) -> ApiResult:
         """
         Effectue l'opération de création d'axe.
@@ -96,7 +106,7 @@ class AxeSynchronizer(EntitySynchronizer):
         # Import déplacé ici pour éviter les imports circulaires
         from n2f.process.user import lookup_company_id
 
-        company_code = entity.get("client")
+        company_code: Optional[str] = entity.get("client")
         company_id = lookup_company_id(company_code, df_n2f_companies, self.sandbox)
 
         if company_id:
@@ -113,9 +123,9 @@ class AxeSynchronizer(EntitySynchronizer):
     def _perform_update_operation(
         self,
         entity: pd.Series,
-        payload: Dict,
-        n2f_entity: Dict,
-        df_n2f_companies: pd.DataFrame = None,
+        payload: Dict[str, Any],
+        n2f_entity: Dict[str, Any],
+        df_n2f_companies: Optional[pd.DataFrame] = None,
     ) -> ApiResult:
         """
         Effectue l'opération de mise à jour d'axe.
@@ -132,8 +142,10 @@ class AxeSynchronizer(EntitySynchronizer):
         # Import déplacé ici pour éviter les imports circulaires
         from n2f.process.user import lookup_company_id
 
-        company_code = entity.get("client")
-        company_id = lookup_company_id(company_code, df_n2f_companies, self.sandbox)
+        company_code: Optional[str] = entity.get("client")
+        company_id: Optional[str] = lookup_company_id(
+            company_code, df_n2f_companies, self.sandbox
+        )
 
         if company_id:
             return self.n2f_client.upsert_axe_value(
@@ -147,7 +159,7 @@ class AxeSynchronizer(EntitySynchronizer):
             )
 
     def _perform_delete_operation(
-        self, entity: pd.Series, df_n2f_companies: pd.DataFrame = None
+        self, entity: pd.Series, df_n2f_companies: Optional[pd.DataFrame] = None
     ) -> ApiResult:
         """
         Effectue l'opération de suppression d'axe.
@@ -159,7 +171,7 @@ class AxeSynchronizer(EntitySynchronizer):
         Returns:
             ApiResult: Résultat de l'opération
         """
-        company_id = entity.get(
+        company_id: Optional[str] = entity.get(
             "company_id"
         )  # Assumes company_id was added during get_axes
 

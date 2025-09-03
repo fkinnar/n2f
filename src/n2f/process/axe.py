@@ -124,7 +124,7 @@ def update_axes(
         return pd.DataFrame(), status_col
 
     n2f_by_code = df_n2f_projects.set_index("code").to_dict(orient="index")
-    axes_to_update: List[Dict] = []
+    axes_to_update: List[Dict[str, Any]] = []
     api_results: List[ApiResult] = []
 
     for _, project in df_agresso_projects[

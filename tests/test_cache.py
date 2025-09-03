@@ -24,10 +24,10 @@ from core.cache import AdvancedCache, CacheEntry, CacheMetrics
 class TestCacheEntry(unittest.TestCase):
     """Tests pour la classe CacheEntry."""
 
-    def test_cache_entry_creation(self):
+    def test_cache_entry_creation(self) -> None:
         """Test de création d'une entrée de cache."""
-        data = {"test": "data"}
-        entry = CacheEntry(data=data, timestamp=time.time(), ttl=3600)
+        data: dict = {"test": "data"}
+        entry: CacheEntry = CacheEntry(data=data, timestamp=time.time(), ttl=3600)
 
         self.assertEqual(entry.data, data)
         self.assertIsInstance(entry.timestamp, float)
@@ -36,31 +36,33 @@ class TestCacheEntry(unittest.TestCase):
         self.assertEqual(entry.last_access, 0.0)
         self.assertEqual(entry.size_bytes, 0)
 
-    def test_cache_entry_is_expired(self):
+    def test_cache_entry_is_expired(self) -> None:
         """Test de vérification d'expiration."""
         # Entrée expirée
-        entry = CacheEntry(
+        entry: CacheEntry = CacheEntry(
             data={"test": "data"},
             timestamp=time.time() - 7200,  # 2 heures ago
             ttl=3600,  # 1 heure TTL
         )
 
         # Utiliser la méthode _is_expired du cache
-        cache = AdvancedCache()
+        cache: AdvancedCache = AdvancedCache()
         self.assertTrue(cache._is_expired(entry))
 
         # Entrée valide
-        entry = CacheEntry(data={"test": "data"}, timestamp=time.time(), ttl=3600)
+        entry: CacheEntry = CacheEntry(
+            data={"test": "data"}, timestamp=time.time(), ttl=3600
+        )
         self.assertFalse(cache._is_expired(entry))
 
-    def test_cache_entry_size(self):
+    def test_cache_entry_size(self) -> None:
         """Test du calcul de la taille d'une entrée."""
-        data = {"test": "data", "large": "value" * 1000}
-        entry = CacheEntry(data=data, timestamp=time.time(), ttl=3600)
+        data: dict = {"test": "data", "large": "value" * 1000}
+        entry: CacheEntry = CacheEntry(data=data, timestamp=time.time(), ttl=3600)
 
         # Utiliser la méthode _calculate_size du cache
-        cache = AdvancedCache()
-        size = cache._calculate_size(data)
+        cache: AdvancedCache = AdvancedCache()
+        size: int = cache._calculate_size(data)
         self.assertIsInstance(size, int)
         self.assertGreater(size, 0)
 
@@ -68,9 +70,9 @@ class TestCacheEntry(unittest.TestCase):
 class TestCacheMetrics(unittest.TestCase):
     """Tests pour la classe CacheMetrics."""
 
-    def test_cache_metrics_creation(self):
+    def test_cache_metrics_creation(self) -> None:
         """Test de création des métriques de cache."""
-        metrics = CacheMetrics()
+        metrics: CacheMetrics = CacheMetrics()
 
         self.assertEqual(metrics.hits, 0)
         self.assertEqual(metrics.misses, 0)
@@ -79,9 +81,9 @@ class TestCacheMetrics(unittest.TestCase):
         self.assertEqual(metrics.total_size_bytes, 0)
         self.assertEqual(metrics.entry_count, 0)
 
-    def test_cache_metrics_increment(self):
+    def test_cache_metrics_increment(self) -> None:
         """Test d'incrémentation des métriques."""
-        metrics = CacheMetrics()
+        metrics: CacheMetrics = CacheMetrics()
 
         metrics.hits += 1
         metrics.misses += 2
@@ -93,9 +95,9 @@ class TestCacheMetrics(unittest.TestCase):
         self.assertEqual(metrics.sets, 3)
         self.assertEqual(metrics.invalidations, 1)
 
-    def test_cache_metrics_str_representation(self):
+    def test_cache_metrics_str_representation(self) -> None:
         """Test de la représentation string des métriques."""
-        metrics = CacheMetrics()
+        metrics: CacheMetrics = CacheMetrics()
         metrics.hits = 10
         metrics.misses = 5
         metrics.sets = 8

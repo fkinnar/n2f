@@ -2,6 +2,7 @@ import unittest
 import sys
 import os
 from unittest.mock import Mock, patch, MagicMock
+from typing import Dict, List, Any
 
 import n2f.api.user as user_api
 import n2f.api.company as company_api
@@ -12,17 +13,17 @@ import n2f.api.project as project_api
 class TestUserApi(unittest.TestCase):
     """Tests pour n2f.api.user."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Configuration initiale pour les tests."""
-        self.base_url = "https://api.n2f.com"
-        self.client_id = "test_client_id"
-        self.client_secret = "test_client_secret"
-        self.payload = {"mail": "test@example.com", "name": "Test User"}
+        self.base_url: str = "https://api.n2f.com"
+        self.client_id: str = "test_client_id"
+        self.client_secret: str = "test_client_secret"
+        self.payload: Dict[str, str] = {"mail": "test@example.com", "name": "Test User"}
 
     @patch("n2f.api.user.retreive")
-    def test_get_users_success(self, mock_retreive):
+    def test_get_users_success(self, mock_retreive: Mock) -> None:
         """Test de récupération réussie d'utilisateurs."""
-        mock_response = {
+        mock_response: Dict[str, Any] = {
             "response": {
                 "data": [
                     {"id": "1", "mail": "user1@example.com"},
@@ -32,7 +33,9 @@ class TestUserApi(unittest.TestCase):
         }
         mock_retreive.return_value = mock_response
 
-        result = user_api.get_users(self.base_url, self.client_id, self.client_secret)
+        result: List[Dict[str, str]] = user_api.get_users(
+            self.base_url, self.client_id, self.client_secret
+        )
 
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0]["mail"], "user1@example.com")
@@ -41,9 +44,9 @@ class TestUserApi(unittest.TestCase):
         )
 
     @patch("n2f.api.user.retreive")
-    def test_get_users_with_pagination(self, mock_retreive):
+    def test_get_users_with_pagination(self, mock_retreive: Mock) -> None:
         """Test de récupération d'utilisateurs avec pagination."""
-        mock_response = {"response": {"data": []}}
+        mock_response: Dict[str, Any] = {"response": {"data": []}}
         mock_retreive.return_value = mock_response
 
         user_api.get_users(
@@ -55,12 +58,12 @@ class TestUserApi(unittest.TestCase):
         )
 
     @patch("n2f.api.user.retreive")
-    def test_get_users_simulation_mode(self, mock_retreive):
+    def test_get_users_simulation_mode(self, mock_retreive: Mock) -> None:
         """Test de récupération d'utilisateurs en mode simulation."""
-        mock_response = {"response": {"data": []}}
+        mock_response: Dict[str, Any] = {"response": {"data": []}}
         mock_retreive.return_value = mock_response
 
-        result = user_api.get_users(
+        result: List[Dict[str, str]] = user_api.get_users(
             self.base_url, self.client_id, self.client_secret, simulate=True
         )
 
@@ -69,21 +72,23 @@ class TestUserApi(unittest.TestCase):
         )
 
     @patch("n2f.api.user.retreive")
-    def test_get_users_empty_response(self, mock_retreive):
+    def test_get_users_empty_response(self, mock_retreive: Mock) -> None:
         """Test de récupération d'utilisateurs avec réponse vide."""
-        mock_response = {"response": {}}  # Pas de "data"
+        mock_response: Dict[str, Any] = {"response": {}}  # Pas de "data"
         mock_retreive.return_value = mock_response
 
-        result = user_api.get_users(self.base_url, self.client_id, self.client_secret)
+        result: List[Dict[str, str]] = user_api.get_users(
+            self.base_url, self.client_id, self.client_secret
+        )
 
         self.assertEqual(result, [])
 
     @patch("n2f.api.user.upsert")
-    def test_create_user_success(self, mock_upsert):
+    def test_create_user_success(self, mock_upsert: Mock) -> None:
         """Test de création d'utilisateur réussie."""
         mock_upsert.return_value = True
 
-        result = user_api.create_user(
+        result: bool = user_api.create_user(
             self.base_url, self.client_id, self.client_secret, self.payload
         )
 
@@ -98,11 +103,11 @@ class TestUserApi(unittest.TestCase):
         )
 
     @patch("n2f.api.user.upsert")
-    def test_create_user_simulation_mode(self, mock_upsert):
+    def test_create_user_simulation_mode(self, mock_upsert: Mock) -> None:
         """Test de création d'utilisateur en mode simulation."""
         mock_upsert.return_value = True
 
-        result = user_api.create_user(
+        result: bool = user_api.create_user(
             self.base_url,
             self.client_id,
             self.client_secret,
@@ -120,11 +125,11 @@ class TestUserApi(unittest.TestCase):
         )
 
     @patch("n2f.api.user.upsert")
-    def test_update_user_success(self, mock_upsert):
+    def test_update_user_success(self, mock_upsert: Mock) -> None:
         """Test de mise à jour d'utilisateur réussie."""
         mock_upsert.return_value = True
 
-        result = user_api.update_user(
+        result: bool = user_api.update_user(
             self.base_url, self.client_id, self.client_secret, self.payload
         )
 
@@ -139,11 +144,11 @@ class TestUserApi(unittest.TestCase):
         )
 
     @patch("n2f.api.user.delete")
-    def test_delete_user_success(self, mock_delete):
+    def test_delete_user_success(self, mock_delete: Mock) -> None:
         """Test de suppression d'utilisateur réussie."""
         mock_delete.return_value = True
 
-        result = user_api.delete_user(
+        result: bool = user_api.delete_user(
             self.base_url, self.client_id, self.client_secret, "test@example.com"
         )
 
@@ -158,11 +163,11 @@ class TestUserApi(unittest.TestCase):
         )
 
     @patch("n2f.api.user.delete")
-    def test_delete_user_simulation_mode(self, mock_delete):
+    def test_delete_user_simulation_mode(self, mock_delete: Mock) -> None:
         """Test de suppression d'utilisateur en mode simulation."""
         mock_delete.return_value = True
 
-        result = user_api.delete_user(
+        result: bool = user_api.delete_user(
             self.base_url,
             self.client_id,
             self.client_secret,
@@ -183,16 +188,16 @@ class TestUserApi(unittest.TestCase):
 class TestCompanyApi(unittest.TestCase):
     """Tests pour n2f.api.company."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Configuration initiale pour les tests."""
-        self.base_url = "https://api.n2f.com"
-        self.client_id = "test_client_id"
-        self.client_secret = "test_client_secret"
+        self.base_url: str = "https://api.n2f.com"
+        self.client_id: str = "test_client_id"
+        self.client_secret: str = "test_client_secret"
 
     @patch("n2f.api.company.retreive")
-    def test_get_companies_success(self, mock_retreive):
+    def test_get_companies_success(self, mock_retreive: Mock) -> None:
         """Test de récupération réussie d'entreprises."""
-        mock_response = {
+        mock_response: Dict[str, Any] = {
             "response": {
                 "data": [
                     {"id": "1", "name": "Company 1"},
@@ -202,7 +207,7 @@ class TestCompanyApi(unittest.TestCase):
         }
         mock_retreive.return_value = mock_response
 
-        result = company_api.get_companies(
+        result: List[Dict[str, str]] = company_api.get_companies(
             self.base_url, self.client_id, self.client_secret
         )
 
@@ -219,9 +224,9 @@ class TestCompanyApi(unittest.TestCase):
         )
 
     @patch("n2f.api.company.retreive")
-    def test_get_companies_with_pagination(self, mock_retreive):
+    def test_get_companies_with_pagination(self, mock_retreive: Mock) -> None:
         """Test de récupération d'entreprises avec pagination."""
-        mock_response = {"response": {"data": []}}
+        mock_response: Dict[str, Any] = {"response": {"data": []}}
         mock_retreive.return_value = mock_response
 
         company_api.get_companies(
@@ -239,12 +244,12 @@ class TestCompanyApi(unittest.TestCase):
         )
 
     @patch("n2f.api.company.retreive")
-    def test_get_companies_simulation_mode(self, mock_retreive):
+    def test_get_companies_simulation_mode(self, mock_retreive: Mock) -> None:
         """Test de récupération d'entreprises en mode simulation."""
-        mock_response = {"response": {"data": []}}
+        mock_response: Dict[str, Any] = {"response": {"data": []}}
         mock_retreive.return_value = mock_response
 
-        result = company_api.get_companies(
+        result: List[Dict[str, str]] = company_api.get_companies(
             self.base_url, self.client_id, self.client_secret, simulate=True
         )
 
@@ -253,12 +258,12 @@ class TestCompanyApi(unittest.TestCase):
         )
 
     @patch("n2f.api.company.retreive")
-    def test_get_companies_empty_response(self, mock_retreive):
+    def test_get_companies_empty_response(self, mock_retreive: Mock) -> None:
         """Test de récupération d'entreprises avec réponse vide."""
-        mock_response = {"response": {}}  # Pas de "data"
+        mock_response: Dict[str, Any] = {"response": {}}  # Pas de "data"
         mock_retreive.return_value = mock_response
 
-        result = company_api.get_companies(
+        result: List[Dict[str, str]] = company_api.get_companies(
             self.base_url, self.client_id, self.client_secret
         )
 
@@ -268,21 +273,23 @@ class TestCompanyApi(unittest.TestCase):
 class TestCustomAxeApi(unittest.TestCase):
     """Tests pour n2f.api.customaxe."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Configuration initiale pour les tests."""
-        self.base_url = "https://api.n2f.com"
-        self.client_id = "test_client_id"
-        self.client_secret = "test_client_secret"
-        self.company_id = "company123"
-        self.axe_id = "axe456"
+        self.base_url: str = "https://api.n2f.com"
+        self.client_id: str = "test_client_id"
+        self.client_secret: str = "test_client_secret"
+        self.company_id: str = "company123"
+        self.axe_id: str = "axe456"
 
     @patch("n2f.api.customaxe.get_access_token")
     @patch("n2f.get_session_get")
-    def test_get_customaxes_success(self, mock_get_session, mock_get_token):
+    def test_get_customaxes_success(
+        self, mock_get_session: Mock, mock_get_token: Mock
+    ) -> None:
         """Test de récupération réussie d'axes personnalisés."""
         mock_get_token.return_value = ("test_token", "2025-12-31T23:59:59Z")
-        mock_session = Mock()
-        mock_response = Mock()
+        mock_session: Mock = Mock()
+        mock_response: Mock = Mock()
         mock_response.json.return_value = {
             "response": {
                 "data": [{"id": "1", "name": "Axis 1"}, {"id": "2", "name": "Axis 2"}]
@@ -292,7 +299,7 @@ class TestCustomAxeApi(unittest.TestCase):
         mock_session.get.return_value = mock_response
         mock_get_session.return_value = mock_session
 
-        result = customaxe_api.get_customaxes(
+        result: List[Dict[str, str]] = customaxe_api.get_customaxes(
             self.base_url, self.client_id, self.client_secret, self.company_id, 0, 100
         )
 
@@ -306,9 +313,11 @@ class TestCustomAxeApi(unittest.TestCase):
 
     @patch("n2f.api.customaxe.get_access_token")
     @patch("n2f.get_session_get")
-    def test_get_customaxes_simulation_mode(self, mock_get_session, mock_get_token):
+    def test_get_customaxes_simulation_mode(
+        self, mock_get_session: Mock, mock_get_token: Mock
+    ) -> None:
         """Test de récupération d'axes personnalisés en mode simulation."""
-        result = customaxe_api.get_customaxes(
+        result: List[Dict[str, str]] = customaxe_api.get_customaxes(
             self.base_url,
             self.client_id,
             self.client_secret,

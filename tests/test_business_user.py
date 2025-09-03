@@ -8,6 +8,7 @@ import sys
 import os
 import pandas as pd
 from unittest.mock import Mock, patch, MagicMock
+from typing import Dict, List, Any
 
 # Ajouter le répertoire python au path pour les imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))
@@ -19,10 +20,10 @@ from core import SyncContext
 class TestBusinessUser(unittest.TestCase):
     """Tests pour le module business.process.user."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Configuration initiale pour les tests."""
         # Mock du contexte
-        self.mock_context = Mock(spec=SyncContext)
+        self.mock_context: Mock = Mock(spec=SyncContext)
         self.mock_context.base_dir = "/test/base/dir"
         self.mock_context.db_user = "test_user"
         self.mock_context.db_password = "test_password"
@@ -32,25 +33,25 @@ class TestBusinessUser(unittest.TestCase):
         self.mock_context.scope = "test_scope"
 
         # Mock des arguments
-        self.mock_args = Mock()
+        self.mock_args: Mock = Mock()
         self.mock_args.create = True
         self.mock_args.update = True
         self.mock_args.delete = True
         self.mock_context.args = self.mock_args
 
         # Mock de la configuration
-        self.mock_agresso_config = Mock()
+        self.mock_agresso_config: Mock = Mock()
         self.mock_agresso_config.sql_path = "sql"
         self.mock_agresso_config.prod = False
 
-        self.mock_n2f_config = Mock()
+        self.mock_n2f_config: Mock = Mock()
         self.mock_n2f_config.sandbox = False
 
         # Mock du client N2F
-        self.mock_n2f_client = Mock()
+        self.mock_n2f_client: Mock = Mock()
 
         # DataFrames de test
-        self.df_agresso_users = pd.DataFrame(
+        self.df_agresso_users: pd.DataFrame = pd.DataFrame(
             {
                 "email": ["user1@test.com", "user2@test.com"],
                 "firstname": ["John", "Jane"],
@@ -58,7 +59,7 @@ class TestBusinessUser(unittest.TestCase):
             }
         )
 
-        self.df_n2f_users = pd.DataFrame(
+        self.df_n2f_users: pd.DataFrame = pd.DataFrame(
             {
                 "email": ["existing@test.com"],
                 "firstname": ["Existing"],
@@ -66,21 +67,23 @@ class TestBusinessUser(unittest.TestCase):
             }
         )
 
-        self.df_n2f_companies = pd.DataFrame(
+        self.df_n2f_companies: pd.DataFrame = pd.DataFrame(
             {"uuid": ["uuid1", "uuid2"], "name": ["Company 1", "Company 2"]}
         )
 
-        self.df_roles = pd.DataFrame(
+        self.df_roles: pd.DataFrame = pd.DataFrame(
             {"id": ["role1", "role2"], "name": ["Role 1", "Role 2"]}
         )
 
-        self.df_userprofiles = pd.DataFrame(
+        self.df_userprofiles: pd.DataFrame = pd.DataFrame(
             {"id": ["profile1", "profile2"], "name": ["Profile 1", "Profile 2"]}
         )
 
     @patch("business.process.user.normalize_agresso_users")
     @patch("business.process.user.select")
-    def test_load_agresso_users_success(self, mock_select, mock_normalize):
+    def test_load_agresso_users_success(
+        self, mock_select: Mock, mock_normalize: Mock
+    ) -> None:
         """Test de chargement des utilisateurs Agresso avec succès."""
         # Configuration des mocks
         mock_select.return_value = self.df_agresso_users
@@ -90,7 +93,9 @@ class TestBusinessUser(unittest.TestCase):
         )
 
         # Exécution de la fonction
-        result = user_process._load_agresso_users(self.mock_context, "test_query.sql")
+        result: pd.DataFrame = user_process._load_agresso_users(
+            self.mock_context, "test_query.sql"
+        )
 
         # Vérifications
         mock_select.assert_called_once()

@@ -1,17 +1,23 @@
 import time
 from datetime import datetime
 from functools import wraps
+from typing import Callable, Any, Tuple, Union, Dict
 import n2f
 
 
 def cache_token(
     timeout_seconds: int = n2f.TIMEOUT_TOKEN, safety_margin: int = n2f.SAFETY_MARGIN
-):
-    def decorator(func):
-        cache = {}
+) -> Callable[
+    [Callable[..., Tuple[str, Union[str, float]]]],
+    Callable[..., Tuple[str, Union[str, float]]],
+]:
+    def decorator(
+        func: Callable[..., Tuple[str, Union[str, float]]],
+    ) -> Callable[..., Tuple[str, Union[str, float]]]:
+        cache: Dict[str, Union[str, float]] = {}
 
         @wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> Tuple[str, Union[str, float]]:
             now = time.time()
             if (
                 "token" in cache
@@ -42,7 +48,7 @@ def cache_token(
 @cache_token(timeout_seconds=3600)
 def get_access_token(
     base_url: str, client_id: str, client_secret: str, simulate: bool = False
-) -> tuple[str, str]:
+) -> Tuple[str, str]:
     """
     Récupère un token d'accès N2F via l'API d'authentification.
 
@@ -53,7 +59,7 @@ def get_access_token(
         simulate (bool): Si True, simule la récupération sans l'exécuter.
 
     Returns:
-        tuple[str, str]: Un tuple contenant le token d'accès et sa validité.
+        Tuple[str, str]: Un tuple contenant le token d'accès et sa validité.
 
     Laisse lever une exception en cas d'erreur HTTP ou de parsing.
     """

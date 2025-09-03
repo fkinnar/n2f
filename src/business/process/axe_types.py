@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Tuple, Dict, Optional
+from typing import Tuple, Dict, Optional, List
 import pandas as pd
 
 from n2f.client import N2fApiClient
@@ -22,28 +22,31 @@ def _get_dynamic_mappings(
     if _dynamic_mappings is not None:
         return _dynamic_mappings
 
-    mappings = {AxeType.PROJECTS: ("PROJECT", "projects")}
+    mappings: Dict[AxeType, Tuple[str, str]] = {
+        AxeType.PROJECTS: ("PROJECT", "projects")
+    }
 
     try:
         df_customaxes = n2f_client.get_custom_axes(company_id)
         if not df_customaxes.empty:
             for _, row in df_customaxes.iterrows():
                 names = row.get("names", [])
-                french_name = next(
-                    (
-                        name.get("value", "").lower()
-                        for name in names
-                        if isinstance(name, dict) and name.get("culture") == "fr"
-                    ),
-                    None,
-                )
+                if isinstance(names, list):
+                    french_name = next(
+                        (
+                            name.get("value", "").lower()
+                            for name in names
+                            if isinstance(name, dict) and name.get("culture") == "fr"
+                        ),
+                        None,
+                    )
 
-                if french_name:
-                    uuid = row.get("uuid", "")
-                    if french_name == "plaque":
-                        mappings[AxeType.PLATES] = ("PLAQUE", uuid)
-                    elif french_name == "subpost":
-                        mappings[AxeType.SUBPOSTS] = ("SUBPOST", uuid)
+                    if french_name:
+                        uuid = row.get("uuid", "")
+                        if french_name == "plaque":
+                            mappings[AxeType.PLATES] = ("PLAQUE", uuid)
+                        elif french_name == "subpost":
+                            mappings[AxeType.SUBPOSTS] = ("SUBPOST", uuid)
     except Exception as e:
         raise RuntimeError(
             f"Erreur lors de la récupération des mappings dynamiques: {e}"

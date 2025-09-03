@@ -5,7 +5,10 @@ Ce module définit une hiérarchie d'exceptions spécifiques au projet
 pour améliorer la gestion d'erreur et faciliter le debugging.
 """
 
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Callable, TypeVar, cast
+
+# Type variable pour les fonctions décorées
+F = TypeVar("F", bound=Callable[..., Any])
 
 
 class SyncException(Exception):
@@ -21,7 +24,7 @@ class SyncException(Exception):
         message: str,
         details: Optional[str] = None,
         context: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> None:
         """
         Initialise l'exception de synchronisation.
 
@@ -67,7 +70,7 @@ class ApiException(SyncException):
         endpoint: Optional[str] = None,
         details: Optional[str] = None,
         context: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> None:
         """
         Initialise l'exception d'API.
 
@@ -113,7 +116,7 @@ class ValidationException(SyncException):
         expected_format: Optional[str] = None,
         details: Optional[str] = None,
         context: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> None:
         """
         Initialise l'exception de validation.
 
@@ -158,7 +161,7 @@ class ConfigurationException(SyncException):
         config_file: Optional[str] = None,
         details: Optional[str] = None,
         context: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> None:
         """
         Initialise l'exception de configuration.
 
@@ -197,7 +200,7 @@ class DatabaseException(SyncException):
         table: Optional[str] = None,
         details: Optional[str] = None,
         context: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> None:
         """
         Initialise l'exception de base de données.
 
@@ -234,7 +237,7 @@ class AuthenticationException(SyncException):
         credentials_type: Optional[str] = None,
         details: Optional[str] = None,
         context: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> None:
         """
         Initialise l'exception d'authentification.
 
@@ -274,7 +277,7 @@ class NetworkException(SyncException):
         retry_count: Optional[int] = None,
         details: Optional[str] = None,
         context: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> None:
         """
         Initialise l'exception réseau.
 
@@ -303,7 +306,7 @@ class NetworkException(SyncException):
 # Fonctions utilitaires pour la gestion d'exceptions
 
 
-def wrap_api_call(func):
+def wrap_api_call(func: F) -> F:
     """
     Décorateur pour wrapper les appels API avec gestion d'exceptions.
 
@@ -314,7 +317,7 @@ def wrap_api_call(func):
         Fonction wrapper avec gestion d'exceptions
     """
 
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         try:
             return func(*args, **kwargs)
         except ApiException:
@@ -332,10 +335,10 @@ def wrap_api_call(func):
                 },
             )
 
-    return wrapper
+    return cast(F, wrapper)
 
 
-def handle_sync_exceptions(func):
+def handle_sync_exceptions(func: F) -> F:
     """
     Décorateur pour wrapper les fonctions de synchronisation avec gestion d'exceptions.
 
@@ -346,7 +349,7 @@ def handle_sync_exceptions(func):
         Fonction wrapper avec gestion d'exceptions
     """
 
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         try:
             return func(*args, **kwargs)
         except SyncException:
@@ -364,4 +367,4 @@ def handle_sync_exceptions(func):
                 },
             )
 
-    return wrapper
+    return cast(F, wrapper)

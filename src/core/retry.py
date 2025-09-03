@@ -129,7 +129,7 @@ class RetryManager:
     - Logging intelligent
     """
 
-    def __init__(self, config: Optional[RetryConfig] = None):
+    def __init__(self, config: Optional[RetryConfig] = None) -> None:
         """
         Initialise le gestionnaire de retry.
 
@@ -141,7 +141,11 @@ class RetryManager:
         self.metrics: Dict[str, RetryMetrics] = {}
 
     def execute(
-        self, func: Callable, *args, operation_name: str = "unknown", **kwargs
+        self,
+        func: Callable[..., Any],
+        *args: Any,
+        operation_name: str = "unknown",
+        **kwargs: Any,
     ) -> Any:
         """
         Exécute une fonction avec retry automatique.
@@ -162,7 +166,7 @@ class RetryManager:
             self.metrics[operation_name] = RetryMetrics()
 
         metrics = self.metrics[operation_name]
-        last_exception = None
+        last_exception: Optional[Exception] = None
 
         for attempt in range(1, self.config.max_attempts + 1):
             try:
@@ -218,7 +222,10 @@ class RetryManager:
                 time.sleep(delay)
 
         # Toutes les tentatives ont échoué
-        raise last_exception
+        if last_exception is not None:
+            raise last_exception
+        else:
+            raise RuntimeError("Unexpected error: no exception captured")
 
     def _calculate_delay(self, attempt: int) -> float:
         """
@@ -230,12 +237,10 @@ class RetryManager:
         Returns:
             Délai en secondes
         """
-        if self.config.strategy == RetryStrategy.EXPONENTIAL_BACKOFF:
-            delay = self.config.base_delay * (
-                self.config.exponential_base ** (attempt - 1)
-            )
-        elif self.config.strategy == RetryStrategy.LINEAR_BACKOFF:
+        if self.config.strategy == RetryStrategy.LINEAR_BACKOFF:
             delay = self.config.base_delay * attempt
+        elif self.config.strategy == RetryStrategy.EXPONENTIAL_BACKOFF:
+            delay = self.config.base_delay * (2 ** (attempt - 1))
         elif self.config.strategy == RetryStrategy.CONSTANT_DELAY:
             delay = self.config.base_delay
         elif self.config.strategy == RetryStrategy.FIBONACCI_BACKOFF:
@@ -298,31 +303,31 @@ class RetryManager:
             return
 
         print("\n" + "=" * 60)
-        print("🔄 RÉSUMÉ DES RETRY")
+        print("RÉSUMÉ DES MÉTRIQUES DE RETRY")
         print("=" * 60)
 
         total_attempts = sum(m.total_attempts for m in self.metrics.values())
         total_successful = sum(m.successful_attempts for m in self.metrics.values())
         total_failed = sum(m.failed_attempts for m in self.metrics.values())
-        total_delay = sum(m.total_delay_seconds for m in self.metrics.values())
 
-        print(f"📊 Statistiques globales:")
-        print(f"   • Tentatives totales: {total_attempts}")
-        print(f"   • Succès: {total_successful}")
-        print(f"   • Échecs: {total_failed}")
+        print(f"Tentatives totales: {total_attempts}")
+        print(f"Succès: {total_successful}")
+        print(f"Échecs: {total_failed}")
         print(
-            f"   • Taux de succès: {(total_successful/total_attempts*100):.1f}%"
+            f"Taux de succès: {(total_successful/total_attempts*100):.1f}%"
             if total_attempts > 0
-            else "   • Taux de succès: 0%"
+            else "N/A"
         )
-        print(f"   • Délai total: {total_delay:.2f}s")
 
-        print(f"\n📁 Par opération:")
-        for operation, metrics in self.metrics.items():
-            success_rate = metrics.success_rate * 100
+        print("\nDétail par opération:")
+        for op_name, metrics in self.metrics.items():
+            success_rate = (
+                (metrics.successful_attempts / metrics.total_attempts * 100)
+                if metrics.total_attempts > 0
+                else 0
+            )
             print(
-                f"   • {operation}: {metrics.successful_attempts}/{metrics.total_attempts} "
-                f"({success_rate:.1f}%) - {metrics.total_delay_seconds:.2f}s"
+                f"  - {op_name}: {metrics.successful_attempts}/{metrics.total_attempts} ({success_rate:.1f}%)"
             )
 
         print("=" * 60)

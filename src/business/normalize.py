@@ -1,4 +1,5 @@
 import pandas as pd
+from typing import Dict, Any, Optional
 
 from business.constants import (
     AGRESSO_COL_EMAIL,
@@ -77,7 +78,9 @@ def normalize_agresso_users(df_users: pd.DataFrame) -> pd.DataFrame:
 
 
 def normalize_n2f_users(
-    df_users: pd.DataFrame, profile_mapping: dict = None, role_mapping: dict = None
+    df_users: pd.DataFrame,
+    profile_mapping: Optional[Dict[str, str]] = None,
+    role_mapping: Optional[Dict[str, str]] = None,
 ) -> pd.DataFrame:
     """
     Normalise les utilisateurs N2F en s'assurant que les colonnes nécessaires sont présentes et correctement formatées.
@@ -135,7 +138,7 @@ def normalize_n2f_users(
     return df_users
 
 
-def build_mapping(df: pd.DataFrame) -> dict:
+def build_mapping(df: pd.DataFrame) -> Dict[str, str]:
     """
     Construit un mapping de toutes les valeurs de profile (toutes langues) vers la valeur française.
 
@@ -155,13 +158,13 @@ def build_mapping(df: pd.DataFrame) -> dict:
     if COL_NAMES not in df.columns:
         raise ValueError(f"Colonne manquante dans le DataFrame de mapping: {COL_NAMES}")
 
-    mapping = {}
+    mapping: Dict[str, str] = {}
     for _, row in df.iterrows():
         names = row[COL_NAMES]
         if not names:  # Skip si la liste des noms est vide
             continue
 
-        fr_value = None
+        fr_value: Optional[str] = None
         # Chercher la valeur française
         for name in names:
             if name.get(COL_CULTURE) == CULTURE_FR:

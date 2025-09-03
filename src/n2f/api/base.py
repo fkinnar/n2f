@@ -25,7 +25,7 @@ def retreive(
         simulate (bool): Si True, simule la récupération sans l'exécuter.
 
     Returns:
-        dict: Réponse brute de l'API (incluant la clé "response" avec les données).
+        List[Dict[str, Any]]: Réponse brute de l'API (incluant la clé "response" avec les données).
 
     Raises:
         Exception: En cas d'erreur HTTP ou de parsing.
@@ -52,7 +52,7 @@ def upsert(
     endpoint: str,
     client_id: str,
     client_secret: str,
-    payload: dict,
+    payload: Dict[str, Any],
     simulate: bool = False,
 ) -> bool:
     """
@@ -63,7 +63,7 @@ def upsert(
         endpoint (str): Point de terminaison de l'API (ex: "/users").
         client_id (str): ID du client pour l'API N2F.
         client_secret (str): Secret du client pour l'API N2F.
-        payload (dict): Données à envoyer à l'API.
+        payload (Dict[str, Any]): Données à envoyer à l'API.
         simulate (bool): Si True, simule l'appel sans l'exécuter.
 
     Returns:
@@ -102,7 +102,7 @@ def delete(
         endpoint (str): Point de terminaison de l'API (ex: "/users").
         client_id (str): ID du client pour l'API N2F.
         client_secret (str): Secret du client pour l'API N2F.
-        mail (str): Identifiant de l'objet à supprimer (ex: adresse e-mail pour un utilisateur).
+        id (str): Identifiant de l'objet à supprimer (ex: adresse e-mail pour un utilisateur).
         simulate (bool): Si True, simule la suppression sans l'exécuter.
 
     Returns:

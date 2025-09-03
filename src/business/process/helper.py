@@ -1,5 +1,5 @@
 import pandas as pd
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 
 def reporting(
@@ -71,7 +71,7 @@ def log_error(
 
 
 def has_payload_changes(
-    payload: Dict[str, Any], n2f_entity: Dict[str, Any], entity_type: str = None
+    payload: Dict[str, Any], n2f_entity: pd.Series, entity_type: Optional[str] = None
 ) -> bool:
     """
     Compare les champs du payload avec les données N2F pour détecter les changements.
@@ -99,7 +99,7 @@ def has_payload_changes(
         True
     """
     # Fields to ignore as they can change without being business changes
-    ignored_fields = {
+    ignored_fields: set[str] = {
         "uuid",
         "id",
         "created_at",
@@ -113,7 +113,13 @@ def has_payload_changes(
     }
 
     # Axe-specific fields to ignore (code is a technical identifier for axes)
-    axe_ignored_fields = {"axe_id", "company_uuid", "created_by", "modified_by", "code"}
+    axe_ignored_fields: set[str] = {
+        "axe_id",
+        "company_uuid",
+        "created_by",
+        "modified_by",
+        "code",
+    }
 
     for key, value in payload.items():
         # Ignore irrelevant fields

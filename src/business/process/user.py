@@ -82,7 +82,7 @@ def synchronize(
         n2f_config.sandbox if hasattr(n2f_config, "sandbox") else n2f_config["sandbox"]
     )
     synchronizer = UserSynchronizer(n2f_client, sandbox)
-    results = []
+    results: List[pd.DataFrame] = []
 
     # Exécution des actions de synchronisation
     if context.args.create:

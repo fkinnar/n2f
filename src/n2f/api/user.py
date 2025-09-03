@@ -22,7 +22,7 @@ def get_users(
         simulate (bool): Si True, simule la récupération sans l'exécuter.
 
     Returns:
-        list[dict[str, Any]]: Liste de dictionnaires représentant les utilisateurs récupérés.
+        List[Dict[str, Any]]: Liste de dictionnaires représentant les utilisateurs récupérés.
 
     Raises:
         Exception: En cas d'erreur HTTP ou de parsing.
@@ -39,7 +39,7 @@ def create_user(
     base_url: str,
     client_id: str,
     client_secret: str,
-    payload: dict,
+    payload: Dict[str, Any],
     simulate: bool = False,
 ) -> bool:
     """
@@ -49,7 +49,7 @@ def create_user(
         base_url (str): URL de base de l'API N2F.
         client_id (str): ID du client pour l'API N2F.
         client_secret (str): Secret du client pour l'API N2F.
-        payload (dict): Données utilisateur à envoyer à l'API.
+        payload (Dict[str, Any]): Données utilisateur à envoyer à l'API.
         simulate (bool): Si True, simule l'appel sans exécuter.
 
     Returns:
@@ -62,7 +62,7 @@ def update_user(
     base_url: str,
     client_id: str,
     client_secret: str,
-    payload: dict,
+    payload: Dict[str, Any],
     simulate: bool = False,
 ) -> bool:
     """
@@ -72,7 +72,7 @@ def update_user(
         base_url (str): URL de base de l'API N2F.
         client_id (str): ID du client pour l'API N2F.
         client_secret (str): Secret du client pour l'API N2F.
-        payload (dict): Données utilisateur à envoyer à l'API.
+        payload (Dict[str, Any]): Données utilisateur à envoyer à l'API.
         simulate (bool): Si True, simule l'appel sans exécuter.
 
     Returns:

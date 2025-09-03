@@ -20,6 +20,7 @@ import argparse
 import sys
 import os
 from pathlib import Path
+from typing import Dict, List, Any
 
 # Ajout du chemin du projet pour les imports
 from core.config import SyncConfig, DatabaseConfig, ApiConfig
@@ -28,24 +29,24 @@ from core.config import SyncConfig, DatabaseConfig, ApiConfig
 class TestSyncContext(unittest.TestCase):
     """Tests pour la classe SyncContext."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Configuration initiale pour les tests."""
-        self.args = Mock(spec=argparse.Namespace)
-        self.base_dir = Path("/test/base/dir")
-        self.db_user = "test_user"
-        self.db_password = "test_password"
-        self.client_id = "test_client_id"
-        self.client_secret = "test_client_secret"
+        self.args: Mock = Mock(spec=argparse.Namespace)
+        self.base_dir: Path = Path("/test/base/dir")
+        self.db_user: str = "test_user"
+        self.db_password: str = "test_password"
+        self.client_id: str = "test_client_id"
+        self.client_secret: str = "test_client_secret"
 
-    def test_initialization_with_dict_config(self):
+    def test_initialization_with_dict_config(self) -> None:
         """Test de l'initialisation avec une configuration en format dict."""
-        config = {
+        config: Dict[str, Any] = {
             "agresso": {"host": "localhost", "port": 5432},
             "n2f": {"base_url": "https://api.n2f.com", "timeout": 30},
             "cache": {"enabled": True, "ttl": 3600},
         }
 
-        context = SyncContext(
+        context: SyncContext = SyncContext(
             args=self.args,
             config=config,
             base_dir=self.base_dir,
@@ -63,25 +64,25 @@ class TestSyncContext(unittest.TestCase):
         self.assertEqual(context.client_id, self.client_id)
         self.assertEqual(context.client_secret, self.client_secret)
 
-    def test_initialization_with_syncconfig(self):
+    def test_initialization_with_syncconfig(self) -> None:
         """Test de l'initialisation avec une configuration SyncConfig."""
         # Créer une configuration SyncConfig
-        database_config = DatabaseConfig(
+        database_config: DatabaseConfig = DatabaseConfig(
             prod=True,
             sql_path="test_sql",
             sql_filename_users="test_users.sql",
             sql_filename_customaxes="test_axes.sql",
         )
-        api_config = ApiConfig(
+        api_config: ApiConfig = ApiConfig(
             base_urls="https://api.n2f.com/services/api/v2/",
             sandbox=True,
             simulate=False,
         )
-        config = SyncConfig(
+        config: SyncConfig = SyncConfig(
             database=database_config, api=api_config, scopes={}, cache=Mock()
         )
 
-        context = SyncContext(
+        context: SyncContext = SyncContext(
             args=self.args,
             config=config,
             base_dir=self.base_dir,

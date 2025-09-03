@@ -10,6 +10,7 @@ Ce module démontre comment utiliser le système de retry pour :
 
 import time
 import random
+from typing import Dict, Any
 from ..retry import (
     RetryConfig,
     RetryStrategy,
@@ -25,7 +26,9 @@ from ..retry import (
 )
 
 
-def simulate_api_call(success_rate: float = 0.3, operation_name: str = "api_call"):
+def simulate_api_call(
+    success_rate: float = 0.3, operation_name: str = "api_call"
+) -> Dict[str, str]:
     """Simule un appel API avec un taux de succès configurable."""
     print(f"🔄 Tentative d'appel API: {operation_name}")
 
@@ -46,7 +49,7 @@ def simulate_api_call(success_rate: float = 0.3, operation_name: str = "api_call
 
 def simulate_database_operation(
     success_rate: float = 0.5, operation_name: str = "db_operation"
-):
+) -> Dict[str, Any]:
     """Simule une opération de base de données."""
     print(f"🔄 Tentative d'opération DB: {operation_name}")
 
@@ -65,7 +68,7 @@ def simulate_database_operation(
         raise error_type
 
 
-def simulate_fatal_error():
+def simulate_fatal_error() -> None:
     """Simule une erreur fatale (non récupérable)."""
     print("🔄 Tentative d'opération avec erreur fatale")
     raise FatalError("Erreur fatale - données invalides")
@@ -83,7 +86,7 @@ def db_function_with_retry():
     return simulate_database_operation(0.3, "db_function_with_retry")
 
 
-def example_basic_retry():
+def example_basic_retry() -> None:
     """Exemple d'utilisation basique du retry."""
     print("=== Exemple d'utilisation basique ===")
 
@@ -108,7 +111,7 @@ def example_basic_retry():
         print(f"Échec définitif: {e}")
 
 
-def example_different_strategies():
+def example_different_strategies() -> None:
     """Exemple avec différentes stratégies de retry."""
     print("\n=== Exemple avec différentes stratégies ===")
 
@@ -142,7 +145,7 @@ def example_different_strategies():
             print(f"❌ Échec avec {name}: {e}")
 
 
-def example_decorators():
+def example_decorators() -> None:
     """Exemple d'utilisation des décorateurs spécialisés."""
     print("\n=== Exemple d'utilisation des décorateurs ===")
 
@@ -163,7 +166,7 @@ def example_decorators():
         print(f"❌ DB function échouée: {e}")
 
 
-def example_fatal_error_handling():
+def example_fatal_error_handling() -> None:
     """Exemple de gestion des erreurs fatales."""
     print("\n=== Exemple de gestion des erreurs fatales ===")
 
@@ -180,7 +183,7 @@ def example_fatal_error_handling():
         print(f"❌ Autre erreur: {e}")
 
 
-def example_metrics_analysis():
+def example_metrics_analysis() -> None:
     """Exemple d'analyse des métriques de retry."""
     print("\n=== Exemple d'analyse des métriques ===")
 
@@ -225,7 +228,7 @@ def example_metrics_analysis():
             print(f"  • Raisons des retry: {', '.join(metrics.retry_reasons)}")
 
 
-def example_integration_with_metrics():
+def example_integration_with_metrics() -> None:
     """Exemple d'intégration avec le système de métriques existant."""
     print("\n=== Exemple d'intégration avec les métriques ===")
 
@@ -273,7 +276,7 @@ def example_integration_with_metrics():
         print("⚠️  Module metrics non disponible pour l'intégration")
 
 
-def example_custom_retryable_exceptions():
+def example_custom_retryable_exceptions() -> None:
     """Exemple avec des exceptions récupérables personnalisées."""
     print("\n=== Exemple avec exceptions personnalisées ===")
 
@@ -287,7 +290,7 @@ def example_custom_retryable_exceptions():
 
         pass
 
-    def simulate_custom_api_call():
+    def simulate_custom_api_call() -> Dict[str, str]:
         """Simule un appel API avec erreurs personnalisées."""
         print("🔄 Tentative d'appel API personnalisé")
 

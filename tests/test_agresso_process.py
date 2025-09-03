@@ -19,10 +19,10 @@ import agresso.process as agresso_process
 class TestAgressoProcess(unittest.TestCase):
     """Tests pour le module agresso.process."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Configuration initiale pour les tests."""
         # Données de test
-        self.test_df = pd.DataFrame(
+        self.test_df: pd.DataFrame = pd.DataFrame(
             {
                 "id": [1, 2, 3],
                 "name": ["Alice", "Bob", "Charlie"],
@@ -45,12 +45,12 @@ class TestAgressoProcess(unittest.TestCase):
     @patch("builtins.open", new_callable=mock_open, read_data="SELECT * FROM users")
     def test_select_with_cache_hit(
         self,
-        mock_file,
-        mock_iris_connect,
-        mock_execute_query,
-        mock_set_cache,
-        mock_get_cache,
-    ):
+        mock_file: Mock,
+        mock_iris_connect: Mock,
+        mock_execute_query: Mock,
+        mock_set_cache: Mock,
+        mock_get_cache: Mock,
+    ) -> None:
         """Test de la fonction select avec un hit de cache."""
         # Configuration des mocks
         mock_get_cache.return_value = self.test_df
@@ -83,12 +83,12 @@ class TestAgressoProcess(unittest.TestCase):
     @patch("builtins.open", new_callable=mock_open, read_data="SELECT * FROM users")
     def test_select_with_cache_miss(
         self,
-        mock_file,
-        mock_iris_connect,
-        mock_execute_query,
-        mock_set_cache,
-        mock_get_cache,
-    ):
+        mock_file: Mock,
+        mock_iris_connect: Mock,
+        mock_execute_query: Mock,
+        mock_set_cache: Mock,
+        mock_get_cache: Mock,
+    ) -> None:
         """Test de la fonction select avec un miss de cache."""
         # Configuration des mocks
         mock_get_cache.return_value = None
@@ -124,12 +124,12 @@ class TestAgressoProcess(unittest.TestCase):
     @patch("builtins.open", new_callable=mock_open, read_data="SELECT * FROM users")
     def test_select_without_cache(
         self,
-        mock_file,
-        mock_iris_connect,
-        mock_execute_query,
-        mock_set_cache,
-        mock_get_cache,
-    ):
+        mock_file: Mock,
+        mock_iris_connect: Mock,
+        mock_execute_query: Mock,
+        mock_set_cache: Mock,
+        mock_get_cache: Mock,
+    ) -> None:
         """Test de la fonction select sans cache."""
         # Configuration des mocks
         mock_execute_query.return_value = self.test_df
@@ -164,12 +164,12 @@ class TestAgressoProcess(unittest.TestCase):
     @patch("builtins.open", new_callable=mock_open, read_data="SELECT * FROM users")
     def test_select_production_mode(
         self,
-        mock_file,
-        mock_iris_connect,
-        mock_execute_query,
-        mock_set_cache,
-        mock_get_cache,
-    ):
+        mock_file: Mock,
+        mock_iris_connect: Mock,
+        mock_execute_query: Mock,
+        mock_set_cache: Mock,
+        mock_get_cache: Mock,
+    ) -> None:
         """Test de la fonction select en mode production."""
         # Configuration des mocks
         mock_get_cache.return_value = None

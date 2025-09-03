@@ -5,6 +5,7 @@ Ce fichier montre comment utiliser les différentes exceptions
 pour améliorer la gestion d'erreur dans le projet.
 """
 
+from typing import Dict, Any
 from ..exceptions import (
     SyncException,
     ApiException,
@@ -19,7 +20,7 @@ from ..exceptions import (
 
 
 # Exemple 1: Gestion d'erreur d'API
-def example_api_error_handling():
+def example_api_error_handling() -> None:
     """Exemple de gestion d'erreur d'API avec ApiException."""
 
     try:
@@ -42,7 +43,7 @@ def example_api_error_handling():
 
 
 # Exemple 2: Validation de données
-def example_validation_error():
+def example_validation_error() -> None:
     """Exemple de gestion d'erreur de validation."""
 
     try:
@@ -64,7 +65,7 @@ def example_validation_error():
 
 
 # Exemple 3: Erreur de configuration
-def example_configuration_error():
+def example_configuration_error() -> None:
     """Exemple de gestion d'erreur de configuration."""
 
     try:
@@ -84,7 +85,7 @@ def example_configuration_error():
 
 
 # Exemple 4: Erreur de base de données
-def example_database_error():
+def example_database_error() -> None:
     """Exemple de gestion d'erreur de base de données."""
 
     try:
@@ -103,7 +104,7 @@ def example_database_error():
 
 
 # Exemple 5: Erreur d'authentification
-def example_authentication_error():
+def example_authentication_error() -> None:
     """Exemple de gestion d'erreur d'authentification."""
 
     try:
@@ -121,7 +122,7 @@ def example_authentication_error():
 
 
 # Exemple 6: Erreur réseau
-def example_network_error():
+def example_network_error() -> None:
     """Exemple de gestion d'erreur réseau."""
 
     try:
@@ -142,7 +143,7 @@ def example_network_error():
 
 # Exemple 7: Utilisation du décorateur pour les appels API
 @wrap_api_call
-def example_api_function():
+def example_api_function() -> str:
     """Exemple de fonction API avec décorateur de gestion d'exceptions."""
     # Cette fonction sera automatiquement wrapper avec gestion d'exceptions
     return "API call successful"
@@ -150,14 +151,14 @@ def example_api_function():
 
 # Exemple 8: Utilisation du décorateur pour la synchronisation
 @handle_sync_exceptions
-def example_sync_function():
+def example_sync_function() -> str:
     """Exemple de fonction de synchronisation avec décorateur de gestion d'exceptions."""
     # Cette fonction sera automatiquement wrapper avec gestion d'exceptions
     return "Synchronization successful"
 
 
 # Exemple 9: Conversion d'exceptions en dictionnaire
-def example_exception_serialization():
+def example_exception_serialization() -> None:
     """Exemple de sérialisation d'exceptions."""
 
     try:
@@ -169,14 +170,14 @@ def example_exception_serialization():
         )
     except ApiException as e:
         # Convertir l'exception en dictionnaire pour la sérialisation
-        error_dict = e.to_dict()
+        error_dict: Dict[str, Any] = e.to_dict()
         print("Exception as dictionary:")
         for key, value in error_dict.items():
             print(f"  {key}: {value}")
 
 
 # Exemple 10: Gestion hiérarchique d'exceptions
-def example_hierarchical_exception_handling():
+def example_hierarchical_exception_handling() -> None:
     """Exemple de gestion hiérarchique d'exceptions."""
 
     try:
@@ -190,7 +191,7 @@ def example_hierarchical_exception_handling():
         print(f"Caught generic Exception: {e}")
 
 
-def run_all_examples():
+def run_all_examples() -> None:
     """Exécute tous les exemples d'exceptions."""
     print("=== Exceptions personnalisées - Exemples d'utilisation ===\n")
 

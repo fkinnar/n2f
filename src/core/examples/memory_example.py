@@ -28,7 +28,7 @@ def create_sample_dataframe(rows: int = 1000, cols: int = 10) -> pd.DataFrame:
     return pd.DataFrame(data)
 
 
-def example_memory_basic_usage():
+def example_memory_basic_usage() -> None:
     """Exemple d'utilisation basique du MemoryManager."""
     print("=== Exemple d'utilisation basique ===")
 
@@ -63,7 +63,7 @@ def example_memory_basic_usage():
     print_memory_summary()
 
 
-def example_memory_pressure():
+def example_memory_pressure() -> None:
     """Exemple de gestion de la pression mémoire."""
     print("\n=== Exemple de gestion de la pression mémoire ===")
 
@@ -87,7 +87,7 @@ def example_memory_pressure():
     cleanup_all()
 
 
-def example_scope_management():
+def example_scope_management() -> None:
     """Exemple de gestion par scope."""
     print("\n=== Exemple de gestion par scope ===")
 
@@ -113,7 +113,7 @@ def example_scope_management():
     print_memory_summary()
 
 
-def example_metrics_detailed():
+def example_metrics_detailed() -> None:
     """Exemple d'utilisation des métriques détaillées."""
     print("\n=== Exemple de métriques détaillées ===")
 
@@ -143,7 +143,7 @@ def example_metrics_detailed():
     cleanup_all()
 
 
-def example_integration_with_sync():
+def example_integration_with_sync() -> None:
     """Exemple d'intégration avec un processus de synchronisation."""
     print("\n=== Exemple d'intégration avec synchronisation ===")
 
@@ -183,7 +183,7 @@ if __name__ == "__main__":
 
     try:
         # Exemples d'utilisation
-        example_basic_usage()
+        example_memory_basic_usage()
         example_memory_pressure()
         example_scope_management()
         example_metrics_detailed()

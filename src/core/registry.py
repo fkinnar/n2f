@@ -28,7 +28,7 @@ class RegistryEntry:
         ""  # Filtre pour la colonne SQL (ex: "projects", "plates", "subposts")
     )
 
-    def to_scope_config(self):
+    def to_scope_config(self) -> Any:
         """Convertit l'entrée en ScopeConfig."""
         # Import déplacé ici pour éviter les imports circulaires
         from .config import ScopeConfig
@@ -52,14 +52,14 @@ class SyncRegistry:
     sans modification du code existant.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._registry: Dict[str, RegistryEntry] = {}
         self._discovered_modules: set = set()
 
     def register(
         self,
         scope_name: str,
-        sync_function: Callable,
+        sync_function: Callable[..., Any],
         sql_filename: str,
         entity_type: str,
         display_name: str,
@@ -95,7 +95,7 @@ class SyncRegistry:
             sql_column_filter=sql_column_filter,
         )
 
-    def get(self, scope_name: str):
+    def get(self, scope_name: str) -> Optional[Any]:
         """
         Récupère la configuration d'un scope.
 

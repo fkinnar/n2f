@@ -6,7 +6,7 @@ et fournit des utilitaires pour charger et valider la configuration.
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, Any, Callable, Optional, List
+from typing import Dict, Any, Callable, Optional, List, Union
 from pathlib import Path
 import yaml
 from .registry import get_registry
@@ -48,7 +48,7 @@ class CacheConfig:
 class ScopeConfig:
     """Configuration d'un scope de synchronisation."""
 
-    sync_function: Callable
+    sync_function: Callable[..., Any]
     sql_filename: str
     entity_type: str
     display_name: str
@@ -66,12 +66,12 @@ class SyncConfig:
     cache: CacheConfig = field(default_factory=CacheConfig)
     scopes: Dict[str, ScopeConfig] = field(default_factory=dict)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Initialise les scopes par défaut après la création de l'objet."""
         if not self.scopes:
             self._init_default_scopes()
 
-    def _init_default_scopes(self):
+    def _init_default_scopes(self) -> None:
         """Initialise les scopes par défaut en utilisant le Registry."""
         registry = get_registry()
 
@@ -81,7 +81,7 @@ class SyncConfig:
         # Récupération des scopes depuis le registry
         self.scopes = registry.get_all_scope_configs()
 
-    def _register_default_scopes_if_needed(self, registry):
+    def _register_default_scopes_if_needed(self, registry: Any) -> None:
         """Enregistre les scopes par défaut s'ils ne sont pas encore découverts."""
         # Import des fonctions de synchronisation ici pour éviter les imports circulaires
         from business.process import (
@@ -91,7 +91,7 @@ class SyncConfig:
             synchronize_subposts,
         )
 
-        default_scopes = {
+        default_scopes: Dict[str, Dict[str, Union[Callable[..., Any], str]]] = {
             "users": {
                 "function": synchronize_users,
                 "sql_filename": self.database.sql_filename_users,
@@ -147,7 +147,7 @@ class SyncConfig:
 
     def validate(self) -> List[str]:
         """Valide la configuration et retourne une liste d'erreurs."""
-        errors = []
+        errors: List[str] = []
 
         # Validation de la base de données
         if not self.database.sql_path:
@@ -170,7 +170,7 @@ class SyncConfig:
 class ConfigLoader:
     """Chargeur de configuration depuis les fichiers YAML."""
 
-    def __init__(self, config_path: Path):
+    def __init__(self, config_path: Path) -> None:
         self.config_path = config_path
 
     def load(self) -> SyncConfig:
@@ -181,7 +181,7 @@ class ConfigLoader:
             )
 
         with self.config_path.open("r", encoding="utf-8") as config_file:
-            config_data = yaml.safe_load(config_file)
+            config_data: Dict[str, Any] = yaml.safe_load(config_file)
 
         # Création des objets de configuration
         database_config = DatabaseConfig(

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List, Tuple, Any
+from typing import Dict, List, Tuple, Any, Optional, Union
 import pandas as pd
 from n2f.client import N2fApiClient
 from n2f.api_result import ApiResult
@@ -15,7 +15,7 @@ class EntitySynchronizer(ABC):
     utilisé dans user.py et axe.py pour éliminer la duplication de code.
     """
 
-    def __init__(self, n2f_client: N2fApiClient, sandbox: bool, scope: str):
+    def __init__(self, n2f_client: N2fApiClient, sandbox: bool, scope: str) -> None:
         """
         Initialise le synchroniseur.
 
@@ -32,7 +32,7 @@ class EntitySynchronizer(ABC):
         self,
         df_agresso: pd.DataFrame,
         df_n2f: pd.DataFrame,
-        df_n2f_companies: pd.DataFrame = None,
+        df_n2f_companies: Optional[pd.DataFrame] = None,
         status_col: str = "created",
     ) -> Tuple[pd.DataFrame, str]:
         """
@@ -48,7 +48,9 @@ class EntitySynchronizer(ABC):
             Tuple[DataFrame, str]: DataFrame des résultats et nom de la colonne de statut
         """
         # Identifier les entités à créer (présentes dans Agresso mais pas dans N2F)
-        entities_to_create = self._get_entities_to_create(df_agresso, df_n2f)
+        entities_to_create: pd.DataFrame = self._get_entities_to_create(
+            df_agresso, df_n2f
+        )
 
         if entities_to_create.empty:
             return pd.DataFrame(), status_col
@@ -58,16 +60,16 @@ class EntitySynchronizer(ABC):
         for _, entity in entities_to_create.iterrows():
             try:
                 # Construire le payload et effectuer l'opération
-                payload = self.build_payload(
+                payload: Dict[str, Any] = self.build_payload(
                     entity, df_agresso, df_n2f, df_n2f_companies
                 )
-                api_result = self._perform_create_operation(
+                api_result: ApiResult = self._perform_create_operation(
                     entity, payload, df_n2f_companies
                 )
                 api_results.append(api_result)
             except Exception as e:
                 # Gestion d'erreur standardisée
-                entity_id = self.get_entity_id(entity)
+                entity_id: str = self.get_entity_id(entity)
                 log_error(
                     self.scope.upper(), "CREATE", entity_id, e, f"Payload: {payload}"
                 )
@@ -85,7 +87,7 @@ class EntitySynchronizer(ABC):
         self,
         df_agresso: pd.DataFrame,
         df_n2f: pd.DataFrame,
-        df_n2f_companies: pd.DataFrame = None,
+        df_n2f_companies: Optional[pd.DataFrame] = None,
         status_col: str = "updated",
     ) -> Tuple[pd.DataFrame, str]:
         """
@@ -104,33 +106,35 @@ class EntitySynchronizer(ABC):
             return pd.DataFrame(), status_col
 
         # Identifier les entités à mettre à jour (présentes dans les deux systèmes)
-        entities_to_update = self._get_entities_to_update(df_agresso, df_n2f)
+        entities_to_update: pd.DataFrame = self._get_entities_to_update(
+            df_agresso, df_n2f
+        )
 
         if entities_to_update.empty:
             return pd.DataFrame(), status_col
 
         # Créer un index pour accéder rapidement aux données N2F
-        n2f_index = self._create_n2f_index(df_n2f)
+        n2f_index: Dict[str, pd.Series] = self._create_n2f_index(df_n2f)
 
         api_results: List[ApiResult] = []
-        updated_entities: List[Dict] = []
+        updated_entities: List[Dict[str, Any]] = []
 
         for _, entity in entities_to_update.iterrows():
             try:
                 # Construire le payload
-                payload = self.build_payload(
+                payload: Dict[str, Any] = self.build_payload(
                     entity, df_agresso, df_n2f, df_n2f_companies
                 )
 
                 # Récupérer l'entité N2F correspondante
-                n2f_entity = self._get_n2f_entity(entity, n2f_index)
+                n2f_entity: pd.Series = self._get_n2f_entity(entity, n2f_index)
 
                 # Vérifier s'il y a des changements
                 if not self._has_changes(payload, n2f_entity):
                     continue
 
                 # Effectuer l'opération de mise à jour
-                api_result = self._perform_update_operation(
+                api_result: ApiResult = self._perform_update_operation(
                     entity, payload, n2f_entity, df_n2f_companies
                 )
                 api_results.append(api_result)
@@ -138,7 +142,7 @@ class EntitySynchronizer(ABC):
 
             except Exception as e:
                 # Gestion d'erreur standardisée
-                entity_id = self.get_entity_id(entity)
+                entity_id: str = self.get_entity_id(entity)
                 log_error(
                     self.scope.upper(), "UPDATE", entity_id, e, f"Payload: {payload}"
                 )
@@ -159,7 +163,7 @@ class EntitySynchronizer(ABC):
         self,
         df_agresso: pd.DataFrame,
         df_n2f: pd.DataFrame,
-        df_n2f_companies: pd.DataFrame = None,
+        df_n2f_companies: Optional[pd.DataFrame] = None,
         status_col: str = "deleted",
     ) -> Tuple[pd.DataFrame, str]:
         """
@@ -204,66 +208,40 @@ class EntitySynchronizer(ABC):
 
         return entities_to_delete, status_col
 
-    # Méthodes abstraites à implémenter dans les classes concrètes
+    # Méthodes abstraites pour l'identification des entités
     @abstractmethod
     def build_payload(
         self,
         entity: pd.Series,
         df_agresso: pd.DataFrame,
         df_n2f: pd.DataFrame,
-        df_n2f_companies: pd.DataFrame = None,
+        df_n2f_companies: Optional[pd.DataFrame] = None,
     ) -> Dict[str, Any]:
-        """
-        Construit le payload pour l'API N2F.
-
-        Args:
-            entity: Entité à traiter
-            df_agresso: DataFrame des données Agresso
-            df_n2f: DataFrame des données N2F
-            df_n2f_companies: DataFrame des entreprises N2F (optionnel)
-
-        Returns:
-            Dict: Payload pour l'API N2F
-        """
+        """Construit le payload pour l'API N2F."""
         pass
 
     @abstractmethod
     def get_entity_id(self, entity: pd.Series) -> str:
-        """
-        Retourne l'identifiant unique de l'entité.
-
-        Args:
-            entity: Entité à traiter
-
-        Returns:
-            str: Identifiant unique de l'entité
-        """
+        """Récupère l'identifiant unique de l'entité."""
         pass
 
     @abstractmethod
     def get_agresso_id_column(self) -> str:
-        """
-        Retourne le nom de la colonne d'identifiant dans les données Agresso.
-
-        Returns:
-            str: Nom de la colonne d'identifiant
-        """
+        """Retourne le nom de la colonne d'identifiant Agresso."""
         pass
 
     @abstractmethod
     def get_n2f_id_column(self) -> str:
-        """
-        Retourne le nom de la colonne d'identifiant dans les données N2F.
-
-        Returns:
-            str: Nom de la colonne d'identifiant
-        """
+        """Retourne le nom de la colonne d'identifiant N2F."""
         pass
 
     # Méthodes abstraites pour les opérations spécifiques
     @abstractmethod
     def _perform_create_operation(
-        self, entity: pd.Series, payload: Dict, df_n2f_companies: pd.DataFrame = None
+        self,
+        entity: pd.Series,
+        payload: Dict[str, Any],
+        df_n2f_companies: Optional[pd.DataFrame] = None,
     ) -> ApiResult:
         """Effectue l'opération de création spécifique à l'entité."""
         pass
@@ -272,16 +250,16 @@ class EntitySynchronizer(ABC):
     def _perform_update_operation(
         self,
         entity: pd.Series,
-        payload: Dict,
-        n2f_entity: Dict,
-        df_n2f_companies: pd.DataFrame = None,
+        payload: Dict[str, Any],
+        n2f_entity: Dict[str, Any],
+        df_n2f_companies: Optional[pd.DataFrame] = None,
     ) -> ApiResult:
         """Effectue l'opération de mise à jour spécifique à l'entité."""
         pass
 
     @abstractmethod
     def _perform_delete_operation(
-        self, entity: pd.Series, df_n2f_companies: pd.DataFrame = None
+        self, entity: pd.Series, df_n2f_companies: Optional[pd.DataFrame] = None
     ) -> ApiResult:
         """Effectue l'opération de suppression spécifique à l'entité."""
         pass
@@ -320,25 +298,27 @@ class EntitySynchronizer(ABC):
 
         return df_n2f[~df_n2f[n2f_id_col].isin(df_agresso[agresso_id_col])].copy()
 
-    def _create_n2f_index(self, df_n2f: pd.DataFrame) -> Dict:
+    def _create_n2f_index(self, df_n2f: pd.DataFrame) -> Dict[str, pd.Series]:
         """Crée un index pour accéder rapidement aux données N2F."""
-        n2f_id_col = self.get_n2f_id_column()
-        return df_n2f.set_index(n2f_id_col).to_dict(orient="index")
+        n2f_id_col: str = self.get_n2f_id_column()
+        return df_n2f.set_index(n2f_id_col)
 
-    def _get_n2f_entity(self, entity: pd.Series, n2f_index: Dict) -> Dict:
+    def _get_n2f_entity(
+        self, entity: pd.Series, n2f_index: Dict[str, pd.Series]
+    ) -> pd.Series:
         """Récupère l'entité N2F correspondante."""
-        entity_id = self.get_entity_id(entity)
-        n2f_entity = n2f_index.get(entity_id, {})
+        entity_id: str = self.get_entity_id(entity)
+        n2f_entity: pd.Series = n2f_index.get(entity_id, pd.Series())
 
         # Ajouter l'ID car set_index() le retire des valeurs
-        if n2f_entity:
+        if not n2f_entity.empty:
             n2f_entity[self.get_n2f_id_column()] = entity_id
 
         return n2f_entity
 
-    def _has_changes(self, payload: Dict, n2f_entity: Dict) -> bool:
+    def _has_changes(self, payload: Dict[str, Any], n2f_entity: pd.Series) -> bool:
         """Vérifie s'il y a des changements entre le payload et l'entité N2F."""
-        entity_type = self.scope.rstrip(
+        entity_type: str = self.scope.rstrip(
             "s"
         )  # "users" -> "user", "projects" -> "project"
         return has_payload_changes(payload, n2f_entity, entity_type)

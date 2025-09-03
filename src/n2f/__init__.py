@@ -1,5 +1,6 @@
 from requests_ratelimiter import LimiterSession
 from datetime import datetime
+from typing import Union
 
 
 # Quota configuration
@@ -26,11 +27,11 @@ def is_night() -> bool:
     return hour > DAY_END_HOUR or hour < DAY_START_HOUR
 
 
-def get_session_get():
+def get_session_get() -> LimiterSession:
     """Retourne la session GET adaptée à l'heure courante."""
     return session_get_night if is_night() else session_get_day
 
 
-def get_session_write():
+def get_session_write() -> LimiterSession:
     """Retourne la session WRITE adaptée à l'heure courante."""
-    return session_write_night if is_night() else session_write_day
+    return session_write_night if is_night() else session_get_day

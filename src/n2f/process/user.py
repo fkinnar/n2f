@@ -33,7 +33,7 @@ def build_user_payload(
     n2f_client: N2fApiClient,
     df_n2f_companies: pd.DataFrame,
     sandbox: bool,
-    manager_email: str = None,
+    manager_email: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Construit le payload JSON pour l'upsert d'un utilisateur."""
     company_id = lookup_company_id(user["Entreprise"], df_n2f_companies)
@@ -174,7 +174,7 @@ def update_users(
     if df_agresso_users.empty or df_n2f_users.empty:
         return pd.DataFrame(), status_col
 
-    users_to_update: List[Dict] = []
+    users_to_update: List[Dict[str, Any]] = []
     api_results: List[ApiResult] = []
     n2f_by_mail = df_n2f_users.set_index("mail").to_dict(orient="index")
 

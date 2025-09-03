@@ -14,7 +14,7 @@ import pickle
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union, List
 from dataclasses import dataclass, asdict
 import pandas as pd
 import hashlib
@@ -57,8 +57,11 @@ class AdvancedCache:
     """
 
     def __init__(
-        self, cache_dir: Path = None, max_size_mb: int = 100, default_ttl: int = 3600
-    ):
+        self,
+        cache_dir: Optional[Path] = None,
+        max_size_mb: int = 100,
+        default_ttl: int = 3600,
+    ) -> None:
         """
         Initialise le cache avancé.
 
@@ -85,7 +88,7 @@ class AdvancedCache:
     def _make_key(self, function_name: str, *args: Any) -> str:
         """Crée une clé de cache unique."""
         # Création d'une clé basée sur la fonction et ses arguments
-        key_parts = [function_name] + list(args)
+        key_parts: List[Any] = [function_name] + list(args)
         key_string = json.dumps(key_parts, sort_keys=True, default=str)
         return hashlib.md5(key_string.encode()).hexdigest()
 
@@ -122,7 +125,7 @@ class AdvancedCache:
     def _cleanup_expired(self) -> None:
         """Nettoie les entrées expirées."""
         current_time = time.time()
-        expired_keys = []
+        expired_keys: List[str] = []
 
         for key, entry in self._memory_cache.items():
             if self._is_expired(entry):

@@ -1,4 +1,5 @@
 import pandas as pd
+from typing import List, Dict, Any
 
 from core import SyncContext
 from n2f.client import N2fApiClient
@@ -53,7 +54,7 @@ def _load_n2f_axes(
     n2f_client: N2fApiClient, df_n2f_companies: pd.DataFrame, n2f_code: str
 ) -> pd.DataFrame:
     """Charge les valeurs d'axes N2F pour toutes les entreprises."""
-    axes_list = []
+    axes_list: List[pd.DataFrame] = []
     for company_id in df_n2f_companies["uuid"]:
         df_axes = get_n2f_projects(
             n2f_client=n2f_client, axe_id=n2f_code, company_id=company_id
@@ -70,7 +71,7 @@ def _load_n2f_axes(
 
 def _get_scope_from_axe_type(axe_type: AxeType) -> str:
     """Détermine le scope à partir du type d'axe."""
-    scope_map = {
+    scope_map: Dict[AxeType, str] = {
         AxeType.PROJECTS: "projects",
         AxeType.PLATES: "plates",
         AxeType.SUBPOSTS: "subposts",
@@ -87,9 +88,9 @@ def _perform_sync_actions(
     df_n2f_axes: pd.DataFrame,
     df_n2f_companies: pd.DataFrame,
     scope: str,
-) -> list[pd.DataFrame]:
+) -> List[pd.DataFrame]:
     """Exécute les actions de création, mise à jour et suppression pour les axes."""
-    results = []
+    results: List[pd.DataFrame] = []
 
     # Récupérer la configuration N2F une seule fois
     n2f_config = context.get_config_value("n2f")
@@ -108,7 +109,7 @@ def _perform_sync_actions(
             scope=scope,
         )
         reporting(
-            created_df, f"No {sql_column} added", f"{sql_column} added", status_col
+            created_df, f"No {sql_column} created", f"{sql_column} created", status_col
         )
         if not created_df.empty:
             results.append(created_df)
@@ -155,7 +156,7 @@ def synchronize(
     context: SyncContext,
     axe_type: AxeType,
     sql_filename: str,
-) -> list[pd.DataFrame]:
+) -> List[pd.DataFrame]:
     """Orchestre la synchronisation des axes Agresso <-> N2F."""
     n2f_client = N2fApiClient(context)
 
@@ -189,7 +190,7 @@ def synchronize(
 
 def synchronize_projects(
     context: SyncContext, sql_filename: str, sql_column_filter: str = ""
-) -> list[pd.DataFrame]:
+) -> List[pd.DataFrame]:
     """Effectue la synchronisation des projets Agresso <-> N2F."""
     return synchronize(
         context=context, axe_type=AxeType.PROJECTS, sql_filename=sql_filename
@@ -198,7 +199,7 @@ def synchronize_projects(
 
 def synchronize_plates(
     context: SyncContext, sql_filename: str, sql_column_filter: str = ""
-) -> list[pd.DataFrame]:
+) -> List[pd.DataFrame]:
     """Effectue la synchronisation des plaques Agresso <-> N2F."""
     return synchronize(
         context=context, axe_type=AxeType.PLATES, sql_filename=sql_filename
@@ -207,7 +208,7 @@ def synchronize_plates(
 
 def synchronize_subposts(
     context: SyncContext, sql_filename: str, sql_column_filter: str = ""
-) -> list[pd.DataFrame]:
+) -> List[pd.DataFrame]:
     """Effectue la synchronisation des subposts Agresso <-> N2F."""
     return synchronize(
         context=context, axe_type=AxeType.SUBPOSTS, sql_filename=sql_filename

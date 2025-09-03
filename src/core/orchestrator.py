@@ -54,7 +54,7 @@ class SyncResult:
 class ContextBuilder:
     """Constructeur de contexte de synchronisation."""
 
-    def __init__(self, args: argparse.Namespace, config_path: Path):
+    def __init__(self, args: argparse.Namespace, config_path: Path) -> None:
         self.args = args
         self.config_path = config_path
 
@@ -114,7 +114,7 @@ class ContextBuilder:
 class ScopeExecutor:
     """Exécuteur de synchronisation pour un scope."""
 
-    def __init__(self, context: SyncContext):
+    def __init__(self, context: SyncContext) -> None:
         self.context = context
         self.registry = get_registry()
 
@@ -150,22 +150,20 @@ class ScopeExecutor:
             return SyncResult(
                 scope_name=scope_name,
                 success=True,
-                results=results or [],
+                results=results if isinstance(results, list) else [results],
                 duration_seconds=duration,
             )
 
         except Exception as e:
             duration = time.time() - start_time
-            error_msg = (
-                f"Error during synchronization of scope '{scope_name}': {str(e)}"
-            )
-            print(f"ERROR: {error_msg}")
+            error_message = f"Error during synchronization: {str(e)}"
+            print(f"--- Error in scope {scope_name}: {error_message} ---")
 
             return SyncResult(
                 scope_name=scope_name,
                 success=False,
                 results=[],
-                error_message=error_msg,
+                error_message=error_message,
                 duration_seconds=duration,
             )
 
@@ -173,7 +171,7 @@ class ScopeExecutor:
 class LogManager:
     """Gestionnaire de logs et d'export."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.results: List[SyncResult] = []
 
     def add_result(self, result: SyncResult) -> None:
@@ -187,7 +185,7 @@ class LogManager:
             return
 
         # Collecte de tous les DataFrames de résultats
-        all_dataframes = []
+        all_dataframes: List[pd.DataFrame] = []
         for result in self.results:
             if result.success and result.results:
                 all_dataframes.extend(result.results)
@@ -287,7 +285,7 @@ class SyncOrchestrator:
     - Gestion des logs et reporting
     """
 
-    def __init__(self, config_path: Path, args: argparse.Namespace):
+    def __init__(self, config_path: Path, args: argparse.Namespace) -> None:
         """
         Initialise l'orchestrateur.
 

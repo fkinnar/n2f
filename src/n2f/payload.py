@@ -1,4 +1,5 @@
 import pandas as pd
+from typing import Dict, Any
 
 from n2f.helper import to_bool, normalize_date_for_payload
 from business.constants import (
@@ -62,18 +63,20 @@ from business.constants import (
 )
 
 
-def create_user_upsert_payload(user: dict, company_id: str, sandbox: bool) -> dict:
+def create_user_upsert_payload(
+    user: Dict[str, Any], company_id: str, sandbox: bool
+) -> Dict[str, Any]:
     """
     Construit le payload JSON pour l'upsert (création ou mise à jour) d'un utilisateur N2F
     à partir d'une ligne du DataFrame Agresso, en remplaçant le code entreprise par son UUID.
 
     Args:
-        user (dict): Dictionnaire représentant un utilisateur.
+        user (Dict[str, Any]): Dictionnaire représentant un utilisateur.
         company_id (str): ID de l'entreprise à laquelle l'utilisateur appartient.
         sandbox (bool): Indique si l'environnement est un sandbox.
 
     Returns:
-        dict: Dictionnaire prêt à être converti en JSON pour l'API N2F.
+        Dict[str, Any]: Dictionnaire prêt à être converti en JSON pour l'API N2F.
     """
 
     payload = {
@@ -103,17 +106,19 @@ def create_user_upsert_payload(user: dict, company_id: str, sandbox: bool) -> di
     return payload
 
 
-def create_project_upsert_payload(project: dict, sandbox: bool) -> dict:
+def create_project_upsert_payload(
+    project: Dict[str, Any], sandbox: bool
+) -> Dict[str, Any]:
     """
     Construit le payload JSON pour l'upsert (création ou mise à jour) d'un projet N2F
     à partir d'une ligne du DataFrame Agresso.
 
     Args:
-        project (dict): Dictionnaire représentant un projet.
+        project (Dict[str, Any]): Dictionnaire représentant un projet.
         sandbox (bool): Indique si l'environnement est un sandbox.
 
     Returns:
-        dict: Dictionnaire prêt à être converti en JSON pour l'API N2F.
+        Dict[str, Any]: Dictionnaire prêt à être converti en JSON pour l'API N2F.
     """
 
     payload = {

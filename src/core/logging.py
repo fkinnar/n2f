@@ -3,7 +3,7 @@ Fonctions de logging pour la synchronisation N2F.
 """
 
 import pandas as pd
-from typing import List
+from typing import List, Optional
 from datetime import datetime
 from pathlib import Path
 from n2f.api_result import ApiResult
@@ -39,7 +39,7 @@ def add_api_logging_columns(
     return df
 
 
-def export_api_logs(df: pd.DataFrame, filename: str = None) -> str:
+def export_api_logs(df: pd.DataFrame, filename: Optional[str] = None) -> str:
     """
     Exporte les logs d'API vers un fichier CSV dans le dossier logs.
 
@@ -48,7 +48,7 @@ def export_api_logs(df: pd.DataFrame, filename: str = None) -> str:
         filename: Nom du fichier (optionnel)
 
     Returns:
-        Chemin du fichier exporté
+        str: Chemin du fichier exporté
     """
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

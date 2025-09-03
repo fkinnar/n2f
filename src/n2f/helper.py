@@ -1,7 +1,8 @@
 import pandas as pd
+from typing import Union, Optional, Any
 
 
-def to_bool(val) -> bool:
+def to_bool(val: Union[bool, int, float, str, Any]) -> bool:
     """
     Convertit une valeur en booléen.
     Gère les cas courants : '1', 1, 'true', 'True', 'yes', 'y', 'on' → True
@@ -17,7 +18,7 @@ def to_bool(val) -> bool:
     return False
 
 
-def normalize_date_for_payload(value):
+def normalize_date_for_payload(value: Union[pd.Timestamp, str, Any]) -> Optional[str]:
     """
     Normalise une date pour l'API: renvoie None si vide/NaN
     et si la date représente 31/12/2099 (sentinelle d'illimité).

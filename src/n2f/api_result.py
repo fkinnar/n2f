@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional, Any
+from typing import Optional, Any, Dict
 
 
 @dataclass
@@ -21,11 +21,11 @@ class ApiResult:
     object_id: Optional[str] = None  # email pour user, code pour axe, etc.
     scope: Optional[str] = None  # "users", "projects", "plates", "subposts"
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.timestamp is None:
             self.timestamp = datetime.now()
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> Dict[str, Any]:
         """Convertit le résultat en dictionnaire pour stockage dans DataFrame."""
         return {
             "api_success": self.success,
