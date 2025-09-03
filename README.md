@@ -389,3 +389,15 @@ Ce projet est propriétaire et confidentiel.
 
 *Dernière mise à jour : 28 août 2025*
 *Version : 1.0*
+
+## Pre-commit Hooks
+
+This project uses pre-commit hooks to ensure code quality:
+- **Black**: Automatic code formatting
+- **Trailing whitespace**: Removes trailing spaces
+- **End of file**: Ensures files end with newline
+- **YAML validation**: Checks YAML syntax
+- **Large files**: Prevents large files from being committed
+- **Merge conflicts**: Detects unresolved merge conflicts
+
+Test line for pre-commit hooks.
