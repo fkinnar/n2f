@@ -113,18 +113,9 @@ def run_coverage_analysis():
     return result.failures, result.errors
 
 
-def analyze_missing_coverage():
-    """Analyse détaillée des lignes manquantes."""
-    print("\n" + "=" * 60)
-    print("ANALYSE DÉTAILLÉE DES LIGNES MANQUANTES")
-    print("=" * 60)
-
-    cov = coverage.Coverage()
-    cov.load()
-
+def _get_missing_lines_by_file(data):
+    """Extrait les lignes manquantes par fichier depuis les données de couverture."""
     missing_by_file = {}
-
-    data = cov.get_data()
 
     for filename in data.measured_files():
         if filename.startswith("src/"):
@@ -136,29 +127,50 @@ def analyze_missing_coverage():
                 if missing_lines:
                     missing_by_file[filename] = missing_lines
 
+    return missing_by_file
+
+
+def _display_file_missing_lines(filename, missing_lines):
+    """Affiche les lignes manquantes pour un fichier spécifique."""
+    print(f"\n{filename}:")
+    print(f"  Lignes non couvertes : {missing_lines}")
+    print("  Extrait des lignes manquantes :")
+
+    try:
+        with open(filename, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+
+        # Limiter à 10 lignes pour éviter l'overflow
+        lines_to_show = missing_lines[:10]
+        for line_num in lines_to_show:
+            if 0 < line_num <= len(lines):
+                line_content = lines[line_num - 1].strip()
+                if line_content:
+                    print(f"    Ligne {line_num}: {line_content}")
+
+        if len(missing_lines) > 10:
+            print(f"    ... et {len(missing_lines) - 10} autres lignes")
+
+    except Exception as e:
+        print(f"    Erreur lors de la lecture du fichier : {e}")
+
+
+def analyze_missing_coverage():
+    """Analyse détaillée des lignes manquantes."""
+    print("\n" + "=" * 60)
+    print("ANALYSE DÉTAILLÉE DES LIGNES MANQUANTES")
+    print("\n" + "=" * 60)
+
+    cov = coverage.Coverage()
+    cov.load()
+
+    data = cov.get_data()
+    missing_by_file = _get_missing_lines_by_file(data)
+
     if missing_by_file:
         for filename in sorted(missing_by_file.keys()):
-            print(f"\n{filename}:")
             missing_lines = missing_by_file[filename]
-
-            # Lire le fichier pour afficher les lignes manquantes
-            try:
-                with open(filename, "r", encoding="utf - 8") as f:
-                    lines = f.readlines()
-
-                print(f"  Lignes non couvertes : {missing_lines}")
-                print("  Extrait des lignes manquantes :")
-                for line_num in missing_lines[:10]:  # Limiter à 10 lignes
-                    if 0 < line_num <= len(lines):
-                        line_content = lines[line_num - 1].strip()
-                        if line_content:
-                            print(f"    Ligne {line_num}: {line_content}")
-
-                if len(missing_lines) > 10:
-                    print(f"    ... et {len(missing_lines) - 10} autres lignes")
-
-            except Exception as e:
-                print(f"    Erreur lors de la lecture du fichier : {e}")
+            _display_file_missing_lines(filename, missing_lines)
     else:
         print("Aucune ligne manquante trouvée.")
 
