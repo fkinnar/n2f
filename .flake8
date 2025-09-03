@@ -1,0 +1,43 @@
+[flake8]
+# Configuration pour flake8
+max-line-length = 88
+max-complexity = 12
+
+# Codes d'erreurs à ignorer dans certains contextes
+per-file-ignores =
+    # Fichiers d'exemples peuvent avoir des variables inutilisées
+    src/core/examples/*.py:F841,F401
+    # Tests peuvent avoir des imports et variables temporaires
+    tests/*.py:F401,F841
+    # Fichiers d'initialisation peuvent utiliser import *
+    src/core/__init__.py:F401,F403
+    # Scripts peuvent avoir des imports spéciaux
+    scripts/*.py:F401,E402
+
+# Codes à ignorer globalement
+ignore =
+    # W503: line break before binary operator (conflit avec Black)
+    W503,
+    # E203: whitespace before ':' (conflit avec Black)
+    E203
+
+# Répertoires à exclure
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    env,
+    .mypy_cache,
+    .pytest_cache,
+    coverage_html,
+    build,
+    dist,
+    *.egg-info
+
+# Extensions à vérifier
+filename = *.py
+
+# Affichage des statistiques
+statistics = True
+count = True
+show-source = True
