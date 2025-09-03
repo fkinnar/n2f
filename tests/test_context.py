@@ -24,6 +24,7 @@ from pathlib import Path
 # Ajout du chemin du projet pour les imports
 from core.config import SyncConfig, DatabaseConfig, ApiConfig
 
+
 class TestSyncContext(unittest.TestCase):
     """Tests pour la classe SyncContext."""
 
@@ -41,7 +42,7 @@ class TestSyncContext(unittest.TestCase):
         config = {
             "agresso": {"host": "localhost", "port": 5432},
             "n2f": {"base_url": "https://api.n2f.com", "timeout": 30},
-            "cache": {"enabled": True, "ttl": 3600}
+            "cache": {"enabled": True, "ttl": 3600},
         }
 
         context = SyncContext(
@@ -51,7 +52,7 @@ class TestSyncContext(unittest.TestCase):
             db_user=self.db_user,
             db_password=self.db_password,
             client_id=self.client_id,
-            client_secret=self.client_secret
+            client_secret=self.client_secret,
         )
 
         self.assertEqual(context.args, self.args)
@@ -69,18 +70,15 @@ class TestSyncContext(unittest.TestCase):
             prod=True,
             sql_path="test_sql",
             sql_filename_users="test_users.sql",
-            sql_filename_customaxes="test_axes.sql"
+            sql_filename_customaxes="test_axes.sql",
         )
         api_config = ApiConfig(
             base_urls="https://api.n2f.com/services/api/v2/",
             sandbox=True,
-            simulate=False
+            simulate=False,
         )
         config = SyncConfig(
-            database=database_config,
-            api=api_config,
-            scopes={},
-            cache=Mock()
+            database=database_config, api=api_config, scopes={}, cache=Mock()
         )
 
         context = SyncContext(
@@ -90,7 +88,7 @@ class TestSyncContext(unittest.TestCase):
             db_user=self.db_user,
             db_password=self.db_password,
             client_id=self.client_id,
-            client_secret=self.client_secret
+            client_secret=self.client_secret,
         )
 
         self.assertEqual(context.args, self.args)
@@ -106,7 +104,7 @@ class TestSyncContext(unittest.TestCase):
         config = {
             "agresso": {"host": "localhost", "port": 5432},
             "n2f": {"base_url": "https://api.n2f.com"},
-            "cache": {"enabled": True}
+            "cache": {"enabled": True},
         }
 
         context = SyncContext(
@@ -116,19 +114,23 @@ class TestSyncContext(unittest.TestCase):
             db_user=self.db_user,
             db_password=self.db_password,
             client_id=self.client_id,
-            client_secret=self.client_secret
+            client_secret=self.client_secret,
         )
 
         # Test récupération de clés existantes
-        self.assertEqual(context.get_config_value("agresso"), {"host": "localhost", "port": 5432})
-        self.assertEqual(context.get_config_value("n2f"), {"base_url": "https://api.n2f.com"})
+        self.assertEqual(
+            context.get_config_value("agresso"), {"host": "localhost", "port": 5432}
+        )
+        self.assertEqual(
+            context.get_config_value("n2f"), {"base_url": "https://api.n2f.com"}
+        )
         self.assertEqual(context.get_config_value("cache"), {"enabled": True})
 
     def test_get_config_value_dict_format_missing_key(self):
         """Test de récupération d'une valeur manquante avec format dict."""
         config = {
             "agresso": {"host": "localhost"},
-            "n2f": {"base_url": "https://api.n2f.com"}
+            "n2f": {"base_url": "https://api.n2f.com"},
         }
 
         context = SyncContext(
@@ -138,13 +140,15 @@ class TestSyncContext(unittest.TestCase):
             db_user=self.db_user,
             db_password=self.db_password,
             client_id=self.client_id,
-            client_secret=self.client_secret
+            client_secret=self.client_secret,
         )
 
         # Test récupération de clés manquantes
         self.assertIsNone(context.get_config_value("missing_key"))
         self.assertEqual(context.get_config_value("missing_key", "default"), "default")
-        self.assertEqual(context.get_config_value("cache", {"enabled": False}), {"enabled": False})
+        self.assertEqual(
+            context.get_config_value("cache", {"enabled": False}), {"enabled": False}
+        )
 
     def test_get_config_value_syncconfig_format_existing_key(self):
         """Test de récupération d'une valeur existante avec format SyncConfig."""
@@ -153,18 +157,15 @@ class TestSyncContext(unittest.TestCase):
             prod=True,
             sql_path="test_sql",
             sql_filename_users="test_users.sql",
-            sql_filename_customaxes="test_axes.sql"
+            sql_filename_customaxes="test_axes.sql",
         )
         api_config = ApiConfig(
             base_urls="https://api.n2f.com/services/api/v2/",
             sandbox=True,
-            simulate=False
+            simulate=False,
         )
         config = SyncConfig(
-            database=database_config,
-            api=api_config,
-            scopes={},
-            cache=Mock()
+            database=database_config, api=api_config, scopes={}, cache=Mock()
         )
 
         context = SyncContext(
@@ -174,7 +175,7 @@ class TestSyncContext(unittest.TestCase):
             db_user=self.db_user,
             db_password=self.db_password,
             client_id=self.client_id,
-            client_secret=self.client_secret
+            client_secret=self.client_secret,
         )
 
         # Test récupération des clés spéciales
@@ -192,18 +193,15 @@ class TestSyncContext(unittest.TestCase):
             prod=True,
             sql_path="test_sql",
             sql_filename_users="test_users.sql",
-            sql_filename_customaxes="test_axes.sql"
+            sql_filename_customaxes="test_axes.sql",
         )
         api_config = ApiConfig(
             base_urls="https://api.n2f.com/services/api/v2/",
             sandbox=True,
-            simulate=False
+            simulate=False,
         )
         config = SyncConfig(
-            database=database_config,
-            api=api_config,
-            scopes={},
-            cache=Mock()
+            database=database_config, api=api_config, scopes={}, cache=Mock()
         )
 
         context = SyncContext(
@@ -213,13 +211,16 @@ class TestSyncContext(unittest.TestCase):
             db_user=self.db_user,
             db_password=self.db_password,
             client_id=self.client_id,
-            client_secret=self.client_secret
+            client_secret=self.client_secret,
         )
 
         # Test récupération de clés manquantes
         self.assertIsNone(context.get_config_value("missing_key"))
         self.assertEqual(context.get_config_value("missing_key", "default"), "default")
-        self.assertEqual(context.get_config_value("nonexistent", {"test": "value"}), {"test": "value"})
+        self.assertEqual(
+            context.get_config_value("nonexistent", {"test": "value"}),
+            {"test": "value"},
+        )
 
     def test_get_config_value_syncconfig_format_with_default(self):
         """Test de récupération avec valeur par défaut avec format SyncConfig."""
@@ -228,18 +229,15 @@ class TestSyncContext(unittest.TestCase):
             prod=True,
             sql_path="test_sql",
             sql_filename_users="test_users.sql",
-            sql_filename_customaxes="test_axes.sql"
+            sql_filename_customaxes="test_axes.sql",
         )
         api_config = ApiConfig(
             base_urls="https://api.n2f.com/services/api/v2/",
             sandbox=True,
-            simulate=False
+            simulate=False,
         )
         config = SyncConfig(
-            database=database_config,
-            api=api_config,
-            scopes={},
-            cache=Mock()
+            database=database_config, api=api_config, scopes={}, cache=Mock()
         )
 
         context = SyncContext(
@@ -249,7 +247,7 @@ class TestSyncContext(unittest.TestCase):
             db_user=self.db_user,
             db_password=self.db_password,
             client_id=self.client_id,
-            client_secret=self.client_secret
+            client_secret=self.client_secret,
         )
 
         # Test avec valeurs par défaut pour une clé qui n'existe pas
@@ -269,7 +267,7 @@ class TestSyncContext(unittest.TestCase):
             "false": False,
             "none": None,
             "empty_dict": {},
-            "empty_list": []
+            "empty_list": [],
         }
 
         context = SyncContext(
@@ -279,7 +277,7 @@ class TestSyncContext(unittest.TestCase):
             db_user=self.db_user,
             db_password=self.db_password,
             client_id=self.client_id,
-            client_secret=self.client_secret
+            client_secret=self.client_secret,
         )
 
         # Test que les valeurs "falsy" sont correctement retournées
@@ -297,21 +295,15 @@ class TestSyncContext(unittest.TestCase):
                 "database": {
                     "host": "localhost",
                     "port": 5432,
-                    "credentials": {
-                        "user": "db_user",
-                        "password": "db_pass"
-                    }
+                    "credentials": {"user": "db_user", "password": "db_pass"},
                 }
             },
             "n2f": {
                 "api": {
                     "base_url": "https://api.n2f.com",
-                    "endpoints": {
-                        "users": "/users",
-                        "projects": "/projects"
-                    }
+                    "endpoints": {"users": "/users", "projects": "/projects"},
                 }
-            }
+            },
         }
 
         context = SyncContext(
@@ -321,7 +313,7 @@ class TestSyncContext(unittest.TestCase):
             db_user=self.db_user,
             db_password=self.db_password,
             client_id=self.client_id,
-            client_secret=self.client_secret
+            client_secret=self.client_secret,
         )
 
         # Test récupération de valeurs imbriquées
@@ -336,7 +328,7 @@ class TestSyncContext(unittest.TestCase):
         """Test que le contexte est bien configuré après création."""
         config = {
             "agresso": {"host": "localhost"},
-            "n2f": {"base_url": "https://api.n2f.com"}
+            "n2f": {"base_url": "https://api.n2f.com"},
         }
 
         context = SyncContext(
@@ -346,7 +338,7 @@ class TestSyncContext(unittest.TestCase):
             db_user=self.db_user,
             db_password=self.db_password,
             client_id=self.client_id,
-            client_secret=self.client_secret
+            client_secret=self.client_secret,
         )
 
         # Vérifier que les attributs sont bien définis
@@ -373,7 +365,7 @@ class TestSyncContext(unittest.TestCase):
             db_user=None,
             db_password=None,
             client_id=None,
-            client_secret=None
+            client_secret=None,
         )
 
         self.assertIsNone(context.db_user)
@@ -390,7 +382,7 @@ class TestSyncContext(unittest.TestCase):
             db_user=self.db_user,
             db_password=self.db_password,
             client_id=self.client_id,
-            client_secret=self.client_secret
+            client_secret=self.client_secret,
         )
 
         # Test que get_config_value fonctionne avec une config vide
@@ -401,7 +393,7 @@ class TestSyncContext(unittest.TestCase):
         """Test de la représentation du contexte."""
         config = {
             "agresso": {"host": "localhost"},
-            "n2f": {"base_url": "https://api.n2f.com"}
+            "n2f": {"base_url": "https://api.n2f.com"},
         }
 
         context = SyncContext(
@@ -411,7 +403,7 @@ class TestSyncContext(unittest.TestCase):
             db_user=self.db_user,
             db_password=self.db_password,
             client_id=self.client_id,
-            client_secret=self.client_secret
+            client_secret=self.client_secret,
         )
 
         # Test que le contexte peut être converti en string
@@ -424,5 +416,6 @@ class TestSyncContext(unittest.TestCase):
         self.assertIsInstance(context_repr, str)
         self.assertIn("SyncContext", context_repr)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

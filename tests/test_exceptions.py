@@ -14,9 +14,15 @@ import sys
 import os
 
 from core.exceptions import (
-    SyncException, ApiException, ValidationException, ConfigurationException,
-    DatabaseException, AuthenticationException, NetworkException
+    SyncException,
+    ApiException,
+    ValidationException,
+    ConfigurationException,
+    DatabaseException,
+    AuthenticationException,
+    NetworkException,
 )
+
 
 class TestSyncException(unittest.TestCase):
     """Tests pour la classe de base SyncException."""
@@ -24,7 +30,7 @@ class TestSyncException(unittest.TestCase):
     def test_sync_exception_creation(self):
         """Test de création d'une exception de base."""
         exception = SyncException("Test message", "Test details", {"key": "value"})
-        
+
         self.assertEqual(exception.message, "Test message")
         self.assertEqual(exception.details, "Test details")
         self.assertEqual(exception.context, {"key": "value"})
@@ -33,12 +39,12 @@ class TestSyncException(unittest.TestCase):
         """Test de la méthode to_dict()."""
         exception = SyncException("Test message", "Test details", {"key": "value"})
         result = exception.to_dict()
-        
+
         expected = {
             "type": "SyncException",
             "message": "Test message",
             "details": "Test details",
-            "context": {"key": "value"}
+            "context": {"key": "value"},
         }
         self.assertEqual(result, expected)
 
@@ -47,18 +53,19 @@ class TestSyncException(unittest.TestCase):
         exception = SyncException("Test message")
         self.assertIn("Test message", str(exception))
 
+
 class TestApiException(unittest.TestCase):
     """Tests pour ApiException."""
 
     def test_api_exception_creation(self):
         """Test de création d'une ApiException."""
         exception = ApiException(
-            "API Error", 
-            status_code=404, 
+            "API Error",
+            status_code=404,
             response_text="Not Found",
-            endpoint="/users/123"
+            endpoint="/users/123",
         )
-        
+
         self.assertEqual(exception.message, "API Error")
         self.assertEqual(exception.status_code, 404)
         self.assertEqual(exception.response_text, "Not Found")
@@ -67,13 +74,13 @@ class TestApiException(unittest.TestCase):
     def test_api_exception_to_dict(self):
         """Test de la méthode to_dict() pour ApiException."""
         exception = ApiException(
-            "API Error", 
+            "API Error",
             status_code=500,
             response_text="Internal Server Error",
-            endpoint="/users"
+            endpoint="/users",
         )
         result = exception.to_dict()
-        
+
         expected = {
             "type": "ApiException",
             "message": "API Error",
@@ -81,9 +88,10 @@ class TestApiException(unittest.TestCase):
             "context": {},
             "status_code": 500,
             "response_text": "Internal Server Error",
-            "endpoint": "/users"
+            "endpoint": "/users",
         }
         self.assertEqual(result, expected)
+
 
 class TestValidationException(unittest.TestCase):
     """Tests pour ValidationException."""
@@ -91,12 +99,12 @@ class TestValidationException(unittest.TestCase):
     def test_validation_exception_creation(self):
         """Test de création d'une ValidationException."""
         exception = ValidationException(
-            "Invalid email", 
+            "Invalid email",
             field="email",
             value="invalid-email",
-            expected_format="user@domain.com"
+            expected_format="user@domain.com",
         )
-        
+
         self.assertEqual(exception.message, "Invalid email")
         self.assertEqual(exception.field, "email")
         self.assertEqual(exception.value, "invalid-email")
@@ -105,13 +113,13 @@ class TestValidationException(unittest.TestCase):
     def test_validation_exception_to_dict(self):
         """Test de la méthode to_dict() pour ValidationException."""
         exception = ValidationException(
-            "Invalid field", 
+            "Invalid field",
             field="username",
             value="",
-            expected_format="non-empty string"
+            expected_format="non-empty string",
         )
         result = exception.to_dict()
-        
+
         expected = {
             "type": "ValidationException",
             "message": "Invalid field",
@@ -119,9 +127,10 @@ class TestValidationException(unittest.TestCase):
             "context": {},
             "field": "username",
             "value": "",
-            "expected_format": "non-empty string"
+            "expected_format": "non-empty string",
         }
         self.assertEqual(result, expected)
+
 
 class TestConfigurationException(unittest.TestCase):
     """Tests pour ConfigurationException."""
@@ -129,14 +138,13 @@ class TestConfigurationException(unittest.TestCase):
     def test_configuration_exception_creation(self):
         """Test de création d'une ConfigurationException."""
         exception = ConfigurationException(
-            "Missing config", 
-            config_key="database.host",
-            config_file="dev.yaml"
+            "Missing config", config_key="database.host", config_file="dev.yaml"
         )
-        
+
         self.assertEqual(exception.message, "Missing config")
         self.assertEqual(exception.config_key, "database.host")
         self.assertEqual(exception.config_file, "dev.yaml")
+
 
 class TestDatabaseException(unittest.TestCase):
     """Tests pour DatabaseException."""
@@ -144,14 +152,13 @@ class TestDatabaseException(unittest.TestCase):
     def test_database_exception_creation(self):
         """Test de création d'une DatabaseException."""
         exception = DatabaseException(
-            "Connection failed", 
-            sql_query="SELECT * FROM users",
-            table="users"
+            "Connection failed", sql_query="SELECT * FROM users", table="users"
         )
-        
+
         self.assertEqual(exception.message, "Connection failed")
         self.assertEqual(exception.sql_query, "SELECT * FROM users")
         self.assertEqual(exception.table, "users")
+
 
 class TestAuthenticationException(unittest.TestCase):
     """Tests pour AuthenticationException."""
@@ -159,14 +166,13 @@ class TestAuthenticationException(unittest.TestCase):
     def test_authentication_exception_creation(self):
         """Test de création d'une AuthenticationException."""
         exception = AuthenticationException(
-            "Token expired", 
-            service="N2F API",
-            credentials_type="OAuth2"
+            "Token expired", service="N2F API", credentials_type="OAuth2"
         )
-        
+
         self.assertEqual(exception.message, "Token expired")
         self.assertEqual(exception.service, "N2F API")
         self.assertEqual(exception.credentials_type, "OAuth2")
+
 
 class TestNetworkException(unittest.TestCase):
     """Tests pour NetworkException."""
@@ -174,16 +180,17 @@ class TestNetworkException(unittest.TestCase):
     def test_network_exception_creation(self):
         """Test de création d'une NetworkException."""
         exception = NetworkException(
-            "Connection timeout", 
+            "Connection timeout",
             url="https://api.n2f.com/users",
             timeout=30.0,
-            retry_count=3
+            retry_count=3,
         )
-        
+
         self.assertEqual(exception.message, "Connection timeout")
         self.assertEqual(exception.url, "https://api.n2f.com/users")
         self.assertEqual(exception.timeout, 30.0)
         self.assertEqual(exception.retry_count, 3)
+
 
 class TestExceptionHierarchy(unittest.TestCase):
     """Tests pour vérifier la hiérarchie d'exceptions."""
@@ -196,9 +203,9 @@ class TestExceptionHierarchy(unittest.TestCase):
             ConfigurationException("test"),
             DatabaseException("test"),
             AuthenticationException("test"),
-            NetworkException("test")
+            NetworkException("test"),
         ]
-        
+
         for exception in exceptions:
             self.assertIsInstance(exception, SyncException)
             self.assertIsInstance(exception, Exception)
@@ -206,12 +213,13 @@ class TestExceptionHierarchy(unittest.TestCase):
     def test_exception_context_preservation(self):
         """Test que le contexte est préservé dans la hiérarchie."""
         context = {"user_id": "123", "operation": "create"}
-        
+
         api_exception = ApiException("API Error", context=context)
         self.assertEqual(api_exception.context, context)
-        
+
         validation_exception = ValidationException("Validation Error", context=context)
         self.assertEqual(validation_exception.context, context)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

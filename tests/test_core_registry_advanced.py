@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 # Ajouter le répertoire python au path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))
 
 from core.registry import SyncRegistry, RegistryEntry, get_registry, register_scope
 from core.config import ScopeConfig
@@ -38,7 +38,7 @@ class TestRegistryAdvanced(unittest.TestCase):
             sync_function=self.test_function,
             sql_filename="test.sql",
             entity_type="test",
-            display_name="Test Scope"
+            display_name="Test Scope",
         )
 
         # Vérifier qu'il est enregistré
@@ -61,8 +61,8 @@ class TestRegistryAdvanced(unittest.TestCase):
         """Test d'auto-découverte des scopes avec succès."""
         # Test simplifié qui vérifie le comportement sans patcher importlib
         # Simuler une découverte réussie en patchant directement la méthode
-        original_import = self.registry.__class__.__dict__['auto_discover_scopes']
-        
+        original_import = self.registry.__class__.__dict__["auto_discover_scopes"]
+
         def mock_auto_discover(modules_path):
             if modules_path == "business.process":
                 # Simuler l'enregistrement d'un scope
@@ -74,12 +74,12 @@ class TestRegistryAdvanced(unittest.TestCase):
                     display_name="Users",
                     description="Auto-discovered scope: users",
                     enabled=True,
-                    module_path="business.process"
+                    module_path="business.process",
                 )
-        
+
         # Remplacer temporairement la méthode
         self.registry.auto_discover_scopes = mock_auto_discover
-        
+
         try:
             # Exécuter l'auto-découverte
             self.registry.auto_discover_scopes("business.process")
@@ -93,21 +93,25 @@ class TestRegistryAdvanced(unittest.TestCase):
     def test_auto_discover_scopes_import_error(self):
         """Test d'auto-découverte avec erreur d'import."""
         # Test simplifié qui vérifie le comportement sans patcher importlib
-        with patch('builtins.print') as mock_print:
+        with patch("builtins.print") as mock_print:
             # Simuler une erreur d'import en patchant directement la méthode
-            original_import = self.registry.__class__.__dict__['auto_discover_scopes']
-            
+            original_import = self.registry.__class__.__dict__["auto_discover_scopes"]
+
             def mock_auto_discover(modules_path):
-                print(f"Warning: Could not import {modules_path} for auto-discovery: Module not found")
-            
+                print(
+                    f"Warning: Could not import {modules_path} for auto-discovery: Module not found"
+                )
+
             # Remplacer temporairement la méthode
             self.registry.auto_discover_scopes = mock_auto_discover
-            
+
             try:
                 self.registry.auto_discover_scopes("nonexistent.module")
-                
+
                 # Vérifier que l'erreur est affichée
-                mock_print.assert_called_with("Warning: Could not import nonexistent.module for auto-discovery: Module not found")
+                mock_print.assert_called_with(
+                    "Warning: Could not import nonexistent.module for auto-discovery: Module not found"
+                )
             finally:
                 # Restaurer la méthode originale
                 self.registry.auto_discover_scopes = original_import
@@ -115,22 +119,26 @@ class TestRegistryAdvanced(unittest.TestCase):
     def test_auto_discover_scopes_submodule_import_error(self):
         """Test d'auto-découverte avec erreur d'import de sous-module."""
         # Test simplifié qui vérifie le comportement sans patcher importlib
-        with patch('builtins.print') as mock_print:
+        with patch("builtins.print") as mock_print:
             # Simuler une erreur d'import en patchant directement la méthode
-            original_import = self.registry.__class__.__dict__['auto_discover_scopes']
-            
+            original_import = self.registry.__class__.__dict__["auto_discover_scopes"]
+
             def mock_auto_discover(modules_path):
                 if modules_path == "business.process":
-                    print(f"Warning: Could not import business.process.test_module for auto-discovery: Submodule not found")
-            
+                    print(
+                        f"Warning: Could not import business.process.test_module for auto-discovery: Submodule not found"
+                    )
+
             # Remplacer temporairement la méthode
             self.registry.auto_discover_scopes = mock_auto_discover
-            
+
             try:
                 self.registry.auto_discover_scopes("business.process")
-                
+
                 # Vérifier que l'erreur est affichée
-                mock_print.assert_called_with("Warning: Could not import business.process.test_module for auto-discovery: Submodule not found")
+                mock_print.assert_called_with(
+                    "Warning: Could not import business.process.test_module for auto-discovery: Submodule not found"
+                )
             finally:
                 # Restaurer la méthode originale
                 self.registry.auto_discover_scopes = original_import
@@ -145,7 +153,7 @@ class TestRegistryAdvanced(unittest.TestCase):
         # Ajouter une fonction de synchronisation au module
         mock_module.synchronize_users = self.test_function
 
-        with patch('core.registry.inspect.getmembers') as mock_getmembers:
+        with patch("core.registry.inspect.getmembers") as mock_getmembers:
             mock_getmembers.return_value = [("synchronize_users", self.test_function)]
 
             self.registry._scan_module_for_scopes(mock_module, "test.module")
@@ -155,6 +163,7 @@ class TestRegistryAdvanced(unittest.TestCase):
 
     def test_is_sync_function_valid(self):
         """Test de validation d'une fonction de synchronisation valide."""
+
         def synchronize_users():
             pass
 
@@ -164,6 +173,7 @@ class TestRegistryAdvanced(unittest.TestCase):
 
     def test_is_sync_function_invalid(self):
         """Test de validation d'une fonction de synchronisation invalide."""
+
         def regular_function():
             pass
 
@@ -173,6 +183,7 @@ class TestRegistryAdvanced(unittest.TestCase):
 
     def test_is_sync_function_generic_synchronize(self):
         """Test de validation de la fonction synchronize générique."""
+
         def synchronize():
             pass
 
@@ -202,7 +213,7 @@ class TestRegistryAdvanced(unittest.TestCase):
                     "entity_type": "user",
                     "display_name": "Users",
                     "description": "Test users",
-                    "enabled": True
+                    "enabled": True,
                 }
             }
         }
@@ -222,12 +233,7 @@ class TestRegistryAdvanced(unittest.TestCase):
     def test_load_from_config_without_sync_function(self):
         """Test de chargement depuis une configuration sans fonction de synchronisation."""
         config_data = {
-            "scopes": {
-                "users": {
-                    "sql_filename": "users.sql",
-                    "entity_type": "user"
-                }
-            }
+            "scopes": {"users": {"sql_filename": "users.sql", "entity_type": "user"}}
         }
 
         self.registry.load_from_config(config_data)
@@ -243,7 +249,7 @@ class TestRegistryAdvanced(unittest.TestCase):
             sync_function=self.test_function,
             sql_filename="test.sql",
             entity_type="test",
-            display_name="Test Scope"
+            display_name="Test Scope",
         )
 
         errors = self.registry.validate()
@@ -257,7 +263,7 @@ class TestRegistryAdvanced(unittest.TestCase):
             sync_function=self.test_function,
             sql_filename="",  # Manquant
             entity_type="test",
-            display_name="Test Scope"
+            display_name="Test Scope",
         )
         self.registry._registry["test_scope"] = entry
 
@@ -272,7 +278,7 @@ class TestRegistryAdvanced(unittest.TestCase):
             sync_function=self.test_function,
             sql_filename="test.sql",
             entity_type="",  # Manquant
-            display_name="Test Scope"
+            display_name="Test Scope",
         )
         self.registry._registry["test_scope"] = entry
 
@@ -287,7 +293,7 @@ class TestRegistryAdvanced(unittest.TestCase):
             sync_function=self.test_function,
             sql_filename="test.sql",
             entity_type="test",
-            display_name=""  # Manquant
+            display_name="",  # Manquant
         )
         self.registry._registry["test_scope"] = entry
 
@@ -303,7 +309,7 @@ class TestRegistryAdvanced(unittest.TestCase):
             sync_function=self.test_function,
             sql_filename="test.sql",
             entity_type="test",
-            display_name="Test Scope"
+            display_name="Test Scope",
         )
 
         configs = self.registry.get_all_scope_configs()
@@ -319,6 +325,7 @@ class TestRegistryGlobalFunctions(unittest.TestCase):
         """Configuration initiale."""
         # Réinitialiser le registry global
         from core.registry import _global_registry
+
         _global_registry._registry.clear()
         _global_registry._discovered_modules.clear()
 
@@ -330,6 +337,7 @@ class TestRegistryGlobalFunctions(unittest.TestCase):
 
     def test_register_scope(self):
         """Test d'enregistrement d'un scope via la fonction globale."""
+
         def test_sync_function():
             return "test"
 
@@ -341,7 +349,7 @@ class TestRegistryGlobalFunctions(unittest.TestCase):
             display_name="Test Scope",
             description="Test description",
             enabled=True,
-            sql_column_filter="test_filter"
+            sql_column_filter="test_filter",
         )
 
         # Vérifier que le scope a été enregistré dans le registry global
@@ -357,5 +365,5 @@ class TestRegistryGlobalFunctions(unittest.TestCase):
         self.assertEqual(entry.sql_column_filter, "test_filter")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

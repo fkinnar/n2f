@@ -12,7 +12,7 @@ from .helper import reporting
 
 __all__ = [
     "UserSynchronizer",
-    "AxeSynchronizer", 
+    "AxeSynchronizer",
     "EntitySynchronizer",
     "synchronize_users",
     "synchronize_projects",

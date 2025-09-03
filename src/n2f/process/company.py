@@ -6,12 +6,12 @@ from core import cache_get, cache_set
 
 
 def get_companies(
-        base_url: str,
-        client_id: str,
-        client_secret: str,
-        simulate: bool = False,
-        cache: bool = True
-    ) -> pd.DataFrame:
+    base_url: str,
+    client_id: str,
+    client_secret: str,
+    simulate: bool = False,
+    cache: bool = True,
+) -> pd.DataFrame:
     """
     Récupère toutes les entreprises depuis l'API N2F (toutes les pages) et retourne un DataFrame unique.
     Respecte le quota d'appels à l'API (en secondes entre chaque appel).
@@ -29,12 +29,7 @@ def get_companies(
 
     while True:
         companies_page = get_companies_api(
-            base_url,
-            client_id,
-            client_secret,
-            start,
-            limit,
-            simulate
+            base_url, client_id, client_secret, start, limit, simulate
         )
         if not companies_page:
             break

@@ -1,10 +1,21 @@
 import pandas as pd
 
 from business.constants import (
-    AGRESSO_COL_EMAIL, AGRESSO_COL_MANAGER, AGRESSO_COL_STRUCTURE,
-    AGRESSO_COL_SSO_METHOD, N2F_COL_EMAIL, N2F_COL_PROFILE, N2F_COL_ROLE,
-    COL_NAMES, COL_CULTURE, COL_VALUE, DEFAULT_STRUCTURE, DEFAULT_PROFILE,
-    DEFAULT_ROLE, DEFAULT_SSO_METHOD, CULTURE_FR
+    AGRESSO_COL_EMAIL,
+    AGRESSO_COL_MANAGER,
+    AGRESSO_COL_STRUCTURE,
+    AGRESSO_COL_SSO_METHOD,
+    N2F_COL_EMAIL,
+    N2F_COL_PROFILE,
+    N2F_COL_ROLE,
+    COL_NAMES,
+    COL_CULTURE,
+    COL_VALUE,
+    DEFAULT_STRUCTURE,
+    DEFAULT_PROFILE,
+    DEFAULT_ROLE,
+    DEFAULT_SSO_METHOD,
+    CULTURE_FR,
 )
 
 
@@ -25,10 +36,17 @@ def normalize_agresso_users(df_users: pd.DataFrame) -> pd.DataFrame:
         raise ValueError("Le DataFrame des utilisateurs Agresso ne peut pas être vide")
 
     # Vérification des colonnes essentielles
-    required_columns = [AGRESSO_COL_EMAIL, AGRESSO_COL_MANAGER, AGRESSO_COL_STRUCTURE, AGRESSO_COL_SSO_METHOD]
+    required_columns = [
+        AGRESSO_COL_EMAIL,
+        AGRESSO_COL_MANAGER,
+        AGRESSO_COL_STRUCTURE,
+        AGRESSO_COL_SSO_METHOD,
+    ]
     missing_columns = [col for col in required_columns if col not in df_users.columns]
     if missing_columns:
-        raise ValueError(f"Colonnes manquantes dans le DataFrame Agresso: {missing_columns}")
+        raise ValueError(
+            f"Colonnes manquantes dans le DataFrame Agresso: {missing_columns}"
+        )
 
     df_users = df_users.copy()
 
@@ -36,19 +54,31 @@ def normalize_agresso_users(df_users: pd.DataFrame) -> pd.DataFrame:
     df_users[AGRESSO_COL_EMAIL] = df_users[AGRESSO_COL_EMAIL].astype(str).str.lower()
 
     # Normalisation des emails de manager (gestion des NaN et chaînes vides)
-    df_users[AGRESSO_COL_MANAGER] = df_users[AGRESSO_COL_MANAGER].astype(str).str.lower()
-    df_users[AGRESSO_COL_MANAGER] = df_users[AGRESSO_COL_MANAGER].replace(['nan', 'none', ''], '')
+    df_users[AGRESSO_COL_MANAGER] = (
+        df_users[AGRESSO_COL_MANAGER].astype(str).str.lower()
+    )
+    df_users[AGRESSO_COL_MANAGER] = df_users[AGRESSO_COL_MANAGER].replace(
+        ["nan", "none", ""], ""
+    )
 
     # Normalisation des structures (remplacement des valeurs vides par la valeur par défaut)
-    df_users[AGRESSO_COL_STRUCTURE] = df_users[AGRESSO_COL_STRUCTURE].replace(['', 'nan', 'none'], pd.NA).fillna(DEFAULT_STRUCTURE)
+    df_users[AGRESSO_COL_STRUCTURE] = (
+        df_users[AGRESSO_COL_STRUCTURE]
+        .replace(["", "nan", "none"], pd.NA)
+        .fillna(DEFAULT_STRUCTURE)
+    )
 
     # Normalisation des méthodes SSO (remplacement de 'Saml' par la valeur par défaut)
-    df_users[AGRESSO_COL_SSO_METHOD] = df_users[AGRESSO_COL_SSO_METHOD].replace("Saml", DEFAULT_SSO_METHOD)
+    df_users[AGRESSO_COL_SSO_METHOD] = df_users[AGRESSO_COL_SSO_METHOD].replace(
+        "Saml", DEFAULT_SSO_METHOD
+    )
 
     return df_users
 
 
-def normalize_n2f_users(df_users: pd.DataFrame, profile_mapping: dict = None, role_mapping: dict = None) -> pd.DataFrame:
+def normalize_n2f_users(
+    df_users: pd.DataFrame, profile_mapping: dict = None, role_mapping: dict = None
+) -> pd.DataFrame:
     """
     Normalise les utilisateurs N2F en s'assurant que les colonnes nécessaires sont présentes et correctement formatées.
     Remplace les valeurs de 'profile' par leur équivalent français.
@@ -71,7 +101,9 @@ def normalize_n2f_users(df_users: pd.DataFrame, profile_mapping: dict = None, ro
     required_columns = [N2F_COL_EMAIL, N2F_COL_PROFILE, N2F_COL_ROLE]
     missing_columns = [col for col in required_columns if col not in df_users.columns]
     if missing_columns:
-        raise ValueError(f"Colonnes manquantes dans le DataFrame N2F: {missing_columns}")
+        raise ValueError(
+            f"Colonnes manquantes dans le DataFrame N2F: {missing_columns}"
+        )
 
     df_users = df_users.copy()
 
@@ -79,7 +111,11 @@ def normalize_n2f_users(df_users: pd.DataFrame, profile_mapping: dict = None, ro
     df_users[N2F_COL_EMAIL] = df_users[N2F_COL_EMAIL].astype(str).str.lower()
 
     # Normalisation des profils
-    df_users[N2F_COL_PROFILE] = df_users[N2F_COL_PROFILE].replace(['', 'nan', 'none'], pd.NA).fillna(DEFAULT_PROFILE)
+    df_users[N2F_COL_PROFILE] = (
+        df_users[N2F_COL_PROFILE]
+        .replace(["", "nan", "none"], pd.NA)
+        .fillna(DEFAULT_PROFILE)
+    )
     if profile_mapping:
         # Remplacement des valeurs de profile par la version française
         df_users[N2F_COL_PROFILE] = df_users[N2F_COL_PROFILE].apply(
@@ -87,7 +123,9 @@ def normalize_n2f_users(df_users: pd.DataFrame, profile_mapping: dict = None, ro
         )
 
     # Normalisation des rôles
-    df_users[N2F_COL_ROLE] = df_users[N2F_COL_ROLE].replace(['', 'nan', 'none'], pd.NA).fillna(DEFAULT_ROLE)
+    df_users[N2F_COL_ROLE] = (
+        df_users[N2F_COL_ROLE].replace(["", "nan", "none"], pd.NA).fillna(DEFAULT_ROLE)
+    )
     if role_mapping:
         # Remplacement des valeurs de role par la version française
         df_users[N2F_COL_ROLE] = df_users[N2F_COL_ROLE].apply(
@@ -127,13 +165,13 @@ def build_mapping(df: pd.DataFrame) -> dict:
         # Chercher la valeur française
         for name in names:
             if name.get(COL_CULTURE) == CULTURE_FR:
-                fr_value = name.get(COL_VALUE, '').strip()
+                fr_value = name.get(COL_VALUE, "").strip()
                 break
 
         # Si on a trouvé une valeur française, créer le mapping
         if fr_value:
             for name in names:
-                nl_value = name.get(COL_VALUE, '').strip()
+                nl_value = name.get(COL_VALUE, "").strip()
                 if nl_value:  # Ne pas mapper les valeurs vides
                     mapping[nl_value.lower()] = fr_value
 

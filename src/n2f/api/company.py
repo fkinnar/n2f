@@ -1,7 +1,15 @@
 from typing import Dict, List, Any
 from n2f.api.base import retreive
 
-def get_companies(base_url: str, client_id: str, client_secret: str, start: int = 0, limit: int = 200, simulate: bool = False) -> List[Dict[str, Any]]:
+
+def get_companies(
+    base_url: str,
+    client_id: str,
+    client_secret: str,
+    start: int = 0,
+    limit: int = 200,
+    simulate: bool = False,
+) -> List[Dict[str, Any]]:
     """
     Récupère une page d'entreprises depuis l'API N2F (paginé).
 
@@ -20,6 +28,8 @@ def get_companies(base_url: str, client_id: str, client_secret: str, start: int 
         Exception: En cas d'erreur HTTP ou de parsing.
     """
 
-    response = retreive("companies", base_url, client_id, client_secret, start, limit, simulate)
+    response = retreive(
+        "companies", base_url, client_id, client_secret, start, limit, simulate
+    )
     data = response["response"]
     return data["data"] if "data" in data else []

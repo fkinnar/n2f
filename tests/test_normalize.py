@@ -8,13 +8,30 @@ import os
 import pandas as pd
 import numpy as np
 
-from business.normalize import normalize_agresso_users, normalize_n2f_users, build_mapping
-from business.constants import (
-    AGRESSO_COL_EMAIL, AGRESSO_COL_MANAGER, AGRESSO_COL_STRUCTURE,
-    AGRESSO_COL_SSO_METHOD, N2F_COL_EMAIL, N2F_COL_PROFILE, N2F_COL_ROLE,
-    COL_NAMES, COL_CULTURE, COL_VALUE, DEFAULT_STRUCTURE, DEFAULT_PROFILE,
-    DEFAULT_ROLE, DEFAULT_SSO_METHOD, CULTURE_FR, CULTURE_NL
+from business.normalize import (
+    normalize_agresso_users,
+    normalize_n2f_users,
+    build_mapping,
 )
+from business.constants import (
+    AGRESSO_COL_EMAIL,
+    AGRESSO_COL_MANAGER,
+    AGRESSO_COL_STRUCTURE,
+    AGRESSO_COL_SSO_METHOD,
+    N2F_COL_EMAIL,
+    N2F_COL_PROFILE,
+    N2F_COL_ROLE,
+    COL_NAMES,
+    COL_CULTURE,
+    COL_VALUE,
+    DEFAULT_STRUCTURE,
+    DEFAULT_PROFILE,
+    DEFAULT_ROLE,
+    DEFAULT_SSO_METHOD,
+    CULTURE_FR,
+    CULTURE_NL,
+)
+
 
 class TestNormalize(unittest.TestCase):
     """Tests unitaires pour les fonctions de normalisation."""
@@ -23,17 +40,21 @@ class TestNormalize(unittest.TestCase):
         """Configure l'environnement de test."""
         # Données de test pour les utilisateurs Agresso
         self.agresso_users_data = {
-            AGRESSO_COL_EMAIL: ["TEST@EXAMPLE.COM", "user@test.com", "ADMIN@DOMAIN.COM"],
+            AGRESSO_COL_EMAIL: [
+                "TEST@EXAMPLE.COM",
+                "user@test.com",
+                "ADMIN@DOMAIN.COM",
+            ],
             AGRESSO_COL_MANAGER: ["MANAGER@EXAMPLE.COM", "boss@test.com", ""],
             AGRESSO_COL_STRUCTURE: ["IT", "", "HR"],
-            AGRESSO_COL_SSO_METHOD: ["SSO", "Saml", "LDAP"]
+            AGRESSO_COL_SSO_METHOD: ["SSO", "Saml", "LDAP"],
         }
 
         # Données de test pour les utilisateurs N2F
         self.n2f_users_data = {
             N2F_COL_EMAIL: ["TEST@EXAMPLE.COM", "user@test.com", "ADMIN@DOMAIN.COM"],
             N2F_COL_PROFILE: ["STANDARD", "", "PREMIUM"],
-            N2F_COL_ROLE: ["USER", "", "ADMIN"]
+            N2F_COL_ROLE: ["USER", "", "ADMIN"],
         }
 
         # Données de test pour le mapping
@@ -41,12 +62,12 @@ class TestNormalize(unittest.TestCase):
             COL_NAMES: [
                 [
                     {COL_CULTURE: CULTURE_FR, COL_VALUE: "Standard"},
-                    {COL_CULTURE: CULTURE_NL, COL_VALUE: "Standaard"}
+                    {COL_CULTURE: CULTURE_NL, COL_VALUE: "Standaard"},
                 ],
                 [
                     {COL_CULTURE: CULTURE_FR, COL_VALUE: "Premium"},
-                    {COL_CULTURE: CULTURE_NL, COL_VALUE: "Premium"}
-                ]
+                    {COL_CULTURE: CULTURE_NL, COL_VALUE: "Premium"},
+                ],
             ]
         }
 
@@ -142,10 +163,7 @@ class TestNormalize(unittest.TestCase):
     def test_normalize_n2f_users_with_profile_mapping(self):
         """Test la normalisation avec mapping de profils."""
         df = pd.DataFrame(self.n2f_users_data)
-        profile_mapping = {
-            "standard": "Standard",
-            "premium": "Premium"
-        }
+        profile_mapping = {"standard": "Standard", "premium": "Premium"}
 
         result = normalize_n2f_users(df, profile_mapping=profile_mapping)
 
@@ -156,10 +174,7 @@ class TestNormalize(unittest.TestCase):
     def test_normalize_n2f_users_with_role_mapping(self):
         """Test la normalisation avec mapping de rôles."""
         df = pd.DataFrame(self.n2f_users_data)
-        role_mapping = {
-            "user": "Utilisateur",
-            "admin": "Administrateur"
-        }
+        role_mapping = {"user": "Utilisateur", "admin": "Administrateur"}
 
         result = normalize_n2f_users(df, role_mapping=role_mapping)
 
@@ -173,7 +188,9 @@ class TestNormalize(unittest.TestCase):
         profile_mapping = {"standard": "Standard", "premium": "Premium"}
         role_mapping = {"user": "Utilisateur", "admin": "Administrateur"}
 
-        result = normalize_n2f_users(df, profile_mapping=profile_mapping, role_mapping=role_mapping)
+        result = normalize_n2f_users(
+            df, profile_mapping=profile_mapping, role_mapping=role_mapping
+        )
 
         # Vérification que les deux mappings sont appliqués
         expected_profiles = ["Standard", DEFAULT_PROFILE, "Premium"]
@@ -229,7 +246,7 @@ class TestNormalize(unittest.TestCase):
         expected_mapping = {
             "standard": "Standard",
             "standaard": "Standard",
-            "premium": "Premium"
+            "premium": "Premium",
         }
         self.assertEqual(result, expected_mapping)
 
@@ -239,16 +256,16 @@ class TestNormalize(unittest.TestCase):
             COL_NAMES: [
                 [
                     {COL_CULTURE: CULTURE_FR, COL_VALUE: "Standard"},
-                    {COL_CULTURE: CULTURE_NL, COL_VALUE: "Standaard"}
+                    {COL_CULTURE: CULTURE_NL, COL_VALUE: "Standaard"},
                 ],
                 [
                     {COL_CULTURE: CULTURE_FR, COL_VALUE: "Premium"},
-                    {COL_CULTURE: CULTURE_NL, COL_VALUE: "Premium"}
+                    {COL_CULTURE: CULTURE_NL, COL_VALUE: "Premium"},
                 ],
                 [
                     {COL_CULTURE: CULTURE_FR, COL_VALUE: "Admin"},
-                    {COL_CULTURE: CULTURE_NL, COL_VALUE: "Beheerder"}
-                ]
+                    {COL_CULTURE: CULTURE_NL, COL_VALUE: "Beheerder"},
+                ],
             ]
         }
 
@@ -261,18 +278,14 @@ class TestNormalize(unittest.TestCase):
             "standaard": "Standard",
             "premium": "Premium",
             "admin": "Admin",
-            "beheerder": "Admin"
+            "beheerder": "Admin",
         }
         self.assertEqual(result, expected_mapping)
 
     def test_build_mapping_without_french_value(self):
         """Test la construction d'un mapping sans valeur française."""
         mapping_data = {
-            COL_NAMES: [
-                [
-                    {COL_CULTURE: CULTURE_NL, COL_VALUE: "Standaard"}
-                ]
-            ]
+            COL_NAMES: [[{COL_CULTURE: CULTURE_NL, COL_VALUE: "Standaard"}]]
         }
 
         df = pd.DataFrame(mapping_data)
@@ -287,7 +300,7 @@ class TestNormalize(unittest.TestCase):
             COL_NAMES: [
                 [
                     {COL_CULTURE: CULTURE_FR, COL_VALUE: ""},
-                    {COL_CULTURE: CULTURE_NL, COL_VALUE: ""}
+                    {COL_CULTURE: CULTURE_NL, COL_VALUE: ""},
                 ]
             ]
         }
@@ -304,7 +317,7 @@ class TestNormalize(unittest.TestCase):
             COL_NAMES: [
                 [
                     {COL_CULTURE: CULTURE_FR, COL_VALUE: " Standard "},
-                    {COL_CULTURE: CULTURE_NL, COL_VALUE: " Standaard "}
+                    {COL_CULTURE: CULTURE_NL, COL_VALUE: " Standaard "},
                 ]
             ]
         }
@@ -314,10 +327,7 @@ class TestNormalize(unittest.TestCase):
 
         # Vérification que les espaces sont gérés correctement (les clés sont en minuscules et sans espaces)
         # La fonction strip() supprime les espaces des clés et des valeurs
-        expected_mapping = {
-            "standard": "Standard",
-            "standaard": "Standard"
-        }
+        expected_mapping = {"standard": "Standard", "standaard": "Standard"}
         self.assertEqual(result, expected_mapping)
 
     def test_normalize_agresso_users_empty_dataframe(self):
@@ -351,7 +361,7 @@ class TestNormalize(unittest.TestCase):
         # Création d'un DataFrame avec seulement quelques colonnes
         partial_data = {
             AGRESSO_COL_EMAIL: ["test@example.com"],
-            AGRESSO_COL_MANAGER: ["manager@example.com"]
+            AGRESSO_COL_MANAGER: ["manager@example.com"],
         }
         df = pd.DataFrame(partial_data)
 
@@ -365,7 +375,7 @@ class TestNormalize(unittest.TestCase):
         # Création d'un DataFrame avec seulement quelques colonnes
         partial_data = {
             N2F_COL_EMAIL: ["test@example.com"],
-            N2F_COL_PROFILE: ["STANDARD"]
+            N2F_COL_PROFILE: ["STANDARD"],
         }
         df = pd.DataFrame(partial_data)
 
@@ -374,5 +384,6 @@ class TestNormalize(unittest.TestCase):
             normalize_n2f_users(df)
         self.assertIn("Colonnes manquantes", str(context.exception))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

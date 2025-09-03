@@ -2,7 +2,9 @@ from typing import Dict, List, Any
 from n2f.api.base import retreive
 
 
-def get_roles(base_url: str, client_id: str, client_secret: str, simulate: bool = False) -> List[Dict[str, Any]]:
+def get_roles(
+    base_url: str, client_id: str, client_secret: str, simulate: bool = False
+) -> List[Dict[str, Any]]:
     """
     Récupère les rôles depuis l'API N2F.
 
@@ -21,4 +23,4 @@ def get_roles(base_url: str, client_id: str, client_secret: str, simulate: bool 
 
     response = retreive("roles", base_url, client_id, client_secret, simulate=simulate)
     data = response["response"]
-    return data # pas de data dans response ici !
+    return data  # pas de data dans response ici !

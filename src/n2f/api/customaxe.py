@@ -10,7 +10,7 @@ def get_customaxes(
     company_id: str,
     start: int,
     limit: int,
-    simulate: bool = False
+    simulate: bool = False,
 ) -> List[Dict[str, Any]]:
     """
     Récupère une page d'axes personnalisés d'une société depuis l'API N2F.
@@ -34,15 +34,12 @@ def get_customaxes(
     if simulate:
         return []
 
-    access_token, _ = get_access_token(base_url, client_id, client_secret, simulate=simulate)
+    access_token, _ = get_access_token(
+        base_url, client_id, client_secret, simulate=simulate
+    )
     url = f"{base_url}/companies/{company_id}/axes"
-    params = {
-        "start": start,
-        "limit": limit
-    }
-    headers = {
-        "Authorization": f"Bearer {access_token}"
-    }
+    params = {"start": start, "limit": limit}
+    headers = {"Authorization": f"Bearer {access_token}"}
 
     response = n2f.get_session_get().get(url, headers=headers, params=params)
     response.raise_for_status()
@@ -60,7 +57,7 @@ def get_customaxes_values(
     axe_id: str,
     start: int,
     limit: int,
-    simulate: bool = False
+    simulate: bool = False,
 ) -> List[Dict[str, Any]]:
     """
     Récupère une page de valeurs d'un axe personnalisé d'une société depuis l'API N2F.
@@ -85,15 +82,12 @@ def get_customaxes_values(
     if simulate:
         return []
 
-    access_token, _ = get_access_token(base_url, client_id, client_secret, simulate=simulate)
+    access_token, _ = get_access_token(
+        base_url, client_id, client_secret, simulate=simulate
+    )
     url = f"{base_url}/companies/{company_id}/axes/{axe_id}"
-    params = {
-        "start": start,
-        "limit": limit
-    }
-    headers = {
-        "Authorization": f"Bearer {access_token}"
-    }
+    params = {"start": start, "limit": limit}
+    headers = {"Authorization": f"Bearer {access_token}"}
 
     response = n2f.get_session_get().get(url, headers=headers, params=params)
     response.raise_for_status()
@@ -101,5 +95,3 @@ def get_customaxes_values(
 
     values = data["response"]["data"] if "data" in data["response"] else []
     return values
-
-

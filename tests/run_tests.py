@@ -9,7 +9,7 @@ import os
 import time
 
 # Ajouter le répertoire python au path pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))
 
 
 def run_all_tests():
@@ -20,7 +20,7 @@ def run_all_tests():
     # Découvrir et charger tous les tests
     loader = unittest.TestLoader()
     start_dir = os.path.dirname(__file__)
-    suite = loader.discover(start_dir, pattern='test_*.py')
+    suite = loader.discover(start_dir, pattern="test_*.py")
 
     # Exécuter les tests
     runner = unittest.TextTestRunner(verbosity=2)
@@ -36,7 +36,9 @@ def run_all_tests():
     print("RÉSUMÉ DES TESTS")
     print("=" * 50)
     print(f"Durée totale : {duration:.2f} secondes")
-    print(f"Tests réussis : {result.testsRun - len(result.failures) - len(result.errors)}")
+    print(
+        f"Tests réussis : {result.testsRun - len(result.failures) - len(result.errors)}"
+    )
     print(f"Échecs : {len(result.failures)}")
     print(f"Erreurs : {len(result.errors)}")
     print(f"Total : {result.testsRun}")
@@ -58,7 +60,6 @@ def run_all_tests():
     else:
         print("\nTous les tests ont réussi !")
         return 0
-
 
 
 def run_specific_test(test_module):
@@ -89,7 +90,7 @@ def list_available_tests():
 
     test_files = []
     for file in os.listdir(os.path.dirname(__file__)):
-        if file.startswith('test_') and file.endswith('.py'):
+        if file.startswith("test_") and file.endswith(".py"):
             test_files.append(file[:-3])  # Enlever l'extension .py
 
     for test_file in sorted(test_files):
@@ -98,13 +99,17 @@ def list_available_tests():
     print(f"\nTotal : {len(test_files)} modules de test")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description='Exécuter les tests unitaires N2F')
-    parser.add_argument('--list', action='store_true', help='Lister tous les tests disponibles')
-    parser.add_argument('--module', type=str, help='Exécuter un module de test spécifique')
-    parser.add_argument('--verbose', '-v', action='store_true', help='Mode verbeux')
+    parser = argparse.ArgumentParser(description="Exécuter les tests unitaires N2F")
+    parser.add_argument(
+        "--list", action="store_true", help="Lister tous les tests disponibles"
+    )
+    parser.add_argument(
+        "--module", type=str, help="Exécuter un module de test spécifique"
+    )
+    parser.add_argument("--verbose", "-v", action="store_true", help="Mode verbeux")
 
     args = parser.parse_args()
 
@@ -117,9 +122,9 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         command = sys.argv[1]
 
-        if command == 'list':
+        if command == "list":
             list_available_tests()
-        elif command == 'run':
+        elif command == "run":
             if len(sys.argv) > 2:
                 # Exécuter un test spécifique
                 test_module = sys.argv[2]

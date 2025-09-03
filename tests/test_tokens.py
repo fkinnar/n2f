@@ -7,13 +7,14 @@ from datetime import datetime
 
 import n2f.api.token as token_module
 
+
 class TestCacheToken(unittest.TestCase):
     """Tests pour le décorateur cache_token."""
 
     def setUp(self):
         """Configuration initiale pour les tests."""
         self.mock_func = Mock()
-        self.mock_func.__name__ = 'test_func'
+        self.mock_func.__name__ = "test_func"
 
     def test_cache_token_decorator_creation(self):
         """Test que le décorateur se crée correctement."""
@@ -30,7 +31,7 @@ class TestCacheToken(unittest.TestCase):
         decorator = token_module.cache_token()
         decorated_func = decorator(self.mock_func)
 
-        with patch('time.time', return_value=1000):
+        with patch("time.time", return_value=1000):
             result = decorated_func("arg1", kwarg1="value1")
 
         # Vérifie que la fonction originale a été appelée
@@ -48,11 +49,11 @@ class TestCacheToken(unittest.TestCase):
         decorated_func = decorator(self.mock_func)
 
         # Premier appel
-        with patch('time.time', return_value=1000):
+        with patch("time.time", return_value=1000):
             result1 = decorated_func("arg1")
 
         # Deuxième appel (dans la fenêtre de cache)
-        with patch('time.time', return_value=1500):
+        with patch("time.time", return_value=1500):
             result2 = decorated_func("arg1")
 
         # La fonction originale ne doit être appelée qu'une fois
@@ -65,20 +66,20 @@ class TestCacheToken(unittest.TestCase):
         """Test que le cache expire correctement."""
         self.mock_func.side_effect = [
             ("token1", "2025-08-20T09:54:35.8185075Z"),
-            ("token2", "2025-08-20T10:54:35.8185075Z")
+            ("token2", "2025-08-20T10:54:35.8185075Z"),
         ]
 
         decorator = token_module.cache_token(safety_margin=10)
         decorated_func = decorator(self.mock_func)
 
         # Premier appel - token expire en 2025 (timestamp très élevé)
-        with patch('time.time', return_value=1000):
+        with patch("time.time", return_value=1000):
             result1 = decorated_func("arg1")
 
         # Deuxième appel après expiration (simulation d'un temps futur)
         # Le token de 2025 sera expiré quand on simule l'année 2026
         future_time = datetime(2026, 1, 1).timestamp()
-        with patch('time.time', return_value=future_time):
+        with patch("time.time", return_value=future_time):
             result2 = decorated_func("arg1")
 
         # La fonction originale doit être appelée deux fois
@@ -92,11 +93,13 @@ class TestCacheToken(unittest.TestCase):
         """Test que la marge de sécurité fonctionne correctement."""
         # Token qui expire dans 1 heure
         future_iso = "2025-08-20T10:54:35.8185075Z"
-        expires_at = datetime.fromisoformat(future_iso.replace("Z", "+00:00")).timestamp()
+        expires_at = datetime.fromisoformat(
+            future_iso.replace("Z", "+00:00")
+        ).timestamp()
 
         self.mock_func.side_effect = [
             ("token1", future_iso),
-            ("token2", "2025-08-20T11:54:35.8185075Z")
+            ("token2", "2025-08-20T11:54:35.8185075Z"),
         ]
 
         safety_margin = 300  # 5 minutes
@@ -104,14 +107,14 @@ class TestCacheToken(unittest.TestCase):
         decorated_func = decorator(self.mock_func)
 
         # Premier appel
-        with patch('time.time', return_value=1000):
+        with patch("time.time", return_value=1000):
             decorated_func("arg1")
 
         # Deuxième appel juste avant la marge de sécurité
         # Le cache devrait expirer à cause de la marge de sécurité
         test_time = expires_at - safety_margin + 1  # Juste dans la marge
 
-        with patch('time.time', return_value=test_time):
+        with patch("time.time", return_value=test_time):
             decorated_func("arg1")
 
         # La fonction doit être appelée deux fois à cause de la marge de sécurité
@@ -122,24 +125,25 @@ class TestCacheToken(unittest.TestCase):
         test_cases = [
             "2025-08-20T09:54:35.8185075Z",
             "2025-12-31T23:59:59.999Z",
-            "2025-01-01T00:00:00Z"
+            "2025-01-01T00:00:00Z",
         ]
 
         for iso_date in test_cases:
             with self.subTest(iso_date=iso_date):
                 mock_func = Mock()
-                mock_func.__name__ = 'test_func'
+                mock_func.__name__ = "test_func"
                 mock_func.return_value = ("test_token", iso_date)
 
                 decorator = token_module.cache_token()
                 decorated_func = decorator(mock_func)
 
-                with patch('time.time', return_value=1000):
+                with patch("time.time", return_value=1000):
                     result = decorated_func()
 
                 # Vérifie que la date a été convertie en timestamp
                 self.assertIsInstance(result[1], float)
                 self.assertGreater(result[1], 0)
+
 
 class TestGetAccessToken(unittest.TestCase):
     """Tests pour la fonction get_access_token."""
@@ -155,11 +159,11 @@ class TestGetAccessToken(unittest.TestCase):
         self.mock_response.json.return_value = {
             "response": {
                 "token": "test_access_token",
-                "validity": "2025-08-20T09:54:35.8185075Z"
+                "validity": "2025-08-20T09:54:35.8185075Z",
             }
         }
 
-    @patch('n2f.get_session_write')
+    @patch("n2f.get_session_write")
     def test_get_access_token_success(self, mock_get_session):
         """Test de récupération réussie d'un token d'accès."""
         mock_session = Mock()
@@ -172,13 +176,8 @@ class TestGetAccessToken(unittest.TestCase):
                 return "", ""
 
             url = base_url + "/auth"
-            payload = {
-                "client_id": client_id,
-                "client_secret": client_secret
-            }
-            headers = {
-                "Content-Type": "application/json"
-            }
+            payload = {"client_id": client_id, "client_secret": client_secret}
+            headers = {"Content-Type": "application/json"}
 
             response = mock_session.post(url, json=payload, headers=headers)
             response.raise_for_status()
@@ -196,11 +195,8 @@ class TestGetAccessToken(unittest.TestCase):
         # Vérifie l'appel à l'API
         mock_session.post.assert_called_once_with(
             "https://api.n2f.com/auth",
-            json={
-                "client_id": "test_client_id",
-                "client_secret": "test_client_secret"
-            },
-            headers={"Content-Type": "application/json"}
+            json={"client_id": "test_client_id", "client_secret": "test_client_secret"},
+            headers={"Content-Type": "application/json"},
         )
 
     def test_get_access_token_simulation_mode(self):
@@ -211,7 +207,7 @@ class TestGetAccessToken(unittest.TestCase):
 
         self.assertEqual(result, ("", ""))
 
-    @patch('n2f.get_session_write')
+    @patch("n2f.get_session_write")
     def test_get_access_token_http_error(self, mock_get_session):
         """Test de gestion d'erreur HTTP."""
         mock_session = Mock()
@@ -223,13 +219,8 @@ class TestGetAccessToken(unittest.TestCase):
         # Créer une fonction temporaire sans cache
         def temp_get_token(base_url, client_id, client_secret):
             url = base_url + "/auth"
-            payload = {
-                "client_id": client_id,
-                "client_secret": client_secret
-            }
-            headers = {
-                "Content-Type": "application/json"
-            }
+            payload = {"client_id": client_id, "client_secret": client_secret}
+            headers = {"Content-Type": "application/json"}
 
             response = mock_session.post(url, json=payload, headers=headers)
             response.raise_for_status()
@@ -241,7 +232,7 @@ class TestGetAccessToken(unittest.TestCase):
         with self.assertRaises(Exception):
             temp_get_token(self.base_url, self.client_id, self.client_secret)
 
-    @patch('n2f.get_session_write')
+    @patch("n2f.get_session_write")
     def test_get_access_token_invalid_response(self, mock_get_session):
         """Test de gestion de réponse invalide."""
         mock_session = Mock()
@@ -253,13 +244,8 @@ class TestGetAccessToken(unittest.TestCase):
         # Créer une fonction temporaire sans cache
         def temp_get_token(base_url, client_id, client_secret):
             url = base_url + "/auth"
-            payload = {
-                "client_id": client_id,
-                "client_secret": client_secret
-            }
-            headers = {
-                "Content-Type": "application/json"
-            }
+            payload = {"client_id": client_id, "client_secret": client_secret}
+            headers = {"Content-Type": "application/json"}
 
             response = mock_session.post(url, json=payload, headers=headers)
             response.raise_for_status()
@@ -271,7 +257,7 @@ class TestGetAccessToken(unittest.TestCase):
         with self.assertRaises(KeyError):
             temp_get_token(self.base_url, self.client_id, self.client_secret)
 
-    @patch('n2f.get_session_write')
+    @patch("n2f.get_session_write")
     def test_get_access_token_with_cache_integration(self, mock_get_session):
         """Test d'intégration basique avec le cache."""
         mock_session = Mock()
@@ -279,7 +265,7 @@ class TestGetAccessToken(unittest.TestCase):
         mock_get_session.return_value = mock_session
 
         # Premier appel - devrait déclencher une requête HTTP
-        with patch('time.time', return_value=1000):
+        with patch("time.time", return_value=1000):
             result1 = token_module.get_access_token(
                 self.base_url, self.client_id, self.client_secret
             )
@@ -288,5 +274,6 @@ class TestGetAccessToken(unittest.TestCase):
         self.assertEqual(result1[0], "test_access_token")
         self.assertIsInstance(result1[1], float)  # expires_at converti en timestamp
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

@@ -3,7 +3,7 @@ from typing import List
 
 from n2f.api.customaxe import (
     get_customaxes as get_customaxes_api,
-    get_customaxes_values as get_customaxes_values_api
+    get_customaxes_values as get_customaxes_values_api,
 )
 from core import cache_get, cache_set
 
@@ -14,7 +14,7 @@ def get_customaxes(
     client_secret: str,
     company_id: str,
     simulate: bool = False,
-    cache: bool = True
+    cache: bool = True,
 ) -> pd.DataFrame:
     """
     Récupère les axes personnalisés d'une société depuis l'API N2F (toutes les pages) et retourne un DataFrame unique.
@@ -31,13 +31,7 @@ def get_customaxes(
 
     while True:
         axes_page = get_customaxes_api(
-            base_url,
-            client_id,
-            client_secret,
-            company_id,
-            start,
-            limit,
-            simulate
+            base_url, client_id, client_secret, company_id, start, limit, simulate
         )
         if not axes_page:
             break
@@ -66,14 +60,16 @@ def get_customaxes_values(
     company_id: str,
     axe_id: str,
     simulate: bool = False,
-    cache: bool = True
+    cache: bool = True,
 ) -> pd.DataFrame:
     """
     Récupère les valeurs d'un axe personnalisé d'une société depuis l'API N2F (toutes les pages) et retourne un DataFrame unique.
     La pagination est gérée automatiquement.
     """
     if cache:
-        cached = cache_get("get_customaxes_values", base_url, client_id, company_id, axe_id, simulate)
+        cached = cache_get(
+            "get_customaxes_values", base_url, client_id, company_id, axe_id, simulate
+        )
         if cached is not None:
             return cached
 
@@ -90,7 +86,7 @@ def get_customaxes_values(
             axe_id,
             start,
             limit,
-            simulate
+            simulate,
         )
         if not values_page:
             break
@@ -108,5 +104,13 @@ def get_customaxes_values(
         result = pd.DataFrame()
 
     if cache:
-        cache_set(result, "get_customaxes_values", base_url, client_id, company_id, axe_id, simulate)
+        cache_set(
+            result,
+            "get_customaxes_values",
+            base_url,
+            client_id,
+            company_id,
+            axe_id,
+            simulate,
+        )
     return result.copy(deep=True)

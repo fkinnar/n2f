@@ -10,22 +10,24 @@ import os
 import shutil
 from pathlib import Path
 
+
 def find_markdown_files():
     """Trouve tous les fichiers Markdown du projet (excluant env/)."""
     markdown_files = []
 
     # Chercher dans le répertoire racine et les sous-répertoires
-    for root, dirs, files in os.walk('.'):
+    for root, dirs, files in os.walk("."):
         # Ignorer le répertoire env/
-        if 'env' in dirs:
-            dirs.remove('env')
+        if "env" in dirs:
+            dirs.remove("env")
 
         for file in files:
-            if file.endswith('.md'):
+            if file.endswith(".md"):
                 file_path = os.path.join(root, file)
                 markdown_files.append(file_path)
 
     return markdown_files
+
 
 def check_markdown_files():
     """Vérifie les erreurs de linting dans tous les fichiers Markdown."""
@@ -45,7 +47,7 @@ def check_markdown_files():
     print("\n🔍 Vérification en cours...")
 
     # Vérifier si markdownlint est disponible
-    markdownlint_cmd = shutil.which('markdownlint')
+    markdownlint_cmd = shutil.which("markdownlint")
     if not markdownlint_cmd:
         print("❌ markdownlint-cli n'est pas installé ou n'est pas dans le PATH.")
         print("Installez-le avec : npm install -g markdownlint-cli")
@@ -71,17 +73,21 @@ def check_markdown_files():
         print(f"❌ Erreur lors de la vérification : {e}")
         return False
 
+
 def main():
     """Fonction principale."""
     success = check_markdown_files()
 
     if not success:
         print("\n💡 Conseils pour corriger les erreurs :")
-        print("   - Utilisez le script fix_all_markdown.py pour corriger automatiquement")
+        print(
+            "   - Utilisez le script fix_all_markdown.py pour corriger automatiquement"
+        )
         print("   - Ou corrigez manuellement selon les messages d'erreur")
         sys.exit(1)
     else:
         print("\n🎉 Tous les fichiers Markdown sont conformes !")
+
 
 if __name__ == "__main__":
     main()

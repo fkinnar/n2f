@@ -11,7 +11,9 @@ from core import SyncContext
 from core import register_scope
 
 
-def synchronize_departments(context: SyncContext, sql_filename: str, sql_column_filter: str = "") -> List[pd.DataFrame]:
+def synchronize_departments(
+    context: SyncContext, sql_filename: str, sql_column_filter: str = ""
+) -> List[pd.DataFrame]:
     """
     Fonction de synchronisation pour les départements.
 
@@ -33,11 +35,7 @@ def synchronize_departments(context: SyncContext, sql_filename: str, sql_column_
     print("Comparaison et synchronisation...")
 
     # Retourne un DataFrame vide pour l'exemple
-    result_df = pd.DataFrame({
-        'department_id': [],
-        'department_name': [],
-        'status': []
-    })
+    result_df = pd.DataFrame({"department_id": [], "department_name": [], "status": []})
 
     print("Synchronisation des départements terminée")
     return [result_df]
@@ -52,5 +50,5 @@ register_scope(
     entity_type="department",
     display_name="Départements",
     description="Synchronisation des départements Agresso vers N2F",
-    enabled=True
+    enabled=True,
 )

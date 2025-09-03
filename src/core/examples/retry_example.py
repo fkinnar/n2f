@@ -11,9 +11,17 @@ Ce module démontre comment utiliser le système de retry pour :
 import time
 import random
 from ..retry import (
-    RetryConfig, RetryStrategy, RetryableError, FatalError,
-    retry, api_retry, database_retry, execute_with_retry,
-    get_retry_metrics, print_retry_summary, reset_retry_metrics
+    RetryConfig,
+    RetryStrategy,
+    RetryableError,
+    FatalError,
+    retry,
+    api_retry,
+    database_retry,
+    execute_with_retry,
+    get_retry_metrics,
+    print_retry_summary,
+    reset_retry_metrics,
 )
 
 
@@ -25,16 +33,20 @@ def simulate_api_call(success_rate: float = 0.3, operation_name: str = "api_call
         print(f"✅ Succès: {operation_name}")
         return {"status": "success", "data": "sample_data"}
     else:
-        error_type = random.choice([
-            ConnectionError("Connexion perdue"),
-            TimeoutError("Timeout de la requête"),
-            RetryableError("Erreur temporaire du serveur")
-        ])
+        error_type = random.choice(
+            [
+                ConnectionError("Connexion perdue"),
+                TimeoutError("Timeout de la requête"),
+                RetryableError("Erreur temporaire du serveur"),
+            ]
+        )
         print(f"❌ Échec: {operation_name} - {error_type}")
         raise error_type
 
 
-def simulate_database_operation(success_rate: float = 0.5, operation_name: str = "db_operation"):
+def simulate_database_operation(
+    success_rate: float = 0.5, operation_name: str = "db_operation"
+):
     """Simule une opération de base de données."""
     print(f"🔄 Tentative d'opération DB: {operation_name}")
 
@@ -42,11 +54,13 @@ def simulate_database_operation(success_rate: float = 0.5, operation_name: str =
         print(f"✅ Succès: {operation_name}")
         return {"status": "success", "rows_affected": random.randint(1, 100)}
     else:
-        error_type = random.choice([
-            ConnectionError("Connexion DB perdue"),
-            TimeoutError("Timeout de la requête DB"),
-            RetryableError("Verrouillage temporaire")
-        ])
+        error_type = random.choice(
+            [
+                ConnectionError("Connexion DB perdue"),
+                TimeoutError("Timeout de la requête DB"),
+                RetryableError("Verrouillage temporaire"),
+            ]
+        )
         print(f"❌ Échec: {operation_name} - {error_type}")
         raise error_type
 
@@ -79,7 +93,7 @@ def example_basic_retry():
         base_delay=1.0,
         max_delay=10.0,
         strategy=RetryStrategy.EXPONENTIAL_BACKOFF,
-        jitter=True
+        jitter=True,
     )
 
     try:
@@ -87,7 +101,7 @@ def example_basic_retry():
             simulate_api_call,
             success_rate=0.2,
             operation_name="basic_api_call",
-            config=config
+            config=config,
         )
         print(f"Résultat final: {result}")
     except Exception as e:
@@ -102,7 +116,7 @@ def example_different_strategies():
         (RetryStrategy.EXPONENTIAL_BACKOFF, "Backoff exponentiel"),
         (RetryStrategy.LINEAR_BACKOFF, "Backoff linéaire"),
         (RetryStrategy.CONSTANT_DELAY, "Délai constant"),
-        (RetryStrategy.FIBONACCI_BACKOFF, "Backoff Fibonacci")
+        (RetryStrategy.FIBONACCI_BACKOFF, "Backoff Fibonacci"),
     ]
 
     for strategy, name in strategies:
@@ -113,7 +127,7 @@ def example_different_strategies():
             base_delay=1.0,
             max_delay=10.0,
             strategy=strategy,
-            jitter=False  # Désactiver le jitter pour voir les délais exacts
+            jitter=False,  # Désactiver le jitter pour voir les délais exacts
         )
 
         try:
@@ -121,7 +135,7 @@ def example_different_strategies():
                 simulate_api_call,
                 success_rate=0.1,
                 operation_name=f"strategy_{strategy.value}",
-                config=config
+                config=config,
             )
             print(f"✅ Succès avec {name}")
         except Exception as e:
@@ -153,17 +167,11 @@ def example_fatal_error_handling():
     """Exemple de gestion des erreurs fatales."""
     print("\n=== Exemple de gestion des erreurs fatales ===")
 
-    config = RetryConfig(
-        max_attempts=3,
-        base_delay=1.0,
-        max_delay=10.0
-    )
+    config = RetryConfig(max_attempts=3, base_delay=1.0, max_delay=10.0)
 
     try:
         result = execute_with_retry(
-            simulate_fatal_error,
-            operation_name="fatal_error_test",
-            config=config
+            simulate_fatal_error, operation_name="fatal_error_test", config=config
         )
         print(f"Résultat: {result}")
     except FatalError as e:
@@ -184,7 +192,7 @@ def example_metrics_analysis():
         ("api_call_1", lambda: simulate_api_call(0.1, "api_call_1")),
         ("api_call_2", lambda: simulate_api_call(0.3, "api_call_2")),
         ("db_operation_1", lambda: simulate_database_operation(0.2, "db_operation_1")),
-        ("db_operation_2", lambda: simulate_database_operation(0.4, "db_operation_2"))
+        ("db_operation_2", lambda: simulate_database_operation(0.4, "db_operation_2")),
     ]
 
     config = RetryConfig(max_attempts=2, base_delay=0.5, max_delay=5.0)
@@ -193,9 +201,7 @@ def example_metrics_analysis():
         print(f"\n--- Test de {operation_name} ---")
         try:
             result = execute_with_retry(
-                operation_func,
-                operation_name=operation_name,
-                config=config
+                operation_func, operation_name=operation_name, config=config
             )
             print(f"✅ {operation_name} réussi")
         except Exception as e:
@@ -239,16 +245,11 @@ def example_integration_with_metrics():
                 simulate_api_call,
                 success_rate=0.2,
                 operation_name="integration_test",
-                config=config
+                config=config,
             )
 
             # Fin du suivi avec succès
-            end_operation(
-                metrics,
-                success=True,
-                records_processed=1,
-                api_calls=1
-            )
+            end_operation(metrics, success=True, records_processed=1, api_calls=1)
 
             print(f"✅ Intégration réussie: {result}")
 
@@ -259,7 +260,7 @@ def example_integration_with_metrics():
                 success=False,
                 error_message=str(e),
                 records_processed=0,
-                api_calls=1
+                api_calls=1,
             )
             print(f"❌ Intégration échouée: {e}")
 
@@ -278,10 +279,12 @@ def example_custom_retryable_exceptions():
 
     class CustomAPIError(RetryableError):
         """Erreur API personnalisée récupérable."""
+
         pass
 
     class CustomDBError(RetryableError):
         """Erreur DB personnalisée récupérable."""
+
         pass
 
     def simulate_custom_api_call():
@@ -292,11 +295,13 @@ def example_custom_retryable_exceptions():
             print("✅ Succès")
             return {"status": "success"}
         else:
-            error = random.choice([
-                CustomAPIError("Erreur API temporaire"),
-                CustomDBError("Erreur DB temporaire"),
-                ConnectionError("Erreur de connexion")
-            ])
+            error = random.choice(
+                [
+                    CustomAPIError("Erreur API temporaire"),
+                    CustomDBError("Erreur DB temporaire"),
+                    ConnectionError("Erreur de connexion"),
+                ]
+            )
             print(f"❌ Échec: {error}")
             raise error
 
@@ -306,16 +311,20 @@ def example_custom_retryable_exceptions():
         base_delay=1.0,
         max_delay=10.0,
         retryable_exceptions=[
-            ConnectionError, TimeoutError, OSError,
-            CustomAPIError, CustomDBError, RetryableError
-        ]
+            ConnectionError,
+            TimeoutError,
+            OSError,
+            CustomAPIError,
+            CustomDBError,
+            RetryableError,
+        ],
     )
 
     try:
         result = execute_with_retry(
             simulate_custom_api_call,
             operation_name="custom_exceptions_test",
-            config=config
+            config=config,
         )
         print(f"✅ Test réussi: {result}")
     except Exception as e:

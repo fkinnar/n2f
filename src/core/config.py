@@ -10,12 +10,14 @@ from typing import Dict, Any, Callable, Optional, List
 from pathlib import Path
 import yaml
 from .registry import get_registry
+
 # Les imports des fonctions de synchronisation sont déplacés dans les méthodes pour éviter les imports circulaires
 
 
 @dataclass
 class DatabaseConfig:
     """Configuration de la base de données Agresso."""
+
     prod: bool = True
     sql_path: str = "sql"
     sql_filename_users: str = "get-agresso-n2f-users.dev.sql"
@@ -25,6 +27,7 @@ class DatabaseConfig:
 @dataclass
 class ApiConfig:
     """Configuration de l'API N2F."""
+
     base_urls: str = "https://sandbox.n2f.com/services/api/v2/"
     simulate: bool = False
     sandbox: bool = True
@@ -33,6 +36,7 @@ class ApiConfig:
 @dataclass
 class CacheConfig:
     """Configuration du cache."""
+
     enabled: bool = True
     cache_dir: str = "cache"
     max_size_mb: int = 100
@@ -43,6 +47,7 @@ class CacheConfig:
 @dataclass
 class ScopeConfig:
     """Configuration d'un scope de synchronisation."""
+
     sync_function: Callable
     sql_filename: str
     entity_type: str
@@ -55,6 +60,7 @@ class ScopeConfig:
 @dataclass
 class SyncConfig:
     """Configuration complète de la synchronisation."""
+
     database: DatabaseConfig
     api: ApiConfig
     cache: CacheConfig = field(default_factory=CacheConfig)
@@ -82,7 +88,7 @@ class SyncConfig:
             synchronize_users,
             synchronize_projects,
             synchronize_plates,
-            synchronize_subposts
+            synchronize_subposts,
         )
 
         default_scopes = {
@@ -91,7 +97,7 @@ class SyncConfig:
                 "sql_filename": self.database.sql_filename_users,
                 "entity_type": "user",
                 "display_name": "Utilisateurs",
-                "description": "Synchronisation des utilisateurs Agresso vers N2F"
+                "description": "Synchronisation des utilisateurs Agresso vers N2F",
             },
             "projects": {
                 "function": synchronize_projects,
@@ -99,7 +105,7 @@ class SyncConfig:
                 "entity_type": "project",
                 "display_name": "Projets",
                 "description": "Synchronisation des projets (axes personnalisés)",
-                "sql_column_filter": "projects"
+                "sql_column_filter": "projects",
             },
             "plates": {
                 "function": synchronize_plates,
@@ -107,7 +113,7 @@ class SyncConfig:
                 "entity_type": "plate",
                 "display_name": "Plaques",
                 "description": "Synchronisation des plaques (axes personnalisés)",
-                "sql_column_filter": "plates"
+                "sql_column_filter": "plates",
             },
             "subposts": {
                 "function": synchronize_subposts,
@@ -115,8 +121,8 @@ class SyncConfig:
                 "entity_type": "subpost",
                 "display_name": "Sous-posts",
                 "description": "Synchronisation des sous-posts (axes personnalisés)",
-                "sql_column_filter": "subposts"
-            }
+                "sql_column_filter": "subposts",
+            },
         }
 
         for scope_name, scope_data in default_scopes.items():
@@ -128,7 +134,7 @@ class SyncConfig:
                     entity_type=scope_data["entity_type"],
                     display_name=scope_data["display_name"],
                     description=scope_data["description"],
-                    sql_column_filter=scope_data.get("sql_column_filter", "")
+                    sql_column_filter=scope_data.get("sql_column_filter", ""),
                 )
 
     def get_scope(self, scope_name: str) -> Optional[ScopeConfig]:
@@ -170,23 +176,31 @@ class ConfigLoader:
     def load(self) -> SyncConfig:
         """Charge la configuration depuis le fichier YAML."""
         if not self.config_path.exists():
-            raise FileNotFoundError(f"Fichier de configuration non trouvé : {self.config_path}")
+            raise FileNotFoundError(
+                f"Fichier de configuration non trouvé : {self.config_path}"
+            )
 
-        with self.config_path.open('r', encoding='utf-8') as config_file:
+        with self.config_path.open("r", encoding="utf-8") as config_file:
             config_data = yaml.safe_load(config_file)
 
         # Création des objets de configuration
         database_config = DatabaseConfig(
             prod=config_data.get("agresso", {}).get("prod", True),
             sql_path=config_data.get("agresso", {}).get("sql-path", "sql"),
-            sql_filename_users=config_data.get("agresso", {}).get("sql-filename-users", "get-agresso-n2f-users.dev.sql"),
-            sql_filename_customaxes=config_data.get("agresso", {}).get("sql-filename-customaxes", "get-agresso-n2f-customaxes.dev.sql")
+            sql_filename_users=config_data.get("agresso", {}).get(
+                "sql-filename-users", "get-agresso-n2f-users.dev.sql"
+            ),
+            sql_filename_customaxes=config_data.get("agresso", {}).get(
+                "sql-filename-customaxes", "get-agresso-n2f-customaxes.dev.sql"
+            ),
         )
 
         api_config = ApiConfig(
-            base_urls=config_data.get("n2f", {}).get("base_urls", "https://sandbox.n2f.com/services/api/v2/"),
+            base_urls=config_data.get("n2f", {}).get(
+                "base_urls", "https://sandbox.n2f.com/services/api/v2/"
+            ),
             simulate=config_data.get("n2f", {}).get("simulate", False),
-            sandbox=config_data.get("n2f", {}).get("sandbox", True)
+            sandbox=config_data.get("n2f", {}).get("sandbox", True),
         )
 
         cache_config = CacheConfig(
@@ -194,13 +208,11 @@ class ConfigLoader:
             cache_dir=config_data.get("cache", {}).get("cache_dir", "cache"),
             max_size_mb=config_data.get("cache", {}).get("max_size_mb", 100),
             default_ttl=config_data.get("cache", {}).get("default_ttl", 3600),
-            persist_cache=config_data.get("cache", {}).get("persist_cache", True)
+            persist_cache=config_data.get("cache", {}).get("persist_cache", True),
         )
 
         sync_config = SyncConfig(
-            database=database_config,
-            api=api_config,
-            cache=cache_config
+            database=database_config, api=api_config, cache=cache_config
         )
 
         # Validation de la configuration
@@ -218,11 +230,11 @@ def create_default_config() -> Dict[str, Any]:
             "prod": True,
             "sql-path": "sql",
             "sql-filename-users": "get-agresso-n2f-users.dev.sql",
-            "sql-filename-customaxes": "get-agresso-n2f-customaxes.dev.sql"
+            "sql-filename-customaxes": "get-agresso-n2f-customaxes.dev.sql",
         },
         "n2f": {
             "base_urls": "https://sandbox.n2f.com/services/api/v2/",
             "simulate": False,
-            "sandbox": True
-        }
+            "sandbox": True,
+        },
     }

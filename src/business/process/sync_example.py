@@ -9,7 +9,9 @@ from business.process.user_synchronizer import UserSynchronizer
 from business.process.axe_synchronizer import AxeSynchronizer
 
 
-def sync_users_with_new_classes(n2f_client, df_agresso_users, df_n2f_users, df_n2f_companies, sandbox):
+def sync_users_with_new_classes(
+    n2f_client, df_agresso_users, df_n2f_users, df_n2f_companies, sandbox
+):
     """
     Exemple d'utilisation de UserSynchronizer pour remplacer les fonctions existantes.
 
@@ -39,11 +41,22 @@ def sync_users_with_new_classes(n2f_client, df_agresso_users, df_n2f_users, df_n
         df_agresso_users, df_n2f_users, df_n2f_companies, "deleted"
     )
 
-    return (created_users, created_col), (updated_users, updated_col), (deleted_users, deleted_col)
+    return (
+        (created_users, created_col),
+        (updated_users, updated_col),
+        (deleted_users, deleted_col),
+    )
 
 
-def sync_axes_with_new_classes(n2f_client, axe_id, df_agresso_projects, df_n2f_projects,
-                              df_n2f_companies, sandbox, scope="projects"):
+def sync_axes_with_new_classes(
+    n2f_client,
+    axe_id,
+    df_agresso_projects,
+    df_n2f_projects,
+    df_n2f_companies,
+    sandbox,
+    scope="projects",
+):
     """
     Exemple d'utilisation de AxeSynchronizer pour remplacer les fonctions existantes.
 
@@ -75,7 +88,11 @@ def sync_axes_with_new_classes(n2f_client, axe_id, df_agresso_projects, df_n2f_p
         df_agresso_projects, df_n2f_projects, df_n2f_companies, "deleted"
     )
 
-    return (created_axes, created_col), (updated_axes, updated_col), (deleted_axes, deleted_col)
+    return (
+        (created_axes, created_col),
+        (updated_axes, updated_col),
+        (deleted_axes, deleted_col),
+    )
 
 
 # Comparaison avec l'ancien code :

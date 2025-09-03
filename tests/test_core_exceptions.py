@@ -9,9 +9,15 @@ from unittest.mock import Mock, patch
 import json
 
 from core.exceptions import (
-    SyncException, ApiException, ValidationException, ConfigurationException,
-    DatabaseException, AuthenticationException, NetworkException,
-    wrap_api_call, handle_sync_exceptions
+    SyncException,
+    ApiException,
+    ValidationException,
+    ConfigurationException,
+    DatabaseException,
+    AuthenticationException,
+    NetworkException,
+    wrap_api_call,
+    handle_sync_exceptions,
 )
 
 
@@ -58,7 +64,7 @@ class TestSyncException(unittest.TestCase):
             "type": "SyncException",
             "message": "Test message",
             "details": "Test details",
-            "context": context
+            "context": context,
         }
         self.assertEqual(result, expected)
 
@@ -82,7 +88,7 @@ class TestApiException(unittest.TestCase):
             response_text="Not found",
             endpoint="/api/users",
             details="User not found",
-            context={"user_id": "123"}
+            context={"user_id": "123"},
         )
         self.assertEqual(exc.message, "API error")
         self.assertEqual(exc.status_code, 404)
@@ -99,7 +105,7 @@ class TestApiException(unittest.TestCase):
             response_text="Internal error",
             endpoint="/api/data",
             details="Server error",
-            context={"request_id": "abc123"}
+            context={"request_id": "abc123"},
         )
 
         result = exc.to_dict()
@@ -110,7 +116,7 @@ class TestApiException(unittest.TestCase):
             "context": {"request_id": "abc123"},
             "status_code": 500,
             "response_text": "Internal error",
-            "endpoint": "/api/data"
+            "endpoint": "/api/data",
         }
         self.assertEqual(result, expected)
 
@@ -134,7 +140,7 @@ class TestValidationException(unittest.TestCase):
             value="invalid-email",
             expected_format="user@domain.com",
             details="Email format is invalid",
-            context={"form": "registration"}
+            context={"form": "registration"},
         )
         self.assertEqual(exc.message, "Invalid email")
         self.assertEqual(exc.field, "email")
@@ -151,7 +157,7 @@ class TestValidationException(unittest.TestCase):
             value=-5,
             expected_format="positive integer",
             details="Age must be positive",
-            context={"user": "john"}
+            context={"user": "john"},
         )
 
         result = exc.to_dict()
@@ -162,7 +168,7 @@ class TestValidationException(unittest.TestCase):
             "context": {"user": "john"},
             "field": "age",
             "value": "-5",
-            "expected_format": "positive integer"
+            "expected_format": "positive integer",
         }
         self.assertEqual(result, expected)
 
@@ -172,7 +178,7 @@ class TestValidationException(unittest.TestCase):
             message="Missing field",
             field="required_field",
             value=None,
-            expected_format="any value"
+            expected_format="any value",
         )
 
         result = exc.to_dict()
@@ -196,7 +202,7 @@ class TestConfigurationException(unittest.TestCase):
             config_key="database_url",
             config_file="config.json",
             details="Database URL is required",
-            context={"environment": "production"}
+            context={"environment": "production"},
         )
         self.assertEqual(exc.message, "Missing config key")
         self.assertEqual(exc.config_key, "database_url")
@@ -211,7 +217,7 @@ class TestConfigurationException(unittest.TestCase):
             config_key="api_key",
             config_file="settings.yaml",
             details="API key is invalid",
-            context={"service": "n2f"}
+            context={"service": "n2f"},
         )
 
         result = exc.to_dict()
@@ -221,7 +227,7 @@ class TestConfigurationException(unittest.TestCase):
             "details": "API key is invalid",
             "context": {"service": "n2f"},
             "config_key": "api_key",
-            "config_file": "settings.yaml"
+            "config_file": "settings.yaml",
         }
         self.assertEqual(result, expected)
 
@@ -243,7 +249,7 @@ class TestDatabaseException(unittest.TestCase):
             sql_query="SELECT * FROM users",
             table="users",
             details="Connection timeout",
-            context={"database": "agresso"}
+            context={"database": "agresso"},
         )
         self.assertEqual(exc.message, "Connection failed")
         self.assertEqual(exc.sql_query, "SELECT * FROM users")
@@ -258,7 +264,7 @@ class TestDatabaseException(unittest.TestCase):
             sql_query="INSERT INTO projects VALUES (?)",
             table="projects",
             details="Constraint violation",
-            context={"operation": "insert"}
+            context={"operation": "insert"},
         )
 
         result = exc.to_dict()
@@ -268,7 +274,7 @@ class TestDatabaseException(unittest.TestCase):
             "details": "Constraint violation",
             "context": {"operation": "insert"},
             "sql_query": "INSERT INTO projects VALUES (?)",
-            "table": "projects"
+            "table": "projects",
         }
         self.assertEqual(result, expected)
 
@@ -290,7 +296,7 @@ class TestAuthenticationException(unittest.TestCase):
             service="N2F",
             credentials_type="bearer_token",
             details="Token expired",
-            context={"user": "admin"}
+            context={"user": "admin"},
         )
         self.assertEqual(exc.message, "Invalid token")
         self.assertEqual(exc.service, "N2F")
@@ -305,7 +311,7 @@ class TestAuthenticationException(unittest.TestCase):
             service="Agresso",
             credentials_type="username_password",
             details="Wrong password",
-            context={"attempt": 3}
+            context={"attempt": 3},
         )
 
         result = exc.to_dict()
@@ -315,7 +321,7 @@ class TestAuthenticationException(unittest.TestCase):
             "details": "Wrong password",
             "context": {"attempt": 3},
             "service": "Agresso",
-            "credentials_type": "username_password"
+            "credentials_type": "username_password",
         }
         self.assertEqual(result, expected)
 
@@ -339,7 +345,7 @@ class TestNetworkException(unittest.TestCase):
             timeout=30.0,
             retry_count=3,
             details="Server not responding",
-            context={"method": "GET"}
+            context={"method": "GET"},
         )
         self.assertEqual(exc.message, "Connection timeout")
         self.assertEqual(exc.url, "https://api.n2f.com/users")
@@ -356,7 +362,7 @@ class TestNetworkException(unittest.TestCase):
             timeout=10.0,
             retry_count=1,
             details="Cannot resolve hostname",
-            context={"environment": "development"}
+            context={"environment": "development"},
         )
 
         result = exc.to_dict()
@@ -367,7 +373,7 @@ class TestNetworkException(unittest.TestCase):
             "context": {"environment": "development"},
             "url": "https://api.example.com",
             "timeout": 10.0,
-            "retry_count": 1
+            "retry_count": 1,
         }
         self.assertEqual(result, expected)
 
@@ -377,6 +383,7 @@ class TestDecorators(unittest.TestCase):
 
     def test_wrap_api_call_success(self):
         """Test du décorateur wrap_api_call avec succès."""
+
         @wrap_api_call
         def test_function():
             return "success"
@@ -386,6 +393,7 @@ class TestDecorators(unittest.TestCase):
 
     def test_wrap_api_call_with_api_exception(self):
         """Test du décorateur wrap_api_call avec ApiException."""
+
         @wrap_api_call
         def test_function():
             raise ApiException("API error")
@@ -397,6 +405,7 @@ class TestDecorators(unittest.TestCase):
 
     def test_wrap_api_call_with_generic_exception(self):
         """Test du décorateur wrap_api_call avec une exception générique."""
+
         @wrap_api_call
         def test_function():
             raise ValueError("Generic error")
@@ -410,6 +419,7 @@ class TestDecorators(unittest.TestCase):
 
     def test_wrap_api_call_with_arguments(self):
         """Test du décorateur wrap_api_call avec des arguments."""
+
         @wrap_api_call
         def test_function(arg1, arg2, kwarg1=None):
             raise RuntimeError("Runtime error")
@@ -422,6 +432,7 @@ class TestDecorators(unittest.TestCase):
 
     def test_handle_sync_exceptions_success(self):
         """Test du décorateur handle_sync_exceptions avec succès."""
+
         @handle_sync_exceptions
         def test_function():
             return "success"
@@ -431,6 +442,7 @@ class TestDecorators(unittest.TestCase):
 
     def test_handle_sync_exceptions_with_sync_exception(self):
         """Test du décorateur handle_sync_exceptions avec SyncException."""
+
         @handle_sync_exceptions
         def test_function():
             raise SyncException("Sync error")
@@ -442,6 +454,7 @@ class TestDecorators(unittest.TestCase):
 
     def test_handle_sync_exceptions_with_generic_exception(self):
         """Test du décorateur handle_sync_exceptions avec une exception générique."""
+
         @handle_sync_exceptions
         def test_function():
             raise TypeError("Type error")
@@ -455,6 +468,7 @@ class TestDecorators(unittest.TestCase):
 
     def test_handle_sync_exceptions_with_arguments(self):
         """Test du décorateur handle_sync_exceptions avec des arguments."""
+
         @handle_sync_exceptions
         def test_function(arg1, arg2, kwarg1=None):
             raise OSError("OS error")
@@ -466,5 +480,5 @@ class TestDecorators(unittest.TestCase):
         self.assertIn("test_function", context.exception.context["function"])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

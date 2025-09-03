@@ -25,8 +25,13 @@ class AxeSynchronizer(EntitySynchronizer):
         super().__init__(n2f_client, sandbox, scope)
         self.axe_id = axe_id
 
-    def build_payload(self, entity: pd.Series, df_agresso: pd.DataFrame,
-                     df_n2f: pd.DataFrame, df_n2f_companies: pd.DataFrame = None) -> Dict[str, Any]:
+    def build_payload(
+        self,
+        entity: pd.Series,
+        df_agresso: pd.DataFrame,
+        df_n2f: pd.DataFrame,
+        df_n2f_companies: pd.DataFrame = None,
+    ) -> Dict[str, Any]:
         """
         Construit le payload pour l'API N2F axe.
 
@@ -41,6 +46,7 @@ class AxeSynchronizer(EntitySynchronizer):
         """
         # Import déplacé ici pour éviter les imports circulaires
         from n2f.process.axe import build_axe_payload
+
         return build_axe_payload(entity, self.sandbox)
 
     def get_entity_id(self, entity: pd.Series) -> str:
@@ -73,8 +79,9 @@ class AxeSynchronizer(EntitySynchronizer):
         """
         return "code"
 
-    def _perform_create_operation(self, entity: pd.Series, payload: Dict,
-                                df_n2f_companies: pd.DataFrame = None) -> ApiResult:
+    def _perform_create_operation(
+        self, entity: pd.Series, payload: Dict, df_n2f_companies: pd.DataFrame = None
+    ) -> ApiResult:
         """
         Effectue l'opération de création d'axe.
 
@@ -88,18 +95,28 @@ class AxeSynchronizer(EntitySynchronizer):
         """
         # Import déplacé ici pour éviter les imports circulaires
         from n2f.process.user import lookup_company_id
+
         company_code = entity.get("client")
         company_id = lookup_company_id(company_code, df_n2f_companies, self.sandbox)
 
         if company_id:
-            return self.n2f_client.upsert_axe_value(company_id, self.axe_id, payload, "create", self.scope)
+            return self.n2f_client.upsert_axe_value(
+                company_id, self.axe_id, payload, "create", self.scope
+            )
         else:
             # Créer un ApiResult d'erreur si l'entreprise n'est pas trouvée
             error_msg = f"Company not found: {company_code}"
-            return self._create_error_result("CREATE", self.get_entity_id(entity), error_msg)
+            return self._create_error_result(
+                "CREATE", self.get_entity_id(entity), error_msg
+            )
 
-    def _perform_update_operation(self, entity: pd.Series, payload: Dict,
-                                n2f_entity: Dict, df_n2f_companies: pd.DataFrame = None) -> ApiResult:
+    def _perform_update_operation(
+        self,
+        entity: pd.Series,
+        payload: Dict,
+        n2f_entity: Dict,
+        df_n2f_companies: pd.DataFrame = None,
+    ) -> ApiResult:
         """
         Effectue l'opération de mise à jour d'axe.
 
@@ -114,18 +131,24 @@ class AxeSynchronizer(EntitySynchronizer):
         """
         # Import déplacé ici pour éviter les imports circulaires
         from n2f.process.user import lookup_company_id
+
         company_code = entity.get("client")
         company_id = lookup_company_id(company_code, df_n2f_companies, self.sandbox)
 
         if company_id:
-            return self.n2f_client.upsert_axe_value(company_id, self.axe_id, payload, "update", self.scope)
+            return self.n2f_client.upsert_axe_value(
+                company_id, self.axe_id, payload, "update", self.scope
+            )
         else:
             # Créer un ApiResult d'erreur si l'entreprise n'est pas trouvée
             error_msg = f"Company not found: {company_code}"
-            return self._create_error_result("UPDATE", self.get_entity_id(entity), error_msg)
+            return self._create_error_result(
+                "UPDATE", self.get_entity_id(entity), error_msg
+            )
 
-    def _perform_delete_operation(self, entity: pd.Series,
-                                df_n2f_companies: pd.DataFrame = None) -> ApiResult:
+    def _perform_delete_operation(
+        self, entity: pd.Series, df_n2f_companies: pd.DataFrame = None
+    ) -> ApiResult:
         """
         Effectue l'opération de suppression d'axe.
 
@@ -136,11 +159,17 @@ class AxeSynchronizer(EntitySynchronizer):
         Returns:
             ApiResult: Résultat de l'opération
         """
-        company_id = entity.get("company_id")  # Assumes company_id was added during get_axes
+        company_id = entity.get(
+            "company_id"
+        )  # Assumes company_id was added during get_axes
 
         if company_id:
-            return self.n2f_client.delete_axe_value(company_id, self.axe_id, self.get_entity_id(entity), self.scope)
+            return self.n2f_client.delete_axe_value(
+                company_id, self.axe_id, self.get_entity_id(entity), self.scope
+            )
         else:
             # Créer un ApiResult d'erreur si l'ID de l'entreprise n'est pas trouvé
             error_msg = "Company ID not found: company_id field missing"
-            return self._create_error_result("DELETE", self.get_entity_id(entity), error_msg)
+            return self._create_error_result(
+                "DELETE", self.get_entity_id(entity), error_msg
+            )

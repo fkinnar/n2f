@@ -12,9 +12,16 @@ import pandas as pd
 import psutil
 
 from core.memory_manager import (
-    MemoryManager, DataFrameInfo, MemoryMetrics,
-    get_memory_manager, register_dataframe, get_dataframe,
-    cleanup_scope, cleanup_all, print_memory_summary, get_memory_stats
+    MemoryManager,
+    DataFrameInfo,
+    MemoryMetrics,
+    get_memory_manager,
+    register_dataframe,
+    get_dataframe,
+    cleanup_scope,
+    cleanup_all,
+    print_memory_summary,
+    get_memory_stats,
 )
 
 
@@ -23,13 +30,13 @@ class TestDataFrameInfo(unittest.TestCase):
 
     def test_dataframe_info_creation(self):
         """Test de création d'un DataFrameInfo."""
-        df = pd.DataFrame({'col1': [1, 2, 3], 'col2': ['a', 'b', 'c']})
+        df = pd.DataFrame({"col1": [1, 2, 3], "col2": ["a", "b", "c"]})
         info = DataFrameInfo(
             dataframe=df,
             size_mb=1.5,
             access_time=time.time(),
             scope="test",
-            name="test_df"
+            name="test_df",
         )
 
         self.assertEqual(info.dataframe.shape, (3, 2))
@@ -60,17 +67,17 @@ class TestMemoryManager(unittest.TestCase):
     def setUp(self):
         """Configuration initiale pour chaque test."""
         # Mock psutil.Process pour éviter les appels système
-        self.process_patcher = patch('core.memory_manager.psutil.Process')
+        self.process_patcher = patch("core.memory_manager.psutil.Process")
         self.mock_process = self.process_patcher.start()
         self.mock_process_instance = Mock()
         self.mock_process.return_value = self.mock_process_instance
 
         # Mock psutil.virtual_memory
-        self.virtual_memory_patcher = patch('core.memory_manager.psutil.virtual_memory')
+        self.virtual_memory_patcher = patch("core.memory_manager.psutil.virtual_memory")
         self.mock_virtual_memory = self.virtual_memory_patcher.start()
 
         # Mock print pour éviter l'affichage
-        self.print_patcher = patch('builtins.print')
+        self.print_patcher = patch("builtins.print")
         self.mock_print = self.print_patcher.start()
 
         self.memory_manager = MemoryManager(max_memory_mb=100, cleanup_threshold=0.8)
@@ -90,14 +97,14 @@ class TestMemoryManager(unittest.TestCase):
 
     def test_calculate_dataframe_size(self):
         """Test du calcul de la taille d'un DataFrame."""
-        df = pd.DataFrame({'col1': [1, 2, 3], 'col2': ['a', 'b', 'c']})
+        df = pd.DataFrame({"col1": [1, 2, 3], "col2": ["a", "b", "c"]})
         size = self.memory_manager._calculate_dataframe_size(df)
         self.assertIsInstance(size, float)
         self.assertGreater(size, 0)
 
     def test_register_dataframe_success(self):
         """Test d'enregistrement réussi d'un DataFrame."""
-        df = pd.DataFrame({'col1': [1, 2, 3]})
+        df = pd.DataFrame({"col1": [1, 2, 3]})
         result = self.memory_manager.register_dataframe("test_df", df, "test_scope")
 
         self.assertTrue(result)
@@ -108,11 +115,15 @@ class TestMemoryManager(unittest.TestCase):
     def test_register_dataframe_insufficient_memory(self):
         """Test d'enregistrement avec mémoire insuffisante."""
         # Créer un DataFrame qui dépasse la limite
-        large_df = pd.DataFrame({'col1': range(10000), 'col2': ['x'] * 10000})
+        large_df = pd.DataFrame({"col1": range(10000), "col2": ["x"] * 10000})
 
         # Mock _calculate_dataframe_size pour retourner une grande taille
-        with patch.object(self.memory_manager, '_calculate_dataframe_size', return_value=200.0):
-            result = self.memory_manager.register_dataframe("large_df", large_df, "test_scope")
+        with patch.object(
+            self.memory_manager, "_calculate_dataframe_size", return_value=200.0
+        ):
+            result = self.memory_manager.register_dataframe(
+                "large_df", large_df, "test_scope"
+            )
 
         self.assertFalse(result)
         self.assertNotIn("large_df", self.memory_manager.dataframes)
@@ -120,31 +131,35 @@ class TestMemoryManager(unittest.TestCase):
     def test_register_dataframe_triggers_cleanup(self):
         """Test que l'enregistrement déclenche le nettoyage si nécessaire."""
         # Créer plusieurs DataFrames pour atteindre le seuil
-        df1 = pd.DataFrame({'col1': [1, 2, 3]})
-        df2 = pd.DataFrame({'col2': [4, 5, 6]})
+        df1 = pd.DataFrame({"col1": [1, 2, 3]})
+        df2 = pd.DataFrame({"col2": [4, 5, 6]})
 
         # Mock _calculate_dataframe_size pour contrôler les tailles
-        with patch.object(self.memory_manager, '_calculate_dataframe_size', return_value=50.0):
+        with patch.object(
+            self.memory_manager, "_calculate_dataframe_size", return_value=50.0
+        ):
             # Premier DataFrame
             result1 = self.memory_manager.register_dataframe("df1", df1, "scope1")
             self.assertTrue(result1)
 
             # Deuxième DataFrame devrait déclencher le nettoyage
-            with patch.object(self.memory_manager, '_cleanup_oldest') as mock_cleanup:
+            with patch.object(self.memory_manager, "_cleanup_oldest") as mock_cleanup:
                 result2 = self.memory_manager.register_dataframe("df2", df2, "scope2")
                 mock_cleanup.assert_called_once()
 
     def test_get_dataframe_success(self):
         """Test de récupération réussie d'un DataFrame."""
-        df = pd.DataFrame({'col1': [1, 2, 3]})
+        df = pd.DataFrame({"col1": [1, 2, 3]})
         self.memory_manager.register_dataframe("test_df", df, "test_scope")
 
         # Mock time.time pour contrôler le temps d'accès
-        with patch('time.time', return_value=1234567890.0):
+        with patch("time.time", return_value=1234567890.0):
             result = self.memory_manager.get_dataframe("test_df")
 
         self.assertIsInstance(result, pd.DataFrame)
-        self.assertEqual(self.memory_manager.dataframes["test_df"].access_time, 1234567890.0)
+        self.assertEqual(
+            self.memory_manager.dataframes["test_df"].access_time, 1234567890.0
+        )
 
     def test_get_dataframe_not_found(self):
         """Test de récupération d'un DataFrame inexistant."""
@@ -154,11 +169,13 @@ class TestMemoryManager(unittest.TestCase):
     def test_cleanup_scope(self):
         """Test du nettoyage d'un scope spécifique."""
         # Créer des DataFrames dans différents scopes
-        df1 = pd.DataFrame({'col1': [1, 2, 3]})
-        df2 = pd.DataFrame({'col2': [4, 5, 6]})
-        df3 = pd.DataFrame({'col3': [7, 8, 9]})
+        df1 = pd.DataFrame({"col1": [1, 2, 3]})
+        df2 = pd.DataFrame({"col2": [4, 5, 6]})
+        df3 = pd.DataFrame({"col3": [7, 8, 9]})
 
-        with patch.object(self.memory_manager, '_calculate_dataframe_size', return_value=10.0):
+        with patch.object(
+            self.memory_manager, "_calculate_dataframe_size", return_value=10.0
+        ):
             self.memory_manager.register_dataframe("df1", df1, "scope1")
             self.memory_manager.register_dataframe("df2", df2, "scope1")
             self.memory_manager.register_dataframe("df3", df3, "scope2")
@@ -179,10 +196,12 @@ class TestMemoryManager(unittest.TestCase):
     def test_cleanup_all(self):
         """Test du nettoyage complet."""
         # Créer des DataFrames
-        df1 = pd.DataFrame({'col1': [1, 2, 3]})
-        df2 = pd.DataFrame({'col2': [4, 5, 6]})
+        df1 = pd.DataFrame({"col1": [1, 2, 3]})
+        df2 = pd.DataFrame({"col2": [4, 5, 6]})
 
-        with patch.object(self.memory_manager, '_calculate_dataframe_size', return_value=15.0):
+        with patch.object(
+            self.memory_manager, "_calculate_dataframe_size", return_value=15.0
+        ):
             self.memory_manager.register_dataframe("df1", df1, "scope1")
             self.memory_manager.register_dataframe("df2", df2, "scope2")
 
@@ -198,10 +217,12 @@ class TestMemoryManager(unittest.TestCase):
         # Créer plusieurs DataFrames
         dfs = []
         for i in range(5):
-            df = pd.DataFrame({'col': range(i * 1000)})
+            df = pd.DataFrame({"col": range(i * 1000)})
             dfs.append(df)
 
-        with patch.object(self.memory_manager, '_calculate_dataframe_size', return_value=20.0):
+        with patch.object(
+            self.memory_manager, "_calculate_dataframe_size", return_value=20.0
+        ):
             for i, df in enumerate(dfs):
                 self.memory_manager.register_dataframe(f"df{i}", df, f"scope{i}")
 
@@ -219,11 +240,13 @@ class TestMemoryManager(unittest.TestCase):
     def test_get_dataframes_by_scope(self):
         """Test du groupement des DataFrames par scope."""
         # Créer des DataFrames dans différents scopes
-        df1 = pd.DataFrame({'col1': [1, 2, 3]})
-        df2 = pd.DataFrame({'col2': [4, 5, 6]})
-        df3 = pd.DataFrame({'col3': [7, 8, 9]})
+        df1 = pd.DataFrame({"col1": [1, 2, 3]})
+        df2 = pd.DataFrame({"col2": [4, 5, 6]})
+        df3 = pd.DataFrame({"col3": [7, 8, 9]})
 
-        with patch.object(self.memory_manager, '_calculate_dataframe_size', return_value=10.0):
+        with patch.object(
+            self.memory_manager, "_calculate_dataframe_size", return_value=10.0
+        ):
             self.memory_manager.register_dataframe("df1", df1, "scope1")
             self.memory_manager.register_dataframe("df2", df2, "scope1")
             self.memory_manager.register_dataframe("df3", df3, "scope2")
@@ -252,8 +275,10 @@ class TestMemoryManager(unittest.TestCase):
         self.mock_process_instance.memory_info.return_value = mock_memory_info
 
         # Créer un DataFrame
-        df = pd.DataFrame({'col1': [1, 2, 3]})
-        with patch.object(self.memory_manager, '_calculate_dataframe_size', return_value=5.0):
+        df = pd.DataFrame({"col1": [1, 2, 3]})
+        with patch.object(
+            self.memory_manager, "_calculate_dataframe_size", return_value=5.0
+        ):
             self.memory_manager.register_dataframe("test_df", df, "test_scope")
 
             stats = self.memory_manager.get_memory_stats()
@@ -280,19 +305,18 @@ class TestMemoryManager(unittest.TestCase):
                 "total_dataframes": 3,
                 "active_dataframes": 2,
                 "freed_memory_mb": 15.0,
-                "cleanup_count": 1
+                "cleanup_count": 1,
             },
-            "system": {
-                "memory_percentage": 60.0,
-                "process_memory_mb": 75.0
-            },
+            "system": {"memory_percentage": 60.0, "process_memory_mb": 75.0},
             "dataframes_by_scope": {
                 "scope1": {"count": 1, "size_mb": 15.0},
-                "scope2": {"count": 1, "size_mb": 10.5}
-            }
+                "scope2": {"count": 1, "size_mb": 10.5},
+            },
         }
 
-        with patch.object(self.memory_manager, 'get_memory_stats', return_value=mock_stats):
+        with patch.object(
+            self.memory_manager, "get_memory_stats", return_value=mock_stats
+        ):
             self.memory_manager.print_memory_summary()
 
             # Vérifier que print a été appelé plusieurs fois
@@ -306,18 +330,19 @@ class TestGlobalFunctions(unittest.TestCase):
         """Configuration initiale pour chaque test."""
         # Reset l'instance globale
         import core.memory_manager
+
         core.memory_manager._memory_manager = None
 
         # Mock psutil
-        self.process_patcher = patch('core.memory_manager.psutil.Process')
+        self.process_patcher = patch("core.memory_manager.psutil.Process")
         self.mock_process = self.process_patcher.start()
         self.mock_process_instance = Mock()
         self.mock_process.return_value = self.mock_process_instance
 
-        self.virtual_memory_patcher = patch('core.memory_manager.psutil.virtual_memory')
+        self.virtual_memory_patcher = patch("core.memory_manager.psutil.virtual_memory")
         self.mock_virtual_memory = self.virtual_memory_patcher.start()
 
-        self.print_patcher = patch('builtins.print')
+        self.print_patcher = patch("builtins.print")
         self.mock_print = self.print_patcher.start()
 
     def tearDown(self):
@@ -336,13 +361,13 @@ class TestGlobalFunctions(unittest.TestCase):
 
     def test_register_dataframe_global(self):
         """Test de la fonction globale register_dataframe."""
-        df = pd.DataFrame({'col1': [1, 2, 3]})
+        df = pd.DataFrame({"col1": [1, 2, 3]})
         result = register_dataframe("test_df", df, "test_scope")
         self.assertTrue(result)
 
     def test_get_dataframe_global(self):
         """Test de la fonction globale get_dataframe."""
-        df = pd.DataFrame({'col1': [1, 2, 3]})
+        df = pd.DataFrame({"col1": [1, 2, 3]})
         register_dataframe("test_df", df, "test_scope")
 
         result = get_dataframe("test_df")
@@ -350,7 +375,7 @@ class TestGlobalFunctions(unittest.TestCase):
 
     def test_cleanup_scope_global(self):
         """Test de la fonction globale cleanup_scope."""
-        df = pd.DataFrame({'col1': [1, 2, 3]})
+        df = pd.DataFrame({"col1": [1, 2, 3]})
         register_dataframe("test_df", df, "test_scope")
 
         freed_memory = cleanup_scope("test_scope")
@@ -358,7 +383,7 @@ class TestGlobalFunctions(unittest.TestCase):
 
     def test_cleanup_all_global(self):
         """Test de la fonction globale cleanup_all."""
-        df = pd.DataFrame({'col1': [1, 2, 3]})
+        df = pd.DataFrame({"col1": [1, 2, 3]})
         register_dataframe("test_df", df, "test_scope")
 
         freed_memory = cleanup_all()
@@ -402,5 +427,5 @@ class TestGlobalFunctions(unittest.TestCase):
         self.assertIn("dataframes_by_scope", stats)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

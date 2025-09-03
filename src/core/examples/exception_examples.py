@@ -6,9 +6,15 @@ pour améliorer la gestion d'erreur dans le projet.
 """
 
 from ..exceptions import (
-    SyncException, ApiException, ValidationException, ConfigurationException,
-    DatabaseException, AuthenticationException, NetworkException,
-    wrap_api_call, handle_sync_exceptions
+    SyncException,
+    ApiException,
+    ValidationException,
+    ConfigurationException,
+    DatabaseException,
+    AuthenticationException,
+    NetworkException,
+    wrap_api_call,
+    handle_sync_exceptions,
 )
 
 
@@ -25,7 +31,7 @@ def example_api_error_handling():
                 status_code=response_status,
                 endpoint="/users/john.doe@example.com",
                 response_text="User with email john.doe@example.com does not exist",
-                details="The user was deleted or never existed"
+                details="The user was deleted or never existed",
             )
     except ApiException as e:
         print(f"API Error: {e}")
@@ -48,7 +54,7 @@ def example_validation_error():
                 field="email",
                 value=email,
                 expected_format="user@domain.com",
-                details="Email must contain @ symbol"
+                details="Email must contain @ symbol",
             )
     except ValidationException as e:
         print(f"Validation Error: {e}")
@@ -69,7 +75,7 @@ def example_configuration_error():
                 message="Missing required configuration",
                 config_key=config_key,
                 config_file="dev.yaml",
-                details="Database URL is required for connection"
+                details="Database URL is required for connection",
             )
     except ConfigurationException as e:
         print(f"Configuration Error: {e}")
@@ -88,7 +94,7 @@ def example_database_error():
             message="Table does not exist",
             sql_query=sql_query,
             table="users",
-            details="The users table was dropped or renamed"
+            details="The users table was dropped or renamed",
         )
     except DatabaseException as e:
         print(f"Database Error: {e}")
@@ -106,7 +112,7 @@ def example_authentication_error():
             message="Invalid credentials",
             service="N2F",
             credentials_type="client_secret",
-            details="The client secret has expired or is incorrect"
+            details="The client secret has expired or is incorrect",
         )
     except AuthenticationException as e:
         print(f"Authentication Error: {e}")
@@ -125,7 +131,7 @@ def example_network_error():
             url="https://api.n2f.com/users",
             timeout=30.0,
             retry_count=3,
-            details="The server did not respond within 30 seconds"
+            details="The server did not respond within 30 seconds",
         )
     except NetworkException as e:
         print(f"Network Error: {e}")
@@ -159,7 +165,7 @@ def example_exception_serialization():
             message="API call failed",
             status_code=500,
             endpoint="/users",
-            details="Internal server error"
+            details="Internal server error",
         )
     except ApiException as e:
         # Convertir l'exception en dictionnaire pour la sérialisation

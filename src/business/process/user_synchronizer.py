@@ -22,8 +22,13 @@ class UserSynchronizer(EntitySynchronizer):
         """
         super().__init__(n2f_client, sandbox, "users")
 
-    def build_payload(self, entity: pd.Series, df_agresso: pd.DataFrame,
-                     df_n2f: pd.DataFrame, df_n2f_companies: pd.DataFrame = None) -> Dict[str, Any]:
+    def build_payload(
+        self,
+        entity: pd.Series,
+        df_agresso: pd.DataFrame,
+        df_n2f: pd.DataFrame,
+        df_n2f_companies: pd.DataFrame = None,
+    ) -> Dict[str, Any]:
         """
         Construit le payload pour l'API N2F utilisateur.
 
@@ -38,7 +43,10 @@ class UserSynchronizer(EntitySynchronizer):
         """
         # Import déplacé ici pour éviter les imports circulaires
         from n2f.process.user import build_user_payload
-        return build_user_payload(entity, df_agresso, df_n2f, self.n2f_client, df_n2f_companies, self.sandbox)
+
+        return build_user_payload(
+            entity, df_agresso, df_n2f, self.n2f_client, df_n2f_companies, self.sandbox
+        )
 
     def get_entity_id(self, entity: pd.Series) -> str:
         """
@@ -70,8 +78,9 @@ class UserSynchronizer(EntitySynchronizer):
         """
         return "mail"
 
-    def _perform_create_operation(self, entity: pd.Series, payload: Dict,
-                                df_n2f_companies: pd.DataFrame = None) -> ApiResult:
+    def _perform_create_operation(
+        self, entity: pd.Series, payload: Dict, df_n2f_companies: pd.DataFrame = None
+    ) -> ApiResult:
         """
         Effectue l'opération de création d'utilisateur.
 
@@ -85,8 +94,13 @@ class UserSynchronizer(EntitySynchronizer):
         """
         return self.n2f_client.create_user(payload)
 
-    def _perform_update_operation(self, entity: pd.Series, payload: Dict,
-                                n2f_entity: Dict, df_n2f_companies: pd.DataFrame = None) -> ApiResult:
+    def _perform_update_operation(
+        self,
+        entity: pd.Series,
+        payload: Dict,
+        n2f_entity: Dict,
+        df_n2f_companies: pd.DataFrame = None,
+    ) -> ApiResult:
         """
         Effectue l'opération de mise à jour d'utilisateur.
 
@@ -101,8 +115,9 @@ class UserSynchronizer(EntitySynchronizer):
         """
         return self.n2f_client.update_user(payload)
 
-    def _perform_delete_operation(self, entity: pd.Series,
-                                df_n2f_companies: pd.DataFrame = None) -> ApiResult:
+    def _perform_delete_operation(
+        self, entity: pd.Series, df_n2f_companies: pd.DataFrame = None
+    ) -> ApiResult:
         """
         Effectue l'opération de suppression d'utilisateur.
 

@@ -9,7 +9,9 @@ from pathlib import Path
 from n2f.api_result import ApiResult
 
 
-def add_api_logging_columns(df: pd.DataFrame, api_results: List[ApiResult]) -> pd.DataFrame:
+def add_api_logging_columns(
+    df: pd.DataFrame, api_results: List[ApiResult]
+) -> pd.DataFrame:
     """
     Ajoute les colonnes de logging API au DataFrame.
 
@@ -55,7 +57,7 @@ def export_api_logs(df: pd.DataFrame, filename: str = None) -> str:
     # Créer le dossier logs s'il n'existe pas
     logs_dir = Path("logs")
     logs_dir.mkdir(exist_ok=True)
-    
+
     # Construire le chemin complet dans le dossier logs
     filepath = logs_dir / filename
 

@@ -23,6 +23,7 @@ import hashlib
 @dataclass
 class CacheEntry:
     """Entrée dans le cache avec métadonnées."""
+
     data: Any
     timestamp: float
     ttl: Optional[int] = None  # Time to live en secondes
@@ -34,6 +35,7 @@ class CacheEntry:
 @dataclass
 class CacheMetrics:
     """Métriques du cache."""
+
     hits: int = 0
     misses: int = 0
     sets: int = 0
@@ -54,7 +56,9 @@ class AdvancedCache:
     - Compression des données
     """
 
-    def __init__(self, cache_dir: Path = None, max_size_mb: int = 100, default_ttl: int = 3600):
+    def __init__(
+        self, cache_dir: Path = None, max_size_mb: int = 100, default_ttl: int = 3600
+    ):
         """
         Initialise le cache avancé.
 
@@ -147,10 +151,7 @@ class AdvancedCache:
             return
 
         # Éviction LRU (Least Recently Used)
-        entries = sorted(
-            self._memory_cache.items(),
-            key=lambda x: x[1].last_access
-        )
+        entries = sorted(self._memory_cache.items(), key=lambda x: x[1].last_access)
 
         while self.metrics.total_size_bytes > self.max_size_bytes * 0.8 and entries:
             key, _ = entries.pop(0)
@@ -164,15 +165,15 @@ class AdvancedCache:
         try:
             cache_file = self._get_cache_file_path(key)
             entry_data = {
-                'data': self._serialize_data(entry.data),
-                'timestamp': entry.timestamp,
-                'ttl': entry.ttl,
-                'access_count': entry.access_count,
-                'last_access': entry.last_access,
-                'size_bytes': entry.size_bytes
+                "data": self._serialize_data(entry.data),
+                "timestamp": entry.timestamp,
+                "ttl": entry.ttl,
+                "access_count": entry.access_count,
+                "last_access": entry.last_access,
+                "size_bytes": entry.size_bytes,
             }
 
-            with cache_file.open('wb') as f:
+            with cache_file.open("wb") as f:
                 pickle.dump(entry_data, f)
 
         except Exception as e:
@@ -188,16 +189,16 @@ class AdvancedCache:
             if not cache_file.exists():
                 return None
 
-            with cache_file.open('rb') as f:
+            with cache_file.open("rb") as f:
                 entry_data = pickle.load(f)
 
             return CacheEntry(
-                data=self._deserialize_data(entry_data['data']),
-                timestamp=entry_data['timestamp'],
-                ttl=entry_data['ttl'],
-                access_count=entry_data['access_count'],
-                last_access=entry_data['last_access'],
-                size_bytes=entry_data['size_bytes']
+                data=self._deserialize_data(entry_data["data"]),
+                timestamp=entry_data["timestamp"],
+                ttl=entry_data["ttl"],
+                access_count=entry_data["access_count"],
+                last_access=entry_data["last_access"],
+                size_bytes=entry_data["size_bytes"],
             )
 
         except Exception as e:
@@ -270,7 +271,9 @@ class AdvancedCache:
         self.metrics.misses += 1
         return None
 
-    def set(self, data: Any, function_name: str, *args: Any, ttl: Optional[int] = None) -> None:
+    def set(
+        self, data: Any, function_name: str, *args: Any, ttl: Optional[int] = None
+    ) -> None:
         """
         Stocke une valeur dans le cache.
 
@@ -296,7 +299,7 @@ class AdvancedCache:
             ttl=ttl if ttl is not None else self.default_ttl,
             access_count=0,
             last_access=current_time,
-            size_bytes=size_bytes
+            size_bytes=size_bytes,
         )
 
         # Suppression de l'ancienne entrée si elle existe
@@ -358,14 +361,14 @@ class AdvancedCache:
             hit_rate = self.metrics.hits / (self.metrics.hits + self.metrics.misses)
 
         return {
-            'hits': self.metrics.hits,
-            'misses': self.metrics.misses,
-            'sets': self.metrics.sets,
-            'invalidations': self.metrics.invalidations,
-            'hit_rate': hit_rate,
-            'total_size_mb': self.metrics.total_size_bytes / (1024 * 1024),
-            'entry_count': self.metrics.entry_count,
-            'max_size_mb': self.max_size_bytes / (1024 * 1024)
+            "hits": self.metrics.hits,
+            "misses": self.metrics.misses,
+            "sets": self.metrics.sets,
+            "invalidations": self.metrics.invalidations,
+            "hit_rate": hit_rate,
+            "total_size_mb": self.metrics.total_size_bytes / (1024 * 1024),
+            "entry_count": self.metrics.entry_count,
+            "max_size_mb": self.max_size_bytes / (1024 * 1024),
         }
 
     def get_stats(self) -> str:
@@ -387,7 +390,9 @@ class AdvancedCache:
 _advanced_cache: Optional[AdvancedCache] = None
 
 
-def get_cache(cache_dir: Path = None, max_size_mb: int = 100, default_ttl: int = 3600) -> AdvancedCache:
+def get_cache(
+    cache_dir: Path = None, max_size_mb: int = 100, default_ttl: int = 3600
+) -> AdvancedCache:
     """
     Récupère l'instance globale du cache avancé.
 
@@ -403,9 +408,7 @@ def get_cache(cache_dir: Path = None, max_size_mb: int = 100, default_ttl: int =
 
     if _advanced_cache is None:
         _advanced_cache = AdvancedCache(
-            cache_dir=cache_dir,
-            max_size_mb=max_size_mb,
-            default_ttl=default_ttl
+            cache_dir=cache_dir, max_size_mb=max_size_mb, default_ttl=default_ttl
         )
 
     return _advanced_cache
@@ -417,7 +420,9 @@ def cache_get(function_name: str, *args: Any) -> Optional[Any]:
     return cache.get(function_name, *args)
 
 
-def cache_set(data: Any, function_name: str, *args: Any, ttl: Optional[int] = None) -> None:
+def cache_set(
+    data: Any, function_name: str, *args: Any, ttl: Optional[int] = None
+) -> None:
     """Fonction utilitaire pour stocker en cache."""
     cache = get_cache()
     cache.set(data, function_name, *args, ttl=ttl)

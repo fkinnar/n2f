@@ -9,7 +9,7 @@ def get_roles(
     client_id: str,
     client_secret: str,
     simulate: bool = False,
-    cache: bool = True
+    cache: bool = True,
 ) -> pd.DataFrame:
     """
     Récupère les rôles depuis l'API N2F et retourne un DataFrame.
@@ -19,12 +19,7 @@ def get_roles(
         if cached is not None:
             return cached
 
-    roles = get_roles_api(
-        base_url,
-        client_id,
-        client_secret,
-        simulate
-    )
+    roles = get_roles_api(base_url, client_id, client_secret, simulate)
     result = pd.DataFrame(roles)
     if cache:
         cache_set(result, "get_roles", base_url, client_id, simulate)

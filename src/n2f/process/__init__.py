@@ -8,6 +8,7 @@ from .axe import (
     update_axes,
     delete_axes,
 )
+
 # Projects functions as aliases to axes functions
 from .axe import (
     create_axes as create_projects,

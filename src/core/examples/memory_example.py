@@ -18,15 +18,13 @@ from ..memory_manager import (
     cleanup_scope,
     cleanup_all,
     print_memory_summary,
-    get_memory_stats
+    get_memory_stats,
 )
 
 
 def create_sample_dataframe(rows: int = 1000, cols: int = 10) -> pd.DataFrame:
     """Crée un DataFrame de test avec des données aléatoires."""
-    data = {
-        f'col_{i}': np.random.randn(rows) for i in range(cols)
-    }
+    data = {f"col_{i}": np.random.randn(rows) for i in range(cols)}
     return pd.DataFrame(data)
 
 
@@ -138,7 +136,7 @@ def example_metrics_detailed():
     print(f"Mémoire système utilisée: {stats['system']['memory_percentage']:.1f}%")
 
     print("\n📁 Répartition par scope:")
-    for scope, info in stats['dataframes_by_scope'].items():
+    for scope, info in stats["dataframes_by_scope"].items():
         print(f"  • {scope}: {info['count']} DataFrames, {info['size_mb']:.1f}MB")
 
     # Nettoyage final

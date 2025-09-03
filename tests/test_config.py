@@ -22,9 +22,15 @@ import os
 
 # Ajout du chemin du projet pour les imports
 from core.config import (
-    SyncConfig, DatabaseConfig, ApiConfig, CacheConfig, ScopeConfig, ConfigLoader
+    SyncConfig,
+    DatabaseConfig,
+    ApiConfig,
+    CacheConfig,
+    ScopeConfig,
+    ConfigLoader,
 )
 from core.registry import SyncRegistry, RegistryEntry
+
 
 class TestSyncConfig(unittest.TestCase):
     """Tests pour la classe SyncConfig."""
@@ -35,19 +41,17 @@ class TestSyncConfig(unittest.TestCase):
             prod=False,
             sql_path="test_sql",
             sql_filename_users="test_users.sql",
-            sql_filename_customaxes="test_axes.sql"
+            sql_filename_customaxes="test_axes.sql",
         )
         api_config = ApiConfig(
-            base_urls="https://test.n2f.com/api/",
-            simulate=True,
-            sandbox=True
+            base_urls="https://test.n2f.com/api/", simulate=True, sandbox=True
         )
         cache_config = CacheConfig(
             enabled=True,
             cache_dir="test_cache",
             max_size_mb=50,
             default_ttl=1800,
-            persist_cache=False
+            persist_cache=False,
         )
 
         config = SyncConfig(database=db_config, api=api_config, cache=cache_config)
@@ -61,19 +65,21 @@ class TestSyncConfig(unittest.TestCase):
         """Test des valeurs par défaut de SyncConfig."""
         db_config = DatabaseConfig()
         api_config = ApiConfig()
-        
+
         config = SyncConfig(database=db_config, api=api_config)
 
         # Vérification des valeurs par défaut
         self.assertEqual(config.database.prod, True)
         self.assertEqual(config.database.sql_path, "sql")
-        self.assertEqual(config.api.base_urls, "https://sandbox.n2f.com/services/api/v2/")
+        self.assertEqual(
+            config.api.base_urls, "https://sandbox.n2f.com/services/api/v2/"
+        )
         self.assertEqual(config.api.sandbox, True)
 
     def test_scope_config_creation(self):
         """Test de création d'une configuration de scope."""
         mock_function = Mock()
-        
+
         scope_config = ScopeConfig(
             sync_function=mock_function,
             sql_filename="test.sql",
@@ -81,7 +87,7 @@ class TestSyncConfig(unittest.TestCase):
             display_name="Test Entity",
             description="Test description",
             enabled=True,
-            sql_column_filter="active = 1"
+            sql_column_filter="active = 1",
         )
 
         self.assertEqual(scope_config.sql_filename, "test.sql")
@@ -121,6 +127,7 @@ class TestSyncConfig(unittest.TestCase):
         errors = config.validate()
         self.assertIn("sql_path ne peut pas être vide", errors)
 
+
 class TestConfigLoader(unittest.TestCase):
     """Tests pour la classe ConfigLoader."""
 
@@ -133,6 +140,7 @@ class TestConfigLoader(unittest.TestCase):
     def tearDown(self):
         """Nettoyage après les tests."""
         import shutil
+
         shutil.rmtree(self.temp_dir)
 
     def test_load_config_from_file(self):
@@ -142,23 +150,23 @@ class TestConfigLoader(unittest.TestCase):
                 "prod": False,
                 "sql-path": "test_sql",
                 "sql-filename-users": "test_users.sql",
-                "sql-filename-customaxes": "test_axes.sql"
+                "sql-filename-customaxes": "test_axes.sql",
             },
             "n2f": {
                 "base_urls": "https://test.n2f.com/api/",
                 "simulate": True,
-                "sandbox": True
+                "sandbox": True,
             },
             "cache": {
                 "enabled": True,
                 "cache_dir": "test_cache",
                 "max_size_mb": 50,
                 "default_ttl": 1800,
-                "persist_cache": False
-            }
+                "persist_cache": False,
+            },
         }
 
-        with self.config_path.open('w', encoding='utf-8') as f:
+        with self.config_path.open("w", encoding="utf-8") as f:
             yaml.dump(config_data, f)
 
         config = self.loader.load()
@@ -175,7 +183,7 @@ class TestConfigLoader(unittest.TestCase):
 
     def test_load_config_invalid_yaml(self):
         """Test de chargement avec un YAML invalide."""
-        with self.config_path.open('w', encoding='utf-8') as f:
+        with self.config_path.open("w", encoding="utf-8") as f:
             f.write("invalid: yaml: content: [\n")
 
         with self.assertRaises(yaml.YAMLError):
@@ -187,20 +195,19 @@ class TestConfigLoader(unittest.TestCase):
             "agresso": {
                 "sql-path": "",  # Invalide
                 "sql-filename-users": "test_users.sql",
-                "sql-filename-customaxes": "test_axes.sql"
+                "sql-filename-customaxes": "test_axes.sql",
             },
-            "n2f": {
-                "base_urls": "https://test.n2f.com/api/"
-            }
+            "n2f": {"base_urls": "https://test.n2f.com/api/"},
         }
 
-        with self.config_path.open('w', encoding='utf-8') as f:
+        with self.config_path.open("w", encoding="utf-8") as f:
             yaml.dump(config_data, f)
 
         with self.assertRaises(ValueError) as context:
             self.loader.load()
-        
+
         self.assertIn("sql_path ne peut pas être vide", str(context.exception))
+
 
 class TestRegistryEntry(unittest.TestCase):
     """Tests pour la classe RegistryEntry."""
@@ -208,7 +215,7 @@ class TestRegistryEntry(unittest.TestCase):
     def test_registry_entry_creation(self):
         """Test de création d'une entrée de registry."""
         mock_function = Mock()
-        
+
         entry = RegistryEntry(
             sync_function=mock_function,
             sql_filename="test.sql",
@@ -217,7 +224,7 @@ class TestRegistryEntry(unittest.TestCase):
             description="Test description",
             enabled=True,
             module_path="test.module",
-            sql_column_filter="active = 1"
+            sql_column_filter="active = 1",
         )
 
         self.assertEqual(entry.sql_filename, "test.sql")
@@ -229,12 +236,12 @@ class TestRegistryEntry(unittest.TestCase):
     def test_registry_entry_defaults(self):
         """Test des valeurs par défaut de RegistryEntry."""
         mock_function = Mock()
-        
+
         entry = RegistryEntry(
             sync_function=mock_function,
             sql_filename="test.sql",
             entity_type="test_entity",
-            display_name="Test Entity"
+            display_name="Test Entity",
         )
 
         self.assertEqual(entry.description, "")
@@ -245,12 +252,12 @@ class TestRegistryEntry(unittest.TestCase):
     def test_registry_entry_str_representation(self):
         """Test de la représentation string de RegistryEntry."""
         mock_function = Mock()
-        
+
         entry = RegistryEntry(
             sync_function=mock_function,
             sql_filename="test.sql",
             entity_type="test_entity",
-            display_name="Test Entity"
+            display_name="Test Entity",
         )
 
         str_repr = str(entry)
@@ -260,7 +267,7 @@ class TestRegistryEntry(unittest.TestCase):
     def test_to_scope_config(self):
         """Test de conversion en ScopeConfig."""
         mock_function = Mock()
-        
+
         entry = RegistryEntry(
             sync_function=mock_function,
             sql_filename="test.sql",
@@ -268,16 +275,17 @@ class TestRegistryEntry(unittest.TestCase):
             display_name="Test Entity",
             description="Test description",
             enabled=True,
-            sql_column_filter="active = 1"
+            sql_column_filter="active = 1",
         )
 
         scope_config = entry.to_scope_config()
-        
+
         self.assertEqual(scope_config.sql_filename, "test.sql")
         self.assertEqual(scope_config.entity_type, "test_entity")
         self.assertEqual(scope_config.display_name, "Test Entity")
         self.assertEqual(scope_config.enabled, True)
         self.assertEqual(scope_config.sql_column_filter, "active = 1")
+
 
 class TestSyncRegistry(unittest.TestCase):
     """Tests pour la classe SyncRegistry."""
@@ -297,7 +305,7 @@ class TestSyncRegistry(unittest.TestCase):
             display_name="Test Entity",
             description="Test description",
             enabled=True,
-            sql_column_filter="active = 1"
+            sql_column_filter="active = 1",
         )
 
         self.assertTrue(self.registry.is_registered("test_scope"))
@@ -314,13 +322,13 @@ class TestSyncRegistry(unittest.TestCase):
             sync_function=self.mock_function,
             sql_filename="test1.sql",
             entity_type="entity1",
-            display_name="Entity 1"
+            display_name="Entity 1",
         )
         entry2 = RegistryEntry(
             sync_function=self.mock_function,
             sql_filename="test2.sql",
             entity_type="entity2",
-            display_name="Entity 2"
+            display_name="Entity 2",
         )
 
         self.registry._registry["scope1"] = entry1
@@ -345,7 +353,7 @@ class TestSyncRegistry(unittest.TestCase):
             sync_function=self.mock_function,
             sql_filename="test.sql",
             entity_type="test_entity",
-            display_name="Test Entity"
+            display_name="Test Entity",
         )
 
         # Le registry est valide s'il contient au moins un scope
@@ -358,7 +366,7 @@ class TestSyncRegistry(unittest.TestCase):
             sync_function=self.mock_function,
             sql_filename="test.sql",
             entity_type="test_entity",
-            display_name="Test Entity"
+            display_name="Test Entity",
         )
 
         with self.assertRaises(ValueError):
@@ -367,7 +375,7 @@ class TestSyncRegistry(unittest.TestCase):
                 sync_function=self.mock_function,
                 sql_filename="test2.sql",
                 entity_type="test_entity2",
-                display_name="Test Entity 2"
+                display_name="Test Entity 2",
             )
 
     def test_auto_discover_scopes(self):
@@ -376,8 +384,8 @@ class TestSyncRegistry(unittest.TestCase):
         mock_module = Mock()
         mock_module.synchronize_test_entities = self.mock_function
         mock_module.__path__ = ["/fake/path"]
-        
-        with patch('importlib.import_module', return_value=mock_module):
+
+        with patch("importlib.import_module", return_value=mock_module):
             # Test simplifié - on vérifie juste que la méthode ne plante pas
             try:
                 self.registry.auto_discover_scopes("test.module")
@@ -393,12 +401,13 @@ class TestSyncRegistry(unittest.TestCase):
             sync_function=self.mock_function,
             sql_filename="test.sql",
             entity_type="test_entity",
-            display_name="Test Entity"
+            display_name="Test Entity",
         )
 
         configs = self.registry.get_all_scope_configs()
         self.assertIn("test_scope", configs)
         self.assertEqual(configs["test_scope"].entity_type, "test_entity")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

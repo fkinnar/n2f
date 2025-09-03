@@ -17,12 +17,17 @@ from ..metrics import (
     end_operation,
     record_memory_usage,
     print_summary,
-    export_metrics
+    export_metrics,
 )
 
 
-def simulate_sync_operation(scope: str, action: str, duration: float = 1.0,
-                          success: bool = True, records: int = 100):
+def simulate_sync_operation(
+    scope: str,
+    action: str,
+    duration: float = 1.0,
+    success: bool = True,
+    records: int = 100,
+):
     """Simule une opération de synchronisation."""
     print(f"🔄 Démarrage {action} pour {scope}...")
 
@@ -52,7 +57,7 @@ def simulate_sync_operation(scope: str, action: str, duration: float = 1.0,
         memory_usage_mb=memory_usage,
         api_calls=random.randint(5, 20),
         cache_hits=random.randint(0, 10),
-        cache_misses=random.randint(0, 5)
+        cache_misses=random.randint(0, 5),
     )
 
 
@@ -66,7 +71,7 @@ def example_metrics_basic_usage():
         ("users", "update", 1.5, True, 75),
         ("projects", "create", 3.0, True, 200),
         ("projects", "delete", 1.0, False, 0),  # Échec simulé
-        ("companies", "sync", 2.5, True, 50)
+        ("companies", "sync", 2.5, True, 50),
     ]
 
     for scope, action, duration, success, records in operations:
@@ -133,7 +138,7 @@ def example_performance_monitoring():
             memory_usage_mb=random.uniform(20.0, 80.0),
             api_calls=random.randint(10, 30),
             cache_hits=random.randint(5, 15),
-            cache_misses=random.randint(0, 8)
+            cache_misses=random.randint(0, 8),
         )
 
     # Résumé final
@@ -149,7 +154,7 @@ def example_error_tracking():
         ("users", "create", "Erreur de validation des données"),
         ("projects", "update", "Erreur de connexion API"),
         ("companies", "delete", "Erreur de permissions"),
-        ("departments", "sync", "Timeout de la requête")
+        ("departments", "sync", "Timeout de la requête"),
     ]
 
     for scope, action, error_msg in error_scenarios:
@@ -168,7 +173,7 @@ def example_error_tracking():
             memory_usage_mb=random.uniform(5.0, 15.0),
             api_calls=random.randint(1, 5),
             cache_hits=0,
-            cache_misses=random.randint(1, 3)
+            cache_misses=random.randint(1, 3),
         )
 
     # Affichage du résumé avec erreurs
@@ -185,10 +190,11 @@ def example_export_and_analysis():
         action = random.choice(["create", "update", "delete"])
 
         simulate_sync_operation(
-            scope, action,
+            scope,
+            action,
             duration=random.uniform(0.5, 2.0),
             success=random.random() > 0.2,  # 80% de succès
-            records=random.randint(20, 150)
+            records=random.randint(20, 150),
         )
 
     # Export des métriques
@@ -206,7 +212,9 @@ def example_export_and_analysis():
     print(f"   • Scopes traités: {len(summary['operations_by_scope'])}")
     print(f"   • Actions effectuées: {len(summary['operations_by_action'])}")
     print(f"   • Taux de succès global: {summary['summary']['success_rate']*100:.1f}%")
-    print(f"   • Performance moyenne: {summary['summary']['average_records_per_second']:.1f} enregistrements/s")
+    print(
+        f"   • Performance moyenne: {summary['summary']['average_records_per_second']:.1f} enregistrements/s"
+    )
 
 
 def example_memory_monitoring():
@@ -238,7 +246,7 @@ def example_memory_monitoring():
             memory_usage_mb=memory_usage,
             api_calls=random.randint(1, 10),
             cache_hits=random.randint(0, 5),
-            cache_misses=random.randint(0, 3)
+            cache_misses=random.randint(0, 3),
         )
 
     # Affichage du résumé avec focus mémoire

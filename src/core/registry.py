@@ -16,6 +16,7 @@ import pkgutil
 @dataclass
 class RegistryEntry:
     """Entrée dans le registry pour un scope."""
+
     sync_function: Callable
     sql_filename: str
     entity_type: str
@@ -23,12 +24,15 @@ class RegistryEntry:
     description: str = ""
     enabled: bool = True
     module_path: str = ""
-    sql_column_filter: str = ""  # Filtre pour la colonne SQL (ex: "projects", "plates", "subposts")
+    sql_column_filter: str = (
+        ""  # Filtre pour la colonne SQL (ex: "projects", "plates", "subposts")
+    )
 
     def to_scope_config(self):
         """Convertit l'entrée en ScopeConfig."""
         # Import déplacé ici pour éviter les imports circulaires
         from .config import ScopeConfig
+
         return ScopeConfig(
             sync_function=self.sync_function,
             sql_filename=self.sql_filename,
@@ -36,7 +40,7 @@ class RegistryEntry:
             display_name=self.display_name,
             description=self.description,
             enabled=self.enabled,
-            sql_column_filter=self.sql_column_filter
+            sql_column_filter=self.sql_column_filter,
         )
 
 
@@ -52,16 +56,18 @@ class SyncRegistry:
         self._registry: Dict[str, RegistryEntry] = {}
         self._discovered_modules: set = set()
 
-    def register(self,
-                scope_name: str,
-                sync_function: Callable,
-                sql_filename: str,
-                entity_type: str,
-                display_name: str,
-                description: str = "",
-                enabled: bool = True,
-                module_path: str = "",
-                sql_column_filter: str = "") -> None:
+    def register(
+        self,
+        scope_name: str,
+        sync_function: Callable,
+        sql_filename: str,
+        entity_type: str,
+        display_name: str,
+        description: str = "",
+        enabled: bool = True,
+        module_path: str = "",
+        sql_column_filter: str = "",
+    ) -> None:
         """
         Enregistre un nouveau scope dans le registry.
 
@@ -86,7 +92,7 @@ class SyncRegistry:
             description=description,
             enabled=enabled,
             module_path=module_path,
-            sql_column_filter=sql_column_filter
+            sql_column_filter=sql_column_filter,
         )
 
     def get(self, scope_name: str):
@@ -153,7 +159,9 @@ class SyncRegistry:
                         submodule = importlib.import_module(submodule_path)
                         self._scan_module_for_scopes(submodule, submodule_path)
                     except ImportError as e:
-                        print(f"Warning: Could not import {submodule_path} for auto-discovery: {e}")
+                        print(
+                            f"Warning: Could not import {submodule_path} for auto-discovery: {e}"
+                        )
 
         except ImportError as e:
             print(f"Warning: Could not import {modules_path} for auto-discovery: {e}")
@@ -175,23 +183,25 @@ class SyncRegistry:
                         scope_name=scope_name,
                         sync_function=obj,
                         sql_filename=f"get-agresso-n2f-{scope_name}.dev.sql",
-                        entity_type=scope_name.rstrip('s'),  # "users" -> "user"
+                        entity_type=scope_name.rstrip("s"),  # "users" -> "user"
                         display_name=scope_name.title(),  # "users" -> "Users"
                         description=f"Auto-discovered scope: {scope_name}",
                         enabled=True,
-                        module_path=module_path
+                        module_path=module_path,
                     )
                 # Ne pas mettre à jour les scopes existants pour éviter d'écraser les configurations
 
     def _is_sync_function(self, obj: Any) -> bool:
         """Vérifie si un objet est une fonction de synchronisation."""
-        return (inspect.isfunction(obj) and
-                obj.__name__.startswith('synchronize_') and
-                obj.__name__ != 'synchronize')  # Exclure la fonction générique
+        return (
+            inspect.isfunction(obj)
+            and obj.__name__.startswith("synchronize_")
+            and obj.__name__ != "synchronize"
+        )  # Exclure la fonction générique
 
     def _extract_scope_name(self, function_name: str) -> Optional[str]:
         """Extrait le nom du scope depuis le nom de la fonction."""
-        if function_name.startswith('synchronize_'):
+        if function_name.startswith("synchronize_"):
             return function_name[12:]  # "synchronize_users" -> "users"
         return None
 
@@ -210,11 +220,13 @@ class SyncRegistry:
                 self.register(
                     scope_name=scope_name,
                     sync_function=scope_data["sync_function"],
-                    sql_filename=scope_data.get("sql_filename", f"get-agresso-n2f-{scope_name}.dev.sql"),
-                    entity_type=scope_data.get("entity_type", scope_name.rstrip('s')),
+                    sql_filename=scope_data.get(
+                        "sql_filename", f"get-agresso-n2f-{scope_name}.dev.sql"
+                    ),
+                    entity_type=scope_data.get("entity_type", scope_name.rstrip("s")),
                     display_name=scope_data.get("display_name", scope_name.title()),
                     description=scope_data.get("description", ""),
-                    enabled=scope_data.get("enabled", True)
+                    enabled=scope_data.get("enabled", True),
                 )
 
     def validate(self) -> List[str]:
@@ -246,14 +258,16 @@ def get_registry() -> SyncRegistry:
     return _global_registry
 
 
-def register_scope(scope_name: str,
-                  sync_function: Callable,
-                  sql_filename: str,
-                  entity_type: str,
-                  display_name: str,
-                  description: str = "",
-                  enabled: bool = True,
-                  sql_column_filter: str = "") -> None:
+def register_scope(
+    scope_name: str,
+    sync_function: Callable,
+    sql_filename: str,
+    entity_type: str,
+    display_name: str,
+    description: str = "",
+    enabled: bool = True,
+    sql_column_filter: str = "",
+) -> None:
     """
     Fonction utilitaire pour enregistrer un scope dans le registry global.
 
@@ -274,5 +288,5 @@ def register_scope(scope_name: str,
         display_name=display_name,
         description=description,
         enabled=enabled,
-        sql_column_filter=sql_column_filter
+        sql_column_filter=sql_column_filter,
     )

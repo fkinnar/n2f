@@ -3,10 +3,7 @@ from typing import Dict, Any
 
 
 def reporting(
-    result_df      : pd.DataFrame,
-    empty_message  : str,
-    update_message : str,
-    status_col     : str
+    result_df: pd.DataFrame, empty_message: str, update_message: str, status_col: str
 ) -> None:
     """
     Génère un rapport détaillé à partir d'un DataFrame de résultats.
@@ -44,7 +41,9 @@ def reporting(
             print(f"  Total : {len(result_df)}")
 
 
-def log_error(scope: str, action: str, entity_id: str, error: Exception, context: str = "") -> None:
+def log_error(
+    scope: str, action: str, entity_id: str, error: Exception, context: str = ""
+) -> None:
     """
     Enregistre une erreur avec son contexte pour faciliter le debugging.
 
@@ -71,7 +70,9 @@ def log_error(scope: str, action: str, entity_id: str, error: Exception, context
     print(f"[ERROR] [{scope}] [{action}] [{entity_id}]{context_str} - {str(error)}")
 
 
-def has_payload_changes(payload: Dict[str, Any], n2f_entity: Dict[str, Any], entity_type: str = None) -> bool:
+def has_payload_changes(
+    payload: Dict[str, Any], n2f_entity: Dict[str, Any], entity_type: str = None
+) -> bool:
     """
     Compare les champs du payload avec les données N2F pour détecter les changements.
 
@@ -99,14 +100,20 @@ def has_payload_changes(payload: Dict[str, Any], n2f_entity: Dict[str, Any], ent
     """
     # Fields to ignore as they can change without being business changes
     ignored_fields = {
-        'uuid', 'id', 'created_at', 'updated_at', 'created', 'updated',
-        'company_id', 'manager_id', 'profile_id', 'role_id'
+        "uuid",
+        "id",
+        "created_at",
+        "updated_at",
+        "created",
+        "updated",
+        "company_id",
+        "manager_id",
+        "profile_id",
+        "role_id",
     }
 
     # Axe-specific fields to ignore (code is a technical identifier for axes)
-    axe_ignored_fields = {
-        'axe_id', 'company_uuid', 'created_by', 'modified_by', 'code'
-    }
+    axe_ignored_fields = {"axe_id", "company_uuid", "created_by", "modified_by", "code"}
 
     for key, value in payload.items():
         # Ignore irrelevant fields
@@ -114,7 +121,7 @@ def has_payload_changes(payload: Dict[str, Any], n2f_entity: Dict[str, Any], ent
             continue
 
         # For axes, also ignore axe-specific fields
-        if entity_type == 'axe' and key in axe_ignored_fields:
+        if entity_type == "axe" and key in axe_ignored_fields:
             continue
 
         # Check if field exists in N2F
@@ -138,8 +145,9 @@ def has_payload_changes(payload: Dict[str, Any], n2f_entity: Dict[str, Any], ent
                 return True
         elif value != n2f_value:
             # Handle special cases None vs nan
-            if (value is None and (n2f_value is None or str(n2f_value).lower() == 'nan')) or \
-               (n2f_value is None and (value is None or str(value).lower() == 'nan')):
+            if (
+                value is None and (n2f_value is None or str(n2f_value).lower() == "nan")
+            ) or (n2f_value is None and (value is None or str(value).lower() == "nan")):
                 continue
             # Direct comparison for other types
             return True

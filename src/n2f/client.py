@@ -7,6 +7,7 @@ from core import SyncContext, cache_get, cache_set
 from n2f.api.token import get_access_token
 from n2f.api_result import ApiResult
 
+
 class N2fApiClient:
     """
     Client API pour interagir avec l'API N2F.
@@ -42,10 +43,18 @@ class N2fApiClient:
         self.context = context
         # Utilise la méthode get_config_value pour supporter l'ancien et le nouveau format
         n2f_config = context.get_config_value("n2f")
-        self.base_url = n2f_config.base_urls if hasattr(n2f_config, 'base_urls') else n2f_config["base_urls"]
+        self.base_url = (
+            n2f_config.base_urls
+            if hasattr(n2f_config, "base_urls")
+            else n2f_config["base_urls"]
+        )
         self.client_id = context.client_id
         self.client_secret = context.client_secret
-        self.simulate = n2f_config.simulate if hasattr(n2f_config, 'simulate') else n2f_config["simulate"]
+        self.simulate = (
+            n2f_config.simulate
+            if hasattr(n2f_config, "simulate")
+            else n2f_config["simulate"]
+        )
         self._access_token = None
 
     def _get_token(self) -> str:
@@ -68,12 +77,14 @@ class N2fApiClient:
                 self.base_url,
                 self.client_id,
                 self.client_secret,
-                simulate=self.simulate
+                simulate=self.simulate,
             )
             self._access_token = token
         return self._access_token
 
-    def _request(self, entity: str, start: int = 0, limit: int = 200) -> List[dict[str, Any]]:
+    def _request(
+        self, entity: str, start: int = 0, limit: int = 200
+    ) -> List[dict[str, Any]]:
         """
         Effectue une requête GET paginée à l'API N2F.
 
@@ -131,7 +142,11 @@ class N2fApiClient:
                 break
             start += limit
 
-        result = pd.concat(all_companies_list, ignore_index=True) if all_companies_list else pd.DataFrame()
+        result = (
+            pd.concat(all_companies_list, ignore_index=True)
+            if all_companies_list
+            else pd.DataFrame()
+        )
 
         if use_cache:
             cache_set(result, "get_companies", *cache_key_args)
@@ -213,18 +228,31 @@ class N2fApiClient:
                 break
             start += limit
 
-        result = pd.concat(all_users_list, ignore_index=True) if all_users_list else pd.DataFrame()
+        result = (
+            pd.concat(all_users_list, ignore_index=True)
+            if all_users_list
+            else pd.DataFrame()
+        )
 
         if use_cache:
             cache_set(result, "get_users", *cache_key_args)
 
         return result.copy(deep=True)
 
-    def _upsert(self, endpoint: str, payload: dict, action_type: str = "upsert",
-                object_type: str = None, object_id: str = None, scope: str = None) -> ApiResult:
+    def _upsert(
+        self,
+        endpoint: str,
+        payload: dict,
+        action_type: str = "upsert",
+        object_type: str = None,
+        object_id: str = None,
+        scope: str = None,
+    ) -> ApiResult:
         """Effectue un appel POST pour créer ou mettre à jour un objet."""
         if self.simulate:
-            return ApiResult.simulate_result("upsert", action_type, object_type, object_id, scope)
+            return ApiResult.simulate_result(
+                "upsert", action_type, object_type, object_id, scope
+            )
 
         start_time = time.time()
         try:
@@ -232,7 +260,7 @@ class N2fApiClient:
             url = f"{self.base_url}{endpoint}"
             headers = {
                 "Authorization": f"Bearer {access_token}",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             }
 
             response = n2f.get_session_write().post(url, headers=headers, json=payload)
@@ -247,7 +275,7 @@ class N2fApiClient:
                     action_type=action_type,
                     object_type=object_type,
                     object_id=object_id,
-                    scope=scope
+                    scope=scope,
                 )
             else:
                 return ApiResult.error_result(
@@ -258,7 +286,7 @@ class N2fApiClient:
                     action_type=action_type,
                     object_type=object_type,
                     object_id=object_id,
-                    scope=scope
+                    scope=scope,
                 )
         except Exception as e:
             duration_ms = (time.time() - start_time) * 1000
@@ -269,14 +297,22 @@ class N2fApiClient:
                 action_type=action_type,
                 object_type=object_type,
                 object_id=object_id,
-                scope=scope
+                scope=scope,
             )
 
-    def _delete(self, endpoint: str, object_id: str, action_type: str = "delete",
-                object_type: str = None, scope: str = None) -> ApiResult:
+    def _delete(
+        self,
+        endpoint: str,
+        object_id: str,
+        action_type: str = "delete",
+        object_type: str = None,
+        scope: str = None,
+    ) -> ApiResult:
         """Effectue un appel DELETE pour supprimer un objet."""
         if self.simulate:
-            return ApiResult.simulate_result("delete", action_type, object_type, object_id, scope)
+            return ApiResult.simulate_result(
+                "delete", action_type, object_type, object_id, scope
+            )
 
         start_time = time.time()
         try:
@@ -295,7 +331,7 @@ class N2fApiClient:
                     action_type=action_type,
                     object_type=object_type,
                     object_id=object_id,
-                    scope=scope
+                    scope=scope,
                 )
             else:
                 return ApiResult.error_result(
@@ -306,7 +342,7 @@ class N2fApiClient:
                     action_type=action_type,
                     object_type=object_type,
                     object_id=object_id,
-                    scope=scope
+                    scope=scope,
                 )
         except Exception as e:
             duration_ms = (time.time() - start_time) * 1000
@@ -317,7 +353,7 @@ class N2fApiClient:
                 action_type=action_type,
                 object_type=object_type,
                 object_id=object_id,
-                scope=scope
+                scope=scope,
             )
 
     def create_user(self, payload: dict) -> ApiResult:
@@ -361,9 +397,17 @@ class N2fApiClient:
 
         return result.copy(deep=True)
 
-    def get_axe_values(self, company_id: str, axe_id: str, use_cache: bool = True) -> pd.DataFrame:
+    def get_axe_values(
+        self, company_id: str, axe_id: str, use_cache: bool = True
+    ) -> pd.DataFrame:
         """Récupère les valeurs d'un axe pour une société (gère pagination et cache)."""
-        cache_key_args = (self.base_url, self.client_id, company_id, axe_id, self.simulate)
+        cache_key_args = (
+            self.base_url,
+            self.client_id,
+            company_id,
+            axe_id,
+            self.simulate,
+        )
         if use_cache:
             cached = cache_get(f"get_axe_values_{axe_id}", *cache_key_args)
             if cached is not None:
@@ -381,7 +425,9 @@ class N2fApiClient:
                 url = f"{self.base_url}/{endpoint}"
                 params = {"start": start, "limit": limit}
                 headers = {"Authorization": f"Bearer {access_token}"}
-                response = n2f.get_session_get().get(url, headers=headers, params=params)
+                response = n2f.get_session_get().get(
+                    url, headers=headers, params=params
+                )
                 response.raise_for_status()
                 values_page = response.json().get("response", {}).get("data", [])
 
@@ -395,20 +441,33 @@ class N2fApiClient:
                 break
             start += limit
 
-        result = pd.concat(all_values_list, ignore_index=True) if all_values_list else pd.DataFrame()
+        result = (
+            pd.concat(all_values_list, ignore_index=True)
+            if all_values_list
+            else pd.DataFrame()
+        )
 
         if use_cache:
             cache_set(result, f"get_axe_values_{axe_id}", *cache_key_args)
 
         return result.copy(deep=True)
 
-    def upsert_axe_value(self, company_id: str, axe_id: str, payload: dict, action_type: str = "upsert", scope: str = None) -> ApiResult:
+    def upsert_axe_value(
+        self,
+        company_id: str,
+        axe_id: str,
+        payload: dict,
+        action_type: str = "upsert",
+        scope: str = None,
+    ) -> ApiResult:
         """Crée ou met à jour une valeur d'axe pour une société."""
         endpoint = f"/companies/{company_id}/axes/{axe_id}"
         object_code = payload.get("code", "unknown")
         return self._upsert(endpoint, payload, action_type, "axe", object_code, scope)
 
-    def delete_axe_value(self, company_id: str, axe_id: str, value_code: str, scope: str = None) -> ApiResult:
+    def delete_axe_value(
+        self, company_id: str, axe_id: str, value_code: str, scope: str = None
+    ) -> ApiResult:
         """Supprime une valeur d'axe pour une société par son code."""
         endpoint = f"/companies/{company_id}/axes/{value_code}"
         return self._delete(endpoint, value_code, "delete", "axe", value_code, scope)

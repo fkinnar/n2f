@@ -19,16 +19,19 @@ import logging
 
 class RetryableError(Exception):
     """Exception de base pour les erreurs récupérables."""
+
     pass
 
 
 class FatalError(Exception):
     """Exception de base pour les erreurs fatales (non récupérables)."""
+
     pass
 
 
 class RetryStrategy(Enum):
     """Stratégies de retry disponibles."""
+
     EXPONENTIAL_BACKOFF = "exponential_backoff"
     LINEAR_BACKOFF = "linear_backoff"
     CONSTANT_DELAY = "constant_delay"
@@ -38,6 +41,7 @@ class RetryStrategy(Enum):
 @dataclass
 class RetryMetrics:
     """Métriques de retry pour une opération."""
+
     total_attempts: int = 0
     successful_attempts: int = 0
     failed_attempts: int = 0
@@ -50,7 +54,11 @@ class RetryMetrics:
     @property
     def success_rate(self) -> float:
         """Calcule le taux de succès."""
-        return self.successful_attempts / self.total_attempts if self.total_attempts > 0 else 0
+        return (
+            self.successful_attempts / self.total_attempts
+            if self.total_attempts > 0
+            else 0
+        )
 
     @property
     def average_delay(self) -> float:
@@ -60,22 +68,23 @@ class RetryMetrics:
     def to_dict(self) -> Dict[str, Any]:
         """Convertit les métriques en dictionnaire."""
         return {
-            'total_attempts': self.total_attempts,
-            'successful_attempts': self.successful_attempts,
-            'failed_attempts': self.failed_attempts,
-            'success_rate': self.success_rate,
-            'total_delay_seconds': self.total_delay_seconds,
-            'average_delay': self.average_delay,
-            'last_error': self.last_error,
-            'last_error_type': self.last_error_type,
-            'retry_reasons': self.retry_reasons,
-            'delays_used': self.delays_used
+            "total_attempts": self.total_attempts,
+            "successful_attempts": self.successful_attempts,
+            "failed_attempts": self.failed_attempts,
+            "success_rate": self.success_rate,
+            "total_delay_seconds": self.total_delay_seconds,
+            "average_delay": self.average_delay,
+            "last_error": self.last_error,
+            "last_error_type": self.last_error_type,
+            "retry_reasons": self.retry_reasons,
+            "delays_used": self.delays_used,
         }
 
 
 @dataclass
 class RetryConfig:
     """Configuration pour les retry automatiques."""
+
     max_attempts: int = 3
     base_delay: float = 1.0
     max_delay: float = 60.0
@@ -83,12 +92,12 @@ class RetryConfig:
     jitter: bool = True
     jitter_factor: float = 0.1
     strategy: RetryStrategy = RetryStrategy.EXPONENTIAL_BACKOFF
-    retryable_exceptions: List[Type[Exception]] = field(default_factory=lambda: [
-        ConnectionError, TimeoutError, OSError, RetryableError
-    ])
-    fatal_exceptions: List[Type[Exception]] = field(default_factory=lambda: [
-        FatalError, ValueError, TypeError
-    ])
+    retryable_exceptions: List[Type[Exception]] = field(
+        default_factory=lambda: [ConnectionError, TimeoutError, OSError, RetryableError]
+    )
+    fatal_exceptions: List[Type[Exception]] = field(
+        default_factory=lambda: [FatalError, ValueError, TypeError]
+    )
     log_retries: bool = True
     log_level: int = logging.INFO
 
@@ -131,7 +140,9 @@ class RetryManager:
         self.logger = logging.getLogger(__name__)
         self.metrics: Dict[str, RetryMetrics] = {}
 
-    def execute(self, func: Callable, *args, operation_name: str = "unknown", **kwargs) -> Any:
+    def execute(
+        self, func: Callable, *args, operation_name: str = "unknown", **kwargs
+    ) -> Any:
         """
         Exécute une fonction avec retry automatique.
 
@@ -160,14 +171,16 @@ class RetryManager:
                 if self.config.log_retries and attempt > 1:
                     self.logger.log(
                         self.config.log_level,
-                        f"Tentative {attempt}/{self.config.max_attempts} pour {operation_name}"
+                        f"Tentative {attempt}/{self.config.max_attempts} pour {operation_name}",
                     )
 
                 result = func(*args, **kwargs)
                 metrics.successful_attempts += 1
 
                 if attempt > 1:
-                    self.logger.info(f"Succès à la tentative {attempt} pour {operation_name}")
+                    self.logger.info(
+                        f"Succès à la tentative {attempt} pour {operation_name}"
+                    )
 
                 return result
 
@@ -218,7 +231,9 @@ class RetryManager:
             Délai en secondes
         """
         if self.config.strategy == RetryStrategy.EXPONENTIAL_BACKOFF:
-            delay = self.config.base_delay * (self.config.exponential_base ** (attempt - 1))
+            delay = self.config.base_delay * (
+                self.config.exponential_base ** (attempt - 1)
+            )
         elif self.config.strategy == RetryStrategy.LINEAR_BACKOFF:
             delay = self.config.base_delay * attempt
         elif self.config.strategy == RetryStrategy.CONSTANT_DELAY:
@@ -247,7 +262,9 @@ class RetryManager:
             a, b = b, a + b
         return b
 
-    def get_metrics(self, operation_name: Optional[str] = None) -> Union[RetryMetrics, Dict[str, RetryMetrics]]:
+    def get_metrics(
+        self, operation_name: Optional[str] = None
+    ) -> Union[RetryMetrics, Dict[str, RetryMetrics]]:
         """
         Récupère les métriques de retry.
 
@@ -280,9 +297,9 @@ class RetryManager:
             print("Aucune métrique de retry disponible.")
             return
 
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("🔄 RÉSUMÉ DES RETRY")
-        print("="*60)
+        print("=" * 60)
 
         total_attempts = sum(m.total_attempts for m in self.metrics.values())
         total_successful = sum(m.successful_attempts for m in self.metrics.values())
@@ -293,16 +310,22 @@ class RetryManager:
         print(f"   • Tentatives totales: {total_attempts}")
         print(f"   • Succès: {total_successful}")
         print(f"   • Échecs: {total_failed}")
-        print(f"   • Taux de succès: {(total_successful/total_attempts*100):.1f}%" if total_attempts > 0 else "   • Taux de succès: 0%")
+        print(
+            f"   • Taux de succès: {(total_successful/total_attempts*100):.1f}%"
+            if total_attempts > 0
+            else "   • Taux de succès: 0%"
+        )
         print(f"   • Délai total: {total_delay:.2f}s")
 
         print(f"\n📁 Par opération:")
         for operation, metrics in self.metrics.items():
             success_rate = metrics.success_rate * 100
-            print(f"   • {operation}: {metrics.successful_attempts}/{metrics.total_attempts} "
-                  f"({success_rate:.1f}%) - {metrics.total_delay_seconds:.2f}s")
+            print(
+                f"   • {operation}: {metrics.successful_attempts}/{metrics.total_attempts} "
+                f"({success_rate:.1f}%) - {metrics.total_delay_seconds:.2f}s"
+            )
 
-        print("="*60)
+        print("=" * 60)
 
 
 # Instance globale du gestionnaire de retry
@@ -336,12 +359,17 @@ def retry(config: Optional[RetryConfig] = None, operation_name: Optional[str] = 
     Returns:
         Décorateur
     """
+
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             op_name = operation_name or func.__name__
-            return get_retry_manager(config).execute(func, *args, operation_name=op_name, **kwargs)
+            return get_retry_manager(config).execute(
+                func, *args, operation_name=op_name, **kwargs
+            )
+
         return wrapper
+
     return decorator
 
 
@@ -363,14 +391,19 @@ def api_retry(max_attempts: int = 3, base_delay: float = 2.0, max_delay: float =
         max_delay=max_delay,
         strategy=RetryStrategy.EXPONENTIAL_BACKOFF,
         retryable_exceptions=[
-            ConnectionError, TimeoutError, OSError, RetryableError,
+            ConnectionError,
+            TimeoutError,
+            OSError,
+            RetryableError,
             # Ajouter d'autres exceptions API spécifiques si nécessaire
-        ]
+        ],
     )
     return retry(config)
 
 
-def database_retry(max_attempts: int = 3, base_delay: float = 1.0, max_delay: float = 10.0):
+def database_retry(
+    max_attempts: int = 3, base_delay: float = 1.0, max_delay: float = 10.0
+):
     """
     Décorateur spécialisé pour les opérations de base de données.
 
@@ -388,15 +421,23 @@ def database_retry(max_attempts: int = 3, base_delay: float = 1.0, max_delay: fl
         max_delay=max_delay,
         strategy=RetryStrategy.LINEAR_BACKOFF,
         retryable_exceptions=[
-            ConnectionError, TimeoutError, OSError, RetryableError,
+            ConnectionError,
+            TimeoutError,
+            OSError,
+            RetryableError,
             # Ajouter d'autres exceptions DB spécifiques si nécessaire
-        ]
+        ],
     )
     return retry(config)
 
 
-def execute_with_retry(func: Callable, *args, config: Optional[RetryConfig] = None,
-                      operation_name: str = "unknown", **kwargs) -> Any:
+def execute_with_retry(
+    func: Callable,
+    *args,
+    config: Optional[RetryConfig] = None,
+    operation_name: str = "unknown",
+    **kwargs,
+) -> Any:
     """
     Exécute une fonction avec retry automatique.
 
@@ -410,10 +451,14 @@ def execute_with_retry(func: Callable, *args, config: Optional[RetryConfig] = No
     Returns:
         Résultat de la fonction
     """
-    return get_retry_manager(config).execute(func, *args, operation_name=operation_name, **kwargs)
+    return get_retry_manager(config).execute(
+        func, *args, operation_name=operation_name, **kwargs
+    )
 
 
-def get_retry_metrics(operation_name: Optional[str] = None) -> Union[RetryMetrics, Dict[str, RetryMetrics]]:
+def get_retry_metrics(
+    operation_name: Optional[str] = None,
+) -> Union[RetryMetrics, Dict[str, RetryMetrics]]:
     """
     Récupère les métriques de retry.
 

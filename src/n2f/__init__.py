@@ -19,14 +19,17 @@ session_write_day = LimiterSession(per_minute=QUOTA_DAY_OTHER_PER_MINUTE)
 session_get_night = LimiterSession(per_minute=QUOTA_NIGHT_GET_PER_MINUTE)
 session_write_night = LimiterSession(per_minute=QUOTA_NIGHT_OTHER_PER_MINUTE)
 
+
 def is_night() -> bool:
     """Retourne True si l'heure courante est entre 20h et 6h."""
     hour = datetime.now().hour
     return hour > DAY_END_HOUR or hour < DAY_START_HOUR
 
+
 def get_session_get():
     """Retourne la session GET adaptée à l'heure courante."""
     return session_get_night if is_night() else session_get_day
+
 
 def get_session_write():
     """Retourne la session WRITE adaptée à l'heure courante."""

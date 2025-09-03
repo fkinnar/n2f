@@ -23,11 +23,13 @@ def example_cache_basic_usage():
     cache = get_cache(cache_dir=cache_dir, max_size_mb=50, default_ttl=300)
 
     # Simulation de données
-    test_data = pd.DataFrame({
-        'id': [1, 2, 3, 4, 5],
-        'name': ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve'],
-        'value': [100, 200, 300, 400, 500]
-    })
+    test_data = pd.DataFrame(
+        {
+            "id": [1, 2, 3, 4, 5],
+            "name": ["Alice", "Bob", "Charlie", "Diana", "Eve"],
+            "value": [100, 200, 300, 400, 500],
+        }
+    )
 
     # Stockage en cache
     print("Stockage de données en cache...")
@@ -55,7 +57,7 @@ def example_ttl_expiration():
     cache = get_cache()
 
     # Données avec TTL court (5 secondes)
-    short_lived_data = pd.DataFrame({'temp': [1, 2, 3]})
+    short_lived_data = pd.DataFrame({"temp": [1, 2, 3]})
     cache.set(short_lived_data, "temp_data", ttl=5)
 
     print("Données stockées avec TTL de 5 secondes")
@@ -70,7 +72,9 @@ def example_ttl_expiration():
 
     # Deuxième récupération (devrait échouer)
     data2 = cache.get("temp_data")
-    print(f"Récupération après expiration : {'Succès' if data2 is not None else 'Échec'}")
+    print(
+        f"Récupération après expiration : {'Succès' if data2 is not None else 'Échec'}"
+    )
 
 
 def example_cache_invalidation():
@@ -87,18 +91,30 @@ def example_cache_invalidation():
     print("3 entrées stockées en cache")
 
     # Vérification de la présence
-    print(f"function1/param1 : {'Présent' if cache.get('function1', 'param1') else 'Absent'}")
-    print(f"function1/param2 : {'Présent' if cache.get('function1', 'param2') else 'Absent'}")
-    print(f"function2/param1 : {'Présent' if cache.get('function2', 'param1') else 'Absent'}")
+    print(
+        f"function1/param1 : {'Présent' if cache.get('function1', 'param1') else 'Absent'}"
+    )
+    print(
+        f"function1/param2 : {'Présent' if cache.get('function1', 'param2') else 'Absent'}"
+    )
+    print(
+        f"function2/param1 : {'Présent' if cache.get('function2', 'param1') else 'Absent'}"
+    )
 
     # Invalidation sélective
     print("\nInvalidation de function1/param1...")
     cache.invalidate("function1", "param1")
 
     # Vérification après invalidation
-    print(f"function1/param1 : {'Présent' if cache.get('function1', 'param1') else 'Absent'}")
-    print(f"function1/param2 : {'Présent' if cache.get('function1', 'param2') else 'Absent'}")
-    print(f"function2/param1 : {'Présent' if cache.get('function2', 'param1') else 'Absent'}")
+    print(
+        f"function1/param1 : {'Présent' if cache.get('function1', 'param1') else 'Absent'}"
+    )
+    print(
+        f"function1/param2 : {'Présent' if cache.get('function1', 'param2') else 'Absent'}"
+    )
+    print(
+        f"function2/param1 : {'Présent' if cache.get('function2', 'param1') else 'Absent'}"
+    )
 
 
 def example_performance_metrics():

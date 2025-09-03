@@ -3,6 +3,7 @@ from typing import Optional, Set, Dict, Any, List, Tuple
 
 from n2f.client import N2fApiClient
 from n2f.payload import create_user_upsert_payload
+
 # Import déplacé dans la fonction pour éviter l'import circulaire
 from n2f.api_result import ApiResult
 from core.logging import add_api_logging_columns
@@ -10,7 +11,10 @@ from business.process.helper import has_payload_changes, log_error
 
 # Note: get_users is now in the client, but we keep the process file for business logic
 
-def lookup_company_id(company_code: str, df_n2f_companies: pd.DataFrame, sandbox: bool = False) -> str:
+
+def lookup_company_id(
+    company_code: str, df_n2f_companies: pd.DataFrame, sandbox: bool = False
+) -> str:
     """Recherche l'UUID d'une entreprise à partir de son code."""
     if df_n2f_companies.empty:
         return ""
@@ -21,6 +25,7 @@ def lookup_company_id(company_code: str, df_n2f_companies: pd.DataFrame, sandbox
         return df_n2f_companies["uuid"].iloc[0]
     return ""
 
+
 def build_user_payload(
     user: pd.Series,
     df_agresso_users: pd.DataFrame,
@@ -28,18 +33,24 @@ def build_user_payload(
     n2f_client: N2fApiClient,
     df_n2f_companies: pd.DataFrame,
     sandbox: bool,
-    manager_email: str = None
+    manager_email: str = None,
 ) -> Dict[str, Any]:
     """Construit le payload JSON pour l'upsert d'un utilisateur."""
     company_id = lookup_company_id(user["Entreprise"], df_n2f_companies)
     payload = create_user_upsert_payload(user.to_dict(), company_id, sandbox)
     if manager_email is None:
         payload["managerMail"] = ensure_manager_exists(
-            user["Manager"], df_agresso_users, df_n2f_users, n2f_client, df_n2f_companies, sandbox
+            user["Manager"],
+            df_agresso_users,
+            df_n2f_users,
+            n2f_client,
+            df_n2f_companies,
+            sandbox,
         )
     else:
         payload["managerMail"] = manager_email
     return payload
+
 
 def ensure_manager_exists(
     manager_email: str,
@@ -48,7 +59,7 @@ def ensure_manager_exists(
     n2f_client: N2fApiClient,
     df_n2f_companies: pd.DataFrame,
     sandbox: bool,
-    _visited: Optional[Set[str]] = None
+    _visited: Optional[Set[str]] = None,
 ) -> str:
     """Vérifie récursivement si le manager existe dans N2F, sinon le crée."""
     if not manager_email or pd.isna(manager_email):
@@ -65,15 +76,28 @@ def ensure_manager_exists(
         return manager_email
 
     if manager_email in df_agresso_users["AdresseEmail"].values:
-        user = df_agresso_users[df_agresso_users["AdresseEmail"] == manager_email].iloc[0]
+        user = df_agresso_users[df_agresso_users["AdresseEmail"] == manager_email].iloc[
+            0
+        ]
 
         manager_of_manager_mail = ensure_manager_exists(
-            user["Manager"], df_agresso_users, df_n2f_users,
-            n2f_client, df_n2f_companies, sandbox, _visited
+            user["Manager"],
+            df_agresso_users,
+            df_n2f_users,
+            n2f_client,
+            df_n2f_companies,
+            sandbox,
+            _visited,
         )
 
         payload = build_user_payload(
-            user, df_agresso_users, df_n2f_users, n2f_client, df_n2f_companies, sandbox, manager_of_manager_mail
+            user,
+            df_agresso_users,
+            df_n2f_users,
+            n2f_client,
+            df_n2f_companies,
+            sandbox,
+            manager_of_manager_mail,
         )
         status = n2f_client.create_user(payload)
 
@@ -81,6 +105,7 @@ def ensure_manager_exists(
         return manager_email if status else ""
 
     return ""
+
 
 def create_users(
     df_agresso_users: pd.DataFrame,
@@ -94,27 +119,48 @@ def create_users(
     if df_agresso_users.empty:
         return pd.DataFrame(), status_col
 
-    users_to_create = df_agresso_users[~df_agresso_users["AdresseEmail"].isin(df_n2f_users["mail"])].copy() if not df_n2f_users.empty else df_agresso_users.copy()
+    users_to_create = (
+        df_agresso_users[
+            ~df_agresso_users["AdresseEmail"].isin(df_n2f_users["mail"])
+        ].copy()
+        if not df_n2f_users.empty
+        else df_agresso_users.copy()
+    )
 
     api_results: List[ApiResult] = []
     for _, user in users_to_create.iterrows():
         try:
-            payload = build_user_payload(user, df_agresso_users, df_n2f_users, n2f_client, df_n2f_companies, sandbox)
+            payload = build_user_payload(
+                user,
+                df_agresso_users,
+                df_n2f_users,
+                n2f_client,
+                df_n2f_companies,
+                sandbox,
+            )
             api_result = n2f_client.create_user(payload)
             api_results.append(api_result)
         except Exception as e:
             # Log l'erreur mais continue le processus
             log_error("USERS", "CREATE", user["AdresseEmail"], e, f"Payload: {payload}")
             # Créer un ApiResult d'erreur pour maintenir la cohérence
-            api_results.append(ApiResult.error_result(str(e), error_details=str(e),
-                                                     action_type="create", object_type="user",
-                                                     object_id=user["AdresseEmail"], scope="users"))
+            api_results.append(
+                ApiResult.error_result(
+                    str(e),
+                    error_details=str(e),
+                    action_type="create",
+                    object_type="user",
+                    object_id=user["AdresseEmail"],
+                    scope="users",
+                )
+            )
 
     # Ajouter les colonnes de logging
     users_to_create[status_col] = [result.success for result in api_results]
     users_to_create = add_api_logging_columns(users_to_create, api_results)
 
     return users_to_create, status_col
+
 
 def update_users(
     df_agresso_users: pd.DataFrame,
@@ -132,14 +178,18 @@ def update_users(
     api_results: List[ApiResult] = []
     n2f_by_mail = df_n2f_users.set_index("mail").to_dict(orient="index")
 
-    for _, user in df_agresso_users[df_agresso_users["AdresseEmail"].isin(df_n2f_users["mail"])].iterrows():
-        payload = build_user_payload(user, df_agresso_users, df_n2f_users, n2f_client, df_n2f_companies, sandbox)
+    for _, user in df_agresso_users[
+        df_agresso_users["AdresseEmail"].isin(df_n2f_users["mail"])
+    ].iterrows():
+        payload = build_user_payload(
+            user, df_agresso_users, df_n2f_users, n2f_client, df_n2f_companies, sandbox
+        )
         n2f_user = n2f_by_mail.get(user["AdresseEmail"], {})
         # Ajouter l'email car set_index("mail") le retire des valeurs
         if n2f_user:
             n2f_user["mail"] = user["AdresseEmail"]
 
-        if not has_payload_changes(payload, n2f_user, 'user'):
+        if not has_payload_changes(payload, n2f_user, "user"):
             continue
 
         try:
@@ -150,9 +200,16 @@ def update_users(
             # Log l'erreur mais continue le processus
             log_error("USERS", "UPDATE", user["AdresseEmail"], e, f"Payload: {payload}")
             # Créer un ApiResult d'erreur pour maintenir la cohérence
-            api_results.append(ApiResult.error_result(str(e), error_details=str(e),
-                                                     action_type="update", object_type="user",
-                                                     object_id=user["AdresseEmail"], scope="users"))
+            api_results.append(
+                ApiResult.error_result(
+                    str(e),
+                    error_details=str(e),
+                    action_type="update",
+                    object_type="user",
+                    object_id=user["AdresseEmail"],
+                    scope="users",
+                )
+            )
             users_to_update.append(user.to_dict())
 
     if users_to_update:
@@ -162,6 +219,7 @@ def update_users(
 
         return df_result, status_col
     return pd.DataFrame(), status_col
+
 
 def delete_users(
     df_agresso_users: pd.DataFrame,
@@ -173,7 +231,13 @@ def delete_users(
     if df_n2f_users.empty:
         return pd.DataFrame(), status_col
 
-    users_to_delete = df_n2f_users[~df_n2f_users["mail"].isin(df_agresso_users["AdresseEmail"])].copy() if not df_agresso_users.empty else df_n2f_users.copy()
+    users_to_delete = (
+        df_n2f_users[
+            ~df_n2f_users["mail"].isin(df_agresso_users["AdresseEmail"])
+        ].copy()
+        if not df_agresso_users.empty
+        else df_n2f_users.copy()
+    )
 
     if not users_to_delete.empty:
         api_results: List[ApiResult] = []
@@ -185,9 +249,16 @@ def delete_users(
                 # Log l'erreur mais continue le processus
                 log_error("USERS", "DELETE", mail, e)
                 # Créer un ApiResult d'erreur pour maintenir la cohérence
-                api_results.append(ApiResult.error_result(str(e), error_details=str(e),
-                                                         action_type="delete", object_type="user",
-                                                         object_id=mail, scope="users"))
+                api_results.append(
+                    ApiResult.error_result(
+                        str(e),
+                        error_details=str(e),
+                        action_type="delete",
+                        object_type="user",
+                        object_id=mail,
+                        scope="users",
+                    )
+                )
         users_to_delete[status_col] = [result.success for result in api_results]
         users_to_delete = add_api_logging_columns(users_to_delete, api_results)
 

@@ -13,18 +13,10 @@ def clean_coverage_files():
     print("🧹 Nettoyage des fichiers de couverture...")
 
     # Fichiers à supprimer
-    files_to_remove = [
-        '.coverage',
-        'coverage.xml',
-        'htmlcov',
-        'coverage_html'
-    ]
+    files_to_remove = [".coverage", "coverage.xml", "htmlcov", "coverage_html"]
 
     # Patterns pour les fichiers .coverage.*
-    coverage_patterns = [
-        '.coverage.*',
-        'coverage.*'
-    ]
+    coverage_patterns = [".coverage.*", "coverage.*"]
 
     removed_count = 0
 
@@ -55,5 +47,5 @@ def clean_coverage_files():
         print(f"  ✅ {removed_count} fichier(s) nettoyé(s)")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     clean_coverage_files()

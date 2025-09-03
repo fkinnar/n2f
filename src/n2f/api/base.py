@@ -3,7 +3,15 @@ from n2f.api.token import get_access_token
 import n2f
 
 
-def retreive(entity: str, base_url: str, client_id: str, client_secret: str, start: int = 0, limit: int = 200, simulate: bool = False) -> List[Dict[str, Any]]:
+def retreive(
+    entity: str,
+    base_url: str,
+    client_id: str,
+    client_secret: str,
+    start: int = 0,
+    limit: int = 200,
+    simulate: bool = False,
+) -> List[Dict[str, Any]]:
     """
     Récupère une page d'entités depuis l'API N2F (paginé).
 
@@ -26,15 +34,12 @@ def retreive(entity: str, base_url: str, client_id: str, client_secret: str, sta
     if simulate:
         return []
 
-    access_token, _ = get_access_token(base_url, client_id, client_secret, simulate=simulate)
+    access_token, _ = get_access_token(
+        base_url, client_id, client_secret, simulate=simulate
+    )
     url = base_url + f"/{entity}"
-    req_params = {
-        "start": start,
-        "limit": limit
-    }
-    headers = {
-        "Authorization": f"Bearer {access_token}"
-    }
+    req_params = {"start": start, "limit": limit}
+    headers = {"Authorization": f"Bearer {access_token}"}
 
     response = n2f.get_session_get().get(url, headers=headers, params=req_params)
     response.raise_for_status()  # Laisse planter en cas d'erreur HTTP
@@ -48,7 +53,7 @@ def upsert(
     client_id: str,
     client_secret: str,
     payload: dict,
-    simulate: bool = False
+    simulate: bool = False,
 ) -> bool:
     """
     Crée ou met à jour un objet N2F via l'API (POST sur l'endpoint donné).
@@ -68,11 +73,13 @@ def upsert(
     if simulate:
         return False
 
-    access_token, _ = get_access_token(base_url, client_id, client_secret, simulate=simulate)
+    access_token, _ = get_access_token(
+        base_url, client_id, client_secret, simulate=simulate
+    )
     url = base_url + endpoint
     headers = {
         "Authorization": f"Bearer {access_token}",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
     }
 
     response = n2f.get_session_write().post(url, headers=headers, json=payload)
@@ -85,7 +92,7 @@ def delete(
     client_id: str,
     client_secret: str,
     id: str,
-    simulate: bool = False
+    simulate: bool = False,
 ) -> bool:
     """
     Supprime un objet N2F via l'API (DELETE sur l'endpoint donné avec identifiant).
@@ -105,11 +112,11 @@ def delete(
     if simulate:
         return False
 
-    access_token, _ = get_access_token(base_url, client_id, client_secret, simulate=simulate)
+    access_token, _ = get_access_token(
+        base_url, client_id, client_secret, simulate=simulate
+    )
     url = base_url + f"/{endpoint}/{id}"
-    headers = {
-        "Authorization": f"Bearer {access_token}"
-    }
+    headers = {"Authorization": f"Bearer {access_token}"}
 
     response = n2f.get_session_write().delete(url, headers=headers)
     return response.status_code >= 200 and response.status_code < 300

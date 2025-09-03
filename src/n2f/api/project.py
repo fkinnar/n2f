@@ -10,7 +10,7 @@ def get_projects(
     company_id: str,
     start: int,
     limit: int,
-    simulate: bool = False
+    simulate: bool = False,
 ) -> List[Dict[str, Any]]:
     """
     Récupère une page de projets d'une société depuis l'API N2F (utilise l'axe 'projects').
@@ -38,8 +38,9 @@ def get_projects(
         "projects",
         start,
         limit,
-        simulate
+        simulate,
     )
+
 
 def create_project(
     base_url: str,
@@ -47,7 +48,7 @@ def create_project(
     client_secret: str,
     company_id: str,
     payload: dict,
-    simulate: bool = False
+    simulate: bool = False,
 ) -> bool:
     """
     Crée un projet N2F via l'API.
@@ -73,7 +74,7 @@ def update_project(
     client_secret: str,
     company_id: str,
     payload: dict,
-    simulate: bool = False
+    simulate: bool = False,
 ) -> bool:
     """
     Met à jour un projet N2F via l'API.
@@ -99,7 +100,7 @@ def delete_project(
     client_secret: str,
     company_id: str,
     code: str,
-    simulate: bool = False
+    simulate: bool = False,
 ) -> bool:
     """
     Supprime un projet N2F via l'API.

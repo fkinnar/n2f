@@ -4,6 +4,7 @@ from pathlib import Path
 from core import SyncOrchestrator
 from core.config import ConfigLoader
 
+
 def main() -> None:
     """
     Point d'entrée principal du script de synchronisation Agresso-N2F.
@@ -50,6 +51,7 @@ def main() -> None:
     # Chargement des variables d'environnement seulement si en mode sandbox
     if sync_config.api.sandbox:
         from dotenv import load_dotenv
+
         load_dotenv()
         print("Environment variables loaded from .env file (sandbox mode)")
 
@@ -72,7 +74,7 @@ def validate_environment_variables() -> None:
         "AGRESSO_DB_USER",
         "AGRESSO_DB_PASSWORD",
         "N2F_CLIENT_ID",
-        "N2F_CLIENT_SECRET"
+        "N2F_CLIENT_SECRET",
     ]
 
     missing_vars = []
@@ -105,21 +107,61 @@ def create_arg_parser() -> argparse.ArgumentParser:
         >>> args = parser.parse_args(['--create', '--scope', 'users'])
     """
     parser = argparse.ArgumentParser(description="Synchronisation Agresso <-> N2F")
-    parser.add_argument('-c', '--create', action='store_true', help="Créer les éléments manquants dans N2F")
-    parser.add_argument('-d', '--delete', action='store_true', help="Supprimer les éléments obsolètes de N2F")
-    parser.add_argument('-u', '--update', action='store_true', help="Mettre à jour les éléments existants dans N2F")
-    parser.add_argument('-f', '--config', default='dev', help="Nom du fichier de configuration (sans .yaml)")
+    parser.add_argument(
+        "-c",
+        "--create",
+        action="store_true",
+        help="Créer les éléments manquants dans N2F",
+    )
+    parser.add_argument(
+        "-d",
+        "--delete",
+        action="store_true",
+        help="Supprimer les éléments obsolètes de N2F",
+    )
+    parser.add_argument(
+        "-u",
+        "--update",
+        action="store_true",
+        help="Mettre à jour les éléments existants dans N2F",
+    )
+    parser.add_argument(
+        "-f",
+        "--config",
+        default="dev",
+        help="Nom du fichier de configuration (sans .yaml)",
+    )
 
     # Utilisation des scopes par défaut pour le parser d'arguments
     # Le registry sera initialisé plus tard dans le processus
-    scope_choices = ['users', 'projects', 'plates', 'subposts', 'departments', 'all']
+    scope_choices = ["users", "projects", "plates", "subposts", "departments", "all"]
 
-    parser.add_argument('-s', '--scope', choices=scope_choices, nargs='+', default=['all'], help="Périmètre(s) à synchroniser")
+    parser.add_argument(
+        "-s",
+        "--scope",
+        choices=scope_choices,
+        nargs="+",
+        default=["all"],
+        help="Périmètre(s) à synchroniser",
+    )
 
     # Arguments de cache
-    parser.add_argument('--clear-cache', action='store_true', help="Vider complètement le cache avant la synchronisation")
-    parser.add_argument('--invalidate-cache', nargs='+', metavar='FUNCTION', help="Invalider des entrées spécifiques du cache (ex: get_users get_companies)")
-    parser.add_argument('--skip-dotenv-loading', action='store_true', help="Désactiver le chargement du fichier .env, même si le mode sandbox est configuré dans le YAML. Utile pour tester le comportement de production des dépendances.")
+    parser.add_argument(
+        "--clear-cache",
+        action="store_true",
+        help="Vider complètement le cache avant la synchronisation",
+    )
+    parser.add_argument(
+        "--invalidate-cache",
+        nargs="+",
+        metavar="FUNCTION",
+        help="Invalider des entrées spécifiques du cache (ex: get_users get_companies)",
+    )
+    parser.add_argument(
+        "--skip-dotenv-loading",
+        action="store_true",
+        help="Désactiver le chargement du fichier .env, même si le mode sandbox est configuré dans le YAML. Utile pour tester le comportement de production des dépendances.",
+    )
 
     return parser
 

@@ -5,6 +5,7 @@ from unittest.mock import Mock, patch, MagicMock
 
 import n2f.api.base as base_api
 
+
 class TestRetrieve(unittest.TestCase):
     """Tests pour la fonction retreive."""
 
@@ -18,22 +19,23 @@ class TestRetrieve(unittest.TestCase):
         # Mock response pour les tests
         self.mock_response = Mock()
         self.mock_response.json.return_value = {
-            "response": [
-                {"id": 1, "name": "User 1"},
-                {"id": 2, "name": "User 2"}
-            ]
+            "response": [{"id": 1, "name": "User 1"}, {"id": 2, "name": "User 2"}]
         }
 
     def test_retreive_simulation_mode(self):
         """Test du mode simulation."""
         result = base_api.retreive(
-            self.entity, self.base_url, self.client_id, self.client_secret, simulate=True
+            self.entity,
+            self.base_url,
+            self.client_id,
+            self.client_secret,
+            simulate=True,
         )
 
         self.assertEqual(result, [])
 
-    @patch('n2f.api.base.get_access_token')
-    @patch('n2f.get_session_get')
+    @patch("n2f.api.base.get_access_token")
+    @patch("n2f.get_session_get")
     def test_retreive_success(self, mock_get_session, mock_get_token):
         """Test de récupération réussie d'entités."""
         # Configuration des mocks
@@ -48,10 +50,7 @@ class TestRetrieve(unittest.TestCase):
 
         # Vérifications
         expected_response = {
-            "response": [
-                {"id": 1, "name": "User 1"},
-                {"id": 2, "name": "User 2"}
-            ]
+            "response": [{"id": 1, "name": "User 1"}, {"id": 2, "name": "User 2"}]
         }
         self.assertEqual(result, expected_response)
 
@@ -64,11 +63,11 @@ class TestRetrieve(unittest.TestCase):
         mock_session.get.assert_called_once_with(
             "https://api.n2f.com/users",
             headers={"Authorization": "Bearer test_token"},
-            params={"start": 0, "limit": 200}
+            params={"start": 0, "limit": 200},
         )
 
-    @patch('n2f.api.base.get_access_token')
-    @patch('n2f.get_session_get')
+    @patch("n2f.api.base.get_access_token")
+    @patch("n2f.get_session_get")
     def test_retreive_with_pagination(self, mock_get_session, mock_get_token):
         """Test de récupération avec pagination personnalisée."""
         mock_get_token.return_value = ("test_token", "2025-08-20T09:54:35.8185075Z")
@@ -77,19 +76,23 @@ class TestRetrieve(unittest.TestCase):
         mock_get_session.return_value = mock_session
 
         result = base_api.retreive(
-            "companies", self.base_url, self.client_id, self.client_secret,
-            start=50, limit=100
+            "companies",
+            self.base_url,
+            self.client_id,
+            self.client_secret,
+            start=50,
+            limit=100,
         )
 
         # Vérifie l'appel à l'API avec les bons paramètres
         mock_session.get.assert_called_once_with(
             "https://api.n2f.com/companies",
             headers={"Authorization": "Bearer test_token"},
-            params={"start": 50, "limit": 100}
+            params={"start": 50, "limit": 100},
         )
 
-    @patch('n2f.api.base.get_access_token')
-    @patch('n2f.get_session_get')
+    @patch("n2f.api.base.get_access_token")
+    @patch("n2f.get_session_get")
     def test_retreive_http_error(self, mock_get_session, mock_get_token):
         """Test de gestion d'erreur HTTP."""
         mock_get_token.return_value = ("test_token", "2025-08-20T09:54:35.8185075Z")
@@ -103,6 +106,7 @@ class TestRetrieve(unittest.TestCase):
             base_api.retreive(
                 self.entity, self.base_url, self.client_id, self.client_secret
             )
+
 
 class TestUpsert(unittest.TestCase):
     """Tests pour la fonction upsert."""
@@ -118,14 +122,18 @@ class TestUpsert(unittest.TestCase):
     def test_upsert_simulation_mode(self):
         """Test du mode simulation."""
         result = base_api.upsert(
-            self.base_url, self.endpoint, self.client_id, self.client_secret,
-            self.payload, simulate=True
+            self.base_url,
+            self.endpoint,
+            self.client_id,
+            self.client_secret,
+            self.payload,
+            simulate=True,
         )
 
         self.assertEqual(result, False)
 
-    @patch('n2f.api.base.get_access_token')
-    @patch('n2f.get_session_write')
+    @patch("n2f.api.base.get_access_token")
+    @patch("n2f.get_session_write")
     def test_upsert_success(self, mock_get_session, mock_get_token):
         """Test d'upsert réussi."""
         mock_get_token.return_value = ("test_token", "2025-08-20T09:54:35.8185075Z")
@@ -136,7 +144,11 @@ class TestUpsert(unittest.TestCase):
         mock_get_session.return_value = mock_session
 
         result = base_api.upsert(
-            self.base_url, self.endpoint, self.client_id, self.client_secret, self.payload
+            self.base_url,
+            self.endpoint,
+            self.client_id,
+            self.client_secret,
+            self.payload,
         )
 
         # Vérifications
@@ -152,13 +164,13 @@ class TestUpsert(unittest.TestCase):
             "https://api.n2f.com/users",
             headers={
                 "Authorization": "Bearer test_token",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             },
-            json=self.payload
+            json=self.payload,
         )
 
-    @patch('n2f.api.base.get_access_token')
-    @patch('n2f.get_session_write')
+    @patch("n2f.api.base.get_access_token")
+    @patch("n2f.get_session_write")
     def test_upsert_different_status_codes(self, mock_get_session, mock_get_token):
         """Test d'upsert avec différents codes de statut."""
         mock_get_token.return_value = ("test_token", "2025-08-20T09:54:35.8185075Z")
@@ -174,7 +186,11 @@ class TestUpsert(unittest.TestCase):
                 mock_session.post.return_value = mock_response
 
                 result = base_api.upsert(
-                    self.base_url, self.endpoint, self.client_id, self.client_secret, self.payload
+                    self.base_url,
+                    self.endpoint,
+                    self.client_id,
+                    self.client_secret,
+                    self.payload,
                 )
 
                 self.assertTrue(result)
@@ -188,13 +204,17 @@ class TestUpsert(unittest.TestCase):
                 mock_session.post.return_value = mock_response
 
                 result = base_api.upsert(
-                    self.base_url, self.endpoint, self.client_id, self.client_secret, self.payload
+                    self.base_url,
+                    self.endpoint,
+                    self.client_id,
+                    self.client_secret,
+                    self.payload,
                 )
 
                 self.assertFalse(result)
 
-    @patch('n2f.api.base.get_access_token')
-    @patch('n2f.get_session_write')
+    @patch("n2f.api.base.get_access_token")
+    @patch("n2f.get_session_write")
     def test_upsert_different_endpoints(self, mock_get_session, mock_get_token):
         """Test d'upsert sur différents endpoints."""
         mock_get_token.return_value = ("test_token", "2025-08-20T09:54:35.8185075Z")
@@ -209,7 +229,11 @@ class TestUpsert(unittest.TestCase):
         for endpoint in endpoints:
             with self.subTest(endpoint=endpoint):
                 result = base_api.upsert(
-                    self.base_url, endpoint, self.client_id, self.client_secret, self.payload
+                    self.base_url,
+                    endpoint,
+                    self.client_id,
+                    self.client_secret,
+                    self.payload,
                 )
 
                 self.assertTrue(result)
@@ -220,10 +244,11 @@ class TestUpsert(unittest.TestCase):
                     expected_url,
                     headers={
                         "Authorization": "Bearer test_token",
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
                     },
-                    json=self.payload
+                    json=self.payload,
                 )
+
 
 class TestDelete(unittest.TestCase):
     """Tests pour la fonction delete."""
@@ -239,14 +264,18 @@ class TestDelete(unittest.TestCase):
     def test_delete_simulation_mode(self):
         """Test du mode simulation."""
         result = base_api.delete(
-            self.base_url, self.endpoint, self.client_id, self.client_secret,
-            self.id, simulate=True
+            self.base_url,
+            self.endpoint,
+            self.client_id,
+            self.client_secret,
+            self.id,
+            simulate=True,
         )
 
         self.assertEqual(result, False)
 
-    @patch('n2f.api.base.get_access_token')
-    @patch('n2f.get_session_write')
+    @patch("n2f.api.base.get_access_token")
+    @patch("n2f.get_session_write")
     def test_delete_success(self, mock_get_session, mock_get_token):
         """Test de suppression réussie."""
         mock_get_token.return_value = ("test_token", "2025-08-20T09:54:35.8185075Z")
@@ -271,11 +300,11 @@ class TestDelete(unittest.TestCase):
         # Vérifie l'appel à l'API
         mock_session.delete.assert_called_once_with(
             "https://api.n2f.com/users/test@example.com",
-            headers={"Authorization": "Bearer test_token"}
+            headers={"Authorization": "Bearer test_token"},
         )
 
-    @patch('n2f.api.base.get_access_token')
-    @patch('n2f.get_session_write')
+    @patch("n2f.api.base.get_access_token")
+    @patch("n2f.get_session_write")
     def test_delete_different_status_codes(self, mock_get_session, mock_get_token):
         """Test de suppression avec différents codes de statut."""
         mock_get_token.return_value = ("test_token", "2025-08-20T09:54:35.8185075Z")
@@ -291,7 +320,11 @@ class TestDelete(unittest.TestCase):
                 mock_session.delete.return_value = mock_response
 
                 result = base_api.delete(
-                    self.base_url, self.endpoint, self.client_id, self.client_secret, self.id
+                    self.base_url,
+                    self.endpoint,
+                    self.client_id,
+                    self.client_secret,
+                    self.id,
                 )
 
                 self.assertTrue(result)
@@ -305,13 +338,17 @@ class TestDelete(unittest.TestCase):
                 mock_session.delete.return_value = mock_response
 
                 result = base_api.delete(
-                    self.base_url, self.endpoint, self.client_id, self.client_secret, self.id
+                    self.base_url,
+                    self.endpoint,
+                    self.client_id,
+                    self.client_secret,
+                    self.id,
                 )
 
                 self.assertFalse(result)
 
-    @patch('n2f.api.base.get_access_token')
-    @patch('n2f.get_session_write')
+    @patch("n2f.api.base.get_access_token")
+    @patch("n2f.get_session_write")
     def test_delete_different_identifiers(self, mock_get_session, mock_get_token):
         """Test de suppression avec différents types d'identifiants."""
         mock_get_token.return_value = ("test_token", "2025-08-20T09:54:35.8185075Z")
@@ -325,13 +362,17 @@ class TestDelete(unittest.TestCase):
             ("users", "test@example.com"),
             ("companies", "company123"),
             ("projects", "proj456"),
-            ("customaxes", "axe789")
+            ("customaxes", "axe789"),
         ]
 
         for endpoint, identifier in test_cases:
             with self.subTest(endpoint=endpoint, identifier=identifier):
                 result = base_api.delete(
-                    self.base_url, endpoint, self.client_id, self.client_secret, identifier
+                    self.base_url,
+                    endpoint,
+                    self.client_id,
+                    self.client_secret,
+                    identifier,
                 )
 
                 self.assertTrue(result)
@@ -339,9 +380,9 @@ class TestDelete(unittest.TestCase):
                 # Vérifie que l'URL est correcte
                 expected_url = f"https://api.n2f.com/{endpoint}/{identifier}"
                 mock_session.delete.assert_called_with(
-                    expected_url,
-                    headers={"Authorization": "Bearer test_token"}
+                    expected_url, headers={"Authorization": "Bearer test_token"}
                 )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

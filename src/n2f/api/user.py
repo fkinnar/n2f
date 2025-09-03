@@ -1,14 +1,15 @@
 from typing import Dict, List, Any
 from n2f.api.base import retreive, upsert, delete
 
+
 def get_users(
-        base_url: str, 
-        client_id: str, 
-        client_secret: str, 
-        start: int = 0, 
-        limit: int = 200, 
-        simulate: bool = False
-    ) -> List[Dict[str, Any]]:
+    base_url: str,
+    client_id: str,
+    client_secret: str,
+    start: int = 0,
+    limit: int = 200,
+    simulate: bool = False,
+) -> List[Dict[str, Any]]:
     """
     Récupère une page d'utilisateurs depuis l'API N2F (paginé).
 
@@ -27,17 +28,20 @@ def get_users(
         Exception: En cas d'erreur HTTP ou de parsing.
     """
 
-    response = retreive("users", base_url, client_id, client_secret, start, limit, simulate)
+    response = retreive(
+        "users", base_url, client_id, client_secret, start, limit, simulate
+    )
     data = response["response"]
     return data["data"] if "data" in data else []
 
+
 def create_user(
-        base_url: str, 
-        client_id: str, 
-        client_secret: str, 
-        payload: dict, 
-        simulate: bool = False
-    ) -> bool:
+    base_url: str,
+    client_id: str,
+    client_secret: str,
+    payload: dict,
+    simulate: bool = False,
+) -> bool:
     """
     Crée un utilisateur N2F via l'API.
 
@@ -55,12 +59,12 @@ def create_user(
 
 
 def update_user(
-        base_url: str, 
-        client_id: str, 
-        client_secret: str, 
-        payload: dict, 
-        simulate: bool = False
-    ) -> bool:
+    base_url: str,
+    client_id: str,
+    client_secret: str,
+    payload: dict,
+    simulate: bool = False,
+) -> bool:
     """
     Met à jour un utilisateur N2F via l'API.
 
@@ -76,13 +80,10 @@ def update_user(
     """
     return upsert(base_url, "/users", client_id, client_secret, payload, simulate)
 
+
 def delete_user(
-        base_url: str, 
-        client_id: str, 
-        client_secret: str, 
-        mail: str, 
-        simulate: bool = False
-    ) -> bool:
+    base_url: str, client_id: str, client_secret: str, mail: str, simulate: bool = False
+) -> bool:
     """
     Supprime un utilisateur N2F via l'API.
 

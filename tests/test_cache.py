@@ -20,17 +20,14 @@ from pathlib import Path
 # Ajout du chemin du projet pour les imports
 from core.cache import AdvancedCache, CacheEntry, CacheMetrics
 
+
 class TestCacheEntry(unittest.TestCase):
     """Tests pour la classe CacheEntry."""
 
     def test_cache_entry_creation(self):
         """Test de création d'une entrée de cache."""
         data = {"test": "data"}
-        entry = CacheEntry(
-            data=data,
-            timestamp=time.time(),
-            ttl=3600
-        )
+        entry = CacheEntry(data=data, timestamp=time.time(), ttl=3600)
 
         self.assertEqual(entry.data, data)
         self.assertIsInstance(entry.timestamp, float)
@@ -45,7 +42,7 @@ class TestCacheEntry(unittest.TestCase):
         entry = CacheEntry(
             data={"test": "data"},
             timestamp=time.time() - 7200,  # 2 heures ago
-            ttl=3600  # 1 heure TTL
+            ttl=3600,  # 1 heure TTL
         )
 
         # Utiliser la méthode _is_expired du cache
@@ -53,27 +50,20 @@ class TestCacheEntry(unittest.TestCase):
         self.assertTrue(cache._is_expired(entry))
 
         # Entrée valide
-        entry = CacheEntry(
-            data={"test": "data"},
-            timestamp=time.time(),
-            ttl=3600
-        )
+        entry = CacheEntry(data={"test": "data"}, timestamp=time.time(), ttl=3600)
         self.assertFalse(cache._is_expired(entry))
 
     def test_cache_entry_size(self):
         """Test du calcul de la taille d'une entrée."""
         data = {"test": "data", "large": "value" * 1000}
-        entry = CacheEntry(
-            data=data,
-            timestamp=time.time(),
-            ttl=3600
-        )
+        entry = CacheEntry(data=data, timestamp=time.time(), ttl=3600)
 
         # Utiliser la méthode _calculate_size du cache
         cache = AdvancedCache()
         size = cache._calculate_size(data)
         self.assertIsInstance(size, int)
         self.assertGreater(size, 0)
+
 
 class TestCacheMetrics(unittest.TestCase):
     """Tests pour la classe CacheMetrics."""
@@ -115,6 +105,7 @@ class TestCacheMetrics(unittest.TestCase):
         self.assertIn("misses=5", str_repr)
         self.assertIn("sets=8", str_repr)
 
+
 class TestAdvancedCache(unittest.TestCase):
     """Tests pour la classe AdvancedCache."""
 
@@ -123,14 +114,13 @@ class TestAdvancedCache(unittest.TestCase):
         self.temp_dir = tempfile.mkdtemp()
         self.cache_dir = Path(self.temp_dir) / "cache"
         self.cache = AdvancedCache(
-            cache_dir=self.cache_dir,
-            max_size_mb=10,
-            default_ttl=3600
+            cache_dir=self.cache_dir, max_size_mb=10, default_ttl=3600
         )
 
     def tearDown(self):
         """Nettoyage après les tests."""
         import shutil
+
         shutil.rmtree(self.temp_dir)
 
     def test_initialization(self):
@@ -154,7 +144,7 @@ class TestAdvancedCache(unittest.TestCase):
 
         # Clé est un hash MD5 (32 caractères hex)
         self.assertEqual(len(key1), 32)
-        self.assertTrue(all(c in '0123456789abcdef' for c in key1))
+        self.assertTrue(all(c in "0123456789abcdef" for c in key1))
 
     def test_get_set_basic(self):
         """Test de base get/set."""
@@ -259,9 +249,7 @@ class TestAdvancedCache(unittest.TestCase):
 
         # Créer un nouveau cache (simule un redémarrage)
         new_cache = AdvancedCache(
-            cache_dir=self.cache_dir,
-            max_size_mb=10,
-            default_ttl=3600
+            cache_dir=self.cache_dir, max_size_mb=10, default_ttl=3600
         )
 
         # Vérifier que l'entrée persiste
@@ -270,10 +258,7 @@ class TestAdvancedCache(unittest.TestCase):
 
     def test_dataframe_caching(self):
         """Test de cache avec des DataFrames pandas."""
-        df = pd.DataFrame({
-            "col1": [1, 2, 3],
-            "col2": ["a", "b", "c"]
-        })
+        df = pd.DataFrame({"col1": [1, 2, 3], "col2": ["a", "b", "c"]})
 
         # Ajouter le DataFrame au cache
         self.cache.set(df, "dataframe_function", "arg1")
@@ -298,12 +283,12 @@ class TestAdvancedCache(unittest.TestCase):
         metrics = self.cache.get_metrics()
 
         # Vérifier les métriques
-        self.assertEqual(metrics['sets'], 2)
-        self.assertEqual(metrics['hits'], 1)
-        self.assertEqual(metrics['misses'], 1)
-        self.assertEqual(metrics['entry_count'], 2)
-        self.assertGreater(metrics['total_size_mb'], 0)
-        self.assertIn('hit_rate', metrics)
+        self.assertEqual(metrics["sets"], 2)
+        self.assertEqual(metrics["hits"], 1)
+        self.assertEqual(metrics["misses"], 1)
+        self.assertEqual(metrics["entry_count"], 2)
+        self.assertGreater(metrics["total_size_mb"], 0)
+        self.assertIn("hit_rate", metrics)
 
     def test_get_stats(self):
         """Test des statistiques du cache."""
@@ -327,9 +312,7 @@ class TestAdvancedCache(unittest.TestCase):
     def test_cache_without_persistence(self):
         """Test du cache sans persistance."""
         cache = AdvancedCache(
-            cache_dir=None,  # Pas de persistance
-            max_size_mb=10,
-            default_ttl=3600
+            cache_dir=None, max_size_mb=10, default_ttl=3600  # Pas de persistance
         )
 
         test_data = {"test": "data"}
@@ -361,5 +344,6 @@ class TestAdvancedCache(unittest.TestCase):
         self.assertIsInstance(size, int)
         self.assertGreater(size, 0)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

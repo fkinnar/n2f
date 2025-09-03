@@ -13,20 +13,15 @@ from .config import (
     ApiConfig,
     ScopeConfig,
     ConfigLoader,
-    create_default_config
+    create_default_config,
 )
-from .registry import (
-    SyncRegistry,
-    RegistryEntry,
-    get_registry,
-    register_scope
-)
+from .registry import SyncRegistry, RegistryEntry, get_registry, register_scope
 from .orchestrator import (
     SyncOrchestrator,
     ContextBuilder,
     ScopeExecutor,
     LogManager,
-    SyncResult
+    SyncResult,
 )
 from .cache import (
     AdvancedCache,
@@ -37,15 +32,13 @@ from .cache import (
     cache_set,
     cache_invalidate,
     cache_clear,
-    cache_stats
+    cache_stats,
 )
+
 # Examples module
 from .examples import *
 from .context import SyncContext
-from .logging import (
-    add_api_logging_columns,
-    export_api_logs
-)
+from .logging import add_api_logging_columns, export_api_logs
 from .memory_manager import (
     MemoryManager,
     DataFrameInfo,
@@ -56,7 +49,7 @@ from .memory_manager import (
     cleanup_scope,
     cleanup_all,
     print_memory_summary,
-    get_memory_stats
+    get_memory_stats,
 )
 from .metrics import (
     SyncMetrics,
@@ -68,7 +61,7 @@ from .metrics import (
     record_memory_usage,
     get_summary,
     print_summary,
-    export_metrics
+    export_metrics,
 )
 from .retry import (
     RetryConfig,
@@ -84,7 +77,7 @@ from .retry import (
     execute_with_retry,
     get_retry_metrics,
     reset_retry_metrics,
-    print_retry_summary
+    print_retry_summary,
 )
 from .exceptions import (
     SyncException,
@@ -95,7 +88,7 @@ from .exceptions import (
     AuthenticationException,
     NetworkException,
     wrap_api_call,
-    handle_sync_exceptions
+    handle_sync_exceptions,
 )
 
 __all__ = [
@@ -106,20 +99,17 @@ __all__ = [
     "ScopeConfig",
     "ConfigLoader",
     "create_default_config",
-
     # Registry
     "SyncRegistry",
     "RegistryEntry",
     "get_registry",
     "register_scope",
-
     # Orchestrator
     "SyncOrchestrator",
     "ContextBuilder",
     "ScopeExecutor",
     "LogManager",
     "SyncResult",
-
     # Cache
     "AdvancedCache",
     "CacheEntry",
@@ -130,17 +120,13 @@ __all__ = [
     "cache_invalidate",
     "cache_clear",
     "cache_stats",
-    
     # Examples
     # (Tous les exemples sont disponibles via le module examples)
-    
     # Context
     "SyncContext",
-    
     # Logging
     "add_api_logging_columns",
     "export_api_logs",
-
     # Memory Manager
     "MemoryManager",
     "DataFrameInfo",
@@ -152,7 +138,6 @@ __all__ = [
     "cleanup_all",
     "print_memory_summary",
     "get_memory_stats",
-
     # Metrics System
     "SyncMetrics",
     "OperationMetrics",
@@ -164,7 +149,6 @@ __all__ = [
     "get_summary",
     "print_summary",
     "export_metrics",
-
     # Retry System
     "RetryConfig",
     "RetryStrategy",
@@ -180,7 +164,6 @@ __all__ = [
     "get_retry_metrics",
     "reset_retry_metrics",
     "print_retry_summary",
-
     # Exceptions
     "SyncException",
     "ApiException",

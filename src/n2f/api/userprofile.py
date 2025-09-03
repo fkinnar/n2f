@@ -2,7 +2,9 @@ from typing import Dict, List, Any
 from n2f.api.base import retreive
 
 
-def get_userprofiles(base_url: str, client_id: str, client_secret: str, simulate: bool = False) -> List[Dict[str, Any]]:
+def get_userprofiles(
+    base_url: str, client_id: str, client_secret: str, simulate: bool = False
+) -> List[Dict[str, Any]]:
     """
     Récupère les profils d'utilisateurs depuis l'API N2F.
 
@@ -19,6 +21,8 @@ def get_userprofiles(base_url: str, client_id: str, client_secret: str, simulate
         Exception: En cas d'erreur HTTP ou de parsing.
     """
 
-    response = retreive("userprofiles", base_url, client_id, client_secret, simulate=simulate)
+    response = retreive(
+        "userprofiles", base_url, client_id, client_secret, simulate=simulate
+    )
     data = response["response"]
-    return data # pas de data dans response ici !
+    return data  # pas de data dans response ici !

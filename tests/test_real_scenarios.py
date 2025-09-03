@@ -47,6 +47,7 @@ from business.process.user_synchronizer import UserSynchronizer
 from business.process.axe_synchronizer import AxeSynchronizer
 from core import SyncContext
 
+
 class TestRealScenariosBase(unittest.TestCase):
     """Classe de base pour les tests de scénarios réels."""
 
@@ -70,12 +71,15 @@ class TestRealScenariosBase(unittest.TestCase):
         self.args.invalidate_cache = None
 
         # Mock des variables d'environnement
-        self.env_patcher = patch.dict(os.environ, {
-            'AGRESSO_DB_USER': 'agresso_user',
-            'AGRESSO_DB_PASSWORD': 'agresso_pass',
-            'N2F_CLIENT_ID': 'n2f_client',
-            'N2F_CLIENT_SECRET': 'n2f_secret'
-        })
+        self.env_patcher = patch.dict(
+            os.environ,
+            {
+                "AGRESSO_DB_USER": "agresso_user",
+                "AGRESSO_DB_PASSWORD": "agresso_pass",
+                "N2F_CLIENT_ID": "n2f_client",
+                "N2F_CLIENT_SECRET": "n2f_secret",
+            },
+        )
         self.env_patcher.start()
 
     def tearDown(self):
@@ -98,41 +102,43 @@ class TestRealScenariosBase(unittest.TestCase):
                 "host": "agresso-db.company.com",
                 "port": 1433,
                 "database": "AGRESSO_PROD",
-                "timeout": 60
+                "timeout": 60,
             },
-            "api": {
-                "base_url": "https://api.n2f.com",
-                "timeout": 30,
-                "max_retries": 5
-            },
+            "api": {"base_url": "https://api.n2f.com", "timeout": 30, "max_retries": 5},
             "scopes": {
                 "users": {
                     "enabled": True,
                     "display_name": "Utilisateurs",
                     "sql_filename": "get-agresso-n2f-users.prod.sql",
-                    "sql_column_filter": ["AdresseEmail", "Nom", "Prenom", "Entreprise"],
-                    "sync_function": "business.process.user_synchronizer.UserSynchronizer.sync_users"
+                    "sql_column_filter": [
+                        "AdresseEmail",
+                        "Nom",
+                        "Prenom",
+                        "Entreprise",
+                    ],
+                    "sync_function": "business.process.user_synchronizer.UserSynchronizer.sync_users",
                 },
                 "axes": {
                     "enabled": True,
                     "display_name": "Axes personnalisés",
                     "sql_filename": "get-agresso-n2f-customaxes.prod.sql",
                     "sql_column_filter": ["code", "name", "type"],
-                    "sync_function": "business.process.axe_synchronizer.AxeSynchronizer.sync_axes"
-                }
+                    "sync_function": "business.process.axe_synchronizer.AxeSynchronizer.sync_axes",
+                },
             },
             "cache": {
                 "enabled": True,
                 "persist_cache": False,
                 "cache_dir": "cache",
                 "max_size_mb": 200,
-                "default_ttl": 7200
+                "default_ttl": 7200,
             },
-            "memory_limit_mb": 2048
+            "memory_limit_mb": 2048,
         }
 
         import yaml
-        with open(self.test_config_path, 'w') as f:
+
+        with open(self.test_config_path, "w") as f:
             yaml.dump(config, f)
 
     def create_realistic_user_data(self, count=100):
@@ -152,7 +158,7 @@ class TestRealScenariosBase(unittest.TestCase):
                 "Prenom": f"FirstName{i+1}",
                 "Entreprise": company,
                 "Departement": f"Dept{(i % 5) + 1}",
-                "Fonction": f"Role{(i % 3) + 1}"
+                "Fonction": f"Role{(i % 3) + 1}",
             }
             users.append(user)
 
@@ -170,26 +176,39 @@ class TestRealScenariosBase(unittest.TestCase):
                 "name": f"{axe_type} {i+1}",
                 "type": axe_type,
                 "description": f"Description for {axe_type} {i+1}",
-                "active": True
+                "active": True,
             }
             axes.append(axe)
 
         return pd.DataFrame(axes)
 
+
 class TestUserSynchronizationScenario(TestRealScenariosBase):
     """Tests de scénarios de synchronisation d'utilisateurs."""
 
-    @patch('core.orchestrator.print_memory_summary')
-    @patch('core.orchestrator.get_memory_manager')
-    @patch('core.orchestrator.get_metrics')
-    @patch('core.orchestrator.get_retry_manager')
-    @patch('core.orchestrator.get_registry')
-    @patch('core.orchestrator.SyncContext')
-    @patch('core.orchestrator.ScopeExecutor')
-    @patch('core.orchestrator.LogManager')
-    @patch('core.orchestrator.ConfigLoader')
-    @patch('core.orchestrator.get_cache')
-    def test_full_user_synchronization_scenario(self, mock_get_cache, mock_config_loader, mock_log_manager, mock_scope_executor, mock_sync_context, mock_get_registry, mock_get_retry_manager, mock_get_metrics, mock_get_memory_manager, mock_print_memory_summary):
+    @patch("core.orchestrator.print_memory_summary")
+    @patch("core.orchestrator.get_memory_manager")
+    @patch("core.orchestrator.get_metrics")
+    @patch("core.orchestrator.get_retry_manager")
+    @patch("core.orchestrator.get_registry")
+    @patch("core.orchestrator.SyncContext")
+    @patch("core.orchestrator.ScopeExecutor")
+    @patch("core.orchestrator.LogManager")
+    @patch("core.orchestrator.ConfigLoader")
+    @patch("core.orchestrator.get_cache")
+    def test_full_user_synchronization_scenario(
+        self,
+        mock_get_cache,
+        mock_config_loader,
+        mock_log_manager,
+        mock_scope_executor,
+        mock_sync_context,
+        mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
+        mock_get_memory_manager,
+        mock_print_memory_summary,
+    ):
         """Test de synchronisation complète d'utilisateurs (scénario réel)."""
 
         # Configuration des mocks
@@ -212,8 +231,9 @@ class TestUserSynchronizationScenario(TestRealScenariosBase):
         user_data = self.create_realistic_user_data(50)
 
         # Mock du résultat de synchronisation
-        success_result = SyncResult("users", True, [user_data],
-                                  error_message=None, duration_seconds=15.0)
+        success_result = SyncResult(
+            "users", True, [user_data], error_message=None, duration_seconds=15.0
+        )
         mock_executor.execute_scope.return_value = success_result
 
         # Mock du registry
@@ -234,17 +254,29 @@ class TestUserSynchronizationScenario(TestRealScenariosBase):
         self.assertIn("AdresseEmail", user_data.columns)
         self.assertIn("Nom", user_data.columns)
 
-    @patch('core.orchestrator.print_memory_summary')
-    @patch('core.orchestrator.get_memory_manager')
-    @patch('core.orchestrator.get_metrics')
-    @patch('core.orchestrator.get_retry_manager')
-    @patch('core.orchestrator.get_registry')
-    @patch('core.orchestrator.SyncContext')
-    @patch('core.orchestrator.ScopeExecutor')
-    @patch('core.orchestrator.LogManager')
-    @patch('core.orchestrator.ConfigLoader')
-    @patch('core.orchestrator.get_cache')
-    def test_user_synchronization_with_conflicts(self, mock_get_cache, mock_config_loader, mock_log_manager, mock_scope_executor, mock_sync_context, mock_get_registry, mock_get_retry_manager, mock_get_metrics, mock_get_memory_manager, mock_print_memory_summary):
+    @patch("core.orchestrator.print_memory_summary")
+    @patch("core.orchestrator.get_memory_manager")
+    @patch("core.orchestrator.get_metrics")
+    @patch("core.orchestrator.get_retry_manager")
+    @patch("core.orchestrator.get_registry")
+    @patch("core.orchestrator.SyncContext")
+    @patch("core.orchestrator.ScopeExecutor")
+    @patch("core.orchestrator.LogManager")
+    @patch("core.orchestrator.ConfigLoader")
+    @patch("core.orchestrator.get_cache")
+    def test_user_synchronization_with_conflicts(
+        self,
+        mock_get_cache,
+        mock_config_loader,
+        mock_log_manager,
+        mock_scope_executor,
+        mock_sync_context,
+        mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
+        mock_get_memory_manager,
+        mock_print_memory_summary,
+    ):
         """Test de synchronisation d'utilisateurs avec conflits de données."""
 
         # Configuration des mocks
@@ -268,11 +300,14 @@ class TestUserSynchronizationScenario(TestRealScenariosBase):
         # Ajouter des doublons pour simuler des conflits
         duplicate_user = user_data.iloc[0].copy()
         duplicate_user["Nom"] = "Modified Name"
-        user_data = pd.concat([user_data, pd.DataFrame([duplicate_user])], ignore_index=True)
+        user_data = pd.concat(
+            [user_data, pd.DataFrame([duplicate_user])], ignore_index=True
+        )
 
         # Mock du résultat avec conflits
-        success_result = SyncResult("users", True, [user_data],
-                                  error_message=None, duration_seconds=8.0)
+        success_result = SyncResult(
+            "users", True, [user_data], error_message=None, duration_seconds=8.0
+        )
         mock_executor.execute_scope.return_value = success_result
 
         # Mock du registry
@@ -290,20 +325,33 @@ class TestUserSynchronizationScenario(TestRealScenariosBase):
         # Vérifier la gestion des conflits
         self.assertEqual(len(user_data), 21)  # 20 + 1 doublon
 
+
 class TestAxeSynchronizationScenario(TestRealScenariosBase):
     """Tests de scénarios de synchronisation d'axes."""
 
-    @patch('core.orchestrator.print_memory_summary')
-    @patch('core.orchestrator.get_memory_manager')
-    @patch('core.orchestrator.get_metrics')
-    @patch('core.orchestrator.get_retry_manager')
-    @patch('core.orchestrator.get_registry')
-    @patch('core.orchestrator.SyncContext')
-    @patch('core.orchestrator.ScopeExecutor')
-    @patch('core.orchestrator.LogManager')
-    @patch('core.orchestrator.ConfigLoader')
-    @patch('core.orchestrator.get_cache')
-    def test_full_axe_synchronization_scenario(self, mock_get_cache, mock_config_loader, mock_log_manager, mock_scope_executor, mock_sync_context, mock_get_registry, mock_get_retry_manager, mock_get_metrics, mock_get_memory_manager, mock_print_memory_summary):
+    @patch("core.orchestrator.print_memory_summary")
+    @patch("core.orchestrator.get_memory_manager")
+    @patch("core.orchestrator.get_metrics")
+    @patch("core.orchestrator.get_retry_manager")
+    @patch("core.orchestrator.get_registry")
+    @patch("core.orchestrator.SyncContext")
+    @patch("core.orchestrator.ScopeExecutor")
+    @patch("core.orchestrator.LogManager")
+    @patch("core.orchestrator.ConfigLoader")
+    @patch("core.orchestrator.get_cache")
+    def test_full_axe_synchronization_scenario(
+        self,
+        mock_get_cache,
+        mock_config_loader,
+        mock_log_manager,
+        mock_scope_executor,
+        mock_sync_context,
+        mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
+        mock_get_memory_manager,
+        mock_print_memory_summary,
+    ):
         """Test de synchronisation complète d'axes (scénario réel)."""
 
         # Configuration pour les axes
@@ -329,8 +377,9 @@ class TestAxeSynchronizationScenario(TestRealScenariosBase):
         axe_data = self.create_realistic_axe_data(30)
 
         # Mock du résultat de synchronisation
-        success_result = SyncResult("axes", True, [axe_data],
-                                  error_message=None, duration_seconds=10.0)
+        success_result = SyncResult(
+            "axes", True, [axe_data], error_message=None, duration_seconds=10.0
+        )
         mock_executor.execute_scope.return_value = success_result
 
         # Mock du registry
@@ -351,20 +400,33 @@ class TestAxeSynchronizationScenario(TestRealScenariosBase):
         self.assertIn("code", axe_data.columns)
         self.assertIn("name", axe_data.columns)
 
+
 class TestMultiScopeSynchronizationScenario(TestRealScenariosBase):
     """Tests de scénarios de synchronisation multi-scopes."""
 
-    @patch('core.orchestrator.print_memory_summary')
-    @patch('core.orchestrator.get_cache')
-    @patch('core.orchestrator.get_memory_manager')
-    @patch('core.orchestrator.get_metrics')
-    @patch('core.orchestrator.get_retry_manager')
-    @patch('core.orchestrator.get_registry')
-    @patch('core.orchestrator.SyncContext')
-    @patch('core.orchestrator.ScopeExecutor')
-    @patch('core.orchestrator.LogManager')
-    @patch('core.orchestrator.ConfigLoader')
-    def test_multi_scope_synchronization_scenario(self, mock_config_loader, mock_log_manager, mock_scope_executor, mock_sync_context, mock_get_registry, mock_get_retry_manager, mock_get_metrics, mock_get_memory_manager, mock_print_memory_summary, mock_get_cache):
+    @patch("core.orchestrator.print_memory_summary")
+    @patch("core.orchestrator.get_cache")
+    @patch("core.orchestrator.get_memory_manager")
+    @patch("core.orchestrator.get_metrics")
+    @patch("core.orchestrator.get_retry_manager")
+    @patch("core.orchestrator.get_registry")
+    @patch("core.orchestrator.SyncContext")
+    @patch("core.orchestrator.ScopeExecutor")
+    @patch("core.orchestrator.LogManager")
+    @patch("core.orchestrator.ConfigLoader")
+    def test_multi_scope_synchronization_scenario(
+        self,
+        mock_config_loader,
+        mock_log_manager,
+        mock_scope_executor,
+        mock_sync_context,
+        mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
+        mock_get_memory_manager,
+        mock_print_memory_summary,
+        mock_get_cache,
+    ):
         """Test de synchronisation multi-scopes (scénario réel)."""
 
         # Configuration pour plusieurs scopes
@@ -391,10 +453,12 @@ class TestMultiScopeSynchronizationScenario(TestRealScenariosBase):
         axe_data = self.create_realistic_axe_data(15)
 
         # Mock des résultats pour chaque scope
-        users_result = SyncResult("users", True, [user_data],
-                                error_message=None, duration_seconds=12.0)
-        axes_result = SyncResult("axes", True, [axe_data],
-                               error_message=None, duration_seconds=8.0)
+        users_result = SyncResult(
+            "users", True, [user_data], error_message=None, duration_seconds=12.0
+        )
+        axes_result = SyncResult(
+            "axes", True, [axe_data], error_message=None, duration_seconds=8.0
+        )
         mock_executor.execute_scope.side_effect = [users_result, axes_result]
 
         # Mock du registry
@@ -414,20 +478,33 @@ class TestMultiScopeSynchronizationScenario(TestRealScenariosBase):
         # Vérifier que les résultats ont été ajoutés
         self.assertEqual(mock_log_manager.return_value.add_result.call_count, 2)
 
+
 class TestLoadTestingScenario(TestRealScenariosBase):
     """Tests de scénarios de charge."""
 
-    @patch('core.orchestrator.print_memory_summary')
-    @patch('core.orchestrator.get_cache')
-    @patch('core.orchestrator.get_memory_manager')
-    @patch('core.orchestrator.get_metrics')
-    @patch('core.orchestrator.get_retry_manager')
-    @patch('core.orchestrator.get_registry')
-    @patch('core.orchestrator.SyncContext')
-    @patch('core.orchestrator.ScopeExecutor')
-    @patch('core.orchestrator.LogManager')
-    @patch('core.orchestrator.ConfigLoader')
-    def test_large_scale_user_synchronization(self, mock_config_loader, mock_log_manager, mock_scope_executor, mock_sync_context, mock_get_registry, mock_get_retry_manager, mock_get_metrics, mock_get_memory_manager, mock_print_memory_summary, mock_get_cache):
+    @patch("core.orchestrator.print_memory_summary")
+    @patch("core.orchestrator.get_cache")
+    @patch("core.orchestrator.get_memory_manager")
+    @patch("core.orchestrator.get_metrics")
+    @patch("core.orchestrator.get_retry_manager")
+    @patch("core.orchestrator.get_registry")
+    @patch("core.orchestrator.SyncContext")
+    @patch("core.orchestrator.ScopeExecutor")
+    @patch("core.orchestrator.LogManager")
+    @patch("core.orchestrator.ConfigLoader")
+    def test_large_scale_user_synchronization(
+        self,
+        mock_config_loader,
+        mock_log_manager,
+        mock_scope_executor,
+        mock_sync_context,
+        mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
+        mock_get_memory_manager,
+        mock_print_memory_summary,
+        mock_get_cache,
+    ):
         """Test de charge avec un grand volume d'utilisateurs."""
 
         # Configuration des mocks
@@ -450,8 +527,9 @@ class TestLoadTestingScenario(TestRealScenariosBase):
         large_user_data = self.create_realistic_user_data(1000)
 
         # Mock du résultat avec grand volume
-        success_result = SyncResult("users", True, [large_user_data],
-                                  error_message=None, duration_seconds=45.0)
+        success_result = SyncResult(
+            "users", True, [large_user_data], error_message=None, duration_seconds=45.0
+        )
         mock_executor.execute_scope.return_value = success_result
 
         # Mock du registry
@@ -472,17 +550,29 @@ class TestLoadTestingScenario(TestRealScenariosBase):
         self.assertLess(duration, 10.0)  # Doit s'exécuter en moins de 10 secondes
         self.assertEqual(len(large_user_data), 1000)  # Vérifier le volume de données
 
-    @patch('core.orchestrator.print_memory_summary')
-    @patch('core.orchestrator.get_cache')
-    @patch('core.orchestrator.get_memory_manager')
-    @patch('core.orchestrator.get_metrics')
-    @patch('core.orchestrator.get_retry_manager')
-    @patch('core.orchestrator.get_registry')
-    @patch('core.orchestrator.SyncContext')
-    @patch('core.orchestrator.ScopeExecutor')
-    @patch('core.orchestrator.LogManager')
-    @patch('core.orchestrator.ConfigLoader')
-    def test_concurrent_scope_execution(self, mock_config_loader, mock_log_manager, mock_scope_executor, mock_sync_context, mock_get_registry, mock_get_retry_manager, mock_get_metrics, mock_get_memory_manager, mock_print_memory_summary, mock_get_cache):
+    @patch("core.orchestrator.print_memory_summary")
+    @patch("core.orchestrator.get_cache")
+    @patch("core.orchestrator.get_memory_manager")
+    @patch("core.orchestrator.get_metrics")
+    @patch("core.orchestrator.get_retry_manager")
+    @patch("core.orchestrator.get_registry")
+    @patch("core.orchestrator.SyncContext")
+    @patch("core.orchestrator.ScopeExecutor")
+    @patch("core.orchestrator.LogManager")
+    @patch("core.orchestrator.ConfigLoader")
+    def test_concurrent_scope_execution(
+        self,
+        mock_config_loader,
+        mock_log_manager,
+        mock_scope_executor,
+        mock_sync_context,
+        mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
+        mock_get_memory_manager,
+        mock_print_memory_summary,
+        mock_get_cache,
+    ):
         """Test d'exécution concurrente de plusieurs scopes."""
 
         # Configuration pour plusieurs scopes
@@ -509,10 +599,12 @@ class TestLoadTestingScenario(TestRealScenariosBase):
         axe_data = self.create_realistic_axe_data(50)
 
         # Mock des résultats avec timing réaliste
-        users_result = SyncResult("users", True, [user_data],
-                                error_message=None, duration_seconds=20.0)
-        axes_result = SyncResult("axes", True, [axe_data],
-                               error_message=None, duration_seconds=15.0)
+        users_result = SyncResult(
+            "users", True, [user_data], error_message=None, duration_seconds=20.0
+        )
+        axes_result = SyncResult(
+            "axes", True, [axe_data], error_message=None, duration_seconds=15.0
+        )
         mock_executor.execute_scope.side_effect = [users_result, axes_result]
 
         # Mock du registry
@@ -533,20 +625,33 @@ class TestLoadTestingScenario(TestRealScenariosBase):
         self.assertEqual(mock_executor.execute_scope.call_count, 2)
         self.assertLess(total_duration, 5.0)  # L'exécution totale doit être rapide
 
+
 class TestErrorRecoveryScenario(TestRealScenariosBase):
     """Tests de scénarios de récupération d'erreur."""
 
-    @patch('core.orchestrator.print_memory_summary')
-    @patch('core.orchestrator.get_cache')
-    @patch('core.orchestrator.get_memory_manager')
-    @patch('core.orchestrator.get_metrics')
-    @patch('core.orchestrator.get_retry_manager')
-    @patch('core.orchestrator.get_registry')
-    @patch('core.orchestrator.SyncContext')
-    @patch('core.orchestrator.ScopeExecutor')
-    @patch('core.orchestrator.LogManager')
-    @patch('core.orchestrator.ConfigLoader')
-    def test_partial_failure_with_recovery(self, mock_config_loader, mock_log_manager, mock_scope_executor, mock_sync_context, mock_get_registry, mock_get_retry_manager, mock_get_metrics, mock_get_memory_manager, mock_print_memory_summary, mock_get_cache):
+    @patch("core.orchestrator.print_memory_summary")
+    @patch("core.orchestrator.get_cache")
+    @patch("core.orchestrator.get_memory_manager")
+    @patch("core.orchestrator.get_metrics")
+    @patch("core.orchestrator.get_retry_manager")
+    @patch("core.orchestrator.get_registry")
+    @patch("core.orchestrator.SyncContext")
+    @patch("core.orchestrator.ScopeExecutor")
+    @patch("core.orchestrator.LogManager")
+    @patch("core.orchestrator.ConfigLoader")
+    def test_partial_failure_with_recovery(
+        self,
+        mock_config_loader,
+        mock_log_manager,
+        mock_scope_executor,
+        mock_sync_context,
+        mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
+        mock_get_memory_manager,
+        mock_print_memory_summary,
+        mock_get_cache,
+    ):
         """Test de récupération après échec partiel (scénario réel)."""
 
         # Configuration pour plusieurs scopes
@@ -572,11 +677,16 @@ class TestErrorRecoveryScenario(TestRealScenariosBase):
         user_data = self.create_realistic_user_data(30)
 
         # Mock des résultats : un succès, un échec
-        success_result = SyncResult("users", True, [user_data],
-                                  error_message=None, duration_seconds=10.0)
-        failure_result = SyncResult("axes", False, [],
-                                  error_message="API Error - Rate limit exceeded",
-                                  duration_seconds=5.0)
+        success_result = SyncResult(
+            "users", True, [user_data], error_message=None, duration_seconds=10.0
+        )
+        failure_result = SyncResult(
+            "axes",
+            False,
+            [],
+            error_message="API Error - Rate limit exceeded",
+            duration_seconds=5.0,
+        )
         mock_executor.execute_scope.side_effect = [success_result, failure_result]
 
         # Mock du registry
@@ -597,5 +707,6 @@ class TestErrorRecoveryScenario(TestRealScenariosBase):
         self.assertTrue(success_result.success)
         self.assertFalse(failure_result.success)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

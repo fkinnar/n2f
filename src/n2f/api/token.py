@@ -4,16 +4,19 @@ from functools import wraps
 import n2f
 
 
-def cache_token(timeout_seconds: int = n2f.TIMEOUT_TOKEN, safety_margin: int = n2f.SAFETY_MARGIN):
+def cache_token(
+    timeout_seconds: int = n2f.TIMEOUT_TOKEN, safety_margin: int = n2f.SAFETY_MARGIN
+):
     def decorator(func):
         cache = {}
+
         @wraps(func)
         def wrapper(*args, **kwargs):
             now = time.time()
             if (
-                "token" in cache and
-                "expires_at" in cache and
-                cache["expires_at"] - safety_margin > now
+                "token" in cache
+                and "expires_at" in cache
+                and cache["expires_at"] - safety_margin > now
             ):
                 return cache["token"], cache["expires_at"]
             token, validity = func(*args, **kwargs)
@@ -23,7 +26,9 @@ def cache_token(timeout_seconds: int = n2f.TIMEOUT_TOKEN, safety_margin: int = n
                 return token, validity
 
             # validity est une date ISO, ex: '2025-08-20T09:54:35.8185075Z'
-            expires_at = datetime.fromisoformat(validity.replace("Z", "+00:00")).timestamp()
+            expires_at = datetime.fromisoformat(
+                validity.replace("Z", "+00:00")
+            ).timestamp()
             cache["token"] = token
             cache["expires_at"] = expires_at
 
@@ -35,7 +40,9 @@ def cache_token(timeout_seconds: int = n2f.TIMEOUT_TOKEN, safety_margin: int = n
 
 
 @cache_token(timeout_seconds=3600)
-def get_access_token(base_url: str, client_id: str, client_secret: str, simulate: bool = False) -> tuple[str, str]:
+def get_access_token(
+    base_url: str, client_id: str, client_secret: str, simulate: bool = False
+) -> tuple[str, str]:
     """
     Récupère un token d'accès N2F via l'API d'authentification.
 
@@ -55,13 +62,8 @@ def get_access_token(base_url: str, client_id: str, client_secret: str, simulate
         return "", ""
 
     url = base_url + "/auth"
-    payload = {
-        "client_id": client_id,
-        "client_secret": client_secret
-    }
-    headers = {
-        "Content-Type": "application/json"
-    }
+    payload = {"client_id": client_id, "client_secret": client_secret}
+    headers = {"Content-Type": "application/json"}
 
     response = n2f.get_session_write().post(url, json=payload, headers=headers)
     response.raise_for_status()

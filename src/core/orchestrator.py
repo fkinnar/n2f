@@ -18,8 +18,19 @@ from dataclasses import dataclass
 from .config import ConfigLoader, SyncConfig
 from .registry import get_registry
 from .cache import get_cache, cache_stats, cache_clear, cache_invalidate
-from .memory_manager import get_memory_manager, cleanup_scope, cleanup_all, print_memory_summary
-from .metrics import get_metrics, start_operation, end_operation, record_memory_usage, print_summary as print_metrics_summary
+from .memory_manager import (
+    get_memory_manager,
+    cleanup_scope,
+    cleanup_all,
+    print_memory_summary,
+)
+from .metrics import (
+    get_metrics,
+    start_operation,
+    end_operation,
+    record_memory_usage,
+    print_summary as print_metrics_summary,
+)
 from .retry import get_retry_manager, print_retry_summary
 
 # Ajout du répertoire parent au path pour les imports
@@ -32,6 +43,7 @@ from .logging import export_api_logs
 @dataclass
 class SyncResult:
     """Résultat d'une synchronisation."""
+
     scope_name: str
     success: bool
     results: List[pd.DataFrame]
@@ -58,17 +70,21 @@ class ContextBuilder:
             if sync_config.cache.persist_cache:
                 # Vérifier si cache_dir n'est pas un Mock
                 cache_dir_value = sync_config.cache.cache_dir
-                if not hasattr(cache_dir_value, '_mock_name'):  # Pas un Mock
-                    cache_dir = Path(__file__).resolve().parent.parent.parent / cache_dir_value
+                if not hasattr(cache_dir_value, "_mock_name"):  # Pas un Mock
+                    cache_dir = (
+                        Path(__file__).resolve().parent.parent.parent / cache_dir_value
+                    )
 
             get_cache(
                 cache_dir=cache_dir,  # type: ignore
                 max_size_mb=sync_config.cache.max_size_mb,
-                default_ttl=sync_config.cache.default_ttl
+                default_ttl=sync_config.cache.default_ttl,
             )
 
         # Initialisation du gestionnaire de mémoire
-        memory_limit_mb = getattr(sync_config, 'memory_limit_mb', 1024)  # 1GB par défaut
+        memory_limit_mb = getattr(
+            sync_config, "memory_limit_mb", 1024
+        )  # 1GB par défaut
         get_memory_manager(max_memory_mb=memory_limit_mb)
 
         # Initialisation du système de métriques
@@ -91,7 +107,7 @@ class ContextBuilder:
             db_user=os.getenv("AGRESSO_DB_USER"),
             db_password=os.getenv("AGRESSO_DB_PASSWORD"),
             client_id=os.getenv("N2F_CLIENT_ID"),
-            client_secret=os.getenv("N2F_CLIENT_SECRET")
+            client_secret=os.getenv("N2F_CLIENT_SECRET"),
         )
 
 
@@ -114,16 +130,18 @@ class ScopeExecutor:
                     scope_name=scope_name,
                     success=False,
                     results=[],
-                    error_message=f"Scope '{scope_name}' not found or disabled"
+                    error_message=f"Scope '{scope_name}' not found or disabled",
                 )
 
-            print(f"--- Starting synchronization for scope : {scope_name} ({scope_config.display_name}) ---")
+            print(
+                f"--- Starting synchronization for scope : {scope_name} ({scope_config.display_name}) ---"
+            )
 
             # Exécution de la synchronisation
             results = scope_config.sync_function(
                 context=self.context,
                 sql_filename=scope_config.sql_filename,
-                sql_column_filter=scope_config.sql_column_filter
+                sql_column_filter=scope_config.sql_column_filter,
             )
 
             duration = time.time() - start_time
@@ -133,12 +151,14 @@ class ScopeExecutor:
                 scope_name=scope_name,
                 success=True,
                 results=results or [],
-                duration_seconds=duration
+                duration_seconds=duration,
             )
 
         except Exception as e:
             duration = time.time() - start_time
-            error_msg = f"Error during synchronization of scope '{scope_name}': {str(e)}"
+            error_msg = (
+                f"Error during synchronization of scope '{scope_name}': {str(e)}"
+            )
             print(f"ERROR: {error_msg}")
 
             return SyncResult(
@@ -146,7 +166,7 @@ class ScopeExecutor:
                 success=False,
                 results=[],
                 error_message=error_msg,
-                duration_seconds=duration
+                duration_seconds=duration,
             )
 
 
@@ -209,12 +229,11 @@ class LogManager:
             errors_df = combined_df.query("api_success == False")
             for _, row in errors_df.iterrows():
                 print(f"  - {row.get('api_message', 'Unknown error')}")
-                details = row.get('api_error_details')
+                details = row.get("api_error_details")
                 if np.any(pd.notna(details)):
                     print(f"    Details : {details}")
 
     def get_successful_scopes(self) -> List[str]:
-
         """Retourne la liste des scopes qui ont réussi."""
         return [result.scope_name for result in self.results if result.success]
 
@@ -297,13 +316,13 @@ class SyncOrchestrator:
         """
         try:
             # Gestion du cache si demandé
-            if hasattr(self.args, 'clear_cache') and self.args.clear_cache:
+            if hasattr(self.args, "clear_cache") and self.args.clear_cache:
                 print("--- Clearing cache ---")
                 cache_clear()
                 print("Cache cleared successfully")
 
             # Invalidation sélective du cache si demandé
-            if hasattr(self.args, 'invalidate_cache') and self.args.invalidate_cache:
+            if hasattr(self.args, "invalidate_cache") and self.args.invalidate_cache:
                 print("--- Invalidating specific cache entries ---")
                 for function_name in self.args.invalidate_cache:
                     cache_invalidate(function_name)
@@ -378,7 +397,7 @@ class SyncOrchestrator:
                     memory_usage_mb=0.0,  # Sera mis à jour par le MemoryManager
                     api_calls=0,  # À implémenter si nécessaire
                     cache_hits=0,  # À implémenter si nécessaire
-                    cache_misses=0  # À implémenter si nécessaire
+                    cache_misses=0,  # À implémenter si nécessaire
                 )
 
             except Exception as e:
@@ -391,7 +410,7 @@ class SyncOrchestrator:
                     memory_usage_mb=0.0,
                     api_calls=0,
                     cache_hits=0,
-                    cache_misses=0
+                    cache_misses=0,
                 )
                 raise
             finally:
@@ -409,5 +428,5 @@ class SyncOrchestrator:
             "api_sandbox": sync_config.api.sandbox,
             "api_simulate": sync_config.api.simulate,
             "available_scopes": self.registry.get_all_scopes(),
-            "enabled_scopes": self.registry.get_enabled_scopes()
+            "enabled_scopes": self.registry.get_enabled_scopes(),
         }
