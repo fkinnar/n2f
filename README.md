@@ -403,3 +403,29 @@ This project uses pre-commit hooks to ensure code quality:
 For detailed configuration and usage, see [PRE_COMMIT_HOOKS.md](PRE_COMMIT_HOOKS.md).
 
 Test line for pre-commit hooks.
+
+## Development Setup
+
+### Installing Development Dependencies
+
+```bash
+# Install all development dependencies
+python -m pip install -e ".[dev]"
+
+# Or use the requirements file
+python -m pip install -r requirements-dev.txt
+```
+
+**Note**: After installing dev dependencies, run `pre-commit install` to set up Git hooks.
+
+### Pre-commit Hooks
+
+This project uses pre-commit hooks to ensure code quality:
+- **Black**: Automatic code formatting
+- **Trailing whitespace**: Removes trailing spaces
+- **End of file**: Ensures files end with newline
+- **YAML validation**: Checks YAML syntax
+- **Large files**: Prevents large files from being committed
+- **Merge conflicts**: Detects unresolved merge conflicts
+
+For detailed configuration and usage, see [PRE_COMMIT_HOOKS.md](PRE_COMMIT_HOOKS.md).
