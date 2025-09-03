@@ -11,7 +11,7 @@ def get_users(
     simulate: bool = False,
 ) -> List[Dict[str, Any]]:
     """
-    Récupère une page d'utilisateurs depuis l'API N2F (paginé).
+    Récupère une page d'utilisateurs depuis l'API N2F.
 
     Args:
         base_url (str): URL de base de l'API N2F.
@@ -22,7 +22,7 @@ def get_users(
         simulate (bool): Si True, simule la récupération sans l'exécuter.
 
     Returns:
-        List[Dict[str, Any]]: Liste de dictionnaires représentant les utilisateurs récupérés.
+        List[Dict[str, Any]]: Liste de dictionnaires représentant les utilisateurs.
 
     Raises:
         Exception: En cas d'erreur HTTP ou de parsing.

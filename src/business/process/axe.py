@@ -1,5 +1,5 @@
 import pandas as pd
-from typing import List, Dict, Any
+from typing import List, Dict
 
 from core import SyncContext
 from n2f.client import N2fApiClient

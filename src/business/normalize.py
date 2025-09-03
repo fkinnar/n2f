@@ -1,5 +1,5 @@
 import pandas as pd
-from typing import Dict, Any, Optional
+from typing import Dict, Optional
 
 from business.constants import (
     AGRESSO_COL_EMAIL,
@@ -22,7 +22,7 @@ from business.constants import (
 
 def normalize_agresso_users(df_users: pd.DataFrame) -> pd.DataFrame:
     """
-    Normalise les utilisateurs Agresso en s'assurant que les colonnes nécessaires sont présentes et correctement formatées.
+    Normalise les utilisateurs Agresso en s'assurant que les colonnes nécessaires sont présentes.
 
     Args:
         df_users: DataFrame contenant les utilisateurs Agresso
@@ -62,7 +62,7 @@ def normalize_agresso_users(df_users: pd.DataFrame) -> pd.DataFrame:
         ["nan", "none", ""], ""
     )
 
-    # Normalisation des structures (remplacement des valeurs vides par la valeur par défaut)
+    # Normalisation des structures (remplacement des valeurs vides par défaut)
     df_users[AGRESSO_COL_STRUCTURE] = (
         df_users[AGRESSO_COL_STRUCTURE]
         .replace(["", "nan", "none"], pd.NA)
@@ -83,7 +83,7 @@ def normalize_n2f_users(
     role_mapping: Optional[Dict[str, str]] = None,
 ) -> pd.DataFrame:
     """
-    Normalise les utilisateurs N2F en s'assurant que les colonnes nécessaires sont présentes et correctement formatées.
+    Normalise les utilisateurs N2F en s'assurant que les colonnes nécessaires sont présentes.
     Remplace les valeurs de 'profile' par leur équivalent français.
 
     Args:

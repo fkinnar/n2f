@@ -6,7 +6,7 @@ pour remplacer les fonctions existantes dans user.py et axe.py.
 """
 
 import pandas as pd
-from typing import Tuple, Any
+from typing import Tuple
 from business.process.user_synchronizer import UserSynchronizer
 from business.process.axe_synchronizer import AxeSynchronizer
 from n2f.client import N2fApiClient

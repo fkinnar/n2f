@@ -10,7 +10,7 @@ class SyncContext:
 
     args: argparse.Namespace
     config: Union[
-        Dict[str, Any], "SyncConfig"
+        Dict[str, Any]
     ]  # Supporte l'ancien format dict et le nouveau SyncConfig
     base_dir: Path
     db_user: Union[str, None]

@@ -1,6 +1,6 @@
 from enum import Enum
-from typing import Tuple, Dict, Optional, List
-import pandas as pd
+from typing import Tuple, Dict, Optional
+
 
 from n2f.client import N2fApiClient
 

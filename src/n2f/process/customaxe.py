@@ -17,7 +17,8 @@ def get_customaxes(
     cache: bool = True,
 ) -> pd.DataFrame:
     """
-    Récupère les axes personnalisés d'une société depuis l'API N2F (toutes les pages) et retourne un DataFrame unique.
+    Récupère les axes personnalisés d'une société depuis l'API N2F.
+
     La pagination est gérée automatiquement.
     """
     if cache:
@@ -63,7 +64,8 @@ def get_customaxes_values(
     cache: bool = True,
 ) -> pd.DataFrame:
     """
-    Récupère les valeurs d'un axe personnalisé d'une société depuis l'API N2F (toutes les pages) et retourne un DataFrame unique.
+    Récupère les valeurs d'un axe personnalisé d'une société depuis l'API N2F.
+
     La pagination est gérée automatiquement.
     """
     if cache:

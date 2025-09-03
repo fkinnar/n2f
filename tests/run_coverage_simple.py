@@ -64,7 +64,7 @@ def run_coverage_analysis():
     cov.report(show_missing=True, skip_covered=False)
 
     # Analyser les fichiers avec faible couverture
-    print(f"\nFichiers avec couverture < 80%:")
+    print("\nFichiers avec couverture < 80%:")
     print("-" * 40)
 
     low_coverage_files = []
@@ -97,7 +97,7 @@ def run_coverage_analysis():
         print("  Aucun fichier avec couverture < 80% trouvé.")
 
     # Résumé des tests
-    print(f"\nRésumé des tests:")
+    print("\nRésumé des tests:")
     print(f"  Durée totale : {duration:.2f} secondes")
     print(
         f"  Tests réussis : {result.testsRun - len(result.failures) - len(result.errors)}"
@@ -108,7 +108,7 @@ def run_coverage_analysis():
 
     # Générer un rapport HTML
     cov.html_report(directory="coverage_html")
-    print(f"\nRapport HTML généré dans le dossier 'coverage_html'")
+    print("\nRapport HTML généré dans le dossier 'coverage_html'")
 
     return result.failures, result.errors
 

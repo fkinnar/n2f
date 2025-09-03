@@ -13,7 +13,7 @@ def get_projects(
     simulate: bool = False,
 ) -> List[Dict[str, Any]]:
     """
-    Récupère une page de projets d'une société depuis l'API N2F (utilise l'axe 'projects').
+    Récupère une page de projets d'une société depuis l'API N2F.
 
     Args:
         base_url (str): URL de base de l'API N2F.

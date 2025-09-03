@@ -200,7 +200,7 @@ class LogManager:
 
             # Exporter les logs
             log_filename = export_api_logs(combined_df)
-            print(f"\n--- API Logs Export ---")
+            print("\n--- API Logs Export ---")
             print(f"API logs exported to : {log_filename}")
 
             # Afficher un résumé des erreurs
@@ -218,12 +218,12 @@ class LogManager:
         total_count = len(combined_df)
         error_count = total_count - success_count
 
-        print(f"\nAPI Operations Summary :")
+        print("\nAPI Operations Summary :")
         print(f"  - Success : {success_count}/{total_count}")
         print(f"  - Errors : {error_count}/{total_count}")
 
         if error_count > 0:
-            print(f"\nError Details :")
+            print("\nError Details :")
             errors_df = combined_df.query("api_success == False")
             for _, row in errors_df.iterrows():
                 print(f"  - {row.get('api_message', 'Unknown error')}")
@@ -262,14 +262,14 @@ class LogManager:
         failed_scopes = total_scopes - successful_scopes
         total_duration = self.get_total_duration()
 
-        print(f"\n--- Synchronization Summary ---")
+        print("\n--- Synchronization Summary ---")
         print(f"  - Total scopes processed : {total_scopes}")
         print(f"  - Successful : {successful_scopes}")
         print(f"  - Failed : {failed_scopes}")
         print(f"  - Total duration : {total_duration:.2f} seconds")
 
         if failed_scopes > 0:
-            print(f"\nFailed scopes :")
+            print("\nFailed scopes :")
             for result in self.results:
                 if not result.success:
                     print(f"  - {result.scope_name}: {result.error_message}")
@@ -344,7 +344,7 @@ class SyncOrchestrator:
             config_loader = ConfigLoader(self.config_path)
             sync_config = config_loader.load()
             if sync_config.cache.enabled:
-                print(f"\n--- Cache Statistics ---")
+                print("\n--- Cache Statistics ---")
                 print(cache_stats())
 
             # Affichage des statistiques mémoire

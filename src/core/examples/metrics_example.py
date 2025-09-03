@@ -208,7 +208,7 @@ def example_export_and_analysis() -> None:
     metrics = get_metrics()
     summary = metrics.get_summary()
 
-    print(f"\n📈 ANALYSE DÉTAILLÉE:")
+    print("\n📈 ANALYSE DÉTAILLÉE:")
     print(f"   • Scopes traités: {len(summary['operations_by_scope'])}")
     print(f"   • Actions effectuées: {len(summary['operations_by_action'])}")
     print(f"   • Taux de succès global: {summary['summary']['success_rate']*100:.1f}%")
@@ -251,7 +251,7 @@ def example_memory_monitoring() -> None:
 
     # Affichage du résumé avec focus mémoire
     summary = get_metrics().get_summary()
-    print(f"\n💾 ANALYSE MÉMOIRE:")
+    print("\n💾 ANALYSE MÉMOIRE:")
     print(f"   • Pic d'utilisation: {summary['memory']['peak_usage_mb']:.1f}MB")
     print(f"   • Utilisation moyenne: {summary['memory']['average_usage_mb']:.1f}MB")
     print(f"   • Échantillons mémoire: {summary['memory']['memory_samples']}")

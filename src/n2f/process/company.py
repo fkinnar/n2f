@@ -13,9 +13,9 @@ def get_companies(
     cache: bool = True,
 ) -> pd.DataFrame:
     """
-    Récupère toutes les entreprises depuis l'API N2F (toutes les pages) et retourne un DataFrame unique.
-    Respecte le quota d'appels à l'API (en secondes entre chaque appel).
-    La pagination est gérée automatiquement.
+    Récupère toutes les entreprises depuis l'API N2F.
+
+    Respecte le quota d'appels à l'API et gère la pagination automatiquement.
     """
 
     if cache:

@@ -1,4 +1,3 @@
-import pandas as pd
 from typing import Dict, Any
 
 from n2f.helper import to_bool, normalize_date_for_payload
@@ -9,7 +8,6 @@ from business.constants import (
     AGRESSO_COL_ROLE,
     AGRESSO_COL_PROFILE,
     AGRESSO_COL_MANAGER,
-    AGRESSO_COL_COST_CENTER,
     AGRESSO_COL_CREATE_VEHICLE,
     AGRESSO_COL_APPROVE_VEHICLE,
     AGRESSO_COL_DEDUCT_DISTANCE,
@@ -18,13 +16,10 @@ from business.constants import (
     AGRESSO_COL_FUNCTION,
     AGRESSO_COL_EMPLOYEE_NUMBER,
     AGRESSO_COL_STRUCTURE,
-    AGRESSO_COL_SSO_LOGIN,
     AGRESSO_COL_PRO_PAYMENT,
     AGRESSO_COL_AUX_ACCOUNT,
-    AGRESSO_COL_AUX_ACCOUNT2,
     AGRESSO_COL_RAISE_LIMITS,
     AGRESSO_COL_SSO_METHOD,
-    AGRESSO_COL_UPDATE_PERSONAL,
     AGRESSO_COL_DESCRIPTION,
     AGRESSO_COL_DATE_FROM,
     AGRESSO_COL_DATE_TO,
@@ -39,7 +34,6 @@ from business.constants import (
     N2F_COL_ROLE,
     N2F_COL_PROFILE,
     N2F_COL_MANAGER_MAIL,
-    N2F_COL_COST_CENTER,
     N2F_COL_CREATE_VEHICLE,
     N2F_COL_APPROVE_VEHICLE,
     N2F_COL_DEDUCT_DISTANCE,
@@ -48,13 +42,10 @@ from business.constants import (
     N2F_COL_JOB_TITLE,
     N2F_COL_EMPLOYEE_NUMBER,
     N2F_COL_STRUCTURE,
-    N2F_COL_SSO_LOGIN,
     N2F_COL_PRO_PAYMENT,
     N2F_COL_AUX_ACCOUNT,
-    N2F_COL_AUX_ACCOUNT2,
     N2F_COL_RAISE_LIMITS,
     N2F_COL_AUTH_MODE,
-    N2F_COL_UPDATE_PERSONAL,
     N2F_COL_VALIDITY_DATE_FROM,
     N2F_COL_VALIDITY_DATE_TO,
     DEFAULT_AUTH_MODE_SANDBOX,
@@ -67,8 +58,7 @@ def create_user_upsert_payload(
     user: Dict[str, Any], company_id: str, sandbox: bool
 ) -> Dict[str, Any]:
     """
-    Construit le payload JSON pour l'upsert (création ou mise à jour) d'un utilisateur N2F
-    à partir d'une ligne du DataFrame Agresso, en remplaçant le code entreprise par son UUID.
+    Construit le payload JSON pour l'upsert d'un utilisateur N2F.
 
     Args:
         user (Dict[str, Any]): Dictionnaire représentant un utilisateur.

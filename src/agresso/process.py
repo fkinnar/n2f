@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from typing import Optional
+
 
 from Iris.Database.IrisConnect import IrisConnect
 from agresso.database import execute_query
@@ -17,8 +17,7 @@ def select(
     cache: bool = True,
 ) -> pd.DataFrame:
     """
-    Lit la requête SQL depuis le fichier,
-    établit la connexion à la base Agresso et retourne les utilisateurs sous forme de DataFrame.
+    Lit la requête SQL depuis le fichier et l'exécute sur la base Agresso.
 
     Args:
         base_dir: Répertoire de base du projet

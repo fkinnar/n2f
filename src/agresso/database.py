@@ -1,5 +1,5 @@
 import pandas as pd
-from typing import Any
+
 from Iris.Database.IrisConnect import IrisConnect
 
 

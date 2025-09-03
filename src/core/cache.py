@@ -12,10 +12,10 @@ Ce module fournit un système de cache avancé avec :
 import json
 import pickle
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple, Union, List
-from dataclasses import dataclass, asdict
+from typing import Any, Dict, Optional, List
+from dataclasses import dataclass
 import pandas as pd
 import hashlib
 
@@ -124,7 +124,6 @@ class AdvancedCache:
 
     def _cleanup_expired(self) -> None:
         """Nettoie les entrées expirées."""
-        current_time = time.time()
         expired_keys: List[str] = []
 
         for key, entry in self._memory_cache.items():

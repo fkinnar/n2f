@@ -160,7 +160,11 @@ def create_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--skip-dotenv-loading",
         action="store_true",
-        help="Désactiver le chargement du fichier .env, même si le mode sandbox est configuré dans le YAML. Utile pour tester le comportement de production des dépendances.",
+        help=(
+            "Désactiver le chargement du fichier .env, même si le mode sandbox est "
+            "configuré dans le YAML. Utile pour tester le comportement de production "
+            "des dépendances."
+        ),
     )
 
     return parser

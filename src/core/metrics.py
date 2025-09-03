@@ -402,7 +402,7 @@ class SyncMetrics:
         )
 
         # Performance
-        print(f"\nPERFORMANCE:")
+        print("\nPERFORMANCE:")
         print(
             f"   - Durée moyenne: {summary['performance']['average_duration_seconds']:.2f}s"
         )
@@ -413,14 +413,14 @@ class SyncMetrics:
         )
 
         # Mémoire
-        print(f"\nMÉMOIRE:")
+        print("\nMÉMOIRE:")
         print(f"   - Pic d'utilisation: {summary['memory']['peak_usage_mb']:.1f}MB")
         print(
             f"   - Utilisation moyenne: {summary['memory']['average_usage_mb']:.1f}MB"
         )
 
         # Par scope
-        print(f"\nPAR SCOPE:")
+        print("\nPAR SCOPE:")
         for scope, scope_data in summary["operations_by_scope"].items():
             success_rate = (
                 scope_data["success"] / scope_data["total"] * 100
@@ -433,7 +433,7 @@ class SyncMetrics:
 
         # Erreurs
         if summary["error_summary"]:
-            print(f"\nERREURS:")
+            print("\nERREURS:")
             for error, count in summary["error_summary"].items():
                 print(f"   - {error}: {count} occurrence(s)")
 

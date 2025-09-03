@@ -1,7 +1,6 @@
 import pandas as pd
 import time
-from typing import List, Any, Dict, Optional, Union
-from pathlib import Path
+from typing import List, Any, Dict, Optional
 
 import n2f
 from core import SyncContext, cache_get, cache_set
@@ -162,7 +161,7 @@ class N2fApiClient:
             if cached is not None:
                 return cached
 
-        # L'endpoint "roles" ne semble pas paginé et a une structure de réponse différente
+        # L'endpoint "roles" ne semble pas paginé et a une structure différente
         if self.simulate:
             return pd.DataFrame()
 
@@ -418,7 +417,7 @@ class N2fApiClient:
         start, limit = 0, 200
         endpoint = f"companies/{company_id}/axes/{axe_id}"
         while True:
-            # La méthode _request est pour les endpoints globaux, ici l'URL est spécifique
+            # La méthode _request est pour les endpoints globaux, l'URL est spécifique
             if self.simulate:
                 values_page: List[Dict[str, Any]] = []
             else:

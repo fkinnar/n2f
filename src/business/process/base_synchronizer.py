@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List, Tuple, Any, Optional, Union
+from typing import Dict, List, Tuple, Any, Optional
 import pandas as pd
 from n2f.client import N2fApiClient
 from n2f.api_result import ApiResult
