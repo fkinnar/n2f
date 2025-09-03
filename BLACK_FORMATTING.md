@@ -1,10 +1,13 @@
 ﻿# Formatage du code avec Black
 
-Ce projet utilise [Black](https://black.readthedocs.io/) pour maintenir un formatage de code Python cohÃ©rent et automatique.
+Ce projet utilise [Black](https://black.readthedocs.io/) pour maintenir un formatage de
+code Python cohÃ©rent et automatique.
 
 ## Qu'est-ce que Black ?
 
-Black est un formateur de code Python qui applique automatiquement un style de code cohÃ©rent. Il suit les recommandations PEP 8 et d'autres conventions Python, en se concentrant sur la lisibilitÃ© et la cohÃ©rence.
+Black est un formateur de code Python qui applique automatiquement un style de code
+cohÃ©rent. Il suit les recommandations PEP 8 et d'autres conventions Python, en se
+concentrant sur la lisibilitÃ© et la cohÃ©rence.
 
 ## Configuration
 
@@ -68,7 +71,8 @@ python scripts/format_code.py --check
 
 ## IntÃ©gration avec pre-commit
 
-Le projet est configurÃ© avec pre-commit pour automatiser le formatage lors des commits. Pour l'installer :
+Le projet est configurÃ© avec pre-commit pour automatiser le formatage lors des commits.
+Pour l'installer :
 
 ```bash
 # Installer pre-commit
@@ -78,7 +82,8 @@ pip install pre-commit
 pre-commit install
 ```
 
-AprÃ¨s l'installation, Black s'exÃ©cutera automatiquement sur tous les fichiers Python modifiÃ©s lors de chaque commit.
+AprÃ¨s l'installation, Black s'exÃ©cutera automatiquement sur tous les fichiers Python
+modifiÃ©s lors de chaque commit.
 
 ## RÃ¨gles de formatage
 
@@ -101,11 +106,12 @@ Black applique automatiquement les rÃ¨gles suivantes :
 
 ## RÃ©solution des conflits
 
-Si Black modifie un fichier et que vous avez des modifications non commitÃ©es, vous pouvez :
+Si Black modifie un fichier et que vous avez des modifications non commitÃ©es, vous
+pouvez :
 
 1. **Accepter les changements de Black** (recommandÃ©)
-2. **Reformater manuellement** avec `black <fichier>`
-3. **Utiliser l'option `--skip-string-normalization`** si nÃ©cessaire
+1. **Reformater manuellement** avec `black <fichier>`
+1. **Utiliser l'option `--skip-string-normalization`** si nÃ©cessaire
 
 ## Support des Ã©diteurs
 
@@ -126,8 +132,8 @@ Utilisez des plugins comme `black.vim` ou `ale`.
 Pour maintenir le formatage du projet :
 
 1. **Avant chaque commit** : Black s'exÃ©cute automatiquement
-2. **RÃ©guliÃ¨rement** : ExÃ©cutez `black --check` pour vÃ©rifier
-3. **CI/CD** : IntÃ©grez Black dans votre pipeline de build
+1. **RÃ©guliÃ¨rement** : ExÃ©cutez `black --check` pour vÃ©rifier
+1. **CI/CD** : IntÃ©grez Black dans votre pipeline de build
 
 ## Ressources
 

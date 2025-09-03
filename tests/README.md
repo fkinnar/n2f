@@ -120,10 +120,10 @@ class TestExample(unittest.TestCase):
 ## Bonnes Pratiques
 
 1. **Nommage** : Utilisez des noms descriptifs pour les tests
-2. **Isolation** : Chaque test doit Ãªtre indÃ©pendant
-3. **Mocking** : Utilisez des mocks pour les dÃ©pendances externes
-4. **Assertions** : Utilisez des assertions spÃ©cifiques
-5. **Documentation** : Documentez les cas de test complexes
+1. **Isolation** : Chaque test doit Ãªtre indÃ©pendant
+1. **Mocking** : Utilisez des mocks pour les dÃ©pendances externes
+1. **Assertions** : Utilisez des assertions spÃ©cifiques
+1. **Documentation** : Documentez les cas de test complexes
 
 ## DÃ©pendances
 
@@ -138,20 +138,20 @@ Les tests utilisent les dÃ©pendances suivantes :
 ### Tests qui Ã©chouent
 
 1. VÃ©rifiez les dÃ©pendances
-2. VÃ©rifiez la configuration
-3. VÃ©rifiez les variables d'environnement
+1. VÃ©rifiez la configuration
+1. VÃ©rifiez les variables d'environnement
 
 ### Couverture faible
 
 1. Identifiez les modules avec faible couverture
-2. Ajoutez des tests pour les cas manquants
-3. VÃ©rifiez les exclusions de couverture
+1. Ajoutez des tests pour les cas manquants
+1. VÃ©rifiez les exclusions de couverture
 
 ## Contribution
 
 Lors de l'ajout de nouveaux tests :
 
 1. Suivez la convention de nommage
-2. Ajoutez des tests pour les nouvelles fonctionnalitÃ©s
-3. Maintenez la couverture de code
-4. Documentez les cas de test complexes
+1. Ajoutez des tests pour les nouvelles fonctionnalitÃ©s
+1. Maintenez la couverture de code
+1. Documentez les cas de test complexes

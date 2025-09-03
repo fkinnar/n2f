@@ -5,8 +5,8 @@ plaques et sous-posts.
 
 ## ðŸ“‹ Vue d'ensemble
 
-Ce projet permet de synchroniser automatiquement les donnÃ©es entre le systÃ¨me Agresso et
-l'API N2F. Il gÃ¨re la crÃ©ation, mise Ã  jour et suppression d'entitÃ©s de maniÃ¨re
+Ce projet permet de synchroniser automatiquement les donnÃ©es entre le systÃ¨me Agresso
+et l'API N2F. Il gÃ¨re la crÃ©ation, mise Ã  jour et suppression d'entitÃ©s de maniÃ¨re
 cohÃ©rente et traÃ§able.
 
 ### ðŸŽ¯ FonctionnalitÃ©s principales
@@ -380,9 +380,9 @@ python python/sync-agresso-n2f.py --verbose --scopes users
 ### Workflow Git
 
 1. CrÃ©er une branche feature : `git checkout -b feature/nouvelle-fonctionnalite`
-2. DÃ©velopper et tester
-3. VÃ©rifier les fichiers Markdown : `python scripts/check_markdown.py`
-4. CrÃ©er une pull request
+1. DÃ©velopper et tester
+1. VÃ©rifier les fichiers Markdown : `python scripts/check_markdown.py`
+1. CrÃ©er une pull request
 
 ## ðŸ“„ Licence
 

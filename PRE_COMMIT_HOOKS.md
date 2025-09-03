@@ -71,8 +71,8 @@ pre-commit install
 
 ### Commits automatiques
 
-Les hooks se dÃ©clenchent automatiquement lors de chaque `git commit`. Si un hook Ã©choue
-:
+Les hooks se dÃ©clenchent automatiquement lors de chaque `git commit`. Si un hook
+Ã©choue :
 
 - Le commit est bloquÃ©
 - Les erreurs sont affichÃ©es
@@ -109,16 +109,16 @@ pre-commit autoupdate
 Si les hooks semblent ignorÃ©s, vÃ©rifiez que :
 
 1. `pre-commit install` a Ã©tÃ© exÃ©cutÃ©
-2. Le fichier `.git/hooks/pre-commit` existe
-3. Vous Ãªtes dans le bon repository Git
+1. Le fichier `.git/hooks/pre-commit` existe
+1. Vous Ãªtes dans le bon repository Git
 
 ### Erreurs de formatage
 
 Si Black Ã©choue :
 
 1. VÃ©rifiez la syntaxe Python
-2. ExÃ©cutez `black .` manuellement pour voir les erreurs
-3. Corrigez le code et recommencez
+1. ExÃ©cutez `black .` manuellement pour voir les erreurs
+1. Corrigez le code et recommencez
 
 ### Fichiers ignorÃ©s
 
@@ -132,11 +132,11 @@ Certains fichiers sont automatiquement exclus :
 ## ðŸ”„ Workflow recommandÃ©
 
 1. **DÃ©veloppement** : Codez normalement
-2. **Staging** : `git add <fichiers>`
-3. **Commit** : `git commit -m "message"`
-4. **Hooks automatiques** : Black formate, autres hooks vÃ©rifient
-5. **SuccÃ¨s** : Commit crÃ©Ã© avec code formatÃ©
-6. **Ã‰chec** : Corrigez et recommencez
+1. **Staging** : `git add <fichiers>`
+1. **Commit** : `git commit -m "message"`
+1. **Hooks automatiques** : Black formate, autres hooks vÃ©rifient
+1. **SuccÃ¨s** : Commit crÃ©Ã© avec code formatÃ©
+1. **Ã‰chec** : Corrigez et recommencez
 
 ## ðŸ“š Ressources
 
@@ -146,5 +146,5 @@ Certains fichiers sont automatiquement exclus :
 
 ______________________________________________________________________
 
-**Note** : Ces hooks garantissent que chaque commit respecte les standards de qualitÃ© du
-projet.
+**Note** : Ces hooks garantissent que chaque commit respecte les standards de qualitÃ©
+du projet.

@@ -5,8 +5,8 @@
 Ce document contient toutes les amÃ©liorations identifiÃ©es pour le projet de
 synchronisation N2F, organisÃ©es par prioritÃ© et phases d'implÃ©mentation.
 
-**Ã‰tat actuel :** âœ… Fonctionnel avec gestion d'erreur basique **Objectif :** ðŸŽ¯ Code
-industriel, maintenable et extensible
+**Ã‰tat actuel :** âœ… Fonctionnel avec gestion d'erreur basique **Objectif :** ðŸŽ¯
+Code industriel, maintenable et extensible
 
 ______________________________________________________________________
 
@@ -82,7 +82,8 @@ class PayloadComparator:
 
 #### **Fichiers crÃ©Ã©s :**
 
-- âœ… `src/business/process/base_synchronizer.py` â†’ Classe abstraite EntitySynchronizer
+- âœ… `src/business/process/base_synchronizer.py` â†’ Classe abstraite
+  EntitySynchronizer
 
 - âœ… `src/business/process/user_synchronizer.py` â†’ UserSynchronizer (implÃ©mentation
   concrÃ¨te)
@@ -490,22 +491,26 @@ ______________________________________________________________________
 
 - âœ… **Tests orchestrator (SyncOrchestrator)** - 156/156 tests unitaires (100% pass)
 
-- âœ… **Tests d'intÃ©gration** - 196/196 tests d'intÃ©gration (100% pass) âœ… **CORRIGÃ‰S**
+- âœ… **Tests d'intÃ©gration** - 196/196 tests d'intÃ©gration (100% pass) âœ…
+  **CORRIGÃ‰S**
 
 - âœ… **Configuration Cursor/VS Code** - `.vscode/settings.json` et `.vscode/tasks.json`
 
-- âœ… **Script de test amÃ©liorÃ©** - `tests/run_tests.py` avec options de ligne de commande
+- âœ… **Script de test amÃ©liorÃ©** - `tests/run_tests.py` avec options de ligne de
+  commande
 
-- âœ… **Tests de scÃ©narios rÃ©els** - `tests/test_real_scenarios.py` avec donnÃ©es rÃ©alistes
+- âœ… **Tests de scÃ©narios rÃ©els** - `tests/test_real_scenarios.py` avec donnÃ©es
+  rÃ©alistes
 
 - âœ… **Documentation des tests** - `tests/README.md` mis Ã  jour et corrigÃ©
 
 ### Corrections effectuÃ©es
 
 - âœ… **Correction des erreurs de patch** - `N2fApiClient` au lieu de `N2FClient`
-- âœ… **Correction des tests de base de donnÃ©es** - Utilisation de `execute_query` au lieu
-  de `connect`
-- âœ… **Correction des erreurs de cache** - Mock de `cache_clear` pour `mock_cache.clear`
+- âœ… **Correction des tests de base de donnÃ©es** - Utilisation de `execute_query` au
+  lieu de `connect`
+- âœ… **Correction des erreurs de cache** - Mock de `cache_clear` pour
+  `mock_cache.clear`
 - âœ… **Correction des erreurs de ConfigLoader** - Ajustement pour 2 appels au lieu d'1
 - âœ… **Correction des erreurs de get_registry** - Ajustement pour 2 appels au lieu d'1
 - âœ… **Correction des erreurs de cleanup_scope** - Mock de `cleanup_scope` pour
@@ -556,7 +561,8 @@ ______________________________________________________________________
 - [âœ…] 2.2 Pattern Registry pour les scopes (Registry avec auto-dÃ©couverte et
   extensibilitÃ©)
 
-- [âœ…] 2.3 Orchestrator principal (SÃ©paration des responsabilitÃ©s avec SyncOrchestrator)
+- [âœ…] 2.3 Orchestrator principal (SÃ©paration des responsabilitÃ©s avec
+  SyncOrchestrator)
 
 - [âœ…] 2.4 SystÃ¨me de cache amÃ©liorÃ© (Cache avancÃ© avec persistance et mÃ©triques)
 
@@ -594,18 +600,18 @@ ______________________________________________________________________
 ### ðŸŽ¯ PROCHAINES PRIORITÃ‰S
 
 1. **âœ… Tests d'intÃ©gration corrigÃ©s** - 196/196 tests passent (100% de succÃ¨s)
-2. **âœ… Tests des synchronizers terminÃ©s** - 31/31 tests passent (100% de succÃ¨s)
-3. **âœ… Tests de configuration terminÃ©s** - 21/21 tests passent (100% de succÃ¨s)
-4. **âœ… Tests du cache terminÃ©s** - 21/21 tests passent (100% de succÃ¨s)
-5. **âœ… Tests des mÃ©triques terminÃ©s** - 20/20 tests passent (100% de succÃ¨s)
-6. **âœ… Tests du retry terminÃ©s** - 34/34 tests passent (100% de succÃ¨s)
-7. **âœ… Tests du client API terminÃ©s** - 34/34 tests passent (100% de succÃ¨s)
-8. **âœ… Tests des payloads terminÃ©s** - 14/14 tests passent (100% de succÃ¨s)
-9. **âœ… Tests de normalisation terminÃ©s** - 25/25 tests passent (100% de succÃ¨s)
-10. **âœ… Tests des fonctions helper terminÃ©s** - 14/14 tests passent (100% de succÃ¨s)
-11. **âœ… Tests du contexte terminÃ©s** - 13/13 tests passent (100% de succÃ¨s)
-12. **âœ… Nettoyage du projet terminÃ©** - Suppression des fichiers temporaires et logs
-13. **Tests unitaires restants** - Modules utilitaires et spÃ©cifiques (voir section
+1. **âœ… Tests des synchronizers terminÃ©s** - 31/31 tests passent (100% de succÃ¨s)
+1. **âœ… Tests de configuration terminÃ©s** - 21/21 tests passent (100% de succÃ¨s)
+1. **âœ… Tests du cache terminÃ©s** - 21/21 tests passent (100% de succÃ¨s)
+1. **âœ… Tests des mÃ©triques terminÃ©s** - 20/20 tests passent (100% de succÃ¨s)
+1. **âœ… Tests du retry terminÃ©s** - 34/34 tests passent (100% de succÃ¨s)
+1. **âœ… Tests du client API terminÃ©s** - 34/34 tests passent (100% de succÃ¨s)
+1. **âœ… Tests des payloads terminÃ©s** - 14/14 tests passent (100% de succÃ¨s)
+1. **âœ… Tests de normalisation terminÃ©s** - 25/25 tests passent (100% de succÃ¨s)
+1. **âœ… Tests des fonctions helper terminÃ©s** - 14/14 tests passent (100% de succÃ¨s)
+1. **âœ… Tests du contexte terminÃ©s** - 13/13 tests passent (100% de succÃ¨s)
+1. **âœ… Nettoyage du projet terminÃ©** - Suppression des fichiers temporaires et logs
+1. **Tests unitaires restants** - Modules utilitaires et spÃ©cifiques (voir section
    5.1.2)
 
 ______________________________________________________________________
@@ -689,7 +695,7 @@ ______________________________________________________________________
 **ðŸ”´ PrioritÃ© Haute (1-2 semaines) :**
 
 1. **`src/agresso/process.py` (33%)** - Ajouter des tests pour les lignes 23-49
-2. **`src/business/process/axe.py` (24%)** - Tester les mÃ©thodes de validation (lignes
+1. **`src/business/process/axe.py` (24%)** - Tester les mÃ©thodes de validation (lignes
    20-37, 41-53)
 1. **`src/business/process/user.py` (22%)** - Tester les mÃ©thodes de validation (lignes
    14-29, 33-50)
@@ -697,9 +703,9 @@ ______________________________________________________________________
 **ðŸŸ¡ PrioritÃ© Moyenne (1 mois) :**
 
 1. **`src/core/exceptions.py` (67%)** - Tester les cas d'erreur spÃ©cifiques
-2. **`src/core/memory_manager.py` (68%)** - Tester la gestion de la mÃ©moire
-3. **`src/n2f/process/axe.py` (52%)** - Tester les mÃ©thodes de traitement
-4. **`src/n2f/process/user.py` (54%)** - Tester les mÃ©thodes de traitement
+1. **`src/core/memory_manager.py` (68%)** - Tester la gestion de la mÃ©moire
+1. **`src/n2f/process/axe.py` (52%)** - Tester les mÃ©thodes de traitement
+1. **`src/n2f/process/user.py` (54%)** - Tester les mÃ©thodes de traitement
 
 **ðŸŽ¯ Objectif de Couverture :**
 
@@ -738,10 +744,10 @@ ______________________________________________________________________
 
 #### **Tests Ã  implÃ©menter (PRIORITÃ‰ MOYENNE) :**
 
-- [âœ…] **Tests des tokens** - Gestion des tokens d'authentification (`n2f/api/token.py`)
-  (11 tests)
-- [âœ…] **Tests des fonctions API de base** - retreive, upsert, delete (`n2f/api/base.py`)
-  (12 tests)
+- [âœ…] **Tests des tokens** - Gestion des tokens d'authentification
+  (`n2f/api/token.py`) (11 tests)
+- [âœ…] **Tests des fonctions API de base** - retreive, upsert, delete
+  (`n2f/api/base.py`) (12 tests)
 - [âœ…] **Tests du cache simple** - Cache helper pour les fonctions get\_\*
   (`helper/cache.py`) (19 tests)
 - [âœ…] **Tests de la base de donnÃ©es** - AccÃ¨s et requÃªtes Agresso
@@ -752,8 +758,8 @@ ______________________________________________________________________
 - [âœ…] **Tests des API spÃ©cifiques** - user.py, company.py, customaxe.py, project.py
   (`n2f/api/*.py`) (25 tests)
 - [âœ…] **Tests des modules de traitement** - n2f/process/\*.py (33 tests)
-- [âœ…] **Tests des modules business** - helper.py, axe_types.py, department.py (27 tests)
-  (`business/process/*.py`)
+- [âœ…] **Tests des modules business** - helper.py, axe_types.py, department.py (27
+  tests) (`business/process/*.py`)
 
 #### **Modules analysÃ©s sans tests :**
 
@@ -817,8 +823,10 @@ ______________________________________________________________________
 
 - [âœ…] **Fichiers de logs** - SupprimÃ© les fichiers dans `src/logs/` (ajoutÃ© au
   .gitignore)
-- [âœ…] **Fichiers de mÃ©triques** - SupprimÃ© les fichiers `metrics_*.json` dans la racine
-- [âœ…] **Fichiers de logs API** - SupprimÃ© les fichiers `api_logs_*.csv` dans la racine
+- [âœ…] **Fichiers de mÃ©triques** - SupprimÃ© les fichiers `metrics_*.json` dans la
+  racine
+- [âœ…] **Fichiers de logs API** - SupprimÃ© les fichiers `api_logs_*.csv` dans la
+  racine
 - [âœ…] **Cache** - NettoyÃ© le dossier `cache/` et `cache_persistent/`
 - [âœ…] **Fichiers temporaires** - SupprimÃ© les fichiers de test et temporaires
 
@@ -966,9 +974,9 @@ test_config.yaml
 ### **ðŸŽ¯ Recommandations prioritaires :**
 
 1. **âœ… Nettoyer les fichiers temporaires** (TERMINÃ‰ - 30 minutes)
-2. **âœ… AmÃ©liorer le .gitignore** (TERMINÃ‰ - 15 minutes)
-3. **CrÃ©er les tests prioritaires** (1-2 jours)
-4. **Documenter les modules manquants** (2-3 heures)
+1. **âœ… AmÃ©liorer le .gitignore** (TERMINÃ‰ - 15 minutes)
+1. **CrÃ©er les tests prioritaires** (1-2 jours)
+1. **Documenter les modules manquants** (2-3 heures)
 
 ______________________________________________________________________
 
@@ -986,28 +994,28 @@ ______________________________________________________________________
 ### **ðŸ† Modules entiÃ¨rement testÃ©s :**
 
 1. **Synchronizers** (31 tests) - EntitySynchronizer, UserSynchronizer, AxeSynchronizer
-2. **Configuration** (21 tests) - SyncConfig, ConfigLoader, SyncRegistry
-3. **Cache** (21 tests) - AdvancedCache avec persistance et mÃ©triques
-4. **MÃ©triques** (20 tests) - SyncMetrics et export de donnÃ©es
-5. **Retry** (34 tests) - RetryManager et stratÃ©gies de retry
-6. **Client API** (34 tests) - N2fApiClient (authentification, appels API, gestion
+1. **Configuration** (21 tests) - SyncConfig, ConfigLoader, SyncRegistry
+1. **Cache** (21 tests) - AdvancedCache avec persistance et mÃ©triques
+1. **MÃ©triques** (20 tests) - SyncMetrics et export de donnÃ©es
+1. **Retry** (34 tests) - RetryManager et stratÃ©gies de retry
+1. **Client API** (34 tests) - N2fApiClient (authentification, appels API, gestion
    d'erreur)
 1. **Payloads** (14 tests) - Construction des payloads N2F (user, project, axe)
-2. **Normalisation** (25 tests) - Normalisation des donnÃ©es Agresso/N2F
-3. **Fonctions helper** (14 tests) - to_bool, normalize_date_for_payload
-4. **Contexte** (13 tests) - SyncContext et gestion de configuration
-5. **Tokens** (11 tests) - Gestion des tokens d'authentification
-6. **Fonctions API de base** (12 tests) - retreive, upsert, delete
-7. **Cache simple** (19 tests) - Cache helper pour les fonctions get\_\*
-8. **Base de donnÃ©es** (13 tests) - AccÃ¨s et requÃªtes Agresso
-9. **API spÃ©cifiques** (25 tests) - user.py, company.py, customaxe.py, project.py
-10. **Modules de traitement** (33 tests) - n2f/process/\*.py
-11. **Modules business** (27 tests) - helper.py, axe_types.py, department.py
-12. **Orchestrator avancÃ©** (15 tests) - Tests avancÃ©s de l'orchestrateur
-13. **Registry avancÃ©** (12 tests) - Tests avancÃ©s du registry avec auto-dÃ©couverte
-14. **API Role et UserProfile** (8 tests) - Tests des API spÃ©cifiques
-15. **ScÃ©narios rÃ©els** (25 tests) - Tests de scÃ©narios rÃ©els de synchronisation
-16. **Tests d'intÃ©gration** (196 tests) - Tests d'intÃ©gration complets
+1. **Normalisation** (25 tests) - Normalisation des donnÃ©es Agresso/N2F
+1. **Fonctions helper** (14 tests) - to_bool, normalize_date_for_payload
+1. **Contexte** (13 tests) - SyncContext et gestion de configuration
+1. **Tokens** (11 tests) - Gestion des tokens d'authentification
+1. **Fonctions API de base** (12 tests) - retreive, upsert, delete
+1. **Cache simple** (19 tests) - Cache helper pour les fonctions get\_\*
+1. **Base de donnÃ©es** (13 tests) - AccÃ¨s et requÃªtes Agresso
+1. **API spÃ©cifiques** (25 tests) - user.py, company.py, customaxe.py, project.py
+1. **Modules de traitement** (33 tests) - n2f/process/\*.py
+1. **Modules business** (27 tests) - helper.py, axe_types.py, department.py
+1. **Orchestrator avancÃ©** (15 tests) - Tests avancÃ©s de l'orchestrateur
+1. **Registry avancÃ©** (12 tests) - Tests avancÃ©s du registry avec auto-dÃ©couverte
+1. **API Role et UserProfile** (8 tests) - Tests des API spÃ©cifiques
+1. **ScÃ©narios rÃ©els** (25 tests) - Tests de scÃ©narios rÃ©els de synchronisation
+1. **Tests d'intÃ©gration** (196 tests) - Tests d'intÃ©gration complets
 
 ### **ðŸŽ¯ Objectif atteint :**
 
@@ -1049,10 +1057,11 @@ ______________________________________________________________________
 
 #### **Fichiers crÃ©Ã©s :**
 
-- âœ… `python/business/process/base_synchronizer.py` â†’ Classe abstraite EntitySynchronizer
+- âœ… `python/business/process/base_synchronizer.py` â†’ Classe abstraite
+  EntitySynchronizer
 
-- âœ… `python/business/process/user_synchronizer.py` â†’ UserSynchronizer (implÃ©mentation
-  concrÃ¨te)
+- âœ… `python/business/process/user_synchronizer.py` â†’ UserSynchronizer
+  (implÃ©mentation concrÃ¨te)
 
 - âœ… `python/business/process/axe_synchronizer.py` â†’ AxeSynchronizer (implÃ©mentation
   concrÃ¨te)
@@ -1457,22 +1466,26 @@ ______________________________________________________________________
 
 - âœ… **Tests orchestrator (SyncOrchestrator)** - 156/156 tests unitaires (100% pass)
 
-- âœ… **Tests d'intÃ©gration** - 196/196 tests d'intÃ©gration (100% pass) âœ… **CORRIGÃ‰S**
+- âœ… **Tests d'intÃ©gration** - 196/196 tests d'intÃ©gration (100% pass) âœ…
+  **CORRIGÃ‰S**
 
 - âœ… **Configuration Cursor/VS Code** - `.vscode/settings.json` et `.vscode/tasks.json`
 
-- âœ… **Script de test amÃ©liorÃ©** - `tests/run_tests.py` avec options de ligne de commande
+- âœ… **Script de test amÃ©liorÃ©** - `tests/run_tests.py` avec options de ligne de
+  commande
 
-- âœ… **Tests de scÃ©narios rÃ©els** - `tests/test_real_scenarios.py` avec donnÃ©es rÃ©alistes
+- âœ… **Tests de scÃ©narios rÃ©els** - `tests/test_real_scenarios.py` avec donnÃ©es
+  rÃ©alistes
 
 - âœ… **Documentation des tests** - `tests/README.md` mis Ã  jour et corrigÃ©
 
 ### Corrections effectuÃ©es
 
 - âœ… **Correction des erreurs de patch** - `N2fApiClient` au lieu de `N2FClient`
-- âœ… **Correction des tests de base de donnÃ©es** - Utilisation de `execute_query` au lieu
-  de `connect`
-- âœ… **Correction des erreurs de cache** - Mock de `cache_clear` pour `mock_cache.clear`
+- âœ… **Correction des tests de base de donnÃ©es** - Utilisation de `execute_query` au
+  lieu de `connect`
+- âœ… **Correction des erreurs de cache** - Mock de `cache_clear` pour
+  `mock_cache.clear`
 - âœ… **Correction des erreurs de ConfigLoader** - Ajustement pour 2 appels au lieu d'1
 - âœ… **Correction des erreurs de get_registry** - Ajustement pour 2 appels au lieu d'1
 - âœ… **Correction des erreurs de cleanup_scope** - Mock de `cleanup_scope` pour
@@ -1523,7 +1536,8 @@ ______________________________________________________________________
 - [âœ…] 2.2 Pattern Registry pour les scopes (Registry avec auto-dÃ©couverte et
   extensibilitÃ©)
 
-- [âœ…] 2.3 Orchestrator principal (SÃ©paration des responsabilitÃ©s avec SyncOrchestrator)
+- [âœ…] 2.3 Orchestrator principal (SÃ©paration des responsabilitÃ©s avec
+  SyncOrchestrator)
 
 - [âœ…] 2.4 SystÃ¨me de cache amÃ©liorÃ© (Cache avancÃ© avec persistance et mÃ©triques)
 
@@ -1561,18 +1575,18 @@ ______________________________________________________________________
 ### ðŸŽ¯ PROCHAINES PRIORITÃ‰S
 
 1. **âœ… Tests d'intÃ©gration corrigÃ©s** - 196/196 tests passent (100% de succÃ¨s)
-2. **âœ… Tests des synchronizers terminÃ©s** - 31/31 tests passent (100% de succÃ¨s)
-3. **âœ… Tests de configuration terminÃ©s** - 21/21 tests passent (100% de succÃ¨s)
-4. **âœ… Tests du cache terminÃ©s** - 21/21 tests passent (100% de succÃ¨s)
-5. **âœ… Tests des mÃ©triques terminÃ©s** - 20/20 tests passent (100% de succÃ¨s)
-6. **âœ… Tests du retry terminÃ©s** - 34/34 tests passent (100% de succÃ¨s)
-7. **âœ… Tests du client API terminÃ©s** - 34/34 tests passent (100% de succÃ¨s)
-8. **âœ… Tests des payloads terminÃ©s** - 14/14 tests passent (100% de succÃ¨s)
-9. **âœ… Tests de normalisation terminÃ©s** - 25/25 tests passent (100% de succÃ¨s)
-10. **âœ… Tests des fonctions helper terminÃ©s** - 14/14 tests passent (100% de succÃ¨s)
-11. **âœ… Tests du contexte terminÃ©s** - 13/13 tests passent (100% de succÃ¨s)
-12. **âœ… Nettoyage du projet terminÃ©** - Suppression des fichiers temporaires et logs
-13. **Tests unitaires restants** - Modules utilitaires et spÃ©cifiques (voir section
+1. **âœ… Tests des synchronizers terminÃ©s** - 31/31 tests passent (100% de succÃ¨s)
+1. **âœ… Tests de configuration terminÃ©s** - 21/21 tests passent (100% de succÃ¨s)
+1. **âœ… Tests du cache terminÃ©s** - 21/21 tests passent (100% de succÃ¨s)
+1. **âœ… Tests des mÃ©triques terminÃ©s** - 20/20 tests passent (100% de succÃ¨s)
+1. **âœ… Tests du retry terminÃ©s** - 34/34 tests passent (100% de succÃ¨s)
+1. **âœ… Tests du client API terminÃ©s** - 34/34 tests passent (100% de succÃ¨s)
+1. **âœ… Tests des payloads terminÃ©s** - 14/14 tests passent (100% de succÃ¨s)
+1. **âœ… Tests de normalisation terminÃ©s** - 25/25 tests passent (100% de succÃ¨s)
+1. **âœ… Tests des fonctions helper terminÃ©s** - 14/14 tests passent (100% de succÃ¨s)
+1. **âœ… Tests du contexte terminÃ©s** - 13/13 tests passent (100% de succÃ¨s)
+1. **âœ… Nettoyage du projet terminÃ©** - Suppression des fichiers temporaires et logs
+1. **Tests unitaires restants** - Modules utilitaires et spÃ©cifiques (voir section
    5.1.2)
 
 ______________________________________________________________________
@@ -1656,7 +1670,7 @@ ______________________________________________________________________
 **ðŸ”´ PrioritÃ© Haute (1-2 semaines) :**
 
 1. **`python/agresso/process.py` (33%)** - Ajouter des tests pour les lignes 23-49
-2. **`python/business/process/axe.py` (24%)** - Tester les mÃ©thodes de validation
+1. **`python/business/process/axe.py` (24%)** - Tester les mÃ©thodes de validation
    (lignes 20-37, 41-53)
 1. **`python/business/process/user.py` (22%)** - Tester les mÃ©thodes de validation
    (lignes 14-29, 33-50)
@@ -1664,9 +1678,9 @@ ______________________________________________________________________
 **ðŸŸ¡ PrioritÃ© Moyenne (1 mois) :**
 
 1. **`python/core/exceptions.py` (67%)** - Tester les cas d'erreur spÃ©cifiques
-2. **`python/core/memory_manager.py` (68%)** - Tester la gestion de la mÃ©moire
-3. **`python/n2f/process/axe.py` (52%)** - Tester les mÃ©thodes de traitement
-4. **`python/n2f/process/user.py` (54%)** - Tester les mÃ©thodes de traitement
+1. **`python/core/memory_manager.py` (68%)** - Tester la gestion de la mÃ©moire
+1. **`python/n2f/process/axe.py` (52%)** - Tester les mÃ©thodes de traitement
+1. **`python/n2f/process/user.py` (54%)** - Tester les mÃ©thodes de traitement
 
 **ðŸŽ¯ Objectif de Couverture :**
 
@@ -1705,10 +1719,10 @@ ______________________________________________________________________
 
 #### **Tests Ã  implÃ©menter (PRIORITÃ‰ MOYENNE) :**
 
-- [âœ…] **Tests des tokens** - Gestion des tokens d'authentification (`n2f/api/token.py`)
-  (11 tests)
-- [âœ…] **Tests des fonctions API de base** - retreive, upsert, delete (`n2f/api/base.py`)
-  (12 tests)
+- [âœ…] **Tests des tokens** - Gestion des tokens d'authentification
+  (`n2f/api/token.py`) (11 tests)
+- [âœ…] **Tests des fonctions API de base** - retreive, upsert, delete
+  (`n2f/api/base.py`) (12 tests)
 - [âœ…] **Tests du cache simple** - Cache helper pour les fonctions get\_\*
   (`helper/cache.py`) (19 tests)
 - [âœ…] **Tests de la base de donnÃ©es** - AccÃ¨s et requÃªtes Agresso
@@ -1719,8 +1733,8 @@ ______________________________________________________________________
 - [âœ…] **Tests des API spÃ©cifiques** - user.py, company.py, customaxe.py, project.py
   (`n2f/api/*.py`) (25 tests)
 - [âœ…] **Tests des modules de traitement** - n2f/process/\*.py (33 tests)
-- [âœ…] **Tests des modules business** - helper.py, axe_types.py, department.py (27 tests)
-  (`business/process/*.py`)
+- [âœ…] **Tests des modules business** - helper.py, axe_types.py, department.py (27
+  tests) (`business/process/*.py`)
 
 #### **Modules analysÃ©s sans tests :**
 
@@ -1784,8 +1798,10 @@ ______________________________________________________________________
 
 - [âœ…] **Fichiers de logs** - SupprimÃ© les fichiers dans `python/logs/` (ajoutÃ© au
   .gitignore)
-- [âœ…] **Fichiers de mÃ©triques** - SupprimÃ© les fichiers `metrics_*.json` dans la racine
-- [âœ…] **Fichiers de logs API** - SupprimÃ© les fichiers `api_logs_*.csv` dans la racine
+- [âœ…] **Fichiers de mÃ©triques** - SupprimÃ© les fichiers `metrics_*.json` dans la
+  racine
+- [âœ…] **Fichiers de logs API** - SupprimÃ© les fichiers `api_logs_*.csv` dans la
+  racine
 - [âœ…] **Cache** - NettoyÃ© le dossier `cache/` et `cache_persistent/`
 - [âœ…] **Fichiers temporaires** - SupprimÃ© les fichiers de test et temporaires
 
@@ -1933,9 +1949,9 @@ test_config.yaml
 ### **ðŸŽ¯ Recommandations prioritaires :**
 
 1. **âœ… Nettoyer les fichiers temporaires** (TERMINÃ‰ - 30 minutes)
-2. **âœ… AmÃ©liorer le .gitignore** (TERMINÃ‰ - 15 minutes)
-3. **CrÃ©er les tests prioritaires** (1-2 jours)
-4. **Documenter les modules manquants** (2-3 heures)
+1. **âœ… AmÃ©liorer le .gitignore** (TERMINÃ‰ - 15 minutes)
+1. **CrÃ©er les tests prioritaires** (1-2 jours)
+1. **Documenter les modules manquants** (2-3 heures)
 
 ______________________________________________________________________
 
@@ -1953,28 +1969,28 @@ ______________________________________________________________________
 ### **ðŸ† Modules entiÃ¨rement testÃ©s :**
 
 1. **Synchronizers** (31 tests) - EntitySynchronizer, UserSynchronizer, AxeSynchronizer
-2. **Configuration** (21 tests) - SyncConfig, ConfigLoader, SyncRegistry
-3. **Cache** (21 tests) - AdvancedCache avec persistance et mÃ©triques
-4. **MÃ©triques** (20 tests) - SyncMetrics et export de donnÃ©es
-5. **Retry** (34 tests) - RetryManager et stratÃ©gies de retry
-6. **Client API** (34 tests) - N2fApiClient (authentification, appels API, gestion
+1. **Configuration** (21 tests) - SyncConfig, ConfigLoader, SyncRegistry
+1. **Cache** (21 tests) - AdvancedCache avec persistance et mÃ©triques
+1. **MÃ©triques** (20 tests) - SyncMetrics et export de donnÃ©es
+1. **Retry** (34 tests) - RetryManager et stratÃ©gies de retry
+1. **Client API** (34 tests) - N2fApiClient (authentification, appels API, gestion
    d'erreur)
 1. **Payloads** (14 tests) - Construction des payloads N2F (user, project, axe)
-2. **Normalisation** (25 tests) - Normalisation des donnÃ©es Agresso/N2F
-3. **Fonctions helper** (14 tests) - to_bool, normalize_date_for_payload
-4. **Contexte** (13 tests) - SyncContext et gestion de configuration
-5. **Tokens** (11 tests) - Gestion des tokens d'authentification
-6. **Fonctions API de base** (12 tests) - retreive, upsert, delete
-7. **Cache simple** (19 tests) - Cache helper pour les fonctions get\_\*
-8. **Base de donnÃ©es** (13 tests) - AccÃ¨s et requÃªtes Agresso
-9. **API spÃ©cifiques** (25 tests) - user.py, company.py, customaxe.py, project.py
-10. **Modules de traitement** (33 tests) - n2f/process/\*.py
-11. **Modules business** (27 tests) - helper.py, axe_types.py, department.py
-12. **Orchestrator avancÃ©** (15 tests) - Tests avancÃ©s de l'orchestrateur
-13. **Registry avancÃ©** (12 tests) - Tests avancÃ©s du registry avec auto-dÃ©couverte
-14. **API Role et UserProfile** (8 tests) - Tests des API spÃ©cifiques
-15. **ScÃ©narios rÃ©els** (25 tests) - Tests de scÃ©narios rÃ©els de synchronisation
-16. **Tests d'intÃ©gration** (196 tests) - Tests d'intÃ©gration complets
+1. **Normalisation** (25 tests) - Normalisation des donnÃ©es Agresso/N2F
+1. **Fonctions helper** (14 tests) - to_bool, normalize_date_for_payload
+1. **Contexte** (13 tests) - SyncContext et gestion de configuration
+1. **Tokens** (11 tests) - Gestion des tokens d'authentification
+1. **Fonctions API de base** (12 tests) - retreive, upsert, delete
+1. **Cache simple** (19 tests) - Cache helper pour les fonctions get\_\*
+1. **Base de donnÃ©es** (13 tests) - AccÃ¨s et requÃªtes Agresso
+1. **API spÃ©cifiques** (25 tests) - user.py, company.py, customaxe.py, project.py
+1. **Modules de traitement** (33 tests) - n2f/process/\*.py
+1. **Modules business** (27 tests) - helper.py, axe_types.py, department.py
+1. **Orchestrator avancÃ©** (15 tests) - Tests avancÃ©s de l'orchestrateur
+1. **Registry avancÃ©** (12 tests) - Tests avancÃ©s du registry avec auto-dÃ©couverte
+1. **API Role et UserProfile** (8 tests) - Tests des API spÃ©cifiques
+1. **ScÃ©narios rÃ©els** (25 tests) - Tests de scÃ©narios rÃ©els de synchronisation
+1. **Tests d'intÃ©gration** (196 tests) - Tests d'intÃ©gration complets
 
 ### **ðŸŽ¯ Objectif atteint :**
 
