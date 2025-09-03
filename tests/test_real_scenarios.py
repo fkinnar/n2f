@@ -1,11 +1,5 @@
 import business.process.user as user_process
 import business.process.axe as axe_process
-from core import SyncContext
-from core.config import DatabaseConfig
-from core.config import ApiConfig
-from core.config import CacheConfig
-from core.config import ScopeConfig
-from core.config import ConfigLoader
 from core.orchestrator import SyncOrchestrator
 from core.orchestrator import ScopeExecutor
 from core.orchestrator import SyncResult
@@ -116,14 +110,18 @@ class TestRealScenariosBase(unittest.TestCase):
                         "Prenom",
                         "Entreprise",
                     ],
-                    "sync_function": "business.process.user_synchronizer.UserSynchronizer.sync_users",
+                    "sync_function": (
+                        "business.process.user_synchronizer.UserSynchronizer.sync_users"
+                    ),
                 },
                 "axes": {
                     "enabled": True,
                     "display_name": "Axes personnalisés",
                     "sql_filename": "get - agresso-n2f - customaxes.prod.sql",
                     "sql_column_filter": ["code", "name", "type"],
-                    "sync_function": "business.process.axe_synchronizer.AxeSynchronizer.sync_axes",
+                    "sync_function": (
+                        "business.process.axe_synchronizer.AxeSynchronizer.sync_axes"
+                    ),
                 },
             },
             "cache": {

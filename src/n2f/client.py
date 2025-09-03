@@ -41,7 +41,8 @@ class N2fApiClient:
             AuthenticationException: Si les credentials sont manquants
         """
         self.context = context
-        # Utilise la méthode get_config_value pour supporter l'ancien et le nouveau format
+        # Utilise la méthode get_config_value pour supporter l'ancien et le nouveau
+        # format
         n2f_config = context.get_config_value("n2f")
         self.base_url = (
             n2f_config.base_urls

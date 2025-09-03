@@ -202,12 +202,14 @@ class TestNormalize(unittest.TestCase):
     def test_normalize_n2f_users_mapping_case_insensitive(self):
         """Test que le mapping est insensible à la casse."""
         df = pd.DataFrame(self.n2f_users_data)
-        # Le mapping doit utiliser des clés en minuscules car la fonction convertit en minuscules
+        # Le mapping doit utiliser des clés en minuscules car la fonction convertit en
+        # minuscules
         profile_mapping = {"standard": "Standard", "premium": "Premium"}
 
         result = normalize_n2f_users(df, profile_mapping=profile_mapping)
 
-        # Vérification que le mapping fonctionne (les valeurs originales restent inchangées si pas dans le mapping)
+        # Vérification que le mapping fonctionne (les valeurs originales restent
+        # inchangées si pas dans le mapping)
         expected_profiles = ["Standard", DEFAULT_PROFILE, "Premium"]
         self.assertEqual(result[N2F_COL_PROFILE].tolist(), expected_profiles)
 
@@ -325,7 +327,8 @@ class TestNormalize(unittest.TestCase):
         df = pd.DataFrame(mapping_data)
         result = build_mapping(df)
 
-        # Vérification que les espaces sont gérés correctement (les clés sont en minuscules et sans espaces)
+        # Vérification que les espaces sont gérés correctement (les clés sont en
+        # minuscules et sans espaces)
         # La fonction strip() supprime les espaces des clés et des valeurs
         expected_mapping = {"standard": "Standard", "standaard": "Standard"}
         self.assertEqual(result, expected_mapping)

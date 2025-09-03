@@ -100,7 +100,8 @@ class TestRegistryAdvanced(unittest.TestCase):
 
             def mock_auto_discover(modules_path="business.process"):
                 print(
-                    f"Warning: Could not import {modules_path} for auto-discovery: Module not found"
+                    f"Warning: Could not import {modules_path} for auto-discovery: "
+                    f"Module not found"
                 )
 
             # Remplacer temporairement la méthode
@@ -111,7 +112,8 @@ class TestRegistryAdvanced(unittest.TestCase):
 
                 # Vérifier que l'erreur est affichée
                 mock_print.assert_called_with(
-                    "Warning: Could not import nonexistent.module for auto-discovery: Module not found"
+                    "Warning: Could not import nonexistent.module for auto-discovery: "
+                    "Module not found"
                 )
             finally:
                 # Restaurer la méthode originale
@@ -127,7 +129,8 @@ class TestRegistryAdvanced(unittest.TestCase):
             def mock_auto_discover(modules_path="business.process"):
                 if modules_path == "business.process":
                     print(
-                        "Warning: Could not import business.process.test_module for auto-discovery: Submodule not found"
+                        "Warning: Could not import business.process.test_module for "
+                        "auto-discovery: Submodule not found"
                     )
 
             # Remplacer temporairement la méthode
@@ -138,7 +141,8 @@ class TestRegistryAdvanced(unittest.TestCase):
 
                 # Vérifier que l'erreur est affichée
                 mock_print.assert_called_with(
-                    "Warning: Could not import business.process.test_module for auto-discovery: Submodule not found"
+                    "Warning: Could not import business.process.test_main for "
+                    "auto-discovery: Submodule not found"
                 )
             finally:
                 # Restaurer la méthode originale
@@ -159,7 +163,8 @@ class TestRegistryAdvanced(unittest.TestCase):
 
             self.registry._scan_module_for_scopes(mock_module, "test.module")
 
-            # Vérifier que le scope n'a pas été enregistré car le module était déjà découvert
+            # Vérifier que le scope n'a pas été enregistré car le module était déjà
+            # découvert
             self.assertFalse(self.registry.is_registered("users"))
 
     def test_is_sync_function_valid(self):
@@ -205,7 +210,9 @@ class TestRegistryAdvanced(unittest.TestCase):
         self.assertIsNone(result)
 
     def test_load_from_config_with_sync_function(self):
-        """Test de chargement depuis une configuration avec fonction de synchronisation."""
+        """
+        Test de chargement depuis une configuration avec fonction de synchronisation.
+        """
         config_data = {
             "scopes": {
                 "users": {
@@ -232,7 +239,9 @@ class TestRegistryAdvanced(unittest.TestCase):
         self.assertTrue(entry.enabled)
 
     def test_load_from_config_without_sync_function(self):
-        """Test de chargement depuis une configuration sans fonction de synchronisation."""
+        """
+        Test de chargement depuis une configuration sans fonction de synchronisation.
+        """
         config_data = {
             "scopes": {"users": {"sql_filename": "users.sql", "entity_type": "user"}}
         }

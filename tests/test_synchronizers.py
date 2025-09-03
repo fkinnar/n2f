@@ -1,8 +1,4 @@
 import n2f.api_result
-import business.process.user as user_process
-import business.process.axe as axe_process
-import n2f.process.user as user_process
-import n2f.process.axe as axe_process
 from business.process.base_synchronizer import EntitySynchronizer
 
 """

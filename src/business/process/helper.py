@@ -63,8 +63,10 @@ def log_error(
         ...     # Opération qui peut échouer
         ...     pass
         ... except Exception as e:
-        ...     log_error("USERS", "CREATE", "john@example.com", e, "Payload validation")
-        [ERROR] [USERS] [CREATE] [john@example.com] - Payload validation - Invalid email format
+        ...     log_error("USERS",
+     "CREATE", "john@example.com", e, "Payload validation")
+        [ERROR] [USERS] [CREATE] [john@example.com] - Payload validation - Invalid
+    email format
     """
     context_str = f" - {context}" if context else ""
     print(f"[ERROR] [{scope}] [{action}] [{entity_id}]{context_str} - {str(error)}")

@@ -71,7 +71,10 @@ class TestSyncAgressoN2F(unittest.TestCase):
         mock_config_loader,
         mock_parser,
     ):
-        """Test the main function flow with no action arguments, defaulting to create/update."""
+        """
+        Test the main function flow with no action arguments, defaulting to
+        create/update.
+        """
         # Setup mocks
         mock_args = MagicMock()
         mock_args.create = False

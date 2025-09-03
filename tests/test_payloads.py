@@ -155,7 +155,9 @@ class TestPayloads(unittest.TestCase):
         self.assertEqual(payload[N2F_COL_COMPANY], company_id)
 
     def test_create_user_upsert_payload_with_missing_optional_fields(self):
-        """Test la création d'un payload utilisateur avec des champs optionnels manquants."""
+        """
+        Test la création d'un payload utilisateur avec des champs optionnels manquants.
+        """
         # Données utilisateur avec champs manquants
         minimal_user = {
             AGRESSO_COL_EMAIL: "minimal@example.com",

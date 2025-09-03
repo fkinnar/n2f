@@ -2,8 +2,6 @@ from unittest.mock import Mock, patch, MagicMock
 
 import agresso.database as agresso_db
 from core import SyncContext
-from core.config import DatabaseConfig
-from core.config import ApiConfig
 
 """
 Tests unitaires pour le module de contexte.
@@ -15,7 +13,6 @@ Ce module teste les fonctionnalités du contexte de synchronisation :
 """
 
 import unittest
-from unittest.mock import Mock, patch
 import argparse
 import sys
 import os
@@ -256,7 +253,8 @@ class TestSyncContext(unittest.TestCase):
         result = context.get_config_value("nonexistent_key", default_value)
         self.assertEqual(result, default_value)
 
-        # Test que la clé "cache" retourne bien le Mock (car elle existe dans SyncConfig)
+        # Test que la clé "cache" retourne bien le Mock (car elle existe dans
+        # SyncConfig)
         cache_result = context.get_config_value("cache")
         self.assertIsInstance(cache_result, Mock)
 
@@ -351,7 +349,8 @@ class TestSyncContext(unittest.TestCase):
         self.assertIsNotNone(context.client_id)
         self.assertIsNotNone(context.client_secret)
 
-        # Vérifier que les attributs peuvent être modifiés (dataclass mutable par défaut)
+        # Vérifier que les attributs peuvent être modifiés (dataclass mutable par
+        # défaut)
         # Ce test vérifie que la classe fonctionne correctement
         original_args = context.args
         context.args = Mock(spec=argparse.Namespace)

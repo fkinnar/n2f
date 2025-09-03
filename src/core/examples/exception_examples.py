@@ -152,7 +152,9 @@ def example_api_function() -> str:
 # Exemple 8: Utilisation du décorateur pour la synchronisation
 @handle_sync_exceptions
 def example_sync_function() -> str:
-    """Exemple de fonction de synchronisation avec décorateur de gestion d'exceptions."""
+    """
+    Exemple de fonction de synchronisation avec décorateur de gestion d'exceptions.
+    """
     # Cette fonction sera automatiquement wrapper avec gestion d'exceptions
     return "Synchronization successful"
 

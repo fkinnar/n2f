@@ -61,7 +61,8 @@ class TestOperationMetrics(unittest.TestCase):
         )
 
         # Le calcul de la durée utilise time.time() directement dans la propriété
-        # On ne peut pas facilement mocker cela, donc on teste juste que la propriété fonctionne
+        # On ne peut pas facilement mocker cela, donc on teste juste que la
+        # propriété fonctionne
         duration = metrics.duration_seconds
         self.assertIsInstance(duration, float)
         self.assertGreater(duration, 0)

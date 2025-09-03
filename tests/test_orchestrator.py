@@ -1,12 +1,3 @@
-from core import SyncContext
-from core.config import DatabaseConfig
-from core.config import ApiConfig
-from core.config import ConfigLoader
-from core.orchestrator import SyncOrchestrator
-from core.orchestrator import ContextBuilder
-from core.orchestrator import ScopeExecutor
-from core.orchestrator import SyncResult
-
 """
 Tests unitaires pour l'orchestrateur principal.
 
@@ -633,8 +624,8 @@ class TestSyncOrchestrator(unittest.TestCase):
         self.orchestrator.registry.get_enabled_scopes.return_value = []
 
         # Exécuter l'orchestrateur
-        # Le code gère les exceptions correctement, donc on teste juste qu'il ne plante pas
-        # et qu'il affiche le message d'erreur approprié
+        # Le code gère les exceptions correctement, donc on teste juste qu'il ne
+        # plante pas et qu'il affiche le message d'erreur approprié
         try:
             self.orchestrator.run()
         except Exception:

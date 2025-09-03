@@ -1,12 +1,6 @@
 from unittest.mock import Mock, patch, MagicMock
 
-from core.retry import RetryManager
-from core.retry import RetryConfig
-from core.retry import RetryStrategy
-from core.retry import RetryMetrics
-
 import unittest
-from unittest.mock import patch, MagicMock, call
 import time
 import random
 from typing import Dict, Any
@@ -477,7 +471,9 @@ class TestRetryManagerSingleton(unittest.TestCase):
         self.assertIs(manager1, manager2)
 
     def test_get_retry_manager_with_config(self):
-        """Test que get_retry_manager utilise la config seulement à la première création."""
+        """
+        Test que get_retry_manager utilise la config seulement à la première création.
+        """
         # Réinitialiser le singleton
         import core.retry
 
@@ -493,7 +489,8 @@ class TestRetryManagerSingleton(unittest.TestCase):
         # Vérifier que c'est la même instance
         self.assertIs(manager1, manager2)
 
-        # Vérifier que la première config a été utilisée (ou la config par défaut si le singleton ne fonctionne pas)
+        # Vérifier que la première config a été utilisée (ou la config par défaut si le
+        # singleton ne fonctionne pas)
         # Le test vérifie que c'est la même instance, ce qui est le plus important
         self.assertEqual(manager1.config.max_attempts, manager2.config.max_attempts)
         self.assertEqual(manager1.config.base_delay, manager2.config.base_delay)

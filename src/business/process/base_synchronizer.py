@@ -36,16 +36,17 @@ class EntitySynchronizer(ABC):
         status_col: str = "created",
     ) -> Tuple[pd.DataFrame, str]:
         """
-        Crée les nouvelles entités dans N2F.
+            Crée les nouvelles entités dans N2F.
 
-        Args:
-            df_agresso: DataFrame des données Agresso
-            df_n2f: DataFrame des données N2F existantes
-            df_n2f_companies: DataFrame des entreprises N2F (optionnel)
-            status_col: Nom de la colonne de statut
+            Args:
+                df_agresso: DataFrame des données Agresso
+                df_n2f: DataFrame des données N2F existantes
+                df_n2f_companies: DataFrame des entreprises N2F (optionnel)
+                status_col: Nom de la colonne de statut
 
-        Returns:
-            Tuple[DataFrame, str]: DataFrame des résultats et nom de la colonne de statut
+            Returns:
+                Tuple[DataFrame, str]: DataFrame des résultats et nom de la colonne de
+        statut
         """
         # Identifier les entités à créer (présentes dans Agresso mais pas dans N2F)
         entities_to_create: pd.DataFrame = self._get_entities_to_create(
@@ -91,16 +92,17 @@ class EntitySynchronizer(ABC):
         status_col: str = "updated",
     ) -> Tuple[pd.DataFrame, str]:
         """
-        Met à jour les entités existantes dans N2F.
+            Met à jour les entités existantes dans N2F.
 
-        Args:
-            df_agresso: DataFrame des données Agresso
-            df_n2f: DataFrame des données N2F existantes
-            df_n2f_companies: DataFrame des entreprises N2F (optionnel)
-            status_col: Nom de la colonne de statut
+            Args:
+                df_agresso: DataFrame des données Agresso
+                df_n2f: DataFrame des données N2F existantes
+                df_n2f_companies: DataFrame des entreprises N2F (optionnel)
+                status_col: Nom de la colonne de statut
 
-        Returns:
-            Tuple[DataFrame, str]: DataFrame des résultats et nom de la colonne de statut
+            Returns:
+                Tuple[DataFrame, str]: DataFrame des résultats et nom de la colonne de
+        statut
         """
         if df_agresso.empty or df_n2f.empty:
             return pd.DataFrame(), status_col
@@ -167,16 +169,17 @@ class EntitySynchronizer(ABC):
         status_col: str = "deleted",
     ) -> Tuple[pd.DataFrame, str]:
         """
-        Supprime les entités obsolètes de N2F.
+            Supprime les entités obsolètes de N2F.
 
-        Args:
-            df_agresso: DataFrame des données Agresso
-            df_n2f: DataFrame des données N2F existantes
-            df_n2f_companies: DataFrame des entreprises N2F (optionnel)
-            status_col: Nom de la colonne de statut
+            Args:
+                df_agresso: DataFrame des données Agresso
+                df_n2f: DataFrame des données N2F existantes
+                df_n2f_companies: DataFrame des entreprises N2F (optionnel)
+                status_col: Nom de la colonne de statut
 
-        Returns:
-            Tuple[DataFrame, str]: DataFrame des résultats et nom de la colonne de statut
+            Returns:
+                Tuple[DataFrame, str]: DataFrame des résultats et nom de la colonne de
+        statut
         """
         if df_n2f.empty:
             return pd.DataFrame(), status_col

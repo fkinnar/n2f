@@ -160,7 +160,8 @@ class SyncRegistry:
                         self._scan_module_for_scopes(submodule, submodule_path)
                     except ImportError as e:
                         print(
-                            f"Warning: Could not import {submodule_path} for auto - discovery: {e}"
+                            f"Warning: Could not import {submodule_path} for "
+                            f"auto-discovery: {e}"
                         )
 
         except ImportError as e:
@@ -189,7 +190,8 @@ class SyncRegistry:
                         enabled=True,
                         module_path=module_path,
                     )
-                # Ne pas mettre à jour les scopes existants pour éviter d'écraser les configurations
+
+    # Ne pas mettre à jour les scopes existants pour éviter d'écraser les configurations
 
     def _is_sync_function(self, obj: Any) -> bool:
         """Vérifie si un objet est une fonction de synchronisation."""

@@ -22,16 +22,18 @@ from business.constants import (
 
 def normalize_agresso_users(df_users: pd.DataFrame) -> pd.DataFrame:
     """
-    Normalise les utilisateurs Agresso en s'assurant que les colonnes nécessaires sont présentes.
+    Normalise les utilisateurs Agresso en s'assurant que les colonnes nécessaires sont
+        présentes.
 
-    Args:
-        df_users: DataFrame contenant les utilisateurs Agresso
+        Args:
+            df_users: DataFrame contenant les utilisateurs Agresso
 
-    Returns:
-        DataFrame normalisé
+        Returns:
+            DataFrame normalisé
 
-    Raises:
-        ValueError: Si le DataFrame est vide ou si les colonnes essentielles sont manquantes
+        Raises:
+            ValueError: Si le DataFrame est vide ou si les colonnes essentielles sont
+        manquantes
     """
     if df_users.empty:
         raise ValueError("Le DataFrame des utilisateurs Agresso ne peut pas être vide")
@@ -83,19 +85,21 @@ def normalize_n2f_users(
     role_mapping: Optional[Dict[str, str]] = None,
 ) -> pd.DataFrame:
     """
-    Normalise les utilisateurs N2F en s'assurant que les colonnes nécessaires sont présentes.
-    Remplace les valeurs de 'profile' par leur équivalent français.
+    Normalise les utilisateurs N2F en s'assurant que les colonnes nécessaires sont
+        présentes.
+        Remplace les valeurs de 'profile' par leur équivalent français.
 
-    Args:
-        df_users: DataFrame contenant les utilisateurs N2F
-        profile_mapping: Mapping optionnel pour les profils
-        role_mapping: Mapping optionnel pour les rôles
+        Args:
+            df_users: DataFrame contenant les utilisateurs N2F
+            profile_mapping: Mapping optionnel pour les profils
+            role_mapping: Mapping optionnel pour les rôles
 
-    Returns:
-        DataFrame normalisé
+        Returns:
+            DataFrame normalisé
 
-    Raises:
-        ValueError: Si le DataFrame est vide ou si les colonnes essentielles sont manquantes
+        Raises:
+            ValueError: Si le DataFrame est vide ou si les colonnes essentielles sont
+        manquantes
     """
     if df_users.empty:
         raise ValueError("Le DataFrame des utilisateurs N2F ne peut pas être vide")
@@ -140,7 +144,8 @@ def normalize_n2f_users(
 
 def build_mapping(df: pd.DataFrame) -> Dict[str, str]:
     """
-    Construit un mapping de toutes les valeurs de profile (toutes langues) vers la valeur française.
+    Construit un mapping de toutes les valeurs de profile (toutes langues) vers la
+    valeur française.
 
     Args:
         df: DataFrame contenant les données de mapping
@@ -149,7 +154,8 @@ def build_mapping(df: pd.DataFrame) -> Dict[str, str]:
         Dictionnaire de mapping des valeurs vers la valeur française
 
     Raises:
-        ValueError: Si le DataFrame est vide ou si les colonnes essentielles sont manquantes
+        ValueError: Si le DataFrame est vide ou si les colonnes essentielles sont
+        manquantes
     """
     if df.empty:
         return {}

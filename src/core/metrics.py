@@ -397,21 +397,24 @@ class SyncMetrics:
             f"réussies ({summary['summary']['success_rate'] * 100:.1f}%)"
         )
         print(
-            f"Enregistrements traités: {summary['summary']['total_records_processed']:,}"
+            f"Enregistrements traités: "
+            f"{summary['summary']['total_records_processed']:,}"
         )
         print(
-            f"Performance: {summary['summary']['average_records_per_second']:.1f} enregistrements / seconde"
+            f"Performance: {summary['summary']['average_records_per_second']:.1f} "
+            f"enregistrements / seconde"
         )
 
         # Performance
         print("\nPERFORMANCE:")
         print(
-            f"   - Durée moyenne: {summary['performance']['average_duration_seconds']:.2f}s"
+            f"   - Durée moyenne: "
+            f"{summary['performance']['average_duration_seconds']:.2f}s"
         )
         print(f"   - Durée max: {summary['performance']['max_duration_seconds']:.2f}s")
         print(f"   - Appels API: {summary['performance']['total_api_calls']}")
         print(
-            f"   - Cache hit rate: {summary['performance']['cache_hit_rate'] * 100:.1f}%"
+            f"- Cache hit rate: {summary['performance']['cache_hit_rate'] * 100:.1f}%"
         )
 
         # Mémoire
@@ -430,7 +433,8 @@ class SyncMetrics:
                 else 0
             )
             print(
-                f"   - {scope}: {scope_data['success']}/{scope_data['total']} ({success_rate:.1f}%)"
+                f"   - {scope}: {scope_data['success']}/{scope_data['total']} "
+                f"({success_rate:.1f}%)"
             )
 
         # Erreurs

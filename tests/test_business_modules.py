@@ -78,7 +78,8 @@ class TestBusinessHelper(unittest.TestCase):
         )
 
         mock_print.assert_called_once_with(
-            "[ERROR] [PROJECTS] [UPDATE] [PROJ001] - Payload validation - Validation failed"
+            "[ERROR] [PROJECTS] [UPDATE] [PROJ001] - "
+            "Payload validation - Validation failed"
         )
 
     def test_has_payload_changes_no_changes(self) -> None:

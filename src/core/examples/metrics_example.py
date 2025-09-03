@@ -215,7 +215,8 @@ def example_export_and_analysis() -> None:
         f"   • Taux de succès global: {summary['summary']['success_rate'] * 100:.1f}%"
     )
     print(
-        f"   • Performance moyenne: {summary['summary']['average_records_per_second']:.1f} enregistrements/s"
+        f"   • Performance moyenne: "
+        f"{summary['summary']['average_records_per_second']:.1f} enregistrements/s"
     )
 
 

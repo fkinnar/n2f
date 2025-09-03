@@ -132,7 +132,8 @@ class ScopeExecutor:
                 )
 
             print(
-                f"--- Starting synchronization for scope : {scope_name} ({scope_config.display_name}) ---"
+                f"--- Starting synchronization for scope : {scope_name} "
+                f"({scope_config.display_name}) ---"
             )
 
             # Exécution de la synchronisation

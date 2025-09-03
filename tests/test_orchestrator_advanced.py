@@ -359,7 +359,8 @@ cache:
 
         selected_scopes = self.orchestrator._get_selected_scopes()
 
-        # L'ordre n'est pas important, vérifier seulement que les deux scopes sont présents
+        # L'ordre n'est pas important, vérifier seulement que les deux scopes sont
+        # présents
         self.assertEqual(set(selected_scopes), {"users", "axes"})
 
     @patch("core.orchestrator.get_registry")
@@ -379,7 +380,8 @@ cache:
         selected_scopes = self.orchestrator._get_selected_scopes()
 
         # Vérifier que les scopes retournés sont ceux attendus
-        # Note: Le test vérifie que les scopes retournés correspondent aux scopes attendus
+        # Note: Le test vérifie que les scopes retournés correspondent aux scopes
+        # attendus
         # même si l'ordre peut être différent
         self.assertEqual(set(selected_scopes), set(expected_scopes))
 

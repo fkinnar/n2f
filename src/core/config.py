@@ -84,7 +84,8 @@ class SyncConfig:
 
     def _register_default_scopes_if_needed(self, registry: Any) -> None:
         """Enregistre les scopes par défaut s'ils ne sont pas encore découverts."""
-        # Import des fonctions de synchronisation ici pour éviter les imports circulaires
+        # Import des fonctions de synchronisation ici pour éviter les imports
+        # circulaires
         from business.process import (
             synchronize_users,
             synchronize_projects,

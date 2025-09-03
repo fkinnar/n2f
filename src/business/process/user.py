@@ -43,7 +43,10 @@ def _load_agresso_users(context: SyncContext, sql_filename: str) -> pd.DataFrame
 
 
 def _load_n2f_data(n2f_client: N2fApiClient) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """Charge toutes les données nécessaires depuis N2F (utilisateurs, rôles, profils, entreprises)."""
+    """
+    Charge toutes les données nécessaires depuis N2F (utilisateurs, rôles, profils,
+    entreprises).
+    """
     df_roles = n2f_client.get_roles()
     print(f"Number of N2F roles loaded : {len(df_roles)}")
 

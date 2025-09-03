@@ -1,10 +1,5 @@
 from unittest.mock import Mock, patch, MagicMock
 
-from core.exceptions import SyncException
-from core.exceptions import ApiException
-from core.exceptions import ValidationException
-from core.exceptions import ConfigurationException
-
 """
 Tests unitaires pour la hiérarchie d'exceptions personnalisées.
 """

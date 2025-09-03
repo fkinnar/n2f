@@ -100,7 +100,7 @@ def run_coverage_analysis():
     print("\nRésumé des tests:")
     print(f"  Durée totale : {duration:.2f} secondes")
     print(
-        f"  Tests réussis : {result.testsRun - len(result.failures) - len(result.errors)}"
+        f"Tests réussis : {result.testsRun - len(result.failures) - len(result.errors)}"
     )
     print(f"  Échecs : {len(result.failures)}")
     print(f"  Erreurs : {len(result.errors)}")

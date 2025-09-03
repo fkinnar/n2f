@@ -102,7 +102,8 @@ class MemoryManager:
         if self.metrics.current_usage_mb + size_mb > self.max_memory_mb:
             print(
                 f"Impossible d'enregistrer {name} - Mémoire insuffisante "
-                f"({self.metrics.current_usage_mb:.1f}MB + {size_mb:.1f}MB > {self.max_memory_mb}MB)"
+                f"({self.metrics.current_usage_mb:.1f}MB + {size_mb:.1f}MB > "
+                f"{self.max_memory_mb}MB)"
             )
             return False
 
@@ -249,7 +250,8 @@ class MemoryManager:
         )
         print(f"Pic d'utilisation: {mm['peak_usage_mb']:.1f}MB")
         print(
-            f"DataFrames actifs: {mm['active_dataframes']} / {mm['total_dataframes']} total"
+            f"DataFrames actifs: {mm['active_dataframes']} / "
+            f"{mm['total_dataframes']} total"
         )
         print(
             f"Mémoire libérée: {mm['freed_memory_mb']:.1f}MB "

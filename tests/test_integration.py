@@ -1,13 +1,7 @@
 import n2f.client
 import business.process.user as user_process
 import business.process.axe as axe_process
-from core import SyncContext
 import agresso.database as agresso_db
-from core.config import DatabaseConfig
-from core.config import ApiConfig
-from core.config import CacheConfig
-from core.config import ScopeConfig
-from core.config import ConfigLoader
 from core.orchestrator import SyncOrchestrator
 from core.orchestrator import ContextBuilder
 from core.orchestrator import ScopeExecutor
@@ -116,14 +110,18 @@ class TestIntegrationBase(unittest.TestCase):
                     "display_name": "Users",
                     "sql_filename": "get - agresso-n2f - users.dev.sql",
                     "sql_column_filter": ["user_id", "username", "email"],
-                    "sync_function": "business.process.user_synchronizer.UserSynchronizer.sync_users",
+                    "sync_function": (
+                        "business.process.user_synchronizer.UserSynchronizer.sync_users"
+                    ),
                 },
                 "axes": {
                     "enabled": True,
                     "display_name": "Custom Axes",
                     "sql_filename": "get - agresso-n2f - customaxes.dev.sql",
                     "sql_column_filter": ["axe_id", "axe_name", "axe_type"],
-                    "sync_function": "business.process.axe_synchronizer.AxeSynchronizer.sync_axes",
+                    "sync_function": (
+                        "business.process.axe_synchronizer.AxeSynchronizer.sync_axes"
+                    ),
                 },
             },
             "cache": {
@@ -208,14 +206,16 @@ class TestEndToEndIntegration(TestIntegrationBase):
         orchestrator.run()
 
         # Vérifications
-        # ConfigLoader est appelé 2 fois : une fois dans ContextBuilder.build() et une fois dans run()
+        # ConfigLoader est appelé 2 fois : une fois dans ContextBuilder.build() et
+        # une fois dans run()
         self.assertEqual(mock_config_loader.call_count, 2)
         mock_config_loader.assert_any_call(self.test_config_path)
         mock_get_cache.assert_called_once()
         mock_get_memory_manager.assert_called_once()
         mock_get_metrics.assert_called_once()
         mock_get_retry_manager.assert_called_once()
-        # get_registry est appelé 2 fois : une fois dans ContextBuilder.build() et une fois dans SyncOrchestrator.__init__()
+        # get_registry est appelé 2 fois : une fois dans ContextBuilder.build() et
+        # une fois dans SyncOrchestrator.__init__()
         self.assertEqual(mock_get_registry.call_count, 2)
         mock_sync_context.assert_called_once()
         mock_scope_executor.assert_called_once_with(mock_context)

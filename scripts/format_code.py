@@ -39,7 +39,8 @@ def run_black(check_only=False):
         else:
             if check_only:
                 print(
-                    "❌ Certains fichiers ne sont pas formatés selon les standards Black."
+                    "❌ Certains fichiers ne sont pas formatés selon les standards "
+                    "Black."
                 )
                 print("Exécutez 'python scripts/format_code.py' pour les formater.")
             else:

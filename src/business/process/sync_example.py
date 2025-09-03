@@ -32,7 +32,8 @@ def sync_users_with_new_classes(
         sandbox: Mode sandbox ou production
 
     Returns:
-        Tuple[Tuple[pd.DataFrame, str], Tuple[pd.DataFrame, str], Tuple[pd.DataFrame, str]]:
+        Tuple[Tuple[pd.DataFrame, str], Tuple[pd.DataFrame, str], Tuple[pd.DataFrame,
+    str]]:
         Résultats des opérations (create, update, delete)
     """
     # Créer le synchroniseur d'utilisateurs
@@ -82,7 +83,8 @@ def sync_axes_with_new_classes(
         scope: Scope de synchronisation
 
     Returns:
-        Tuple[Tuple[pd.DataFrame, str], Tuple[pd.DataFrame, str], Tuple[pd.DataFrame, str]]:
+        Tuple[Tuple[pd.DataFrame, str], Tuple[pd.DataFrame, str], Tuple[pd.DataFrame,
+    str]]:
         Résultats des opérations (create, update, delete)
     """
     # Créer le synchroniseur d'axes
@@ -111,11 +113,13 @@ def sync_axes_with_new_classes(
 # Comparaison avec l'ancien code :
 """
 ANCIEN CODE (user.py):
-def create_users(df_agresso_users, df_n2f_users, df_n2f_companies, n2f_client, sandbox, status_col="created"):
+def create_users(df_agresso_users,
+     df_n2f_users, df_n2f_companies, n2f_client, sandbox, status_col="created"):
     # 30+ lignes de code avec gestion d'erreur manuelle
     # Logique répétée pour chaque opération
 
-def update_users(df_agresso_users, df_n2f_users, df_n2f_companies, n2f_client, sandbox, status_col="updated"):
+def update_users(df_agresso_users,
+     df_n2f_users, df_n2f_companies, n2f_client, sandbox, status_col="updated"):
     # 40+ lignes de code avec gestion d'erreur manuelle
     # Logique répétée pour chaque opération
 
@@ -125,9 +129,15 @@ def delete_users(df_agresso_users, df_n2f_users, n2f_client, status_col="deleted
 
 NOUVEAU CODE:
 user_sync = UserSynchronizer(n2f_client, sandbox)
-created_users, created_col = user_sync.create_entities(df_agresso_users, df_n2f_users, df_n2f_companies)
-updated_users, updated_col = user_sync.update_entities(df_agresso_users, df_n2f_users, df_n2f_companies)
-deleted_users, deleted_col = user_sync.delete_entities(df_agresso_users, df_n2f_users, df_n2f_companies)
+created_users,
+     created_col = user_sync.create_entities(df_agresso_users,
+     df_n2f_users, df_n2f_companies)
+updated_users,
+     updated_col = user_sync.update_entities(df_agresso_users,
+     df_n2f_users, df_n2f_companies)
+deleted_users,
+     deleted_col = user_sync.delete_entities(df_agresso_users,
+     df_n2f_users, df_n2f_companies)
 
 AVANTAGES:
 ✅ Code plus concis et lisible

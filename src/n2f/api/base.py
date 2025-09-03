@@ -25,7 +25,8 @@ def retreive(
         simulate (bool): Si True, simule la récupération sans l'exécuter.
 
     Returns:
-        List[Dict[str, Any]]: Réponse brute de l'API (incluant la clé "response" avec les données).
+        List[Dict[str,
+     Any]]: Réponse brute de l'API (incluant la clé "response" avec les données).
 
     Raises:
         Exception: En cas d'erreur HTTP ou de parsing.
@@ -102,7 +103,8 @@ def delete(
         endpoint (str): Point de terminaison de l'API (ex: "/users").
         client_id (str): ID du client pour l'API N2F.
         client_secret (str): Secret du client pour l'API N2F.
-        id (str): Identifiant de l'objet à supprimer (ex: adresse e - mail pour un utilisateur).
+        id (str): Identifiant de l'objet à supprimer (ex: adresse e -
+    mail pour un utilisateur).
         simulate (bool): Si True, simule la suppression sans l'exécuter.
 
     Returns:

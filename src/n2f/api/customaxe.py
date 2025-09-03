@@ -25,7 +25,8 @@ def get_customaxes(
         simulate (bool): Si True, simule la récupération sans l'exécuter.
 
     Returns:
-        List[Dict[str, Any]]: Liste de dictionnaires représentant les axes personnalisés.
+        List[Dict[str, Any]]: Liste de dictionnaires représentant les axes
+    personnalisés.
 
     Raises:
         Exception: En cas d'erreur HTTP ou de parsing.
@@ -73,7 +74,8 @@ def get_customaxes_values(
         simulate (bool): Si True, simule la récupération sans l'exécuter.
 
     Returns:
-        List[Dict[str, Any]]: Liste de dictionnaires représentant les valeurs de l'axe personnalisé.
+        List[Dict[str, Any]]: Liste de dictionnaires représentant les valeurs de
+        l'axe personnalisé.
 
     Raises:
         Exception: En cas d'erreur HTTP ou de parsing.

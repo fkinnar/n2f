@@ -307,7 +307,8 @@ class TestEnsureManagerExists(unittest.TestCase):
                 self.df_n2f_companies,
                 True,
             )
-            # Le code actuel ne gère pas la récursion circulaire, donc il retourne l'email
+            # Le code actuel ne gère pas la récursion circulaire, donc il retourne
+            # l'email
             self.assertEqual(result, "manager@test.com")
 
     def test_ensure_manager_exists_create_failure(self):

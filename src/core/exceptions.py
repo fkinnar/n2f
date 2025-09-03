@@ -177,7 +177,9 @@ class ConfigurationException(SyncException):
         self.config_file = config_file
 
     def to_dict(self) -> Dict[str, Any]:
-        """Convertit l'exception en dictionnaire avec les informations de configuration."""
+        """
+        Convertit l'exception en dictionnaire avec les informations de configuration.
+        """
         base_dict = super().to_dict()
         base_dict.update(
             {"config_key": self.config_key, "config_file": self.config_file}
@@ -216,7 +218,9 @@ class DatabaseException(SyncException):
         self.table = table
 
     def to_dict(self) -> Dict[str, Any]:
-        """Convertit l'exception en dictionnaire avec les informations de base de données."""
+        """
+        Convertit l'exception en dictionnaire avec les informations de base de données.
+        """
         base_dict = super().to_dict()
         base_dict.update({"sql_query": self.sql_query, "table": self.table})
         return base_dict
@@ -253,7 +257,9 @@ class AuthenticationException(SyncException):
         self.credentials_type = credentials_type
 
     def to_dict(self) -> Dict[str, Any]:
-        """Convertit l'exception en dictionnaire avec les informations d'authentification."""
+        """
+        Convertit l'exception en dictionnaire avec les informations d'authentification.
+        """
         base_dict = super().to_dict()
         base_dict.update(
             {"service": self.service, "credentials_type": self.credentials_type}

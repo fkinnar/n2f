@@ -19,7 +19,10 @@ class SyncContext:
     client_secret: Union[str, None]
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """Récupère une valeur de configuration de manière compatible avec l'ancien et le nouveau format."""
+        """
+        Récupère une valeur de configuration de manière compatible avec l'ancien et le
+        nouveau format.
+        """
         # Import local pour éviter l'import circulaire
         from core import SyncConfig
 

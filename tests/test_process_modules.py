@@ -348,7 +348,8 @@ class TestAxeProcess(unittest.TestCase):
             False,
         )
 
-        # Le DataFrame peut être vide si has_payload_changes retourne False pour tous les éléments
+        # Le DataFrame peut être vide si has_payload_changes retourne False pour
+        # tous les éléments
         # Vérifions plutôt que la fonction s'exécute sans erreur
         self.assertEqual(status_col, "updated")
 

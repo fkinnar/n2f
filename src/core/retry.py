@@ -175,7 +175,8 @@ class RetryManager:
                 if self.config.log_retries and attempt > 1:
                     self.logger.log(
                         self.config.log_level,
-                        f"Tentative {attempt}/{self.config.max_attempts} pour {operation_name}",
+                        f"Tentative {attempt}/{self.config.max_attempts} pour "
+                        f"{operation_name}",
                     )
 
                 result = func(*args, **kwargs)
