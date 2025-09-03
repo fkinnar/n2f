@@ -4,10 +4,23 @@ Ce projet utilise des hooks Git pre-commit pour assurer la qualité du code auto
 
 ## 🚀 Installation
 
-Les hooks sont déjà installés dans ce projet. Si vous clonez le projet sur une nouvelle machine, installez-les avec :
+### Installation des dépendances de développement
+
+Si vous clonez le projet sur une nouvelle machine, installez d'abord toutes les dépendances de développement :
 
 ```bash
-python -m pip install pre-commit
+# Option 1: Via pyproject.toml (recommandé)
+python -m pip install -e ".[dev]"
+
+# Option 2: Via requirements-dev.txt
+python -m pip install -r requirements-dev.txt
+```
+
+### Installation des hooks pre-commit
+
+Une fois les dépendances installées, installez les hooks :
+
+```bash
 pre-commit install
 ```
 
