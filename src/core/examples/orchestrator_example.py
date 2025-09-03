@@ -7,10 +7,10 @@ scénarios de synchronisation.
 
 import argparse
 from pathlib import Path
-from .orchestrator import SyncOrchestrator
+from ..orchestrator import SyncOrchestrator
 
 
-def example_basic_usage():
+def example_orchestrator_basic_usage():
     """Exemple d'utilisation basique de l'orchestrateur."""
     print("=== Exemple d'utilisation basique ===")
     

@@ -5,7 +5,7 @@ Ce fichier montre comment utiliser les différentes exceptions
 pour améliorer la gestion d'erreur dans le projet.
 """
 
-from core.exceptions import (
+from ..exceptions import (
     SyncException, ApiException, ValidationException, ConfigurationException,
     DatabaseException, AuthenticationException, NetworkException,
     wrap_api_call, handle_sync_exceptions

@@ -10,7 +10,7 @@ Ce module démontre comment utiliser le système de retry pour :
 
 import time
 import random
-from retry import (
+from ..retry import (
     RetryConfig, RetryStrategy, RetryableError, FatalError,
     retry, api_retry, database_retry, execute_with_retry,
     get_retry_metrics, print_retry_summary, reset_retry_metrics

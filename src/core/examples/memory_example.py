@@ -11,7 +11,7 @@ Ce module démontre comment utiliser le gestionnaire de mémoire pour :
 import pandas as pd
 import numpy as np
 from pathlib import Path
-from memory_manager import (
+from ..memory_manager import (
     get_memory_manager,
     register_dataframe,
     get_dataframe,
@@ -30,7 +30,7 @@ def create_sample_dataframe(rows: int = 1000, cols: int = 10) -> pd.DataFrame:
     return pd.DataFrame(data)
 
 
-def example_basic_usage():
+def example_memory_basic_usage():
     """Exemple d'utilisation basique du MemoryManager."""
     print("=== Exemple d'utilisation basique ===")
 

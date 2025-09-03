@@ -11,7 +11,7 @@ Ce module démontre comment utiliser le système de métriques pour :
 import time
 import random
 from pathlib import Path
-from metrics import (
+from ..metrics import (
     get_metrics,
     start_operation,
     end_operation,
@@ -56,7 +56,7 @@ def simulate_sync_operation(scope: str, action: str, duration: float = 1.0,
     )
 
 
-def example_basic_usage():
+def example_metrics_basic_usage():
     """Exemple d'utilisation basique du système de métriques."""
     print("=== Exemple d'utilisation basique ===")
 

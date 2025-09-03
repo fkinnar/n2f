@@ -11,10 +11,10 @@ Ce module démontre les fonctionnalités du cache avancé :
 import time
 import pandas as pd
 from pathlib import Path
-from cache import get_cache, cache_get, cache_set, cache_invalidate, cache_stats
+from ..cache import get_cache, cache_get, cache_set, cache_invalidate, cache_stats
 
 
-def example_basic_usage():
+def example_cache_basic_usage():
     """Exemple d'utilisation basique du cache."""
     print("=== Exemple d'utilisation basique ===")
 

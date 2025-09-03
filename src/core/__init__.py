@@ -39,13 +39,8 @@ from .cache import (
     cache_clear,
     cache_stats
 )
-from .cache_compat import (
-    make_cache_key,
-    get_from_cache,
-    set_in_cache,
-    invalidate_cache_key,
-    clear_cache
-)
+# Examples module
+from .examples import *
 from .context import SyncContext
 from .logging import (
     add_api_logging_columns,
@@ -136,12 +131,8 @@ __all__ = [
     "cache_clear",
     "cache_stats",
     
-    # Cache Compatibility Layer
-    "make_cache_key",
-    "get_from_cache",
-    "set_in_cache",
-    "invalidate_cache_key",
-    "clear_cache",
+    # Examples
+    # (Tous les exemples sont disponibles via le module examples)
     
     # Context
     "SyncContext",
