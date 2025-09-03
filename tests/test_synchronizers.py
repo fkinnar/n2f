@@ -20,7 +20,6 @@ import pandas as pd
 import tempfile
 import sys
 import os
-from pathlib import Path
 
 # Ajout du chemin du projet pour les imports
 from business.process.user_synchronizer import UserSynchronizer

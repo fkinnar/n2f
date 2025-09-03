@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-Tests pour le module agresso.process
+Tests unitaires pour le module src/agresso/process.py.
+
+Ce module teste les fonctions de traitement des données Agresso.
 """
 
 import unittest
@@ -13,6 +15,7 @@ from unittest.mock import Mock, patch, MagicMock, mock_open
 # Ajouter le répertoire python au path pour les imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))
 
+# Imports après modification du path
 import agresso.process as agresso_process
 
 
@@ -31,7 +34,7 @@ class TestAgressoProcess(unittest.TestCase):
         )
 
         # Paramètres de test
-        self.base_dir = "/test/base/dir"
+        self.base_dir = "/test / base/dir"
         self.db_user = "test_user"
         self.db_password = "test_password"
         self.sql_path = "sql"
@@ -301,7 +304,7 @@ class TestAgressoProcess(unittest.TestCase):
         # Test avec un fichier inexistant
         with self.assertRaises(FileNotFoundError):
             agresso_process.select(
-                base_dir="/invalid/path",
+                base_dir="/invalid / path",
                 db_user=self.db_user,
                 db_password=self.db_password,
                 sql_path="sql",

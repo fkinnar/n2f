@@ -1,21 +1,23 @@
 #!/usr/bin/env python3
 """
-Tests avancés pour l'orchestrator - Couverture des lignes manquantes.
+Tests avancés pour le module src/core/orchestrator.py.
+
+Ce module teste les fonctionnalités avancées de l'orchestrateur.
 """
 
 import unittest
 from unittest.mock import Mock, patch, MagicMock
-import pandas as pd
-import numpy as np
 import tempfile
 import os
+import sys
+import pandas as pd
+import numpy as np
 from pathlib import Path
 
 # Ajouter le répertoire python au path
-import sys
-
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))
 
+# Imports après modification du path
 from core.orchestrator import SyncOrchestrator, LogManager, SyncResult
 from core.config import SyncConfig, DatabaseConfig, ApiConfig, CacheConfig
 from core.registry import SyncRegistry

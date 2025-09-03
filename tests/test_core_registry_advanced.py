@@ -13,6 +13,7 @@ from pathlib import Path
 # Ajouter le répertoire python au path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))
 
+# Imports après modification du path
 from core.registry import SyncRegistry, RegistryEntry, get_registry, register_scope
 from core.config import ScopeConfig
 
@@ -63,7 +64,7 @@ class TestRegistryAdvanced(unittest.TestCase):
         # Simuler une découverte réussie en patchant directement la méthode
         original_import = self.registry.__class__.__dict__["auto_discover_scopes"]
 
-        def mock_auto_discover(modules_path):
+        def mock_auto_discover(modules_path="business.process"):
             if modules_path == "business.process":
                 # Simuler l'enregistrement d'un scope
                 self.registry.register(
@@ -97,7 +98,7 @@ class TestRegistryAdvanced(unittest.TestCase):
             # Simuler une erreur d'import en patchant directement la méthode
             original_import = self.registry.__class__.__dict__["auto_discover_scopes"]
 
-            def mock_auto_discover(modules_path):
+            def mock_auto_discover(modules_path="business.process"):
                 print(
                     f"Warning: Could not import {modules_path} for auto-discovery: Module not found"
                 )
@@ -123,10 +124,10 @@ class TestRegistryAdvanced(unittest.TestCase):
             # Simuler une erreur d'import en patchant directement la méthode
             original_import = self.registry.__class__.__dict__["auto_discover_scopes"]
 
-            def mock_auto_discover(modules_path):
+            def mock_auto_discover(modules_path="business.process"):
                 if modules_path == "business.process":
                     print(
-                        f"Warning: Could not import business.process.test_module for auto-discovery: Submodule not found"
+                        "Warning: Could not import business.process.test_module for auto-discovery: Submodule not found"
                     )
 
             # Remplacer temporairement la méthode

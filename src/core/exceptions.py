@@ -321,7 +321,7 @@ def wrap_api_call(func: F) -> F:
         try:
             return func(*args, **kwargs)
         except ApiException:
-            # Re-raise les exceptions d'API
+            # Re - raise les exceptions d'API
             raise
         except Exception as e:
             # Convertir les autres exceptions en ApiException
@@ -353,7 +353,7 @@ def handle_sync_exceptions(func: F) -> F:
         try:
             return func(*args, **kwargs)
         except SyncException:
-            # Re-raise les exceptions de synchronisation
+            # Re - raise les exceptions de synchronisation
             raise
         except Exception as e:
             # Convertir les autres exceptions en SyncException

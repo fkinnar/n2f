@@ -63,13 +63,13 @@ class TestApiException(unittest.TestCase):
             "API Error",
             status_code=404,
             response_text="Not Found",
-            endpoint="/users/123",
+            endpoint="/users / 123",
         )
 
         self.assertEqual(exception.message, "API Error")
         self.assertEqual(exception.status_code, 404)
         self.assertEqual(exception.response_text, "Not Found")
-        self.assertEqual(exception.endpoint, "/users/123")
+        self.assertEqual(exception.endpoint, "/users / 123")
 
     def test_api_exception_to_dict(self):
         """Test de la méthode to_dict() pour ApiException."""
@@ -101,13 +101,13 @@ class TestValidationException(unittest.TestCase):
         exception = ValidationException(
             "Invalid email",
             field="email",
-            value="invalid-email",
+            value="invalid - email",
             expected_format="user@domain.com",
         )
 
         self.assertEqual(exception.message, "Invalid email")
         self.assertEqual(exception.field, "email")
-        self.assertEqual(exception.value, "invalid-email")
+        self.assertEqual(exception.value, "invalid - email")
         self.assertEqual(exception.expected_format, "user@domain.com")
 
     def test_validation_exception_to_dict(self):
@@ -116,7 +116,7 @@ class TestValidationException(unittest.TestCase):
             "Invalid field",
             field="username",
             value="",
-            expected_format="non-empty string",
+            expected_format="non - empty string",
         )
         result = exception.to_dict()
 
@@ -127,7 +127,7 @@ class TestValidationException(unittest.TestCase):
             "context": {},
             "field": "username",
             "value": "",
-            "expected_format": "non-empty string",
+            "expected_format": "non - empty string",
         }
         self.assertEqual(result, expected)
 
@@ -181,13 +181,13 @@ class TestNetworkException(unittest.TestCase):
         """Test de création d'une NetworkException."""
         exception = NetworkException(
             "Connection timeout",
-            url="https://api.n2f.com/users",
+            url="https://api.n2f.com / users",
             timeout=30.0,
             retry_count=3,
         )
 
         self.assertEqual(exception.message, "Connection timeout")
-        self.assertEqual(exception.url, "https://api.n2f.com/users")
+        self.assertEqual(exception.url, "https://api.n2f.com / users")
         self.assertEqual(exception.timeout, 30.0)
         self.assertEqual(exception.retry_count, 3)
 

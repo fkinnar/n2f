@@ -1,22 +1,28 @@
 #!/usr/bin/env python3
 """
-Tests pour les modules n2f/api/role.py et n2f/api/userprofile.py.
+Tests unitaires pour les modules src/n2f/api/role.py et src/n2f/api/userprofile.py.
+
+Ce module teste les fonctions d'API pour les rôles et profils utilisateur.
 """
 
 import unittest
-from unittest.mock import Mock, patch
-import sys
+from unittest.mock import Mock, patch, MagicMock
+import tempfile
 import os
+import sys
+import pandas as pd
+import numpy as np
 
 # Ajouter le répertoire python au path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))
 
+# Imports après modification du path
 from n2f.api.role import get_roles
 from n2f.api.userprofile import get_userprofiles
 
 
 class TestN2fApiRole(unittest.TestCase):
-    """Tests pour n2f/api/role.py."""
+    """Tests pour n2f / api/role.py."""
 
     def setUp(self):
         """Configuration initiale."""
@@ -98,7 +104,7 @@ class TestN2fApiRole(unittest.TestCase):
 
 
 class TestN2fApiUserprofile(unittest.TestCase):
-    """Tests pour n2f/api/userprofile.py."""
+    """Tests pour n2f / api/userprofile.py."""
 
     def setUp(self):
         """Configuration initiale."""
@@ -205,8 +211,8 @@ class TestN2fApiUserprofile(unittest.TestCase):
                         "notifications": True,
                     },
                     "metadata": {
-                        "created_at": "2023-01-01T00:00:00Z",
-                        "updated_at": "2023-01-02T00:00:00Z",
+                        "created_at": "2023 - 01-01T00:00:00Z",
+                        "updated_at": "2023 - 01-02T00:00:00Z",
                         "version": "1.0",
                     },
                 }

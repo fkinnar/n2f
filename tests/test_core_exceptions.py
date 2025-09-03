@@ -1,5 +1,5 @@
 """
-Tests unitaires pour le module src/core/exceptions.py.
+Tests unitaires pour le module src / core/exceptions.py.
 
 Ce module teste toutes les classes d'exceptions personnalisées et les fonctions utilitaires.
 """
@@ -86,14 +86,14 @@ class TestApiException(unittest.TestCase):
             message="API error",
             status_code=404,
             response_text="Not found",
-            endpoint="/api/users",
+            endpoint="/api / users",
             details="User not found",
             context={"user_id": "123"},
         )
         self.assertEqual(exc.message, "API error")
         self.assertEqual(exc.status_code, 404)
         self.assertEqual(exc.response_text, "Not found")
-        self.assertEqual(exc.endpoint, "/api/users")
+        self.assertEqual(exc.endpoint, "/api / users")
         self.assertEqual(exc.details, "User not found")
         self.assertEqual(exc.context, {"user_id": "123"})
 
@@ -103,7 +103,7 @@ class TestApiException(unittest.TestCase):
             message="API error",
             status_code=500,
             response_text="Internal error",
-            endpoint="/api/data",
+            endpoint="/api / data",
             details="Server error",
             context={"request_id": "abc123"},
         )
@@ -116,7 +116,7 @@ class TestApiException(unittest.TestCase):
             "context": {"request_id": "abc123"},
             "status_code": 500,
             "response_text": "Internal error",
-            "endpoint": "/api/data",
+            "endpoint": "/api / data",
         }
         self.assertEqual(result, expected)
 
@@ -137,14 +137,14 @@ class TestValidationException(unittest.TestCase):
         exc = ValidationException(
             message="Invalid email",
             field="email",
-            value="invalid-email",
+            value="invalid - email",
             expected_format="user@domain.com",
             details="Email format is invalid",
             context={"form": "registration"},
         )
         self.assertEqual(exc.message, "Invalid email")
         self.assertEqual(exc.field, "email")
-        self.assertEqual(exc.value, "invalid-email")
+        self.assertEqual(exc.value, "invalid - email")
         self.assertEqual(exc.expected_format, "user@domain.com")
         self.assertEqual(exc.details, "Email format is invalid")
         self.assertEqual(exc.context, {"form": "registration"})
@@ -341,14 +341,14 @@ class TestNetworkException(unittest.TestCase):
         """Test de création d'une exception réseau avec tous les champs."""
         exc = NetworkException(
             message="Connection timeout",
-            url="https://api.n2f.com/users",
+            url="https://api.n2f.com / users",
             timeout=30.0,
             retry_count=3,
             details="Server not responding",
             context={"method": "GET"},
         )
         self.assertEqual(exc.message, "Connection timeout")
-        self.assertEqual(exc.url, "https://api.n2f.com/users")
+        self.assertEqual(exc.url, "https://api.n2f.com / users")
         self.assertEqual(exc.timeout, 30.0)
         self.assertEqual(exc.retry_count, 3)
         self.assertEqual(exc.details, "Server not responding")

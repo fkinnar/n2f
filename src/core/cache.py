@@ -12,7 +12,7 @@ Ce module fournit un système de cache avancé avec :
 import json
 import pickle
 import time
-from datetime import datetime
+
 from pathlib import Path
 from typing import Any, Dict, Optional, List
 from dataclasses import dataclass
@@ -384,7 +384,8 @@ class AdvancedCache:
             f"  Sets: {metrics['sets']}\n"
             f"  Invalidations: {metrics['invalidations']}\n"
             f"  Entries: {metrics['entry_count']}\n"
-            f"  Size: {metrics['total_size_mb']:.2f} MB / {metrics['max_size_mb']:.2f} MB"
+            f"  Size: {metrics['total_size_mb']:.2f} MB / "
+            f"{metrics['max_size_mb']:.2f} MB"
         )
 
 

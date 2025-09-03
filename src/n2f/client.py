@@ -260,7 +260,7 @@ class N2fApiClient:
             url = f"{self.base_url}{endpoint}"
             headers = {
                 "Authorization": f"Bearer {access_token}",
-                "Content-Type": "application/json",
+                "Content - Type": "application / json",
             }
 
             response = n2f.get_session_write().post(url, headers=headers, json=payload)

@@ -7,7 +7,6 @@ import sys
 import os
 
 import pandas as pd
-from datetime import datetime
 
 from n2f.payload import create_user_upsert_payload, create_project_upsert_payload
 from business.constants import (
@@ -104,13 +103,13 @@ class TestPayloads(unittest.TestCase):
         self.project_data = {
             COL_CODE: "PROJ001",
             AGRESSO_COL_DESCRIPTION: "Test Project",
-            AGRESSO_COL_DATE_FROM: "2025-01-01",
-            AGRESSO_COL_DATE_TO: "2025-12-31",
+            AGRESSO_COL_DATE_FROM: "2025 - 01-01",
+            AGRESSO_COL_DATE_TO: "2025 - 12-31",
         }
 
     def test_create_user_upsert_payload_production(self):
         """Test la création d'un payload utilisateur en production."""
-        company_id = "company-uuid-123"
+        company_id = "company - uuid-123"
         sandbox = False
 
         payload = create_user_upsert_payload(self.user_data, company_id, sandbox)
@@ -143,7 +142,7 @@ class TestPayloads(unittest.TestCase):
 
     def test_create_user_upsert_payload_sandbox(self):
         """Test la création d'un payload utilisateur en sandbox."""
-        company_id = "company-uuid-123"
+        company_id = "company - uuid-123"
         sandbox = True
 
         payload = create_user_upsert_payload(self.user_data, company_id, sandbox)
@@ -182,7 +181,7 @@ class TestPayloads(unittest.TestCase):
             AGRESSO_COL_UPDATE_PERSONAL: "",
         }
 
-        company_id = "company-uuid-123"
+        company_id = "company - uuid-123"
         sandbox = False
 
         payload = create_user_upsert_payload(minimal_user, company_id, sandbox)
@@ -223,7 +222,7 @@ class TestPayloads(unittest.TestCase):
                 user_data = self.user_data.copy()
                 user_data[AGRESSO_COL_APPROVE_VEHICLE] = input_value
 
-                payload = create_user_upsert_payload(user_data, "company-uuid", False)
+                payload = create_user_upsert_payload(user_data, "company - uuid", False)
                 self.assertEqual(payload[N2F_COL_APPROVE_VEHICLE], expected_output)
 
     def test_create_project_upsert_payload(self):
@@ -254,8 +253,8 @@ class TestPayloads(unittest.TestCase):
         self.assertEqual(nl_name[COL_VALUE], "Test Project")
 
         # Vérification des dates
-        self.assertEqual(payload[N2F_COL_VALIDITY_DATE_FROM], "2025-01-01T00:00:00Z")
-        self.assertEqual(payload[N2F_COL_VALIDITY_DATE_TO], "2025-12-31T00:00:00Z")
+        self.assertEqual(payload[N2F_COL_VALIDITY_DATE_FROM], "2025 - 01-01T00:00:00Z")
+        self.assertEqual(payload[N2F_COL_VALIDITY_DATE_TO], "2025 - 12-31T00:00:00Z")
 
     def test_create_project_upsert_payload_with_missing_dates(self):
         """Test la création d'un payload projet avec des dates manquantes."""
@@ -295,7 +294,7 @@ class TestPayloads(unittest.TestCase):
 
     def test_create_user_upsert_payload_all_fields_mapped(self):
         """Test que tous les champs Agresso sont correctement mappés vers N2F."""
-        payload = create_user_upsert_payload(self.user_data, "company-uuid", False)
+        payload = create_user_upsert_payload(self.user_data, "company - uuid", False)
 
         # Vérification que tous les champs attendus sont présents
         expected_fields = [
@@ -346,7 +345,7 @@ class TestPayloads(unittest.TestCase):
         user_data[AGRESSO_COL_LASTNAME] = "O'Connor"
         user_data[AGRESSO_COL_FUNCTION] = "Développeur Senior"
 
-        payload = create_user_upsert_payload(user_data, "company-uuid", False)
+        payload = create_user_upsert_payload(user_data, "company - uuid", False)
 
         self.assertEqual(payload[N2F_COL_FIRSTNAME], "José")
         self.assertEqual(payload[N2F_COL_LASTNAME], "O'Connor")
@@ -355,15 +354,15 @@ class TestPayloads(unittest.TestCase):
     def test_create_project_upsert_payload_with_special_characters(self):
         """Test la création d'un payload projet avec des caractères spéciaux."""
         project_data = {
-            COL_CODE: "PROJ-ÉTÉ",
+            COL_CODE: "PROJ - ÉTÉ",
             AGRESSO_COL_DESCRIPTION: "Projet d'été avec accents",
-            AGRESSO_COL_DATE_FROM: "2025-06-01",
-            AGRESSO_COL_DATE_TO: "2025-08-31",
+            AGRESSO_COL_DATE_FROM: "2025 - 06-01",
+            AGRESSO_COL_DATE_TO: "2025 - 08-31",
         }
 
         payload = create_project_upsert_payload(project_data, False)
 
-        self.assertEqual(payload[COL_CODE], "PROJ-ÉTÉ")
+        self.assertEqual(payload[COL_CODE], "PROJ - ÉTÉ")
 
         # Vérification que les caractères spéciaux sont préservés dans les noms
         names = payload[COL_NAMES]
@@ -377,7 +376,7 @@ class TestPayloads(unittest.TestCase):
         user_data[AGRESSO_COL_LASTNAME] = ""
         user_data[AGRESSO_COL_FUNCTION] = ""
 
-        payload = create_user_upsert_payload(user_data, "company-uuid", False)
+        payload = create_user_upsert_payload(user_data, "company - uuid", False)
 
         # Les chaînes vides doivent être préservées
         self.assertEqual(payload[N2F_COL_FIRSTNAME], "")
@@ -389,8 +388,8 @@ class TestPayloads(unittest.TestCase):
         project_data = {
             COL_CODE: "PROJ004",
             AGRESSO_COL_DESCRIPTION: "",
-            AGRESSO_COL_DATE_FROM: "2025-01-01",
-            AGRESSO_COL_DATE_TO: "2025-12-31",
+            AGRESSO_COL_DATE_FROM: "2025 - 01-01",
+            AGRESSO_COL_DATE_TO: "2025 - 12-31",
         }
 
         payload = create_project_upsert_payload(project_data, False)

@@ -115,10 +115,10 @@ def example_performance_monitoring() -> None:
 
     # Monitoring en temps réel
     for i in range(5):
-        scope = f"batch_{i+1}"
+        scope = f"batch_{i + 1}"
         action = "sync"
 
-        print(f"\n📊 Monitoring batch {i+1}...")
+        print(f"\n📊 Monitoring batch {i + 1}...")
 
         # Démarrage avec métriques
         op_metrics = start_operation(scope, action)
@@ -128,7 +128,7 @@ def example_performance_monitoring() -> None:
         for step in range(3):
             time.sleep(0.5)
             elapsed = time.time() - start_time
-            print(f"   Étape {step+1}: {elapsed:.1f}s écoulées")
+            print(f"   Étape {step + 1}: {elapsed:.1f}s écoulées")
 
         # Fin avec métriques détaillées
         end_operation(
@@ -211,7 +211,9 @@ def example_export_and_analysis() -> None:
     print("\n📈 ANALYSE DÉTAILLÉE:")
     print(f"   • Scopes traités: {len(summary['operations_by_scope'])}")
     print(f"   • Actions effectuées: {len(summary['operations_by_action'])}")
-    print(f"   • Taux de succès global: {summary['summary']['success_rate']*100:.1f}%")
+    print(
+        f"   • Taux de succès global: {summary['summary']['success_rate'] * 100:.1f}%"
+    )
     print(
         f"   • Performance moyenne: {summary['summary']['average_records_per_second']:.1f} enregistrements/s"
     )

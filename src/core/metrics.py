@@ -356,7 +356,7 @@ class SyncMetrics:
             Path: Chemin du fichier exporté
         """
         if output_path is None:
-            timestamp = time.strftime("%Y%m%d_%H%M%S")
+            timestamp = time.strftime("%Y % m%d_ % H%M % S")
             output_path = Path(f"metrics_{timestamp}.json")
 
         # Préparation des données d'export
@@ -374,7 +374,7 @@ class SyncMetrics:
         }
 
         # Export au format JSON
-        with open(output_path, "w", encoding="utf-8") as f:
+        with open(output_path, "w", encoding="utf - 8") as f:
             json.dump(export_data, f, indent=2, ensure_ascii=False)
 
         return output_path
@@ -392,13 +392,15 @@ class SyncMetrics:
             f"Durée totale: {summary['summary']['total_duration_seconds']:.2f} secondes"
         )
         print(
-            f"Opérations: {summary['summary']['successful_operations']}/{summary['summary']['total_operations']} réussies ({summary['summary']['success_rate']*100:.1f}%)"
+            f"Opérations: {summary['summary']['successful_operations']}/"
+            f"{summary['summary']['total_operations']} "
+            f"réussies ({summary['summary']['success_rate'] * 100:.1f}%)"
         )
         print(
             f"Enregistrements traités: {summary['summary']['total_records_processed']:,}"
         )
         print(
-            f"Performance: {summary['summary']['average_records_per_second']:.1f} enregistrements/seconde"
+            f"Performance: {summary['summary']['average_records_per_second']:.1f} enregistrements / seconde"
         )
 
         # Performance
@@ -409,7 +411,7 @@ class SyncMetrics:
         print(f"   - Durée max: {summary['performance']['max_duration_seconds']:.2f}s")
         print(f"   - Appels API: {summary['performance']['total_api_calls']}")
         print(
-            f"   - Cache hit rate: {summary['performance']['cache_hit_rate']*100:.1f}%"
+            f"   - Cache hit rate: {summary['performance']['cache_hit_rate'] * 100:.1f}%"
         )
 
         # Mémoire

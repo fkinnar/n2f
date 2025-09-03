@@ -8,7 +8,7 @@ per-file-ignores =
     # Fichiers d'exemples peuvent avoir des variables inutilisées
     src/core/examples/*.py:F841,F401
     # Tests peuvent avoir des imports et variables temporaires
-    tests/*.py:F401,F841
+    tests/*.py:F401,F841,E402
     # Fichiers d'initialisation peuvent utiliser import *
     src/core/__init__.py:F401,F403
     # Scripts peuvent avoir des imports spéciaux

@@ -232,7 +232,7 @@ class RetryManager:
         Calcule le délai de retry selon la stratégie configurée.
 
         Args:
-            attempt: Numéro de la tentative (1-based)
+            attempt: Numéro de la tentative (1 - based)
 
         Returns:
             Délai en secondes
@@ -259,7 +259,7 @@ class RetryManager:
         return delay
 
     def _fibonacci(self, n: int) -> int:
-        """Calcule le n-ième nombre de Fibonacci."""
+        """Calcule le n - ième nombre de Fibonacci."""
         if n <= 1:
             return n
         a, b = 0, 1
@@ -314,9 +314,9 @@ class RetryManager:
         print(f"Succès: {total_successful}")
         print(f"Échecs: {total_failed}")
         print(
-            f"Taux de succès: {(total_successful/total_attempts*100):.1f}%"
+            f"Taux de succès: {(total_successful / total_attempts * 100):.1f}%"
             if total_attempts > 0
-            else "N/A"
+            else "N / A"
         )
 
         print("\nDétail par opération:")
@@ -327,7 +327,8 @@ class RetryManager:
                 else 0
             )
             print(
-                f"  - {op_name}: {metrics.successful_attempts}/{metrics.total_attempts} ({success_rate:.1f}%)"
+                f"- {op_name}: {metrics.successful_attempts}/{metrics.total_attempts} "
+                f"({success_rate:.1f}%)"
             )
 
         print("=" * 60)

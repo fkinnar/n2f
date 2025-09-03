@@ -1,5 +1,5 @@
 """
-Tests unitaires pour le module src/n2f/process/user.py.
+Tests unitaires pour le module src / n2f/process / user.py.
 
 Ce module teste les fonctions de traitement des utilisateurs N2F.
 """

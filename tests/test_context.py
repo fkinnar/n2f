@@ -32,7 +32,7 @@ class TestSyncContext(unittest.TestCase):
     def setUp(self) -> None:
         """Configuration initiale pour les tests."""
         self.args: Mock = Mock(spec=argparse.Namespace)
-        self.base_dir: Path = Path("/test/base/dir")
+        self.base_dir: Path = Path("/test / base/dir")
         self.db_user: str = "test_user"
         self.db_password: str = "test_password"
         self.client_id: str = "test_client_id"
@@ -74,7 +74,7 @@ class TestSyncContext(unittest.TestCase):
             sql_filename_customaxes="test_axes.sql",
         )
         api_config: ApiConfig = ApiConfig(
-            base_urls="https://api.n2f.com/services/api/v2/",
+            base_urls="https://api.n2f.com / services/api / v2/",
             sandbox=True,
             simulate=False,
         )
@@ -161,7 +161,7 @@ class TestSyncContext(unittest.TestCase):
             sql_filename_customaxes="test_axes.sql",
         )
         api_config = ApiConfig(
-            base_urls="https://api.n2f.com/services/api/v2/",
+            base_urls="https://api.n2f.com / services/api / v2/",
             sandbox=True,
             simulate=False,
         )
@@ -197,7 +197,7 @@ class TestSyncContext(unittest.TestCase):
             sql_filename_customaxes="test_axes.sql",
         )
         api_config = ApiConfig(
-            base_urls="https://api.n2f.com/services/api/v2/",
+            base_urls="https://api.n2f.com / services/api / v2/",
             sandbox=True,
             simulate=False,
         )
@@ -233,7 +233,7 @@ class TestSyncContext(unittest.TestCase):
             sql_filename_customaxes="test_axes.sql",
         )
         api_config = ApiConfig(
-            base_urls="https://api.n2f.com/services/api/v2/",
+            base_urls="https://api.n2f.com / services/api / v2/",
             sandbox=True,
             simulate=False,
         )

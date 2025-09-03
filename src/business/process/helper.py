@@ -9,7 +9,7 @@ def reporting(
     Génère un rapport détaillé à partir d'un DataFrame de résultats.
 
     Cette fonction analyse les résultats d'une opération de synchronisation
-    et affiche un résumé formaté avec les statistiques de succès/échec.
+    et affiche un résumé formaté avec les statistiques de succès / échec.
 
     Args:
         result_df: DataFrame contenant les résultats des opérations
@@ -112,7 +112,7 @@ def has_payload_changes(
         "role_id",
     }
 
-    # Axe-specific fields to ignore (code is a technical identifier for axes)
+    # Axe - specific fields to ignore (code is a technical identifier for axes)
     axe_ignored_fields: set[str] = {
         "axe_id",
         "company_uuid",
@@ -126,7 +126,7 @@ def has_payload_changes(
         if key in ignored_fields:
             continue
 
-        # For axes, also ignore axe-specific fields
+        # For axes, also ignore axe - specific fields
         if entity_type == "axe" and key in axe_ignored_fields:
             continue
 
@@ -146,7 +146,7 @@ def has_payload_changes(
             if abs(float(value) - float(n2f_value)) > 0.001:
                 return True
         elif isinstance(value, str) and isinstance(n2f_value, str):
-            # String comparison (ignore leading/trailing spaces)
+            # String comparison (ignore leading / trailing spaces)
             if value.strip() != n2f_value.strip():
                 return True
         elif value != n2f_value:

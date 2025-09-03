@@ -20,7 +20,7 @@ Ce module contient les tests d'intégration qui vérifient le bon fonctionnement
 de l'ensemble du système de synchronisation, de bout en bout.
 
 Tests couverts :
-- Synchronisation complète end-to-end
+- Synchronisation complète end - to-end
 - Intégration avec base de données mockée
 - Intégration avec API mockée
 - Tests de performance
@@ -114,14 +114,14 @@ class TestIntegrationBase(unittest.TestCase):
                 "users": {
                     "enabled": True,
                     "display_name": "Users",
-                    "sql_filename": "get-agresso-n2f-users.dev.sql",
+                    "sql_filename": "get - agresso-n2f - users.dev.sql",
                     "sql_column_filter": ["user_id", "username", "email"],
                     "sync_function": "business.process.user_synchronizer.UserSynchronizer.sync_users",
                 },
                 "axes": {
                     "enabled": True,
                     "display_name": "Custom Axes",
-                    "sql_filename": "get-agresso-n2f-customaxes.dev.sql",
+                    "sql_filename": "get - agresso-n2f - customaxes.dev.sql",
                     "sql_column_filter": ["axe_id", "axe_name", "axe_type"],
                     "sync_function": "business.process.axe_synchronizer.AxeSynchronizer.sync_axes",
                 },
@@ -143,7 +143,7 @@ class TestIntegrationBase(unittest.TestCase):
 
 
 class TestEndToEndIntegration(TestIntegrationBase):
-    """Tests d'intégration end-to-end."""
+    """Tests d'intégration end - to-end."""
 
     @patch("core.orchestrator.ConfigLoader")
     @patch("core.orchestrator.get_cache")

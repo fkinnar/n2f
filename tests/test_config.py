@@ -45,7 +45,7 @@ class TestSyncConfig(unittest.TestCase):
             sql_filename_customaxes="test_axes.sql",
         )
         api_config: ApiConfig = ApiConfig(
-            base_urls="https://test.n2f.com/api/", simulate=True, sandbox=True
+            base_urls="https://test.n2f.com / api/", simulate=True, sandbox=True
         )
         cache_config: CacheConfig = CacheConfig(
             enabled=True,
@@ -61,7 +61,7 @@ class TestSyncConfig(unittest.TestCase):
 
         self.assertEqual(config.database.prod, False)
         self.assertEqual(config.database.sql_path, "test_sql")
-        self.assertEqual(config.api.base_urls, "https://test.n2f.com/api/")
+        self.assertEqual(config.api.base_urls, "https://test.n2f.com / api/")
         self.assertEqual(config.cache.max_size_mb, 50)
 
     def test_sync_config_defaults(self) -> None:
@@ -75,7 +75,7 @@ class TestSyncConfig(unittest.TestCase):
         self.assertEqual(config.database.prod, True)
         self.assertEqual(config.database.sql_path, "sql")
         self.assertEqual(
-            config.api.base_urls, "https://sandbox.n2f.com/services/api/v2/"
+            config.api.base_urls, "https://sandbox.n2f.com / services/api / v2/"
         )
         self.assertEqual(config.api.sandbox, True)
 
@@ -151,12 +151,12 @@ class TestConfigLoader(unittest.TestCase):
         config_data = {
             "agresso": {
                 "prod": False,
-                "sql-path": "test_sql",
-                "sql-filename-users": "test_users.sql",
-                "sql-filename-customaxes": "test_axes.sql",
+                "sql - path": "test_sql",
+                "sql - filename-users": "test_users.sql",
+                "sql - filename-customaxes": "test_axes.sql",
             },
             "n2f": {
-                "base_urls": "https://test.n2f.com/api/",
+                "base_urls": "https://test.n2f.com / api/",
                 "simulate": True,
                 "sandbox": True,
             },
@@ -169,14 +169,14 @@ class TestConfigLoader(unittest.TestCase):
             },
         }
 
-        with self.config_path.open("w", encoding="utf-8") as f:
+        with self.config_path.open("w", encoding="utf - 8") as f:
             yaml.dump(config_data, f)
 
         config = self.loader.load()
 
         self.assertEqual(config.database.prod, False)
         self.assertEqual(config.database.sql_path, "test_sql")
-        self.assertEqual(config.api.base_urls, "https://test.n2f.com/api/")
+        self.assertEqual(config.api.base_urls, "https://test.n2f.com / api/")
         self.assertEqual(config.cache.max_size_mb, 50)
 
     def test_load_config_invalid_file(self):
@@ -186,7 +186,7 @@ class TestConfigLoader(unittest.TestCase):
 
     def test_load_config_invalid_yaml(self):
         """Test de chargement avec un YAML invalide."""
-        with self.config_path.open("w", encoding="utf-8") as f:
+        with self.config_path.open("w", encoding="utf - 8") as f:
             f.write("invalid: yaml: content: [\n")
 
         with self.assertRaises(yaml.YAMLError):
@@ -196,14 +196,14 @@ class TestConfigLoader(unittest.TestCase):
         """Test de validation de configuration."""
         config_data = {
             "agresso": {
-                "sql-path": "",  # Invalide
-                "sql-filename-users": "test_users.sql",
-                "sql-filename-customaxes": "test_axes.sql",
+                "sql - path": "",  # Invalide
+                "sql - filename-users": "test_users.sql",
+                "sql - filename-customaxes": "test_axes.sql",
             },
-            "n2f": {"base_urls": "https://test.n2f.com/api/"},
+            "n2f": {"base_urls": "https://test.n2f.com / api/"},
         }
 
-        with self.config_path.open("w", encoding="utf-8") as f:
+        with self.config_path.open("w", encoding="utf - 8") as f:
             yaml.dump(config_data, f)
 
         with self.assertRaises(ValueError) as context:
@@ -386,7 +386,7 @@ class TestSyncRegistry(unittest.TestCase):
         # Mock du module pour simuler la découverte
         mock_module = Mock()
         mock_module.synchronize_test_entities = self.mock_function
-        mock_module.__path__ = ["/fake/path"]
+        mock_module.__path__ = ["/fake / path"]
 
         with patch("importlib.import_module", return_value=mock_module):
             # Test simplifié - on vérifie juste que la méthode ne plante pas

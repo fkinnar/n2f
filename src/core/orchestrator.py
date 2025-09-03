@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import List, Optional, Dict, Any
 from dataclasses import dataclass
 
-from .config import ConfigLoader, SyncConfig
+from .config import ConfigLoader
 from .registry import get_registry
 from .cache import get_cache, cache_stats, cache_clear, cache_invalidate
 from .memory_manager import (
@@ -28,16 +28,14 @@ from .metrics import (
     get_metrics,
     start_operation,
     end_operation,
-    record_memory_usage,
     print_summary as print_metrics_summary,
 )
 from .retry import get_retry_manager, print_retry_summary
+from .context import SyncContext
+from .logging import export_api_logs
 
 # Ajout du répertoire parent au path pour les imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from .context import SyncContext
-from .logging import export_api_logs
 
 
 @dataclass

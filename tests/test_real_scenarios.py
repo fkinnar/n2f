@@ -99,7 +99,7 @@ class TestRealScenariosBase(unittest.TestCase):
         """Crée une configuration de test réaliste."""
         config = {
             "database": {
-                "host": "agresso-db.company.com",
+                "host": "agresso - db.company.com",
                 "port": 1433,
                 "database": "AGRESSO_PROD",
                 "timeout": 60,
@@ -109,7 +109,7 @@ class TestRealScenariosBase(unittest.TestCase):
                 "users": {
                     "enabled": True,
                     "display_name": "Utilisateurs",
-                    "sql_filename": "get-agresso-n2f-users.prod.sql",
+                    "sql_filename": "get - agresso-n2f - users.prod.sql",
                     "sql_column_filter": [
                         "AdresseEmail",
                         "Nom",
@@ -121,7 +121,7 @@ class TestRealScenariosBase(unittest.TestCase):
                 "axes": {
                     "enabled": True,
                     "display_name": "Axes personnalisés",
-                    "sql_filename": "get-agresso-n2f-customaxes.prod.sql",
+                    "sql_filename": "get - agresso-n2f - customaxes.prod.sql",
                     "sql_column_filter": ["code", "name", "type"],
                     "sync_function": "business.process.axe_synchronizer.AxeSynchronizer.sync_axes",
                 },
@@ -144,7 +144,12 @@ class TestRealScenariosBase(unittest.TestCase):
     def create_realistic_user_data(self, count=100):
         """Crée des données utilisateurs réalistes."""
         companies = ["Company A", "Company B", "Company C", "Company D"]
-        domains = ["company-a.com", "company-b.com", "company-c.com", "company-d.com"]
+        domains = [
+            "company - a.com",
+            "company - b.com",
+            "company - c.com",
+            "company - d.com",
+        ]
 
         users = []
         for i in range(count):
@@ -153,9 +158,9 @@ class TestRealScenariosBase(unittest.TestCase):
             domain = domains[company_idx]
 
             user = {
-                "AdresseEmail": f"user{i+1}@{domain}",
-                "Nom": f"User{i+1}",
-                "Prenom": f"FirstName{i+1}",
+                "AdresseEmail": f"user{i + 1}@{domain}",
+                "Nom": f"User{i + 1}",
+                "Prenom": f"FirstName{i + 1}",
                 "Entreprise": company,
                 "Departement": f"Dept{(i % 5) + 1}",
                 "Fonction": f"Role{(i % 3) + 1}",
@@ -172,10 +177,10 @@ class TestRealScenariosBase(unittest.TestCase):
         for i in range(count):
             axe_type = axe_types[i % len(axe_types)]
             axe = {
-                "code": f"{axe_type}_{i+1:03d}",
-                "name": f"{axe_type} {i+1}",
+                "code": f"{axe_type}_{i + 1:03d}",
+                "name": f"{axe_type} {i + 1}",
                 "type": axe_type,
-                "description": f"Description for {axe_type} {i+1}",
+                "description": f"Description for {axe_type} {i + 1}",
                 "active": True,
             }
             axes.append(axe)
@@ -402,7 +407,7 @@ class TestAxeSynchronizationScenario(TestRealScenariosBase):
 
 
 class TestMultiScopeSynchronizationScenario(TestRealScenariosBase):
-    """Tests de scénarios de synchronisation multi-scopes."""
+    """Tests de scénarios de synchronisation multi - scopes."""
 
     @patch("core.orchestrator.print_memory_summary")
     @patch("core.orchestrator.get_cache")
@@ -427,7 +432,7 @@ class TestMultiScopeSynchronizationScenario(TestRealScenariosBase):
         mock_print_memory_summary,
         mock_get_cache,
     ):
-        """Test de synchronisation multi-scopes (scénario réel)."""
+        """Test de synchronisation multi - scopes (scénario réel)."""
 
         # Configuration pour plusieurs scopes
         self.args.scope = ["users", "axes"]
@@ -466,7 +471,7 @@ class TestMultiScopeSynchronizationScenario(TestRealScenariosBase):
         mock_get_registry.return_value = mock_registry
         mock_registry.get_enabled_scopes.return_value = ["users", "axes"]
 
-        # Test de synchronisation multi-scopes
+        # Test de synchronisation multi - scopes
         orchestrator = SyncOrchestrator(self.test_config_path, self.args)
         orchestrator.run()
 

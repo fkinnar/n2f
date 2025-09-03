@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr / bin/env python3
 """
 Script simplifié pour analyser la couverture des tests unitaires du projet N2F.
 """
@@ -24,7 +24,7 @@ def run_coverage_analysis():
         omit=[
             "*/tests/*",
             "*/__pycache__/*",
-            "*/site-packages/*",
+            "*/site - packages/*",
             "*/env/*",
             "*/venv/*",
             "*/example*.py",
@@ -143,7 +143,7 @@ def analyze_missing_coverage():
 
             # Lire le fichier pour afficher les lignes manquantes
             try:
-                with open(filename, "r", encoding="utf-8") as f:
+                with open(filename, "r", encoding="utf - 8") as f:
                     lines = f.readlines()
 
                 print(f"  Lignes non couvertes : {missing_lines}")

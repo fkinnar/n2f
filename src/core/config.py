@@ -11,7 +11,8 @@ from pathlib import Path
 import yaml
 from .registry import get_registry
 
-# Les imports des fonctions de synchronisation sont déplacés dans les méthodes pour éviter les imports circulaires
+# Les imports des fonctions de synchronisation sont déplacés dans les méthodes
+# pour éviter les imports circulaires
 
 
 @dataclass

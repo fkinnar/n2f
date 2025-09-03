@@ -7,7 +7,7 @@ et la découverte automatique des scopes sans modification du code existant.
 
 from typing import Dict, Optional, Callable, List, Any
 from dataclasses import dataclass
-from pathlib import Path
+
 import importlib
 import inspect
 import pkgutil
@@ -79,7 +79,7 @@ class SyncRegistry:
             display_name: Nom d'affichage pour l'utilisateur
             description: Description du scope
             enabled: Si le scope est activé
-            module_path: Chemin du module (pour auto-découverte)
+            module_path: Chemin du module (pour auto - découverte)
         """
         if scope_name in self._registry:
             raise ValueError(f"Scope '{scope_name}' already registered")
@@ -151,7 +151,7 @@ class SyncRegistry:
             module = importlib.import_module(modules_path)
             self._scan_module_for_scopes(module, modules_path)
 
-            # Import des sous-modules pour découvrir les nouveaux scopes
+            # Import des sous - modules pour découvrir les nouveaux scopes
             for finder, name, ispkg in pkgutil.iter_modules(module.__path__):
                 if not ispkg:  # Seulement les modules, pas les packages
                     submodule_path = f"{modules_path}.{name}"
@@ -160,11 +160,11 @@ class SyncRegistry:
                         self._scan_module_for_scopes(submodule, submodule_path)
                     except ImportError as e:
                         print(
-                            f"Warning: Could not import {submodule_path} for auto-discovery: {e}"
+                            f"Warning: Could not import {submodule_path} for auto - discovery: {e}"
                         )
 
         except ImportError as e:
-            print(f"Warning: Could not import {modules_path} for auto-discovery: {e}")
+            print(f"Warning: Could not import {modules_path} for auto - discovery: {e}")
 
     def _scan_module_for_scopes(self, module: Any, module_path: str) -> None:
         """Scanne un module pour trouver les fonctions de synchronisation."""
@@ -182,10 +182,10 @@ class SyncRegistry:
                     self.register(
                         scope_name=scope_name,
                         sync_function=obj,
-                        sql_filename=f"get-agresso-n2f-{scope_name}.dev.sql",
+                        sql_filename=f"get - agresso-n2f-{scope_name}.dev.sql",
                         entity_type=scope_name.rstrip("s"),  # "users" -> "user"
                         display_name=scope_name.title(),  # "users" -> "Users"
-                        description=f"Auto-discovered scope: {scope_name}",
+                        description=f"Auto - discovered scope: {scope_name}",
                         enabled=True,
                         module_path=module_path,
                     )
@@ -221,7 +221,7 @@ class SyncRegistry:
                     scope_name=scope_name,
                     sync_function=scope_data["sync_function"],
                     sql_filename=scope_data.get(
-                        "sql_filename", f"get-agresso-n2f-{scope_name}.dev.sql"
+                        "sql_filename", f"get - agresso-n2f-{scope_name}.dev.sql"
                     ),
                     entity_type=scope_data.get("entity_type", scope_name.rstrip("s")),
                     display_name=scope_data.get("display_name", scope_name.title()),

@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Dict, List, Any
 from n2f.api.token import get_access_token
 import n2f
 
@@ -79,7 +79,7 @@ def upsert(
     url = base_url + endpoint
     headers = {
         "Authorization": f"Bearer {access_token}",
-        "Content-Type": "application/json",
+        "Content - Type": "application / json",
     }
 
     response = n2f.get_session_write().post(url, headers=headers, json=payload)
@@ -102,11 +102,11 @@ def delete(
         endpoint (str): Point de terminaison de l'API (ex: "/users").
         client_id (str): ID du client pour l'API N2F.
         client_secret (str): Secret du client pour l'API N2F.
-        id (str): Identifiant de l'objet à supprimer (ex: adresse e-mail pour un utilisateur).
+        id (str): Identifiant de l'objet à supprimer (ex: adresse e - mail pour un utilisateur).
         simulate (bool): Si True, simule la suppression sans l'exécuter.
 
     Returns:
-        bool: True si la suppression a réussi (code 200-299), False sinon.
+        bool: True si la suppression a réussi (code 200 - 299), False sinon.
     """
 
     if simulate:

@@ -221,7 +221,7 @@ def example_metrics_analysis() -> None:
         print(f"\n{operation_name}:")
         print(f"  • Tentatives: {metrics.total_attempts}")
         print(f"  • Succès: {metrics.successful_attempts}")
-        print(f"  • Taux de succès: {metrics.success_rate*100:.1f}%")
+        print(f"  • Taux de succès: {metrics.success_rate * 100:.1f}%")
         print(f"  • Délai total: {metrics.total_delay_seconds:.2f}s")
         print(f"  • Délai moyen: {metrics.average_delay:.2f}s")
         if metrics.retry_reasons:

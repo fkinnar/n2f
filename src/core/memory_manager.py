@@ -11,9 +11,9 @@ Ce module fournit un gestionnaire de mémoire intelligent qui :
 import time
 import gc
 import psutil
-from typing import Dict, Optional, List, Tuple, Any
+from typing import Dict, Optional, Any
 from dataclasses import dataclass, field
-from pathlib import Path
+
 import pandas as pd
 
 
@@ -70,7 +70,8 @@ class MemoryManager:
         self.process = psutil.Process()
 
         print(
-            f"MemoryManager initialisé - Limite: {max_memory_mb}MB, Seuil: {cleanup_threshold*100}%"
+            f"MemoryManager initialisé - Limite: {max_memory_mb}MB, "
+            f"Seuil: {cleanup_threshold * 100}%"
         )
 
     def register_dataframe(
@@ -243,14 +244,16 @@ class MemoryManager:
         # Mémoire du gestionnaire
         mm = stats["memory_manager"]
         print(
-            f"Utilisation actuelle: {mm['current_usage_mb']:.1f}MB / {mm['max_memory_mb']}MB ({mm['usage_percentage']:.1f}%)"
+            f"Utilisation actuelle: {mm['current_usage_mb']:.1f}MB / "
+            f"{mm['max_memory_mb']}MB ({mm['usage_percentage']:.1f}%)"
         )
         print(f"Pic d'utilisation: {mm['peak_usage_mb']:.1f}MB")
         print(
             f"DataFrames actifs: {mm['active_dataframes']} / {mm['total_dataframes']} total"
         )
         print(
-            f"Mémoire libérée: {mm['freed_memory_mb']:.1f}MB ({mm['cleanup_count']} nettoyages)"
+            f"Mémoire libérée: {mm['freed_memory_mb']:.1f}MB "
+            f"({mm['cleanup_count']} nettoyages)"
         )
 
         # Mémoire système

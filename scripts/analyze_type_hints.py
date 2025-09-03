@@ -226,13 +226,16 @@ def print_summary(analysis: Dict[str, Any]) -> None:
         ) * 100
 
         print(
-            f"\nFonctions avec type hints complets: {stats['functions_with_complete_hints']} ({complete_percent:.1f}%)"
+            f"\nFonctions avec type hints complets: "
+            f"{stats['functions_with_complete_hints']} ({complete_percent:.1f}%)"
         )
         print(
-            f"Fonctions avec type hints partiels: {stats['functions_with_partial_hints']} ({partial_percent:.1f}%)"
+            f"Fonctions avec type hints partiels: "
+            f"{stats['functions_with_partial_hints']} ({partial_percent:.1f}%)"
         )
         print(
-            f"Fonctions sans type hints: {stats['functions_without_hints']} ({none_percent:.1f}%)"
+            f"Fonctions sans type hints: "
+            f"{stats['functions_without_hints']} ({none_percent:.1f}%)"
         )
 
     print("\n" + "=" * 60)
@@ -257,7 +260,8 @@ def print_detailed_analysis(analysis: Dict[str, Any]) -> None:
 
         if file_result["functions_without_hints"] > 0:
             print(
-                f"   Fonctions sans type hints: {file_result['functions_without_hints']}"
+                f"   Fonctions sans type hints: "
+                f"{file_result['functions_without_hints']}"
             )
             for func in file_result["missing_type_hints"][
                 :3
@@ -270,7 +274,8 @@ def print_detailed_analysis(analysis: Dict[str, Any]) -> None:
 
         if file_result["functions_with_partial_hints"] > 0:
             print(
-                f"   Fonctions avec type hints partiels: {file_result['functions_with_partial_hints']}"
+                f"   Fonctions avec type hints partiels: "
+                f"{file_result['functions_with_partial_hints']}"
             )
 
 

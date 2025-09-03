@@ -93,13 +93,16 @@ def example_cache_invalidation() -> None:
 
     # Vérification de la présence
     print(
-        f"function1/param1 : {'Présent' if cache.get('function1', 'param1') else 'Absent'}"
+        f"function1/param1 : "
+        f"{'Présent' if cache.get('function1', 'param1') else 'Absent'}"
     )
     print(
-        f"function1/param2 : {'Présent' if cache.get('function1', 'param2') else 'Absent'}"
+        f"function1/param2 : "
+        f"{'Présent' if cache.get('function1', 'param2') else 'Absent'}"
     )
     print(
-        f"function2/param1 : {'Présent' if cache.get('function2', 'param1') else 'Absent'}"
+        f"function2/param1 : "
+        f"{'Présent' if cache.get('function2', 'param1') else 'Absent'}"
     )
 
     # Invalidation sélective
@@ -108,13 +111,16 @@ def example_cache_invalidation() -> None:
 
     # Vérification après invalidation
     print(
-        f"function1/param1 : {'Présent' if cache.get('function1', 'param1') else 'Absent'}"
+        f"function1/param1 : "
+        f"{'Présent' if cache.get('function1', 'param1') else 'Absent'}"
     )
     print(
-        f"function1/param2 : {'Présent' if cache.get('function1', 'param2') else 'Absent'}"
+        f"function1/param2 : "
+        f"{'Présent' if cache.get('function1', 'param2') else 'Absent'}"
     )
     print(
-        f"function2/param1 : {'Présent' if cache.get('function2', 'param1') else 'Absent'}"
+        f"function2/param1 : "
+        f"{'Présent' if cache.get('function2', 'param1') else 'Absent'}"
     )
 
 

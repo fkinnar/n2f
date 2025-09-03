@@ -30,7 +30,7 @@ def example_api_error_handling() -> None:
             raise ApiException(
                 message="User not found",
                 status_code=response_status,
-                endpoint="/users/john.doe@example.com",
+                endpoint="/users / john.doe@example.com",
                 response_text="User with email john.doe@example.com does not exist",
                 details="The user was deleted or never existed",
             )
@@ -48,7 +48,7 @@ def example_validation_error() -> None:
 
     try:
         # Simulation d'une validation qui échoue
-        email = "invalid-email"
+        email = "invalid - email"
         if "@" not in email:
             raise ValidationException(
                 message="Invalid email format",
@@ -129,7 +129,7 @@ def example_network_error() -> None:
         # Simulation d'une erreur réseau
         raise NetworkException(
             message="Connection timeout",
-            url="https://api.n2f.com/users",
+            url="https://api.n2f.com / users",
             timeout=30.0,
             retry_count=3,
             details="The server did not respond within 30 seconds",
