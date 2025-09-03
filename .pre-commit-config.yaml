@@ -20,6 +20,25 @@ repos:
             | dist
           )/
 
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.1.1
+    hooks:
+      - id: flake8
+        types: [python]
+        exclude: |
+          (?x)^(
+              \.eggs
+            | \.git
+            | \.hg
+            | \.mypy_cache
+            | \.tox
+            | \.venv
+            | _build
+            | buck-out
+            | build
+            | dist
+          )/
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:

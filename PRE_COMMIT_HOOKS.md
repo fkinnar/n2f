@@ -32,7 +32,13 @@ pre-commit install
 - **Action** : Formate automatiquement le code Python selon les standards Black
 - **Fichiers** : Tous les fichiers `.py`
 
-### 2. **Trailing Whitespace** - Suppression des espaces en fin de ligne
+### 2. **Flake8** - Vérification de la qualité du code
+- **Version** : 7.1.1
+- **Configuration** : Fichier `.flake8` avec règles personnalisées
+- **Action** : Vérifie le style, les erreurs et la complexité du code Python
+- **Fichiers** : Tous les fichiers `.py`
+
+### 3. **Trailing Whitespace** - Suppression des espaces en fin de ligne
 - **Action** : Supprime automatiquement les espaces et tabulations en fin de ligne
 - **Fichiers** : Tous les fichiers
 
@@ -71,6 +77,7 @@ Pour exécuter un hook spécifique :
 
 ```bash
 pre-commit run black --all-files
+pre-commit run flake8 --all-files
 pre-commit run trailing-whitespace --all-files
 ```
 
