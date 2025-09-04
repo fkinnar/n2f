@@ -158,7 +158,7 @@ class TestCreateAxes(unittest.TestCase):
             self.mock_client.upsert_axe_value.return_value = mock_result
 
             # Mock l'import dynamique de lookup_company_id
-            with patch("n2f.process.user.lookup_company_id") as mock_lookup:
+            with patch("n2f.process.company.lookup_company_id") as mock_lookup:
                 mock_lookup.return_value = "company_uuid2"
 
                 result_df, status_col = create_axes(
@@ -177,9 +177,9 @@ class TestCreateAxes(unittest.TestCase):
 
     def test_create_axes_company_not_found(self):
         """Test de création avec entreprise non trouvée."""
-        with patch("logging.error") as mock_log_error:
+        with patch("n2f.process.axe.logging.error") as mock_log_error:
             # Mock l'import dynamique de lookup_company_id
-            with patch("n2f.process.user.lookup_company_id") as mock_lookup:
+            with patch("n2f.process.axe.lookup_company_id") as mock_lookup:
                 mock_lookup.return_value = None
 
                 result_df, status_col = create_axes(
@@ -207,7 +207,7 @@ class TestCreateAxes(unittest.TestCase):
 
             with patch("logging.error") as mock_log_error:
                 # Mock l'import dynamique de lookup_company_id
-                with patch("n2f.process.user.lookup_company_id") as mock_lookup:
+                with patch("n2f.process.company.lookup_company_id") as mock_lookup:
                     mock_lookup.return_value = "company_uuid2"
 
                     result_df, status_col = create_axes(
@@ -322,7 +322,7 @@ class TestUpdateAxes(unittest.TestCase):
                 self.mock_client.upsert_axe_value.return_value = mock_result
 
                 # Mock l'import dynamique de lookup_company_id
-                with patch("n2f.process.user.lookup_company_id") as mock_lookup:
+                with patch("n2f.process.company.lookup_company_id") as mock_lookup:
                     mock_lookup.return_value = "company_uuid1"
 
                     result_df, status_col = update_axes(
@@ -344,9 +344,9 @@ class TestUpdateAxes(unittest.TestCase):
         with patch("n2f.process.axe.has_payload_changes") as mock_has_changes:
             mock_has_changes.return_value = True
 
-            with patch("logging.error") as mock_log_error:
+            with patch("n2f.process.axe.logging.error") as mock_log_error:
                 # Mock l'import dynamique de lookup_company_id
-                with patch("n2f.process.user.lookup_company_id") as mock_lookup:
+                with patch("n2f.process.axe.lookup_company_id") as mock_lookup:
                     mock_lookup.return_value = None
 
                     result_df, status_col = update_axes(
@@ -377,7 +377,7 @@ class TestUpdateAxes(unittest.TestCase):
 
                 with patch("logging.error") as mock_log_error:
                     # Mock l'import dynamique de lookup_company_id
-                    with patch("n2f.process.user.lookup_company_id") as mock_lookup:
+                    with patch("n2f.process.company.lookup_company_id") as mock_lookup:
                         mock_lookup.return_value = "company_uuid1"
 
                         result_df, status_col = update_axes(

@@ -4,6 +4,7 @@ from typing import Optional, Set, Dict, Any, List, Tuple
 
 from n2f.client import N2fApiClient
 from n2f.payload import create_user_upsert_payload
+from n2f.process.company import lookup_company_id
 
 # Import déplacé dans la fonction pour éviter l'import circulaire
 from n2f.api_result import ApiResult
@@ -11,20 +12,6 @@ from business.process.helper import has_payload_changes
 from core.exceptions import SyncException
 
 # Note: get_users is now in the client, but we keep the process file for business logic
-
-
-def lookup_company_id(
-    company_code: str, df_n2f_companies: pd.DataFrame, sandbox: bool = False
-) -> str:
-    """Recherche l'UUID d'une entreprise à partir de son code."""
-    if df_n2f_companies.empty:
-        return ""
-    match = df_n2f_companies.loc[df_n2f_companies["code"] == company_code, "uuid"]
-    if not match.empty:
-        return match.iloc[0]
-    if sandbox and not df_n2f_companies.empty and "uuid" in df_n2f_companies.columns:
-        return df_n2f_companies["uuid"].iloc[0]
-    return ""
 
 
 def build_user_payload(
