@@ -30,9 +30,9 @@ def _load_agresso_users(context: SyncContext, sql_filename: str) -> pd.DataFrame
 
     df_agresso_users = normalize_agresso_users(
         select(
-            base_dir=context.base_dir,
-            db_user=context.db_user,
-            db_password=context.db_password,
+            base_dir=str(context.base_dir),
+            db_user=context.db_user or "",
+            db_password=context.db_password or "",
             sql_path=sql_path,
             sql_filename=sql_filename,
             prod=prod,
