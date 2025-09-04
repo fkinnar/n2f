@@ -94,7 +94,7 @@ def example_scope_management() -> None:
     memory_manager = get_memory_manager(max_memory_mb=200)
 
     # Création de DataFrames pour différents scopes
-    scopes = ["users", "projects", "companies", "departments"]
+    scopes = ["users", "projects", "companies"]
 
     for scope in scopes:
         print(f"\n📊 Enregistrement pour le scope '{scope}'...")

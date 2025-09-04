@@ -569,7 +569,7 @@ class TestSyncOrchestrator(unittest.TestCase):
     ):
         """Test d'exécution avec des scopes spécifiques."""
         # Configurer les mocks
-        self.args.scopes = ["scope1", "scope2"]
+        self.args.scope = ["scope1", "scope2"]
         self.args.clear_cache = False
         self.args.invalidate_cache = None
 
@@ -637,7 +637,7 @@ class TestSyncOrchestrator(unittest.TestCase):
     def test_get_selected_scopes_all(self):
         """Test de récupération de tous les scopes."""
         # Configurer les mocks
-        self.args.scopes = None
+        self.args.scope = None
 
         mock_scope_config1 = Mock()
         mock_scope_config1.enabled = True
@@ -671,7 +671,7 @@ class TestSyncOrchestrator(unittest.TestCase):
     def test_get_selected_scopes_specific(self):
         """Test de récupération de scopes spécifiques."""
         # Configurer les mocks
-        self.args.scopes = ["scope1", "scope3"]
+        self.args.scope = ["scope1", "scope3"]
 
         # Mock des scopes pour vérifier qu'ils existent
         mock_scope_config1 = Mock()

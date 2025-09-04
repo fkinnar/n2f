@@ -287,7 +287,17 @@ class EntitySynchronizer(ABC):
         agresso_id_col = self.get_agresso_id_column()
         n2f_id_col = self.get_n2f_id_column()
 
-        return df_agresso[df_agresso[agresso_id_col].isin(df_n2f[n2f_id_col])].copy()
+        if agresso_id_col in df_agresso.columns and n2f_id_col in df_n2f.columns:
+            # Utiliser la comparaison normalisée pour identifier les entités
+            agresso_normalized = df_agresso[agresso_id_col].str.lower()
+            n2f_normalized = df_n2f[n2f_id_col].str.lower()
+            result = df_agresso[agresso_normalized.isin(n2f_normalized)].copy()
+        else:
+            result = df_agresso[
+                df_agresso[agresso_id_col].isin(df_n2f[n2f_id_col])
+            ].copy()
+
+        return result
 
     def _get_entities_to_delete(
         self, df_agresso: pd.DataFrame, df_n2f: pd.DataFrame
@@ -304,14 +314,37 @@ class EntitySynchronizer(ABC):
     def _create_n2f_index(self, df_n2f: pd.DataFrame) -> Dict[str, pd.Series]:
         """Crée un index pour accéder rapidement aux données N2F."""
         n2f_id_col: str = self.get_n2f_id_column()
-        return df_n2f.set_index(n2f_id_col)
+
+        if n2f_id_col in df_n2f.columns:
+            # Normaliser les emails en minuscules pour l'index
+            df_n2f_copy = df_n2f.copy()
+            df_n2f_copy[n2f_id_col] = df_n2f_copy[n2f_id_col].str.lower()
+
+            # Créer un dictionnaire avec les emails comme clés et les Series
+            index_result = {}
+            for _, row in df_n2f_copy.iterrows():
+                email_key = row[n2f_id_col]
+                index_result[email_key] = row
+        else:
+            # Créer un dictionnaire avec les emails comme clés et les Series
+            index_result = {}
+            for _, row in df_n2f.iterrows():
+                email_key = row[n2f_id_col]
+                index_result[email_key] = row
+
+        return index_result
 
     def _get_n2f_entity(
         self, entity: pd.Series, n2f_index: Dict[str, pd.Series]
     ) -> pd.Series:
         """Récupère l'entité N2F correspondante."""
         entity_id: str = self.get_entity_id(entity)
-        n2f_entity: pd.Series = n2f_index.get(entity_id, pd.Series())
+
+        # Normaliser l'ID en minuscules pour la recherche
+        normalized_entity_id = entity_id.lower()
+
+        # Utiliser l'ID normalisé pour la recherche
+        n2f_entity: pd.Series = n2f_index.get(normalized_entity_id, pd.Series())
 
         # Ajouter l'ID car set_index() le retire des valeurs
         if not n2f_entity.empty:

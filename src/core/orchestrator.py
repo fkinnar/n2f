@@ -365,8 +365,8 @@ class SyncOrchestrator:
     def _get_selected_scopes(self) -> List[str]:
         """Détermine les scopes à traiter."""
         # Vérifier si des scopes spécifiques sont demandés
-        if hasattr(self.args, "scopes") and self.args.scopes:
-            selected_scopes = set(self.args.scopes)
+        if hasattr(self.args, "scope") and self.args.scope:
+            selected_scopes = set(self.args.scope)
         else:
             # Utilise le registry pour obtenir les scopes disponibles
             selected_scopes = set(self.registry.get_enabled_scopes())

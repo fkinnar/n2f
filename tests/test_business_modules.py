@@ -9,7 +9,6 @@ import pandas as pd
 from typing import Dict, List, Any
 
 import business.process.axe_types as axe_types
-import business.process.department as department
 
 
 class TestBusinessHelper(unittest.TestCase):
@@ -299,70 +298,6 @@ class TestAxeTypes(unittest.TestCase):
 
         # Le client ne doit être appelé qu'une seule fois
         self.n2f_client.get_custom_axes.assert_called_once()
-
-
-class TestDepartment(unittest.TestCase):
-    """Tests pour business.process.department."""
-
-    def setUp(self):
-        """Configuration initiale pour les tests."""
-        self.context = Mock()
-
-    @patch("builtins.print")
-    def test_synchronize_departments_basic(self, mock_print):
-        """Test de synchronisation des départements basique."""
-        result = department.synchronize_departments(self.context, "test.sql")
-
-        # Vérifier que la fonction retourne une liste de DataFrames
-        self.assertIsInstance(result, list)
-        self.assertEqual(len(result), 1)
-        self.assertIsInstance(result[0], pd.DataFrame)
-
-        # Vérifier que les messages ont été affichés
-        calls = mock_print.call_args_list
-        self.assertIn(
-            "--- Synchronisation des départements avec test.sql ---",
-            [call[0][0] for call in calls],
-        )
-        self.assertIn(
-            "Synchronisation des départements terminée", [call[0][0] for call in calls]
-        )
-
-    @patch("builtins.print")
-    def test_synchronize_departments_with_column_filter(self, mock_print):
-        """Test de synchronisation des départements avec filtre de colonne."""
-        result = department.synchronize_departments(
-            self.context, "test.sql", "department_id"
-        )
-
-        # Vérifier que la fonction retourne une liste de DataFrames
-        self.assertIsInstance(result, list)
-        self.assertEqual(len(result), 1)
-        self.assertIsInstance(result[0], pd.DataFrame)
-
-    def test_synchronize_departments_return_structure(self):
-        """Test de la structure de retour de synchronize_departments."""
-        result = department.synchronize_departments(self.context, "test.sql")
-
-        # Vérifier la structure du DataFrame retourné
-        df = result[0]
-        expected_columns = ["department_id", "department_name", "status"]
-        for col in expected_columns:
-            self.assertIn(col, df.columns)
-
-    def test_synchronize_departments_empty_result(self):
-        """Test que le DataFrame retourné est vide (comme attendu pour l'exemple)."""
-        result = department.synchronize_departments(self.context, "test.sql")
-
-        df = result[0]
-        self.assertTrue(df.empty)
-
-    def test_register_scope_called(self):
-        """Test que register_scope est appelé dans le module."""
-        # Vérifier que le module a bien enregistré le scope
-        # Cette vérification peut être faite en vérifiant que le module a été importé
-        # et que register_scope a été appelé
-        self.assertTrue(hasattr(department, "synchronize_departments"))
 
 
 if __name__ == "__main__":

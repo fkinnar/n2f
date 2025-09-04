@@ -86,7 +86,7 @@ def example_detailed_metrics() -> None:
     print("\n=== Exemple avec métriques détaillées ===")
 
     # Simulation d'opérations plus complexes
-    scopes = ["users", "projects", "companies", "departments"]
+    scopes = ["users", "projects", "companies"]
     actions = ["create", "update", "delete", "sync"]
 
     for scope in scopes:
@@ -154,7 +154,7 @@ def example_error_tracking() -> None:
         ("users", "create", "Erreur de validation des données"),
         ("projects", "update", "Erreur de connexion API"),
         ("companies", "delete", "Erreur de permissions"),
-        ("departments", "sync", "Timeout de la requête"),
+        ("companies", "sync", "Timeout de la requête"),
     ]
 
     for scope, action, error_msg in error_scenarios:

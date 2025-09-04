@@ -47,7 +47,7 @@ def example_multiple_scopes() -> None:
         update=True,
         delete=False,
         config="dev",
-        scope=["users", "departments"],
+        scope=["users", "projects"],
     )
 
     config_path = Path(__file__).parent.parent.parent / "dev.yaml"

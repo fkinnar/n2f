@@ -291,7 +291,7 @@ cache:
 
         # Configurer les arguments pour des scopes spécifiques
         self.orchestrator.args = Mock()
-        self.orchestrator.args.scopes = ["users"]
+        self.orchestrator.args.scope = ["users"]
         self.orchestrator.args.invalidate_cache = None  # Pas d'invalidation de cache
 
         # Exécuter
@@ -339,7 +339,7 @@ cache:
 
         # Configurer les arguments
         self.orchestrator.args = Mock()
-        self.orchestrator.args.scopes = ["users"]
+        self.orchestrator.args.scope = ["users"]
         self.orchestrator.args.invalidate_cache = None  # Pas d'invalidation de cache
 
         # Exécuter et vérifier que l'exception est levée
@@ -355,7 +355,7 @@ cache:
     def test_get_selected_scopes_with_specific_scopes(self):
         """Test de sélection des scopes avec des scopes spécifiques."""
         self.orchestrator.args = Mock()
-        self.orchestrator.args.scopes = ["users", "axes"]
+        self.orchestrator.args.scope = ["users", "axes"]
 
         selected_scopes = self.orchestrator._get_selected_scopes()
 
@@ -375,7 +375,7 @@ cache:
         self.orchestrator.registry = mock_registry
 
         self.orchestrator.args = Mock()
-        self.orchestrator.args.scopes = []  # Aucun scope spécifique
+        self.orchestrator.args.scope = []  # Aucun scope spécifique
 
         selected_scopes = self.orchestrator._get_selected_scopes()
 
