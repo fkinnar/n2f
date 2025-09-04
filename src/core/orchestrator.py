@@ -132,8 +132,8 @@ class ScopeExecutor:
                 )
 
             logging.info(
-                f"--- Starting synchronization for scope : {scope_name} "
-                f"({scope_config.display_name}) ---"
+                f"===== Starting synchronization for scope : {scope_name} "
+                f"({scope_config.display_name}) ====="
             )
 
             # Exécution de la synchronisation
@@ -144,7 +144,7 @@ class ScopeExecutor:
             )
 
             duration = time.time() - start_time
-            logging.info(f"--- End of synchronization for scope : {scope_name} ---")
+            logging.info(f"===== End of synchronization for scope : {scope_name} =====")
 
             return SyncResult(
                 scope_name=scope_name,
@@ -157,7 +157,8 @@ class ScopeExecutor:
             duration = time.time() - start_time
             error_message = f"Error during synchronization: {str(e)}"
             logging.error(
-                f"--- Error in scope {scope_name}: {error_message} ---", exc_info=True
+                f"===== Error in scope {scope_name}: {error_message} =====",
+                exc_info=True,
             )
 
             return SyncResult(
@@ -235,17 +236,19 @@ class LogManager:
         failed_scopes = total_scopes - successful_scopes
         total_duration = self.get_total_duration()
 
-        logging.info("\n--- Synchronization Summary ---")
+        logging.info("===== Synchronization Summary =====")
         logging.info(f"  - Total scopes processed : {total_scopes}")
         logging.info(f"  - Successful : {successful_scopes}")
         logging.info(f"  - Failed : {failed_scopes}")
         logging.info(f"  - Total duration : {total_duration:.2f} seconds")
 
         if failed_scopes > 0:
-            logging.warning("\nFailed scopes :")
+            logging.warning("  Failed scopes :")
             for result in self.results:
                 if not result.success:
-                    logging.warning(f"  - {result.scope_name}: {result.error_message}")
+                    logging.warning(
+                        f"    - {result.scope_name}: {result.error_message}"
+                    )
 
 
 class SyncOrchestrator:
@@ -317,8 +320,9 @@ class SyncOrchestrator:
             config_loader = ConfigLoader(self.config_path)
             sync_config = config_loader.load()
             if sync_config.cache.enabled:
-                logging.info("\n--- Cache Statistics ---")
-                logging.info(cache_stats())
+                logging.info("===== Cache Statistics =====")
+                for line in cache_stats().split("\n"):
+                    logging.info(line)
 
             # Affichage des statistiques mémoire
             print_memory_summary()

@@ -241,9 +241,7 @@ class MemoryManager:
         """Affiche un résumé de l'utilisation mémoire."""
         stats = self.get_memory_stats()
 
-        logging.info("\n" + "=" * 60)
-        logging.info("RÉSUMÉ MÉMOIRE")
-        logging.info("=" * 60)
+        logging.info("===== RÉSUMÉ MÉMOIRE =====")
 
         # Mémoire du gestionnaire
         mm = stats["memory_manager"]
@@ -267,13 +265,13 @@ class MemoryManager:
         logging.info(f"Processus: {sys['process_memory_mb']:.1f}MB")
 
         # DataFrames par scope
-        logging.info("\nDataFrames par scope:")
-        for scope, info in stats["dataframes_by_scope"].items():
-            logging.info(
-                f"   - {scope}: {info['count']} DataFrames, {info['size_mb']:.1f}MB"
-            )
-
-        logging.info("=" * 60)
+        if stats["dataframes_by_scope"]:
+            logging.info("DataFrames par scope:")
+            for scope, info in stats["dataframes_by_scope"].items():
+                logging.info(
+                    f"   - {scope}: {info['count']} DataFrames, {info['size_mb']:.1f}MB"
+                )
+        logging.info("=" * 28)
 
     def _calculate_dataframe_size(self, df: pd.DataFrame) -> float:
         """Calcule la taille d'un DataFrame en MB."""

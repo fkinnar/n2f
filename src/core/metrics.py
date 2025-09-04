@@ -384,9 +384,7 @@ class SyncMetrics:
         """Affiche un résumé des métriques dans la console."""
         summary = self.get_summary()
 
-        logging.info("\n" + "=" * 70)
-        logging.info("RÉSUMÉ DES MÉTRIQUES DE SYNCHRONISATION")
-        logging.info("=" * 70)
+        logging.info("===== RÉSUMÉ DES MÉTRIQUES DE SYNCHRONISATION =====")
 
         # Résumé général
         logging.info(
@@ -407,7 +405,7 @@ class SyncMetrics:
         )
 
         # Performance
-        logging.info("\nPERFORMANCE:")
+        logging.info("PERFORMANCE:")
         logging.info(
             f"   - Durée moyenne: "
             f"{summary['performance']['average_duration_seconds']:.2f}s"
@@ -421,7 +419,7 @@ class SyncMetrics:
         )
 
         # Mémoire
-        logging.info("\nMÉMOIRE:")
+        logging.info("MÉMOIRE:")
         logging.info(
             f"   - Pic d'utilisation: {summary['memory']['peak_usage_mb']:.1f}MB"
         )
@@ -430,7 +428,7 @@ class SyncMetrics:
         )
 
         # Par scope
-        logging.info("\nPAR SCOPE:")
+        logging.info("PAR SCOPE:")
         for scope, scope_data in summary["operations_by_scope"].items():
             success_rate = (
                 scope_data["success"] / scope_data["total"] * 100
@@ -444,11 +442,11 @@ class SyncMetrics:
 
         # Erreurs
         if summary["error_summary"]:
-            logging.warning("\nERREURS:")
+            logging.warning("ERREURS:")
             for error, count in summary["error_summary"].items():
                 logging.warning(f"   - {error}: {count} occurrence(s)")
 
-        logging.info("=" * 70)
+        logging.info("=" * 55)
 
     def _group_operations_by_scope(self) -> Dict[str, Dict[str, int]]:
         """Groupe les opérations par scope."""
