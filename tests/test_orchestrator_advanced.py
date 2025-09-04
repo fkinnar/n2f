@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Tests avancés pour le module src/core/orchestrator.py.
+Tests avanc\3s pour le module src/core/orchestrator.py.
 
-Ce module teste les fonctionnalités avancées de l'orchestrateur.
+Ce module teste les fonctionnalit\3s avanc\3es de l'orchestrateur.
 """
 
 import unittest
@@ -14,24 +14,25 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 
-# Ajouter le répertoire python au path
+# Ajouter le r\3pertoire python au path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))
 
-# Imports après modification du path
+# Imports apr\3s modification du path
 from core.orchestrator import SyncOrchestrator, LogManager, SyncResult
 from core.config import SyncConfig, DatabaseConfig, ApiConfig, CacheConfig
 from core.registry import SyncRegistry
 from core import SyncContext
+from core.exceptions import SyncException
 
 
 class TestLogManagerAdvanced(unittest.TestCase):
-    """Tests avancés pour LogManager."""
+    """Tests avanc\3s pour LogManager."""
 
     def setUp(self):
         """Configuration initiale."""
         self.log_manager = LogManager()
 
-        # Créer des résultats de test
+        # Cr\3er des r\3sultats de test
         self.success_result = SyncResult(
             scope_name="test_scope",
             success=True,
@@ -57,8 +58,8 @@ class TestLogManagerAdvanced(unittest.TestCase):
         )
 
     def test_export_api_logs_with_data(self):
-        """Test d'export des logs API avec des données."""
-        # Ajouter des résultats
+        """Test d'export des logs API avec des donn\3es."""
+        # Ajouter des r\3sultats
         self.log_manager.add_result(self.success_result)
         self.log_manager.add_result(self.failed_result)
 
@@ -68,22 +69,23 @@ class TestLogManagerAdvanced(unittest.TestCase):
 
             self.log_manager.export_and_summarize()
 
-            # Vérifier que export_api_logs a été appelé
+            # V\3rifier que export_api_logs a \3t\3 appel\3
             mock_export.assert_called_once()
 
-            # Vérifier que le DataFrame passé contient les bonnes données
+            # V\3rifier que le DataFrame pass\3 contient les bonnes donn\3es
             call_args = mock_export.call_args[0][0]
             self.assertIsInstance(call_args, pd.DataFrame)
-            self.assertEqual(len(call_args), 3)  # 3 lignes de données
+            self.assertEqual(len(call_args), 3)  # 3 lignes de donn\3es
 
     def test_export_api_logs_no_data(self):
-        """Test d'export des logs API sans données."""
-        # Pas de résultats ajoutés
+        """Test d'export des logs API sans donn\3es."""
+        # Pas de r\3sultats ajout\3s
 
         with patch("builtins.print") as mock_print:
             self.log_manager.export_and_summarize()
 
-            # Vérifier que le message "No synchronization results to export" est affiché
+            # V\3rifier que le message "No synchronization results to export"
+            # est affich\3
             mock_print.assert_called_with("No synchronization results to export.")
 
     def test_export_api_logs_exception(self):
@@ -91,38 +93,38 @@ class TestLogManagerAdvanced(unittest.TestCase):
         self.log_manager.add_result(self.success_result)
 
         with patch("core.orchestrator.export_api_logs") as mock_export:
-            mock_export.side_effect = Exception("Export error")
+            mock_export.side_effect = IOError("Export error")
 
             with patch("builtins.print") as mock_print:
                 self.log_manager.export_and_summarize()
 
-                # Vérifier que l'erreur est affichée
+                # V\3rifier que l'erreur est affich\3e
                 mock_print.assert_called_with("Error during logs export : Export error")
 
     def test_print_api_summary_with_errors(self):
-        """Test d'affichage du résumé API avec des erreurs."""
+        """Test d'affichage du r\3sum\3 API avec des erreurs."""
         self.log_manager.add_result(self.success_result)
 
         with patch("builtins.print") as mock_print:
             self.log_manager._print_api_summary(self.success_result.results[0])
 
-            # Vérifier que le résumé est affiché
+            # V\3rifier que le r\3sum\3 est affich\3
             calls = [call[0][0] for call in mock_print.call_args_list]
             self.assertIn("\nAPI Operations Summary :", calls)
             self.assertIn("\nError Details :", calls)
 
     def test_print_api_summary_no_success_column(self):
-        """Test d'affichage du résumé API sans colonne api_success."""
+        """Test d'affichage du r\3sum\3 API sans colonne api_success."""
         df = pd.DataFrame({"other_column": [1, 2, 3]})
 
         with patch("builtins.print") as mock_print:
             self.log_manager._print_api_summary(df)
 
-            # Vérifier qu'aucun résumé n'est affiché
+            # V\3rifier qu'aucun r\3sum\3 n'est affich\3
             mock_print.assert_not_called()
 
     def test_get_successful_scopes(self):
-        """Test de récupération des scopes réussis."""
+        """Test de r\3cup\3ration des scopes r\3ussis."""
         self.log_manager.add_result(self.success_result)
         self.log_manager.add_result(self.failed_result)
 
@@ -131,7 +133,7 @@ class TestLogManagerAdvanced(unittest.TestCase):
         self.assertEqual(successful_scopes, ["test_scope"])
 
     def test_get_failed_scopes(self):
-        """Test de récupération des scopes échoués."""
+        """Test de r\3cup\3ration des scopes \3chou\3s."""
         self.log_manager.add_result(self.success_result)
         self.log_manager.add_result(self.failed_result)
 
@@ -140,7 +142,7 @@ class TestLogManagerAdvanced(unittest.TestCase):
         self.assertEqual(failed_scopes, ["failed_scope"])
 
     def test_get_total_duration_with_string_duration(self):
-        """Test de calcul de la durée totale avec durée en string."""
+        """Test de calcul de la dur\3e totale avec dur\3e en string."""
         result_with_string = SyncResult(
             scope_name="string_duration_scope",
             success=True,
@@ -156,7 +158,7 @@ class TestLogManagerAdvanced(unittest.TestCase):
         self.assertEqual(total_duration, 2.5)
 
     def test_get_total_duration_with_invalid_string(self):
-        """Test de calcul de la durée totale avec string invalide."""
+        """Test de calcul de la dur\3e totale avec string invalide."""
         result_with_invalid_string = SyncResult(
             scope_name="invalid_duration_scope",
             success=True,
@@ -172,33 +174,33 @@ class TestLogManagerAdvanced(unittest.TestCase):
         self.assertEqual(total_duration, 0.0)
 
     def test_print_sync_summary_with_failures(self):
-        """Test d'affichage du résumé de synchronisation avec échecs."""
+        """Test d'affichage du r\3sum\3 de synchronisation avec \3checs."""
         self.log_manager.add_result(self.success_result)
         self.log_manager.add_result(self.failed_result)
 
         with patch("builtins.print") as mock_print:
             self.log_manager.print_sync_summary()
 
-            # Vérifier que le résumé est affiché
+            # V\3rifier que le r\3sum\3 est affich\3
             calls = [call[0][0] for call in mock_print.call_args_list]
             self.assertIn("\n--- Synchronization Summary ---", calls)
             self.assertIn("\nFailed scopes :", calls)
 
     def test_print_sync_summary_no_results(self):
-        """Test d'affichage du résumé de synchronisation sans résultats."""
+        """Test d'affichage du r\3sum\3 de synchronisation sans r\3sultats."""
         with patch("builtins.print") as mock_print:
             self.log_manager.print_sync_summary()
 
-            # Vérifier qu'aucun résumé n'est affiché
+            # V\3rifier qu'aucun r\3sum\3 n'est affich\3
             mock_print.assert_not_called()
 
 
 class TestSyncOrchestratorAdvanced(unittest.TestCase):
-    """Tests avancés pour SyncOrchestrator."""
+    """Tests avanc\3s pour SyncOrchestrator."""
 
     def setUp(self):
         """Configuration initiale."""
-        # Créer une configuration de test
+        # Cr\3er une configuration de test
         self.config = SyncConfig(
             database=DatabaseConfig(prod=False),
             api=ApiConfig(
@@ -208,7 +210,7 @@ class TestSyncOrchestratorAdvanced(unittest.TestCase):
             cache=CacheConfig(enabled=True, default_ttl=3600, max_size_mb=100),
         )
 
-        # Créer un fichier de configuration temporaire
+        # Cr\3er un fichier de configuration temporaire
         self.temp_config_file = tempfile.NamedTemporaryFile(
             mode="w", suffix=".yaml", delete=False
         )
@@ -236,7 +238,7 @@ cache:
         )
         self.temp_config_file.close()
 
-        # Créer l'orchestrator
+        # Cr\3er l'orchestrator
         self.orchestrator = SyncOrchestrator(Path(self.temp_config_file.name), Mock())
 
     def tearDown(self):
@@ -271,7 +273,7 @@ cache:
         mock_registry,
         mock_config_loader,
     ):
-        """Test d'exécution avec des scopes spécifiques."""
+        """Test d'ex\3cution avec des scopes sp\3cifiques."""
         # Configuration des mocks
         mock_config_loader.return_value.load.return_value = self.config
         mock_registry.return_value.get_enabled_scopes.return_value = ["users", "axes"]
@@ -279,7 +281,7 @@ cache:
         mock_executor_instance = Mock()
         mock_executor.return_value = mock_executor_instance
 
-        # Simuler un résultat de succès
+        # Simuler un r\3sultat de succ\3s
         success_result = SyncResult(
             scope_name="users",
             success=True,
@@ -289,15 +291,15 @@ cache:
         )
         mock_executor_instance.execute_scope.return_value = success_result
 
-        # Configurer les arguments pour des scopes spécifiques
+        # Configurer les arguments pour des scopes sp\3cifiques
         self.orchestrator.args = Mock()
         self.orchestrator.args.scope = ["users"]
         self.orchestrator.args.invalidate_cache = None  # Pas d'invalidation de cache
 
-        # Exécuter
+        # Ex\3cuter
         self.orchestrator.run()
 
-        # Vérifications
+        # V\3rifications
         mock_start_operation.assert_called_once()
         mock_end_operation.assert_called_once()
         mock_cleanup_scope.assert_called_once_with("users")
@@ -324,7 +326,7 @@ cache:
         mock_registry,
         mock_config_loader,
     ):
-        """Test d'exécution avec erreur lors de l'exécution d'un scope."""
+        """Test d'ex\3cution avec erreur lors de l'ex\3cution d'un scope."""
         # Configuration des mocks
         mock_config_loader.return_value.load.return_value = self.config
         mock_registry.return_value.get_enabled_scopes.return_value = ["users"]
@@ -332,8 +334,8 @@ cache:
         mock_executor_instance = Mock()
         mock_executor.return_value = mock_executor_instance
 
-        # Simuler une exception lors de l'exécution
-        mock_executor_instance.execute_scope.side_effect = Exception(
+        # Simuler une exception lors de l'ex\3cution
+        mock_executor_instance.execute_scope.side_effect = SyncException(
             "Scope execution error"
         )
 
@@ -342,52 +344,52 @@ cache:
         self.orchestrator.args.scope = ["users"]
         self.orchestrator.args.invalidate_cache = None  # Pas d'invalidation de cache
 
-        # Exécuter et vérifier que l'exception est levée
-        with self.assertRaises(Exception):
+        # Ex\3cuter et v\3rifier que l'exception est lev\3e
+        with self.assertRaises(SyncException):
             self.orchestrator.run()
 
-        # Vérifier que end_operation a été appelé avec success=False
+        # V\3rifier que end_operation a \3t\3 appel\3 avec success=False
         mock_end_operation.assert_called_once()
         call_args = mock_end_operation.call_args[1]
         self.assertFalse(call_args["success"])
         self.assertEqual(call_args["error_message"], "Scope execution error")
 
     def test_get_selected_scopes_with_specific_scopes(self):
-        """Test de sélection des scopes avec des scopes spécifiques."""
+        """Test de s\3lection des scopes avec des scopes sp\3cifiques."""
         self.orchestrator.args = Mock()
         self.orchestrator.args.scope = ["users", "axes"]
 
         selected_scopes = self.orchestrator._get_selected_scopes()
 
-        # L'ordre n'est pas important, vérifier seulement que les deux scopes sont
-        # présents
+        # L'ordre n'est pas important, v\3rifier seulement que les deux scopes sont
+        # pr\3sents
         self.assertEqual(set(selected_scopes), {"users", "axes"})
 
     @patch("core.orchestrator.get_registry")
     def test_get_selected_scopes_from_registry(self, mock_get_registry):
-        """Test de sélection des scopes depuis le registry."""
+        """Test de s\3lection des scopes depuis le registry."""
         expected_scopes = ["users", "axes", "departments"]
         mock_registry = Mock()
         mock_registry.get_enabled_scopes.return_value = expected_scopes
         mock_get_registry.return_value = mock_registry
 
-        # S'assurer que l'orchestrateur utilise le registry mocké
+        # S'assurer que l'orchestrateur utilise le registry mock\3
         self.orchestrator.registry = mock_registry
 
         self.orchestrator.args = Mock()
-        self.orchestrator.args.scope = []  # Aucun scope spécifique
+        self.orchestrator.args.scope = []  # Aucun scope sp\3cifique
 
         selected_scopes = self.orchestrator._get_selected_scopes()
 
-        # Vérifier que les scopes retournés sont ceux attendus
-        # Note: Le test vérifie que les scopes retournés correspondent aux scopes
+        # V\3rifier que les scopes retourn\3s sont ceux attendus
+        # Note: Le test v\3rifie que les scopes retourn\3s correspondent aux scopes
         # attendus
-        # même si l'ordre peut être différent
+        # m\3me si l'ordre peut \3tre diff\3rent
         self.assertEqual(set(selected_scopes), set(expected_scopes))
 
     @patch("core.orchestrator.ConfigLoader")
     def test_get_configuration_summary(self, mock_config_loader):
-        """Test de récupération du résumé de configuration."""
+        """Test de r\3cup\3ration du r\3sum\3 de configuration."""
         mock_config_loader.return_value.load.return_value = self.config
 
         summary = self.orchestrator.get_configuration_summary()

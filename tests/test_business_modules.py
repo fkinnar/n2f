@@ -9,6 +9,7 @@ import pandas as pd
 from typing import Dict, List, Any
 
 import business.process.axe_types as axe_types
+from core.exceptions import ApiException, ValidationException
 
 
 class TestBusinessHelper(unittest.TestCase):
@@ -203,12 +204,12 @@ class TestAxeTypes(unittest.TestCase):
 
     def test_get_axe_mapping_plates_no_company_id(self):
         """Test de récupération du mapping pour les plaques sans company_id."""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationException):
             axe_types.get_axe_mapping(axe_types.AxeType.PLATES, self.n2f_client, "")
 
     def test_get_axe_mapping_subposts_no_company_id(self):
         """Test de récupération du mapping pour les subposts sans company_id."""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationException):
             axe_types.get_axe_mapping(axe_types.AxeType.SUBPOSTS, self.n2f_client, "")
 
     def test_get_axe_mapping_unknown_type(self):
@@ -219,7 +220,7 @@ class TestAxeTypes(unittest.TestCase):
         class UnknownAxeType(Enum):
             UNKNOWN = "unknown"
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationException):
             axe_types.get_axe_mapping(
                 UnknownAxeType.UNKNOWN, self.n2f_client, self.company_id
             )
@@ -229,9 +230,9 @@ class TestAxeTypes(unittest.TestCase):
         # Nettoyer le cache avant le test
         axe_types.clear_mappings_cache()
 
-        self.n2f_client.get_custom_axes.side_effect = Exception("API Error")
+        self.n2f_client.get_custom_axes.side_effect = ApiException("API Error")
 
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(ApiException):
             axe_types.get_axe_mapping(
                 axe_types.AxeType.PLATES, self.n2f_client, self.company_id
             )
@@ -243,7 +244,7 @@ class TestAxeTypes(unittest.TestCase):
 
         self.n2f_client.get_custom_axes.return_value = pd.DataFrame()
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationException):
             axe_types.get_axe_mapping(
                 axe_types.AxeType.PLATES, self.n2f_client, self.company_id
             )

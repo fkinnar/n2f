@@ -10,11 +10,12 @@ Ce module fournit un système de retry intelligent qui :
 
 import time
 import random
-import functools
 from typing import Callable, Any, Optional, List, Dict, Type, Union
 from dataclasses import dataclass, field
 from enum import Enum
 import logging
+
+from core.exceptions import SyncException
 
 
 class RetryableError(Exception):
@@ -189,7 +190,7 @@ class RetryManager:
 
                 return result
 
-            except Exception as e:
+            except Exception as e:  # noqa: B001
                 metrics.failed_attempts += 1
                 metrics.last_error = str(e)
                 metrics.last_error_type = type(e).__name__
@@ -226,7 +227,12 @@ class RetryManager:
         if last_exception is not None:
             raise last_exception
         else:
-            raise RuntimeError("Unexpected error: no exception captured")
+            # This case should theoretically not be reached
+            raise SyncException(
+                "Unexpected error in RetryManager: no exception was captured "
+                "after all attempts.",
+                context={"operation_name": operation_name},
+            )
 
     def _calculate_delay(self, attempt: int) -> float:
         """
@@ -269,7 +275,8 @@ class RetryManager:
         return b
 
     def get_metrics(
-        self, operation_name: Optional[str] = None
+        self,
+        operation_name: Optional[str] = None,
     ) -> Union[RetryMetrics, Dict[str, RetryMetrics]]:
         """
         Récupère les métriques de retry.
@@ -341,13 +348,13 @@ _retry_manager: Optional[RetryManager] = None
 
 def get_retry_manager(config: Optional[RetryConfig] = None) -> RetryManager:
     """
-    Retourne l'instance globale du gestionnaire de retry.
+    Récupère l'instance globale du gestionnaire de retry.
 
     Args:
-        config: Configuration du retry (utilisé seulement à la première création)
+        config: Configuration optionnelle pour l'initialisation
 
     Returns:
-        RetryManager: Instance du gestionnaire de retry
+        Instance du RetryManager
     """
     global _retry_manager
     if _retry_manager is None:
@@ -355,139 +362,74 @@ def get_retry_manager(config: Optional[RetryConfig] = None) -> RetryManager:
     return _retry_manager
 
 
-def retry(config: Optional[RetryConfig] = None, operation_name: Optional[str] = None):
-    """
-    Décorateur pour les fonctions avec retry automatique.
+def print_retry_summary() -> None:
+    """Affiche le résumé des métriques de retry."""
+    manager = get_retry_manager()
+    manager.print_summary()
 
-    Args:
-        config: Configuration du retry
-        operation_name: Nom de l'opération (utilise le nom de la fonction si None)
 
-    Returns:
-        Décorateur
-    """
+def retry(
+    config: Optional[RetryConfig] = None, operation_name: Optional[str] = None
+) -> Callable:
+    """Décorateur pour appliquer une logique de retry à une fonction."""
 
     def decorator(func: Callable) -> Callable:
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             op_name = operation_name or func.__name__
-            return get_retry_manager(config).execute(
-                func, *args, operation_name=op_name, **kwargs
-            )
+            manager = get_retry_manager(config)
+            return manager.execute(func, *args, operation_name=op_name, **kwargs)
 
         return wrapper
 
     return decorator
 
 
-def api_retry(max_attempts: int = 3, base_delay: float = 2.0, max_delay: float = 30.0):
-    """
-    Décorateur spécialisé pour les appels API.
-
-    Args:
-        max_attempts: Nombre maximum de tentatives
-        base_delay: Délai de base en secondes
-        max_delay: Délai maximum en secondes
-
-    Returns:
-        Décorateur
-    """
+def api_retry(
+    max_attempts: int = 3, base_delay: float = 1.0, max_delay: float = 30.0
+) -> Callable:
+    """Décorateur de retry optimisé pour les appels API."""
     config = RetryConfig(
         max_attempts=max_attempts,
         base_delay=base_delay,
         max_delay=max_delay,
         strategy=RetryStrategy.EXPONENTIAL_BACKOFF,
-        retryable_exceptions=[
-            ConnectionError,
-            TimeoutError,
-            OSError,
-            RetryableError,
-            # Ajouter d'autres exceptions API spécifiques si nécessaire
-        ],
+        retryable_exceptions=[ConnectionError, TimeoutError, RetryableError],
     )
     return retry(config)
 
 
 def database_retry(
-    max_attempts: int = 3, base_delay: float = 1.0, max_delay: float = 10.0
-):
-    """
-    Décorateur spécialisé pour les opérations de base de données.
-
-    Args:
-        max_attempts: Nombre maximum de tentatives
-        base_delay: Délai de base en secondes
-        max_delay: Délai maximum en secondes
-
-    Returns:
-        Décorateur
-    """
+    max_attempts: int = 2, base_delay: float = 0.5, max_delay: float = 5.0
+) -> Callable:
+    """Décorateur de retry optimisé pour les opérations de base de données."""
     config = RetryConfig(
         max_attempts=max_attempts,
         base_delay=base_delay,
         max_delay=max_delay,
         strategy=RetryStrategy.LINEAR_BACKOFF,
-        retryable_exceptions=[
-            ConnectionError,
-            TimeoutError,
-            OSError,
-            RetryableError,
-            # Ajouter d'autres exceptions DB spécifiques si nécessaire
-        ],
+        retryable_exceptions=[ConnectionError, TimeoutError, RetryableError],
     )
     return retry(config)
 
 
 def execute_with_retry(
-    func: Callable,
-    *args,
-    config: Optional[RetryConfig] = None,
-    operation_name: str = "unknown",
-    **kwargs,
+    func: Callable, *args: Any, config: Optional[RetryConfig] = None, **kwargs: Any
 ) -> Any:
-    """
-    Exécute une fonction avec retry automatique.
-
-    Args:
-        func: Fonction à exécuter
-        *args: Arguments positionnels
-        config: Configuration du retry
-        operation_name: Nom de l'opération
-        **kwargs: Arguments nommés
-
-    Returns:
-        Résultat de la fonction
-    """
-    return get_retry_manager(config).execute(
-        func, *args, operation_name=operation_name, **kwargs
-    )
+    """Exécute une fonction avec une logique de retry."""
+    operation_name = kwargs.pop("operation_name", func.__name__)
+    manager = get_retry_manager(config)
+    return manager.execute(func, *args, operation_name=operation_name, **kwargs)
 
 
 def get_retry_metrics(
     operation_name: Optional[str] = None,
 ) -> Union[RetryMetrics, Dict[str, RetryMetrics]]:
-    """
-    Récupère les métriques de retry.
-
-    Args:
-        operation_name: Nom de l'opération (None pour toutes les opérations)
-
-    Returns:
-        Métriques de retry
-    """
-    return get_retry_manager().get_metrics(operation_name)
+    """Récupère les métriques de retry."""
+    manager = get_retry_manager()
+    return manager.get_metrics(operation_name)
 
 
 def reset_retry_metrics(operation_name: Optional[str] = None) -> None:
-    """
-    Réinitialise les métriques de retry.
-
-    Args:
-        operation_name: Nom de l'opération (None pour toutes les opérations)
-    """
-    get_retry_manager().reset_metrics(operation_name)
-
-
-def print_retry_summary() -> None:
-    """Affiche un résumé des métriques de retry."""
-    get_retry_manager().print_summary()
+    """Réinitialise les métriques de retry."""
+    manager = get_retry_manager()
+    manager.reset_metrics(operation_name)

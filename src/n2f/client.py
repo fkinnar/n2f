@@ -1,5 +1,6 @@
 import pandas as pd
 import time
+import requests
 from typing import List, Any, Dict, Optional
 
 import n2f
@@ -245,9 +246,9 @@ class N2fApiClient:
         endpoint: str,
         payload: dict,
         action_type: str = "upsert",
-        object_type: str = None,
-        object_id: str = None,
-        scope: str = None,
+        object_type: Optional[str] = None,
+        object_id: Optional[str] = None,
+        scope: Optional[str] = None,
     ) -> ApiResult:
         """Effectue un appel POST pour créer ou mettre à jour un objet."""
         if self.simulate:
@@ -289,10 +290,10 @@ class N2fApiClient:
                     object_id=object_id,
                     scope=scope,
                 )
-        except Exception as e:
+        except requests.exceptions.RequestException as e:
             duration_ms = (time.time() - start_time) * 1000
             return ApiResult.error_result(
-                message=f"Upsert exception: {str(e)}",
+                message=f"Upsert network exception: {str(e)}",
                 duration_ms=duration_ms,
                 error_details=str(e),
                 action_type=action_type,
@@ -306,8 +307,8 @@ class N2fApiClient:
         endpoint: str,
         object_id: str,
         action_type: str = "delete",
-        object_type: str = None,
-        scope: str = None,
+        object_type: Optional[str] = None,
+        scope: Optional[str] = None,
     ) -> ApiResult:
         """Effectue un appel DELETE pour supprimer un objet."""
         if self.simulate:
@@ -345,10 +346,10 @@ class N2fApiClient:
                     object_id=object_id,
                     scope=scope,
                 )
-        except Exception as e:
+        except requests.exceptions.RequestException as e:
             duration_ms = (time.time() - start_time) * 1000
             return ApiResult.error_result(
-                message=f"Upsert exception: {str(e)}",
+                message=f"Delete network exception: {str(e)}",
                 duration_ms=duration_ms,
                 error_details=str(e),
                 action_type=action_type,

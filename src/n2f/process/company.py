@@ -1,51 +1,24 @@
 import pandas as pd
-from typing import List
-
-from n2f.api.company import get_companies as get_companies_api
-from core import cache_get, cache_set
+from core.cache import cache_get, cache_set  # noqa: F401
+from n2f.client import N2fApiClient
 
 
-def get_companies(
-    base_url: str,
-    client_id: str,
-    client_secret: str,
-    simulate: bool = False,
-    cache: bool = True,
-) -> pd.DataFrame:
-    """
-    Récupère toutes les entreprises depuis l'API N2F.
+def get_companies(n2f_client: N2fApiClient) -> pd.DataFrame:
+    """Récupère les entreprises via le client N2F."""
+    return n2f_client.get_companies()
 
-    Respecte le quota d'appels à l'API et gère la pagination automatiquement.
-    """
 
-    if cache:
-        cached = cache_get("get_companies", base_url, client_id, simulate)
-        if cached is not None:
-            return cached
-
-    all_companies: List[pd.DataFrame] = []
-    start = 0
-    limit = 200
-
-    while True:
-        companies_page = get_companies_api(
-            base_url, client_id, client_secret, start, limit, simulate
-        )
-        if not companies_page:
-            break
-        df_page = pd.DataFrame(companies_page)
-        if df_page.empty:
-            break
-        all_companies.append(df_page)
-        if len(df_page) < limit:
-            break
-        start += limit
-
-    if all_companies:
-        result = pd.concat(all_companies, ignore_index=True)
-    else:
-        result = pd.DataFrame()
-
-    if cache:
-        cache_set(result, "get_companies", base_url, client_id, simulate)
-    return result.copy(deep=True)
+def lookup_company_id(
+    company_code: str,
+    df_n2f_companies: pd.DataFrame,
+    sandbox: bool = False,
+) -> str:
+    """Recherche l'UUID d'une entreprise à partir de son code."""
+    if df_n2f_companies.empty:
+        return ""
+    match = df_n2f_companies.loc[df_n2f_companies["code"] == company_code, "uuid"]
+    if not match.empty:
+        return match.iloc[0]
+    if sandbox and not df_n2f_companies.empty and "uuid" in df_n2f_companies.columns:
+        return df_n2f_companies["uuid"].iloc[0]
+    return ""

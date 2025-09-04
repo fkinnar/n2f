@@ -24,6 +24,7 @@ from core.orchestrator import (
     SyncResult,
 )
 from core.config import SyncConfig, DatabaseConfig, ApiConfig
+from core.exceptions import SyncException
 
 
 class TestSyncResult(unittest.TestCase):
@@ -256,7 +257,7 @@ class TestScopeExecutor(unittest.TestCase):
         mock_scope_config = Mock()
         mock_scope_config.enabled = True
         mock_scope_config.display_name = "Test Scope"
-        mock_scope_config.sync_function = Mock(side_effect=ValueError("Test error"))
+        mock_scope_config.sync_function = Mock(side_effect=SyncException("Test error"))
 
         self.executor.registry.get.return_value = mock_scope_config
 

@@ -17,6 +17,7 @@ from n2f.process.user import (
     delete_users,
 )
 from n2f.api_result import ApiResult
+from core.exceptions import SyncException
 
 
 class TestLookupCompanyId(unittest.TestCase):
@@ -415,7 +416,7 @@ class TestCreateUsers(unittest.TestCase):
             mock_payload = {"email": "user2@test.com", "name": "User2"}
             mock_build_payload.return_value = mock_payload
 
-            self.mock_client.create_user.side_effect = Exception("API Error")
+            self.mock_client.create_user.side_effect = SyncException("API Error")
 
             with patch("n2f.process.user.log_error") as mock_log_error:
                 result_df, status_col = create_users(
@@ -538,7 +539,7 @@ class TestUpdateUsers(unittest.TestCase):
                 mock_payload = {"email": "user1@test.com", "name": "User1 Updated"}
                 mock_build_payload.return_value = mock_payload
 
-                self.mock_client.update_user.side_effect = Exception("API Error")
+                self.mock_client.update_user.side_effect = SyncException("API Error")
 
                 with patch("n2f.process.user.log_error") as mock_log_error:
                     result_df, status_col = update_users(
@@ -624,7 +625,7 @@ class TestDeleteUsers(unittest.TestCase):
 
     def test_delete_users_api_exception(self):
         """Test de suppression avec exception API."""
-        self.mock_client.delete_user.side_effect = Exception("API Error")
+        self.mock_client.delete_user.side_effect = SyncException("API Error")
 
         with patch("n2f.process.user.log_error") as mock_log_error:
             result_df, status_col = delete_users(

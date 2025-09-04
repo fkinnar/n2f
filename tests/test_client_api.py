@@ -10,6 +10,7 @@ import sys
 import os
 from datetime import datetime
 from typing import Dict, List, Any
+import requests
 
 from n2f.client import N2fApiClient
 from n2f.api_result import ApiResult
@@ -362,7 +363,9 @@ class TestN2fApiClient(unittest.TestCase):
     def test_upsert_exception(self, mock_get_token, mock_session):
         """Test un upsert avec exception."""
         mock_get_token.return_value = ("test_token", "2025-12-31T23:59:59Z")
-        mock_session.return_value.post.side_effect = Exception("Network error")
+        mock_session.return_value.post.side_effect = (
+            requests.exceptions.RequestException("Network error")
+        )
 
         payload = {"name": "Test User", "email": "test@example.com"}
         result = self.client._upsert(
@@ -370,7 +373,7 @@ class TestN2fApiClient(unittest.TestCase):
         )
 
         self.assertFalse(result.success)
-        self.assertIn("Network error", result.error_details)
+        self.assertIn("Upsert network exception", result.message)
 
     def test_upsert_simulation_mode(self):
         """Test un upsert en mode simulation."""

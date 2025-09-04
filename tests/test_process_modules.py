@@ -456,16 +456,9 @@ class TestCompanyProcess(unittest.TestCase):
         with (
             patch("n2f.process.company.cache_get", return_value=None),
             patch("n2f.process.company.cache_set"),
-            patch(
-                "n2f.process.company.get_companies_api",
-                return_value=[{"id": "1"}, {"id": "2"}],
-            ),
         ):
-
-            result = company_process.get_companies(
-                "https://api.test.com", "client_id", "client_secret"
-            )
-
+            self.n2f_client.get_companies.return_value = mock_df
+            result = company_process.get_companies(self.n2f_client)
             self.assertEqual(len(result), 2)
 
 
@@ -482,16 +475,11 @@ class TestCustomAxeProcess(unittest.TestCase):
         with (
             patch("n2f.process.customaxe.cache_get", return_value=None),
             patch("n2f.process.customaxe.cache_set"),
-            patch(
-                "n2f.process.customaxe.get_customaxes_api",
-                return_value=[{"id": "1"}, {"id": "2"}],
-            ),
         ):
-
-            result = customaxe_process.get_customaxes(
-                "https://api.test.com", "client_id", "client_secret", "company123"
+            self.n2f_client.get_custom_axes.return_value = pd.DataFrame(
+                [{"id": "1"}, {"id": "2"}]
             )
-
+            result = customaxe_process.get_customaxes(self.n2f_client, "company123")
             self.assertEqual(len(result), 2)
 
     def test_get_customaxes_values(self):
@@ -500,20 +488,13 @@ class TestCustomAxeProcess(unittest.TestCase):
         with (
             patch("n2f.process.customaxe.cache_get", return_value=None),
             patch("n2f.process.customaxe.cache_set"),
-            patch(
-                "n2f.process.customaxe.get_customaxes_values_api",
-                return_value=[{"code": "VAL1"}, {"code": "VAL2"}],
-            ),
         ):
-
-            result = customaxe_process.get_customaxes_values(
-                "https://api.test.com",
-                "client_id",
-                "client_secret",
-                "company123",
-                "axe123",
+            self.n2f_client.get_axe_values.return_value = pd.DataFrame(
+                [{"code": "VAL1"}, {"code": "VAL2"}]
             )
-
+            result = customaxe_process.get_customaxe_values(
+                self.n2f_client, "company123", "axe123"
+            )
             self.assertEqual(len(result), 2)
 
 
@@ -530,16 +511,11 @@ class TestUserProfileProcess(unittest.TestCase):
         with (
             patch("n2f.process.userprofile.cache_get", return_value=None),
             patch("n2f.process.userprofile.cache_set"),
-            patch(
-                "n2f.process.userprofile.get_userprofiles_api",
-                return_value=[{"id": "1"}, {"id": "2"}],
-            ),
         ):
-
-            result = userprofile_process.get_userprofiles(
-                "https://api.test.com", "client_id", "client_secret"
+            self.n2f_client.get_userprofiles.return_value = pd.DataFrame(
+                [{"id": "1"}, {"id": "2"}]
             )
-
+            result = userprofile_process.get_userprofiles(self.n2f_client)
             self.assertEqual(len(result), 2)
 
 
@@ -556,16 +532,11 @@ class TestRoleProcess(unittest.TestCase):
         with (
             patch("n2f.process.role.cache_get", return_value=None),
             patch("n2f.process.role.cache_set"),
-            patch(
-                "n2f.process.role.get_roles_api",
-                return_value=[{"id": "1"}, {"id": "2"}],
-            ),
         ):
-
-            result = role_process.get_roles(
-                "https://api.test.com", "client_id", "client_secret"
+            self.n2f_client.get_roles.return_value = pd.DataFrame(
+                [{"id": "1"}, {"id": "2"}]
             )
-
+            result = role_process.get_roles(self.n2f_client)
             self.assertEqual(len(result), 2)
 
 

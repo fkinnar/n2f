@@ -9,6 +9,7 @@ from n2f.payload import create_project_upsert_payload
 from n2f.api_result import ApiResult
 from core.logging import add_api_logging_columns
 from business.process.helper import has_payload_changes, log_error
+from core.exceptions import SyncException
 
 
 def get_axes(
@@ -35,7 +36,9 @@ def create_axes(
     status_col: str = "created",
     scope: str = "projects",
 ) -> Tuple[pd.DataFrame, str]:
-    """Crée les valeurs d'un axe via le client N2F."""
+    """
+    Crée les valeurs d'un axe via le client N2F.
+    """
     if df_agresso_projects.empty:
         return pd.DataFrame(), status_col
 
@@ -82,7 +85,7 @@ def create_axes(
                         scope=scope,
                     )
                 )
-        except Exception as e:
+        except SyncException as e:
             # Log l'erreur mais continue le processus
             log_error(
                 scope.upper(),
@@ -136,6 +139,7 @@ def update_axes(
         if not has_payload_changes(payload, n2f_project, "axe"):
             continue
 
+        axes_to_update.append(project.to_dict())
         try:
             # Import déplacé ici pour éviter les imports circulaires
             from n2f.process.user import lookup_company_id
@@ -147,7 +151,6 @@ def update_axes(
                     company_id, axe_id, payload, "update", scope
                 )
                 api_results.append(api_result)
-                axes_to_update.append(project.to_dict())
             else:
                 error_msg = f"Company not found: {company_code}"
                 log_error(
@@ -166,8 +169,7 @@ def update_axes(
                         scope=scope,
                     )
                 )
-                axes_to_update.append(project.to_dict())
-        except Exception as e:
+        except SyncException as e:
             # Log l'erreur mais continue le processus
             log_error(
                 scope.upper(),
@@ -187,7 +189,6 @@ def update_axes(
                     scope=scope,
                 )
             )
-            axes_to_update.append(project.to_dict())
 
     if axes_to_update:
         df_result = pd.DataFrame(axes_to_update)
@@ -252,7 +253,7 @@ def delete_axes(
                         scope=scope,
                     )
                 )
-        except Exception as e:
+        except SyncException as e:
             # Log l'erreur mais continue le processus
             log_error(
                 scope.upper(),

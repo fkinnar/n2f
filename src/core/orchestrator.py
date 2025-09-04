@@ -33,6 +33,7 @@ from .metrics import (
 from .retry import get_retry_manager, print_retry_summary
 from .context import SyncContext
 from .logging import export_api_logs
+from .exceptions import SyncException
 
 # Ajout du répertoire parent au path pour les imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -153,7 +154,7 @@ class ScopeExecutor:
                 duration_seconds=duration,
             )
 
-        except Exception as e:
+        except SyncException as e:
             duration = time.time() - start_time
             error_message = f"Error during synchronization: {str(e)}"
             print(f"--- Error in scope {scope_name}: {error_message} ---")
@@ -205,7 +206,7 @@ class LogManager:
             # Afficher un résumé des erreurs
             self._print_api_summary(combined_df)
 
-        except Exception as e:
+        except (IOError, ValueError) as e:
             print(f"Error during logs export : {e}")
 
     def _print_api_summary(self, combined_df: pd.DataFrame) -> None:
@@ -366,7 +367,11 @@ class SyncOrchestrator:
         """Détermine les scopes à traiter."""
         # Vérifier si des scopes spécifiques sont demandés
         if hasattr(self.args, "scope") and self.args.scope:
-            selected_scopes = set(self.args.scope)
+            # Si "all" est dans les scopes demandés, utiliser tous les scopes
+            if "all" in self.args.scope:
+                selected_scopes = set(self.registry.get_enabled_scopes())
+            else:
+                selected_scopes = set(self.args.scope)
         else:
             # Utilise le registry pour obtenir les scopes disponibles
             selected_scopes = set(self.registry.get_enabled_scopes())

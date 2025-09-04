@@ -1,7 +1,8 @@
 from enum import Enum
 from typing import Tuple, Dict, Optional
+import requests
 
-
+from core.exceptions import ApiException, ValidationException
 from n2f.client import N2fApiClient
 
 
@@ -47,9 +48,11 @@ def _get_dynamic_mappings(
                             mappings[AxeType.PLATES] = ("PLAQUE", uuid)
                         elif french_name == "subpost":
                             mappings[AxeType.SUBPOSTS] = ("SUBPOST", uuid)
-    except Exception as e:
-        raise RuntimeError(
-            f"Erreur lors de la récupération des mappings dynamiques: {e}"
+    except requests.exceptions.RequestException as e:
+        raise ApiException(
+            message="Erreur lors de la récupération des mappings dynamiques",
+            details=str(e),
+            context={"function": "_get_dynamic_mappings", "company_id": company_id},
         )
 
     _dynamic_mappings = mappings
@@ -64,12 +67,23 @@ def get_axe_mapping(
         return ("PROJECT", "projects")
 
     if not company_id:
-        raise ValueError("company_id est requis pour les mappings dynamiques")
+        raise ValidationException(
+            message="company_id est requis pour les mappings dynamiques",
+            details=(
+                "Le company_id est nécessaire pour récupérer les axes personnalisés."
+            ),
+            field="company_id",
+        )
 
     mappings = _get_dynamic_mappings(n2f_client, company_id)
     if axe_type not in mappings:
-        raise ValueError(
-            f"Type d'axe non supporté ou non trouvé dans l'API: {axe_type}"
+        raise ValidationException(
+            message=(
+                f"Type d'axe non supporté ou non trouvé dans l'API: {axe_type.value}"
+            ),
+            field="axe_type",
+            value=axe_type.value,
+            context={"available_mappings": [k.value for k in mappings.keys()]},
         )
 
     return mappings[axe_type]

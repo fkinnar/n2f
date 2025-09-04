@@ -18,12 +18,13 @@ from business.constants import (
     DEFAULT_SSO_METHOD,
     CULTURE_FR,
 )
+from core.exceptions import ValidationException
 
 
 def normalize_agresso_users(df_users: pd.DataFrame) -> pd.DataFrame:
     """
-    Normalise les utilisateurs Agresso en s'assurant que les colonnes nécessaires sont
-        présentes.
+    Normalise les utilisateurs Agresso en s'assurant que les colonnes nécessaires
+    sont présentes.
 
         Args:
             df_users: DataFrame contenant les utilisateurs Agresso
@@ -32,11 +33,14 @@ def normalize_agresso_users(df_users: pd.DataFrame) -> pd.DataFrame:
             DataFrame normalisé
 
         Raises:
-            ValueError: Si le DataFrame est vide ou si les colonnes essentielles sont
-        manquantes
+            ValidationException: Si le DataFrame est vide ou si des colonnes
+                essentielles sont manquantes.
     """
     if df_users.empty:
-        raise ValueError("Le DataFrame des utilisateurs Agresso ne peut pas être vide")
+        raise ValidationException(
+            message="Le DataFrame des utilisateurs Agresso ne peut pas être vide",
+            details="Le DataFrame en entrée est vide.",
+        )
 
     # Vérification des colonnes essentielles
     required_columns = [
@@ -47,8 +51,9 @@ def normalize_agresso_users(df_users: pd.DataFrame) -> pd.DataFrame:
     ]
     missing_columns = [col for col in required_columns if col not in df_users.columns]
     if missing_columns:
-        raise ValueError(
-            f"Colonnes manquantes dans le DataFrame Agresso: {missing_columns}"
+        raise ValidationException(
+            message="Colonnes manquantes dans le DataFrame Agresso",
+            details=f"Les colonnes suivantes sont requises : {missing_columns}",
         )
 
     df_users = df_users.copy()
@@ -85,8 +90,8 @@ def normalize_n2f_users(
     role_mapping: Optional[Dict[str, str]] = None,
 ) -> pd.DataFrame:
     """
-    Normalise les utilisateurs N2F en s'assurant que les colonnes nécessaires sont
-        présentes.
+    Normalise les utilisateurs N2F en s'assurant que les colonnes nécessaires
+    sont présentes.
         Remplace les valeurs de 'profile' par leur équivalent français.
 
         Args:
@@ -98,18 +103,22 @@ def normalize_n2f_users(
             DataFrame normalisé
 
         Raises:
-            ValueError: Si le DataFrame est vide ou si les colonnes essentielles sont
-        manquantes
+            ValidationException: Si le DataFrame est vide ou si des colonnes
+                essentielles sont manquantes.
     """
     if df_users.empty:
-        raise ValueError("Le DataFrame des utilisateurs N2F ne peut pas être vide")
+        raise ValidationException(
+            message="Le DataFrame des utilisateurs N2F ne peut pas être vide",
+            details="Le DataFrame en entrée est vide.",
+        )
 
     # Vérification des colonnes essentielles
     required_columns = [N2F_COL_EMAIL, N2F_COL_PROFILE, N2F_COL_ROLE]
     missing_columns = [col for col in required_columns if col not in df_users.columns]
     if missing_columns:
-        raise ValueError(
-            f"Colonnes manquantes dans le DataFrame N2F: {missing_columns}"
+        raise ValidationException(
+            message="Colonnes manquantes dans le DataFrame N2F",
+            details=f"Les colonnes suivantes sont requises : {missing_columns}",
         )
 
     df_users = df_users.copy()
@@ -154,15 +163,19 @@ def build_mapping(df: pd.DataFrame) -> Dict[str, str]:
         Dictionnaire de mapping des valeurs vers la valeur française
 
     Raises:
-        ValueError: Si le DataFrame est vide ou si les colonnes essentielles sont
-        manquantes
+        ValidationException: Si le DataFrame est vide ou si les colonnes essentielles
+            sont manquantes.
     """
     if df.empty:
         return {}
 
     # Vérification de la colonne essentielle
     if COL_NAMES not in df.columns:
-        raise ValueError(f"Colonne manquante dans le DataFrame de mapping: {COL_NAMES}")
+        raise ValidationException(
+            message="Colonne manquante dans le DataFrame de mapping",
+            field=COL_NAMES,
+            details=f"La colonne '{COL_NAMES}' est requise pour construire le mapping.",
+        )
 
     mapping: Dict[str, str] = {}
     for _, row in df.iterrows():

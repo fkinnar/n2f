@@ -10,6 +10,7 @@ from typing import Dict, Any, Callable, Optional, List, Union
 from pathlib import Path
 import yaml
 from .registry import get_registry
+from .exceptions import ConfigurationException
 
 # Les imports des fonctions de synchronisation sont déplacés dans les méthodes
 # pour éviter les imports circulaires
@@ -178,8 +179,9 @@ class ConfigLoader:
     def load(self) -> SyncConfig:
         """Charge la configuration depuis le fichier YAML."""
         if not self.config_path.exists():
-            raise FileNotFoundError(
-                f"Fichier de configuration non trouvé : {self.config_path}"
+            raise ConfigurationException(
+                message=f"Fichier de configuration non trouvé : {self.config_path}",
+                config_file=str(self.config_path),
             )
 
         with self.config_path.open("r", encoding="utf-8") as config_file:
@@ -220,7 +222,11 @@ class ConfigLoader:
         # Validation de la configuration
         errors = sync_config.validate()
         if errors:
-            raise ValueError(f"Configuration invalide : {'; '.join(errors)}")
+            raise ConfigurationException(
+                message=f"Configuration invalide : {'; '.join(errors)}",
+                config_file=str(self.config_path),
+                details="; ".join(errors),
+            )
 
         return sync_config
 

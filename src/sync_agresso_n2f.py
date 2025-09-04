@@ -50,7 +50,7 @@ def main() -> None:
 
     # Chargement des variables d'environnement seulement si en mode sandbox
     if sync_config.api.sandbox:
-        from dotenv import load_dotenv
+        from dotenv import load_dotenv  # noqa: E402
 
         load_dotenv()
         print("Environment variables loaded from .env file (sandbox mode)")

@@ -31,6 +31,7 @@ from business.constants import (
     CULTURE_FR,
     CULTURE_NL,
 )
+from core.exceptions import ValidationException
 
 
 class TestNormalize(unittest.TestCase):
@@ -338,7 +339,7 @@ class TestNormalize(unittest.TestCase):
         df = pd.DataFrame()
 
         # Vérification que la fonction lève une ValueError pour un DataFrame vide
-        with self.assertRaises(ValueError) as context:
+        with self.assertRaises(ValidationException) as context:
             normalize_agresso_users(df)
         self.assertIn("ne peut pas être vide", str(context.exception))
 
@@ -347,7 +348,7 @@ class TestNormalize(unittest.TestCase):
         df = pd.DataFrame()
 
         # Vérification que la fonction lève une ValueError pour un DataFrame vide
-        with self.assertRaises(ValueError) as context:
+        with self.assertRaises(ValidationException) as context:
             normalize_n2f_users(df)
         self.assertIn("ne peut pas être vide", str(context.exception))
 
@@ -369,7 +370,7 @@ class TestNormalize(unittest.TestCase):
         df = pd.DataFrame(partial_data)
 
         # Vérification que la fonction lève une ValueError pour les colonnes manquantes
-        with self.assertRaises(ValueError) as context:
+        with self.assertRaises(ValidationException) as context:
             normalize_agresso_users(df)
         self.assertIn("Colonnes manquantes", str(context.exception))
 
@@ -383,7 +384,7 @@ class TestNormalize(unittest.TestCase):
         df = pd.DataFrame(partial_data)
 
         # Vérification que la fonction lève une ValueError pour les colonnes manquantes
-        with self.assertRaises(ValueError) as context:
+        with self.assertRaises(ValidationException) as context:
             normalize_n2f_users(df)
         self.assertIn("Colonnes manquantes", str(context.exception))
 

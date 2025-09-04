@@ -8,6 +8,7 @@ from n2f.payload import create_user_upsert_payload
 from n2f.api_result import ApiResult
 from core.logging import add_api_logging_columns
 from business.process.helper import has_payload_changes, log_error
+from core.exceptions import SyncException
 
 # Note: get_users is now in the client, but we keep the process file for business logic
 
@@ -140,7 +141,7 @@ def create_users(
             )
             api_result = n2f_client.create_user(payload)
             api_results.append(api_result)
-        except Exception as e:
+        except SyncException as e:
             # Log l'erreur mais continue le processus
             log_error("USERS", "CREATE", user["AdresseEmail"], e, f"Payload: {payload}")
             # Créer un ApiResult d'erreur pour maintenir la cohérence
@@ -196,7 +197,7 @@ def update_users(
             api_result = n2f_client.update_user(payload)
             api_results.append(api_result)
             users_to_update.append(user.to_dict())
-        except Exception as e:
+        except SyncException as e:
             # Log l'erreur mais continue le processus
             log_error("USERS", "UPDATE", user["AdresseEmail"], e, f"Payload: {payload}")
             # Créer un ApiResult d'erreur pour maintenir la cohérence
@@ -236,7 +237,7 @@ def delete_users(
             ~df_n2f_users["mail"].isin(df_agresso_users["AdresseEmail"])
         ].copy()
         if not df_agresso_users.empty
-        else df_n2f_users.copy()
+        else df_agresso_users.copy()
     )
 
     if not users_to_delete.empty:
@@ -245,7 +246,7 @@ def delete_users(
             try:
                 api_result = n2f_client.delete_user(mail)
                 api_results.append(api_result)
-            except Exception as e:
+            except SyncException as e:
                 # Log l'erreur mais continue le processus
                 log_error("USERS", "DELETE", mail, e)
                 # Créer un ApiResult d'erreur pour maintenir la cohérence

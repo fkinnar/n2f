@@ -21,6 +21,7 @@ import os
 from business.process.user_synchronizer import UserSynchronizer
 from business.process.axe_synchronizer import AxeSynchronizer
 from n2f.api_result import ApiResult
+from core.exceptions import SyncException
 
 
 class TestEntitySynchronizer(unittest.TestCase):
@@ -92,7 +93,10 @@ class TestEntitySynchronizer(unittest.TestCase):
         """Test de l'identification des entités à mettre à jour."""
         # Données de test
         df_agresso = pd.DataFrame(
-            {"agresso_id": ["user1", "user2"], "name": ["User 1 Updated", "User 2"]}
+            {
+                "agresso_id": ["user1", "user2"],
+                "name": ["User 1 Updated", "User 2"],
+            }
         )
 
         df_n2f = pd.DataFrame(
@@ -144,7 +148,10 @@ class TestEntitySynchronizer(unittest.TestCase):
         """Test de création d'entités avec succès."""
         # Données de test
         df_agresso = pd.DataFrame(
-            {"agresso_id": ["user1", "user2"], "name": ["User 1", "User 2"]}
+            {
+                "agresso_id": ["user1", "user2"],
+                "name": ["User 1", "User 2"],
+            }
         )
 
         df_n2f = pd.DataFrame({"n2f_id": [], "name": []})
@@ -173,11 +180,11 @@ class TestEntitySynchronizer(unittest.TestCase):
 
         df_n2f = pd.DataFrame({"n2f_id": [], "name": []})
 
-        # Mock de l'opération de création qui échoue
+        # Mock de l'opration de cration qui choue
         with patch.object(
             self.synchronizer, "_perform_create_operation"
         ) as mock_create:
-            mock_create.side_effect = Exception("API Error")
+            mock_create.side_effect = SyncException("API Error")
 
             result_df, status_col = self.synchronizer.create_entities(
                 df_agresso, df_n2f
@@ -238,7 +245,10 @@ class TestEntitySynchronizer(unittest.TestCase):
         df_agresso = pd.DataFrame({"agresso_id": ["user1"], "name": ["User 1"]})
 
         df_n2f = pd.DataFrame(
-            {"n2f_id": ["user1", "user2"], "name": ["User 1", "User 2"]}
+            {
+                "n2f_id": ["user1", "user2"],
+                "name": ["User 1", "User 2"],
+            }
         )
 
         # Mock de l'opération de suppression

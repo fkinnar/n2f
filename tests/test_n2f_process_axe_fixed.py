@@ -16,6 +16,7 @@ from n2f.process.axe import (
     delete_axes,
 )
 from n2f.api_result import ApiResult
+from core.exceptions import SyncException
 
 
 class TestGetAxes(unittest.TestCase):
@@ -202,7 +203,7 @@ class TestCreateAxes(unittest.TestCase):
             mock_build_payload.return_value = mock_payload
 
             # Mock upsert_axe_value pour lever une exception
-            self.mock_client.upsert_axe_value.side_effect = Exception("API Error")
+            self.mock_client.upsert_axe_value.side_effect = SyncException("API Error")
 
             with patch("n2f.process.axe.log_error") as mock_log_error:
                 # Mock l'import dynamique de lookup_company_id
@@ -370,7 +371,9 @@ class TestUpdateAxes(unittest.TestCase):
                 mock_payload = {"code": "PROJ1", "name": "Project 1 Updated"}
                 mock_build_payload.return_value = mock_payload
 
-                self.mock_client.upsert_axe_value.side_effect = Exception("API Error")
+                self.mock_client.upsert_axe_value.side_effect = SyncException(
+                    "API Error"
+                )
 
                 with patch("n2f.process.axe.log_error") as mock_log_error:
                     # Mock l'import dynamique de lookup_company_id
@@ -491,7 +494,7 @@ class TestDeleteAxes(unittest.TestCase):
 
     def test_delete_axes_api_exception(self):
         """Test de suppression avec exception API."""
-        self.mock_client.delete_axe_value.side_effect = Exception("API Error")
+        self.mock_client.delete_axe_value.side_effect = SyncException("API Error")
 
         with patch("n2f.process.axe.log_error") as mock_log_error:
             result_df, status_col = delete_axes(

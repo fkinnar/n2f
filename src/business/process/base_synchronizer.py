@@ -5,6 +5,7 @@ from n2f.client import N2fApiClient
 from n2f.api_result import ApiResult
 from business.process.helper import log_error, has_payload_changes
 from core.logging import add_api_logging_columns
+from core.exceptions import SyncException
 
 
 class EntitySynchronizer(ABC):
@@ -68,7 +69,7 @@ class EntitySynchronizer(ABC):
                     entity, payload, df_n2f_companies
                 )
                 api_results.append(api_result)
-            except Exception as e:
+            except SyncException as e:
                 # Gestion d'erreur standardisée
                 entity_id: str = self.get_entity_id(entity)
                 log_error(
@@ -142,7 +143,7 @@ class EntitySynchronizer(ABC):
                 api_results.append(api_result)
                 updated_entities.append(entity.to_dict())
 
-            except Exception as e:
+            except SyncException as e:
                 # Gestion d'erreur standardisée
                 entity_id: str = self.get_entity_id(entity)
                 log_error(
@@ -197,7 +198,7 @@ class EntitySynchronizer(ABC):
                 # Effectuer l'opération de suppression
                 api_result = self._perform_delete_operation(entity, df_n2f_companies)
                 api_results.append(api_result)
-            except Exception as e:
+            except SyncException as e:
                 # Gestion d'erreur standardisée
                 entity_id = self.get_entity_id(entity)
                 log_error(self.scope.upper(), "DELETE", entity_id, e)

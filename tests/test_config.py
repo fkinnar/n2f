@@ -24,6 +24,7 @@ from core.config import (
     ConfigLoader,
 )
 from core.registry import SyncRegistry, RegistryEntry
+from core.exceptions import ConfigurationException
 
 
 class TestSyncConfig(unittest.TestCase):
@@ -174,7 +175,7 @@ class TestConfigLoader(unittest.TestCase):
 
     def test_load_config_invalid_file(self):
         """Test de chargement avec un fichier invalide."""
-        with self.assertRaises(FileNotFoundError):
+        with self.assertRaises(ConfigurationException):
             self.loader.load()
 
     def test_load_config_invalid_yaml(self):
@@ -199,7 +200,7 @@ class TestConfigLoader(unittest.TestCase):
         with self.config_path.open("w", encoding="utf - 8") as f:
             yaml.dump(config_data, f)
 
-        with self.assertRaises(ValueError) as context:
+        with self.assertRaises(ConfigurationException) as context:
             self.loader.load()
 
         self.assertIn("sql_path ne peut pas être vide", str(context.exception))
@@ -365,7 +366,7 @@ class TestSyncRegistry(unittest.TestCase):
             display_name="Test Entity",
         )
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ConfigurationException):
             self.registry.register(
                 scope_name="test_scope",
                 sync_function=self.mock_function,

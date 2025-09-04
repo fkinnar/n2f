@@ -28,8 +28,14 @@ def normalize_date_for_payload(value: Union[pd.Timestamp, str, Any]) -> Optional
     if pd.isna(value) or value is None:
         return None
     try:
-        dt = pd.to_datetime(value, dayfirst=True, errors="coerce")
-    except Exception:
+        if isinstance(value, str):
+            # Essayer d'abord avec dayfirst=True pour les formats JJ/MM/AAAA
+            dt = pd.to_datetime(value, dayfirst=True, errors="coerce")
+        else:
+            # Pour les types non-string (comme les objets datetime), laisser pandas
+            # inférer
+            dt = pd.to_datetime(value, errors="coerce")
+    except (ValueError, TypeError):
         dt = None
     if dt is not None and not pd.isna(dt):
         # Vérifier si c'est la date sentinelle

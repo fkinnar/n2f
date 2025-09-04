@@ -1,16 +1,11 @@
-"""
-Module Registry pour la gestion dynamique des scopes de synchronisation.
-
-Ce module implémente le Pattern Registry pour permettre l'enregistrement
-et la découverte automatique des scopes sans modification du code existant.
-"""
-
 from typing import Dict, Optional, Callable, List, Any
 from dataclasses import dataclass
 
 import importlib
 import inspect
 import pkgutil
+
+from core.exceptions import ConfigurationException
 
 
 @dataclass
@@ -31,7 +26,7 @@ class RegistryEntry:
     def to_scope_config(self) -> Any:
         """Convertit l'entrée en ScopeConfig."""
         # Import déplacé ici pour éviter les imports circulaires
-        from .config import ScopeConfig
+        from core.config import ScopeConfig
 
         return ScopeConfig(
             sync_function=self.sync_function,
@@ -82,7 +77,16 @@ class SyncRegistry:
             module_path: Chemin du module (pour auto - découverte)
         """
         if scope_name in self._registry:
-            raise ValueError(f"Scope '{scope_name}' already registered")
+            raise ConfigurationException(
+                message=(f"Le scope '{scope_name}' est déjà enregistré."),
+                config_key=f"scopes.{scope_name}",
+                details=(
+                    f"Tentative d'enregistrement du scope '{scope_name}' "
+                    f"qui existe déjà. "
+                    "Le module d'origine est "
+                    f"'{self._registry[scope_name].module_path}'."
+                ),
+            )
 
         self._registry[scope_name] = RegistryEntry(
             sync_function=sync_function,
@@ -125,27 +129,14 @@ class SyncRegistry:
         return scope_name in self._registry
 
     def unregister(self, scope_name: str) -> bool:
-        """
-        Désenregistre un scope.
-
-        Args:
-            scope_name: Nom du scope à désenregistrer
-
-        Returns:
-            True si le scope était enregistré et a été supprimé
-        """
+        """Désenregistre un scope."""
         if scope_name in self._registry:
             del self._registry[scope_name]
             return True
         return False
 
     def auto_discover_scopes(self, modules_path: str = "business.process") -> None:
-        """
-        Découvre automatiquement les scopes dans les modules.
-
-        Args:
-            modules_path: Chemin des modules à scanner
-        """
+        """Découvre automatiquement les scopes dans les modules."""
         try:
             # Import du module principal
             module = importlib.import_module(modules_path)
@@ -208,12 +199,7 @@ class SyncRegistry:
         return None
 
     def load_from_config(self, config_data: Dict[str, Any]) -> None:
-        """
-        Charge les scopes depuis une configuration.
-
-        Args:
-            config_data: Données de configuration contenant les scopes
-        """
+        """Charge les scopes depuis une configuration."""
         scopes_config = config_data.get("scopes", {})
 
         for scope_name, scope_data in scopes_config.items():
@@ -232,12 +218,7 @@ class SyncRegistry:
                 )
 
     def validate(self) -> List[str]:
-        """
-        Valide le registry et retourne une liste d'erreurs.
-
-        Returns:
-            Liste des erreurs de validation
-        """
+        """Valide le registry et retourne une liste d'erreurs."""
         errors = []
 
         for scope_name, entry in self._registry.items():

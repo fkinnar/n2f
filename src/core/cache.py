@@ -178,7 +178,7 @@ class AdvancedCache:
             with cache_file.open("wb") as f:
                 pickle.dump(entry_data, f)
 
-        except Exception as e:
+        except (IOError, pickle.PickleError) as e:
             print(f"Warning: Failed to save cache entry {key}: {e}")
 
     def _load_entry(self, key: str) -> Optional[CacheEntry]:
@@ -203,7 +203,7 @@ class AdvancedCache:
                 size_bytes=entry_data["size_bytes"],
             )
 
-        except Exception as e:
+        except (IOError, pickle.PickleError, KeyError) as e:
             print(f"Warning: Failed to load cache entry {key}: {e}")
             return None
 
@@ -221,7 +221,7 @@ class AdvancedCache:
                     self.metrics.total_size_bytes += entry.size_bytes
                     self.metrics.entry_count += 1
 
-        except Exception as e:
+        except (IOError, pickle.PickleError, KeyError) as e:
             print(f"Warning: Failed to load persistent cache: {e}")
 
     def get(self, function_name: str, *args: Any) -> Optional[Any]:
@@ -394,7 +394,9 @@ _advanced_cache: Optional[AdvancedCache] = None
 
 
 def get_cache(
-    cache_dir: Path = None, max_size_mb: int = 100, default_ttl: int = 3600
+    cache_dir: Path = None,
+    max_size_mb: int = 100,
+    default_ttl: int = 3600,
 ) -> AdvancedCache:
     """
     Récupère l'instance globale du cache avancé.
