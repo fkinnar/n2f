@@ -59,29 +59,6 @@ class TestBusinessHelper(unittest.TestCase):
         self.assertIn("Opérations effectuées :", [call[0][0] for call in calls])
         self.assertIn("  Total : 2", [call[0][0] for call in calls])
 
-    @patch("builtins.print")
-    def test_log_error_basic(self, mock_print: Mock) -> None:
-        """Test de log d'erreur basique."""
-        error: Exception = Exception("Test error message")
-        business_helper.log_error("USERS", "CREATE", "test@example.com", error)
-
-        mock_print.assert_called_once_with(
-            "[ERROR] [USERS] [CREATE] [test@example.com] - Test error message"
-        )
-
-    @patch("builtins.print")
-    def test_log_error_with_context(self, mock_print: Mock) -> None:
-        """Test de log d'erreur avec contexte."""
-        error: Exception = Exception("Validation failed")
-        business_helper.log_error(
-            "PROJECTS", "UPDATE", "PROJ001", error, "Payload validation"
-        )
-
-        mock_print.assert_called_once_with(
-            "[ERROR] [PROJECTS] [UPDATE] [PROJ001] - "
-            "Payload validation - Validation failed"
-        )
-
     def test_has_payload_changes_no_changes(self) -> None:
         """Test de détection de changements - aucun changement."""
         payload: Dict[str, str] = {"name": "John Doe", "email": "john@example.com"}

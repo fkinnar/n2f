@@ -418,7 +418,7 @@ class TestCreateUsers(unittest.TestCase):
 
             self.mock_client.create_user.side_effect = SyncException("API Error")
 
-            with patch("n2f.process.user.log_error") as mock_log_error:
+            with patch("logging.error") as mock_log_error:
                 result_df, status_col = create_users(
                     self.df_agresso_users,
                     self.df_n2f_users,
@@ -541,7 +541,7 @@ class TestUpdateUsers(unittest.TestCase):
 
                 self.mock_client.update_user.side_effect = SyncException("API Error")
 
-                with patch("n2f.process.user.log_error") as mock_log_error:
+                with patch("logging.error") as mock_log_error:
                     result_df, status_col = update_users(
                         self.df_agresso_users,
                         self.df_n2f_users,
@@ -627,7 +627,7 @@ class TestDeleteUsers(unittest.TestCase):
         """Test de suppression avec exception API."""
         self.mock_client.delete_user.side_effect = SyncException("API Error")
 
-        with patch("n2f.process.user.log_error") as mock_log_error:
+        with patch("logging.error") as mock_log_error:
             result_df, status_col = delete_users(
                 self.df_agresso_users, self.df_n2f_users, self.mock_client
             )

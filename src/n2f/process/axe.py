@@ -1,3 +1,4 @@
+import logging
 import pandas as pd
 from typing import List, Dict, Any, Tuple
 
@@ -7,8 +8,7 @@ from n2f.payload import create_project_upsert_payload
 # Import déplacé dans les fonctions pour éviter l'import circulaire
 # Import déplacé dans la fonction pour éviter l'import circulaire
 from n2f.api_result import ApiResult
-from core.logging import add_api_logging_columns
-from business.process.helper import has_payload_changes, log_error
+from business.process.helper import has_payload_changes
 from core.exceptions import SyncException
 
 
@@ -69,11 +69,9 @@ def create_axes(
                 api_results.append(api_result)
             else:
                 error_msg = f"Company not found: {company_code}"
-                log_error(
-                    scope.upper(),
-                    "CREATE",
-                    project.get("code", "unknown"),
-                    Exception(error_msg),
+                logging.error(
+                    f"[{scope.upper()}] CREATE failed for entity "
+                    f"'{project.get('code', 'unknown')}': {error_msg}"
                 )
                 api_results.append(
                     ApiResult.error_result(
@@ -87,12 +85,11 @@ def create_axes(
                 )
         except SyncException as e:
             # Log l'erreur mais continue le processus
-            log_error(
-                scope.upper(),
-                "CREATE",
-                project.get("code", "unknown"),
-                e,
-                f"Company: {project.get('client', 'unknown')}",
+            logging.error(
+                f"[{scope.upper()}] CREATE failed for entity "
+                f"'{project.get('code', 'unknown')}' "
+                f"with company '{project.get('client', 'unknown')}'",
+                exc_info=True,
             )
             # Créer un ApiResult d'erreur pour maintenir la cohérence
             api_results.append(
@@ -107,7 +104,7 @@ def create_axes(
             )
 
     projects_to_create[status_col] = [result.success for result in api_results]
-    projects_to_create = add_api_logging_columns(projects_to_create, api_results)
+    # projects_to_create = add_api_logging_columns(projects_to_create, api_results)
 
     return projects_to_create, status_col
 
@@ -153,11 +150,9 @@ def update_axes(
                 api_results.append(api_result)
             else:
                 error_msg = f"Company not found: {company_code}"
-                log_error(
-                    scope.upper(),
-                    "UPDATE",
-                    project.get("code", "unknown"),
-                    Exception(error_msg),
+                logging.error(
+                    f"[{scope.upper()}] UPDATE failed for entity "
+                    f"'{project.get('code', 'unknown')}': {error_msg}"
                 )
                 api_results.append(
                     ApiResult.error_result(
@@ -171,12 +166,11 @@ def update_axes(
                 )
         except SyncException as e:
             # Log l'erreur mais continue le processus
-            log_error(
-                scope.upper(),
-                "UPDATE",
-                project.get("code", "unknown"),
-                e,
-                f"Company: {project.get('client', 'unknown')}",
+            logging.error(
+                f"[{scope.upper()}] UPDATE failed for entity "
+                f"'{project.get('code', 'unknown')}' "
+                f"with company '{project.get('client', 'unknown')}'",
+                exc_info=True,
             )
             # Créer un ApiResult d'erreur pour maintenir la cohérence
             api_results.append(
@@ -193,7 +187,7 @@ def update_axes(
     if axes_to_update:
         df_result = pd.DataFrame(axes_to_update)
         df_result[status_col] = [result.success for result in api_results]
-        df_result = add_api_logging_columns(df_result, api_results)
+        # df_result = add_api_logging_columns(df_result, api_results)
 
         return df_result, status_col
     return pd.DataFrame(), status_col
@@ -237,11 +231,9 @@ def delete_axes(
                 api_results.append(api_result)
             else:
                 error_msg = "Company ID not found: company_id field missing"
-                log_error(
-                    scope.upper(),
-                    "DELETE",
-                    project.get("code", "unknown"),
-                    Exception(error_msg),
+                logging.error(
+                    f"[{scope.upper()}] DELETE failed for entity "
+                    f"'{project.get('code', 'unknown')}': {error_msg}"
                 )
                 api_results.append(
                     ApiResult.error_result(
@@ -255,12 +247,11 @@ def delete_axes(
                 )
         except SyncException as e:
             # Log l'erreur mais continue le processus
-            log_error(
-                scope.upper(),
-                "DELETE",
-                project.get("code", "unknown"),
-                e,
-                f"Company ID: {project.get('company_id', 'missing')}",
+            logging.error(
+                f"[{scope.upper()}] DELETE failed for entity "
+                f"'{project.get('code', 'unknown')}' "
+                f"with company ID '{project.get('company_id', 'missing')}'",
+                exc_info=True,
             )
             # Créer un ApiResult d'erreur pour maintenir la cohérence
             api_results.append(
@@ -275,6 +266,6 @@ def delete_axes(
             )
 
     axes_to_delete[status_col] = [result.success for result in api_results]
-    axes_to_delete = add_api_logging_columns(axes_to_delete, api_results)
+    # axes_to_delete = add_api_logging_columns(axes_to_delete, api_results)
 
     return axes_to_delete, status_col

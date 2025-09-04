@@ -9,6 +9,7 @@ import argparse
 import os
 import sys
 import time
+import logging
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -32,7 +33,6 @@ from .metrics import (
 )
 from .retry import get_retry_manager, print_retry_summary
 from .context import SyncContext
-from .logging import export_api_logs
 from .exceptions import SyncException
 
 # Ajout du répertoire parent au path pour les imports
@@ -179,35 +179,25 @@ class LogManager:
         self.results.append(result)
 
     def export_and_summarize(self) -> None:
-        """Exporte les logs et affiche un résumé."""
+        """Affiche un résumé des opérations API."""
         if not self.results:
-            print("No synchronization results to export.")
+            logging.info("No synchronization results to summarize.")
             return
 
-        # Collecte de tous les DataFrames de résultats
         all_dataframes: List[pd.DataFrame] = []
         for result in self.results:
             if result.success and result.results:
                 all_dataframes.extend(result.results)
 
         if not all_dataframes:
-            print("No data to export.")
+            logging.info("No dataframes to summarize.")
             return
 
         try:
-            # Combiner tous les résultats
             combined_df = pd.concat(all_dataframes, ignore_index=True)
-
-            # Exporter les logs
-            log_filename = export_api_logs(combined_df)
-            print("\n--- API Logs Export ---")
-            print(f"API logs exported to : {log_filename}")
-
-            # Afficher un résumé des erreurs
             self._print_api_summary(combined_df)
-
         except (IOError, ValueError) as e:
-            print(f"Error during logs export : {e}")
+            logging.error(f"Error during summary generation: {e}", exc_info=True)
 
     def _print_api_summary(self, combined_df: pd.DataFrame) -> None:
         """Affiche un résumé des opérations API."""

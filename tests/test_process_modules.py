@@ -8,7 +8,6 @@ from unittest.mock import Mock, patch, MagicMock
 import pandas as pd
 
 import n2f.process.axe as axe_process
-from core.logging import add_api_logging_columns, export_api_logs
 import n2f.process.company as company_process
 import n2f.process.customaxe as customaxe_process
 import n2f.process.userprofile as userprofile_process
@@ -352,94 +351,6 @@ class TestAxeProcess(unittest.TestCase):
         # tous les éléments
         # Vérifions plutôt que la fonction s'exécute sans erreur
         self.assertEqual(status_col, "updated")
-
-
-class TestHelperProcess(unittest.TestCase):
-    """Tests pour n2f.process.helper."""
-
-    def setUp(self):
-        """Configuration initiale pour les tests."""
-        self.df = pd.DataFrame({"id": [1, 2, 3], "name": ["Test1", "Test2", "Test3"]})
-        self.api_results = [
-            Mock(
-                success=True,
-                to_dict=lambda: {"api_status": "success", "api_message": "OK"},
-            ),
-            Mock(
-                success=False,
-                to_dict=lambda: {"api_status": "error", "api_message": "Failed"},
-            ),
-            Mock(
-                success=True,
-                to_dict=lambda: {"api_status": "success", "api_message": "OK"},
-            ),
-        ]
-
-    def test_add_api_logging_columns_empty_results(self):
-        """Test d'ajout de colonnes de logging avec résultats vides."""
-        result = add_api_logging_columns(self.df, [])
-        self.assertEqual(len(result.columns), 2)  # id, name
-        self.assertNotIn("api_success", result.columns)
-
-    def test_add_api_logging_columns_success(self):
-        """Test d'ajout de colonnes de logging réussie."""
-        result = add_api_logging_columns(self.df, self.api_results)
-
-        self.assertIn("api_success", result.columns)
-        self.assertIn("api_status", result.columns)
-        self.assertIn("api_message", result.columns)
-
-        self.assertEqual(result["api_success"].tolist(), [True, False, True])
-        self.assertEqual(result["api_status"].tolist(), ["success", "error", "success"])
-
-    def test_add_api_logging_columns_existing_columns(self):
-        """Test d'ajout de colonnes de logging avec colonnes existantes."""
-        df_with_existing = self.df.copy()
-        df_with_existing["api_success"] = [False, False, False]
-
-        result = add_api_logging_columns(df_with_existing, self.api_results)
-
-        self.assertEqual(result["api_success"].tolist(), [True, False, True])
-
-    @patch("pandas.DataFrame.to_csv")
-    def test_export_api_logs_default_filename(self, mock_to_csv):
-        """Test d'export de logs API avec nom de fichier par défaut."""
-        df_with_logs = self.df.copy()
-        df_with_logs["api_success"] = [True, False, True]
-        df_with_logs["api_status"] = ["success", "error", "success"]
-
-        result = export_api_logs(df_with_logs)
-
-        self.assertTrue("logs" in result and "api_logs_" in result)
-        self.assertTrue(result.endswith(".log.csv"))
-        mock_to_csv.assert_called_once()
-
-    @patch("pandas.DataFrame.to_csv")
-    def test_export_api_logs_custom_filename(self, mock_to_csv):
-        """Test d'export de logs API avec nom de fichier personnalisé."""
-        df_with_logs = self.df.copy()
-        df_with_logs["api_success"] = [True, False, True]
-
-        result = export_api_logs(df_with_logs, "custom_log.csv")
-
-        self.assertTrue("logs" in result and "custom_log.csv" in result)
-        # Vérifier que le mock a été appelé avec le bon chemin
-        mock_call_args = str(mock_to_csv.call_args[0][0])
-        self.assertTrue("logs" in mock_call_args and "custom_log.csv" in mock_call_args)
-
-    @patch("pandas.DataFrame.to_csv")
-    def test_export_api_logs_only_logging_columns(self, mock_to_csv):
-        """Test d'export de logs API avec seulement les colonnes de logging."""
-        df_with_logs = self.df.copy()
-        df_with_logs["api_success"] = [True, False, True]
-        df_with_logs["api_status"] = ["success", "error", "success"]
-        df_with_logs["other_column"] = ["other1", "other2", "other3"]
-
-        result = export_api_logs(df_with_logs, "test.csv")
-
-        # Vérifier que to_csv a été appelé avec les bonnes colonnes
-        call_args = str(mock_to_csv.call_args[0][0])
-        self.assertTrue("logs" in call_args and "test.csv" in call_args)
 
 
 class TestCompanyProcess(unittest.TestCase):

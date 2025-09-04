@@ -16,16 +16,6 @@ def reporting(
         empty_message: Message à afficher si le DataFrame est vide
         update_message: Message de base pour les opérations avec résultats
         status_col: Nom de la colonne contenant le statut (True=succès, False=échec)
-
-    Example:
-        >>> df = pd.DataFrame({
-        ...     'entity_id': ['user1', 'user2', 'user3'],
-        ...     'success': [True, True, False]
-        ... })
-        >>> reporting(df, "Aucune opération", "Opérations effectuées", "success")
-        Opérations effectuées :
-          Success : 2 / 3
-          Failures : 1 / 3
     """
     if result_df.empty:
         print(empty_message)
@@ -39,37 +29,6 @@ def reporting(
             print(f"  Failures : {nb_failed} / {nb_total}")
         else:
             print(f"  Total : {len(result_df)}")
-
-
-def log_error(
-    scope: str, action: str, entity_id: str, error: Exception, context: str = ""
-) -> None:
-    """
-    Enregistre une erreur avec son contexte pour faciliter le debugging.
-
-    Cette fonction formate et affiche les erreurs de manière structurée,
-    incluant toutes les informations nécessaires pour identifier et
-    résoudre le problème.
-
-    Args:
-        scope: Périmètre de synchronisation (USERS, PROJECTS, PLATES, SUBPOSTS)
-        action: Action effectuée (CREATE, UPDATE, DELETE)
-        entity_id: Identifiant de l'entité (email pour users, code pour axes)
-        error: Exception levée
-        context: Contexte supplémentaire optionnel
-
-    Example:
-        >>> try:
-        ...     # Opération qui peut échouer
-        ...     pass
-        ... except Exception as e:
-        ...     log_error("USERS",
-     "CREATE", "john@example.com", e, "Payload validation")
-        [ERROR] [USERS] [CREATE] [john@example.com] - Payload validation - Invalid
-    email format
-    """
-    context_str = f" - {context}" if context else ""
-    print(f"[ERROR] [{scope}] [{action}] [{entity_id}]{context_str} - {str(error)}")
 
 
 def has_payload_changes(

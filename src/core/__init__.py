@@ -38,7 +38,7 @@ from .cache import (
 # Examples module
 from .examples import *
 from .context import SyncContext
-from .logging import add_api_logging_columns, export_api_logs
+from .logging import setup_logging
 from .memory_manager import (
     MemoryManager,
     DataFrameInfo,
@@ -125,8 +125,7 @@ __all__ = [
     # Context
     "SyncContext",
     # Logging
-    "add_api_logging_columns",
-    "export_api_logs",
+    "setup_logging",
     # Memory Manager
     "MemoryManager",
     "DataFrameInfo",

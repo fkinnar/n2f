@@ -1,10 +1,10 @@
+import logging
 from abc import ABC, abstractmethod
 from typing import Dict, List, Tuple, Any, Optional, cast
 import pandas as pd
 from n2f.client import N2fApiClient
 from n2f.api_result import ApiResult
-from business.process.helper import log_error, has_payload_changes
-from core.logging import add_api_logging_columns
+from business.process.helper import has_payload_changes
 from core.exceptions import SyncException
 
 
@@ -72,8 +72,10 @@ class EntitySynchronizer(ABC):
             except SyncException as e:
                 # Gestion d'erreur standardisée
                 entity_id: str = self.get_entity_id(entity)
-                log_error(
-                    self.scope.upper(), "CREATE", entity_id, e, f"Payload: {payload}"
+                logging.error(
+                    f"[{self.scope.upper()}] CREATE failed for entity '{entity_id}'. "
+                    f"Payload: {payload}",
+                    exc_info=True,
                 )
                 api_results.append(
                     self._create_error_result("CREATE", entity_id, str(e))
@@ -81,7 +83,7 @@ class EntitySynchronizer(ABC):
 
         # Ajouter les colonnes de logging
         entities_to_create[status_col] = [result.success for result in api_results]
-        entities_to_create = add_api_logging_columns(entities_to_create, api_results)
+        # entities_to_create = add_api_logging_columns(entities_to_create, api_results)
 
         return entities_to_create, status_col
 
@@ -146,8 +148,10 @@ class EntitySynchronizer(ABC):
             except SyncException as e:
                 # Gestion d'erreur standardisée
                 entity_id: str = self.get_entity_id(entity)
-                log_error(
-                    self.scope.upper(), "UPDATE", entity_id, e, f"Payload: {payload}"
+                logging.error(
+                    f"[{self.scope.upper()}] UPDATE failed for entity '{entity_id}'. "
+                    f"Payload: {payload}",
+                    exc_info=True,
                 )
                 api_results.append(
                     self._create_error_result("UPDATE", entity_id, str(e))
@@ -157,7 +161,7 @@ class EntitySynchronizer(ABC):
         if updated_entities:
             df_result = pd.DataFrame(updated_entities)
             df_result[status_col] = [result.success for result in api_results]
-            df_result = add_api_logging_columns(df_result, api_results)
+            # df_result = add_api_logging_columns(df_result, api_results)
             return df_result, status_col
 
         return pd.DataFrame(), status_col
@@ -201,14 +205,17 @@ class EntitySynchronizer(ABC):
             except SyncException as e:
                 # Gestion d'erreur standardisée
                 entity_id = self.get_entity_id(entity)
-                log_error(self.scope.upper(), "DELETE", entity_id, e)
+                logging.error(
+                    f"[{self.scope.upper()}] DELETE failed for entity '{entity_id}'",
+                    exc_info=True,
+                )
                 api_results.append(
                     self._create_error_result("DELETE", entity_id, str(e))
                 )
 
         # Ajouter les colonnes de logging
         entities_to_delete[status_col] = [result.success for result in api_results]
-        entities_to_delete = add_api_logging_columns(entities_to_delete, api_results)
+        # entities_to_delete = add_api_logging_columns(entities_to_delete, api_results)
 
         return entities_to_delete, status_col
 

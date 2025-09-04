@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 from core import SyncOrchestrator
 from core.config import ConfigLoader
+from core.logging import setup_logging
 
 
 def main() -> None:
@@ -28,6 +29,9 @@ def main() -> None:
         >>> python sync-agresso-n2f.py --scope users --create --update
         >>> python sync-agresso-n2f.py --config prod --scope all
     """
+    # Initialisation du logging dès le début
+    setup_logging()
+
     args = create_arg_parser().parse_args()
 
     # Si aucun paramètre n'est passé, on active create et update par défaut

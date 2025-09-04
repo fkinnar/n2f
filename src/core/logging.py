@@ -1,72 +1,55 @@
 """
-Fonctions de logging pour la synchronisation N2F.
+Module de configuration centralisée du logging pour la synchronisation N2F.
 """
 
-import pandas as pd
-from typing import List, Optional
-from datetime import datetime
+import logging
+import sys
+from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from n2f.api_result import ApiResult
 
 
-def add_api_logging_columns(
-    df: pd.DataFrame, api_results: List[ApiResult]
-) -> pd.DataFrame:
+def setup_logging(log_level: str = "INFO") -> None:
     """
-    Ajoute les colonnes de logging API au DataFrame.
+    Configure le logging pour l'application.
+
+    Cette fonction initialise un logger racine avec deux handlers :
+    - Un StreamHandler pour afficher les logs dans la console.
+    - Un RotatingFileHandler pour écrire les logs dans un fichier
+      avec rotation automatique.
 
     Args:
-        df: DataFrame à enrichir
-        api_results: Liste des résultats d'API
-
-    Returns:
-        DataFrame enrichi avec les colonnes de logging
+        log_level (str): Le niveau de log à utiliser (par ex. "DEBUG", "INFO").
     """
-    if not api_results:
-        return df
-
-    # Ajouter la colonne de succès
-    df["api_success"] = [result.success for result in api_results]
-
-    # Ajouter les colonnes détaillées
-    for i, result in enumerate(api_results):
-        result_dict = result.to_dict()
-        for key, value in result_dict.items():
-            if key not in df.columns:
-                df[key] = None
-            df.loc[df.index[i], key] = value
-
-    return df
-
-
-def export_api_logs(df: pd.DataFrame, filename: Optional[str] = None) -> str:
-    """
-    Exporte les logs d'API vers un fichier CSV dans le dossier logs.
-
-    Args:
-        df: DataFrame contenant les logs d'API
-        filename: Nom du fichier (optionnel)
-
-    Returns:
-        str: Chemin du fichier exporté
-    """
-    if filename is None:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"api_logs_{timestamp}.log.csv"
-
     # Créer le dossier logs s'il n'existe pas
     logs_dir = Path("logs")
     logs_dir.mkdir(exist_ok=True)
+    log_file = logs_dir / "sync.log"
 
-    # Construire le chemin complet dans le dossier logs
-    filepath = logs_dir / filename
+    # Définir le format des logs
+    log_formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
 
-    # Sélectionner seulement les colonnes de logging si elles existent
-    logging_columns = [col for col in df.columns if col.startswith("api_")]
-    if logging_columns:
-        df_export = df[logging_columns].copy()
-    else:
-        df_export = df.copy()
+    # Configurer le logger racine
+    root_logger = logging.getLogger()
+    root_logger.setLevel(log_level)
+    root_logger.handlers.clear()  # Supprimer les handlers existants
 
-    df_export.to_csv(filepath, index=False)
-    return str(filepath)
+    # Handler pour la console
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(log_formatter)
+    root_logger.addHandler(console_handler)
+
+    # Handler pour le fichier avec rotation
+    # 5 Mo par fichier, conserve les 5 derniers fichiers
+    file_handler = RotatingFileHandler(
+        log_file, maxBytes=5 * 1024 * 1024, backupCount=5, encoding="utf-8"
+    )
+    file_handler.setFormatter(log_formatter)
+    root_logger.addHandler(file_handler)
+
+    logging.info("=" * 50)
+    logging.info("Le système de logging a été initialisé.")
+    logging.info(f"Niveau de log : {log_level}")
+    logging.info(f"Fichier de log : {log_file.absolute()}")
+    logging.info("=" * 50)

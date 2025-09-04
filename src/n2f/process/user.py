@@ -1,3 +1,4 @@
+import logging
 import pandas as pd
 from typing import Optional, Set, Dict, Any, List, Tuple
 
@@ -6,8 +7,7 @@ from n2f.payload import create_user_upsert_payload
 
 # Import déplacé dans la fonction pour éviter l'import circulaire
 from n2f.api_result import ApiResult
-from core.logging import add_api_logging_columns
-from business.process.helper import has_payload_changes, log_error
+from business.process.helper import has_payload_changes
 from core.exceptions import SyncException
 
 # Note: get_users is now in the client, but we keep the process file for business logic
@@ -143,7 +143,11 @@ def create_users(
             api_results.append(api_result)
         except SyncException as e:
             # Log l'erreur mais continue le processus
-            log_error("USERS", "CREATE", user["AdresseEmail"], e, f"Payload: {payload}")
+            logging.error(
+                f"[USERS] CREATE failed for entity '{user['AdresseEmail']}'. "
+                f"Payload: {payload}",
+                exc_info=True,
+            )
             # Créer un ApiResult d'erreur pour maintenir la cohérence
             api_results.append(
                 ApiResult.error_result(
@@ -158,7 +162,7 @@ def create_users(
 
     # Ajouter les colonnes de logging
     users_to_create[status_col] = [result.success for result in api_results]
-    users_to_create = add_api_logging_columns(users_to_create, api_results)
+    # users_to_create = add_api_logging_columns(users_to_create, api_results)
 
     return users_to_create, status_col
 
@@ -199,7 +203,11 @@ def update_users(
             users_to_update.append(user.to_dict())
         except SyncException as e:
             # Log l'erreur mais continue le processus
-            log_error("USERS", "UPDATE", user["AdresseEmail"], e, f"Payload: {payload}")
+            logging.error(
+                f"[USERS] UPDATE failed for entity '{user['AdresseEmail']}'. "
+                f"Payload: {payload}",
+                exc_info=True,
+            )
             # Créer un ApiResult d'erreur pour maintenir la cohérence
             api_results.append(
                 ApiResult.error_result(
@@ -216,7 +224,7 @@ def update_users(
     if users_to_update:
         df_result = pd.DataFrame(users_to_update)
         df_result[status_col] = [result.success for result in api_results]
-        df_result = add_api_logging_columns(df_result, api_results)
+        # df_result = add_api_logging_columns(df_result, api_results)
 
         return df_result, status_col
     return pd.DataFrame(), status_col
@@ -248,7 +256,9 @@ def delete_users(
                 api_results.append(api_result)
             except SyncException as e:
                 # Log l'erreur mais continue le processus
-                log_error("USERS", "DELETE", mail, e)
+                logging.error(
+                    f"[USERS] DELETE failed for entity '{mail}'", exc_info=True
+                )
                 # Créer un ApiResult d'erreur pour maintenir la cohérence
                 api_results.append(
                     ApiResult.error_result(
@@ -261,6 +271,6 @@ def delete_users(
                     )
                 )
         users_to_delete[status_col] = [result.success for result in api_results]
-        users_to_delete = add_api_logging_columns(users_to_delete, api_results)
+        # users_to_delete = add_api_logging_columns(users_to_delete, api_results)
 
     return users_to_delete, status_col

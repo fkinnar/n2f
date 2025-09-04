@@ -177,7 +177,7 @@ class TestCreateAxes(unittest.TestCase):
 
     def test_create_axes_company_not_found(self):
         """Test de création avec entreprise non trouvée."""
-        with patch("n2f.process.axe.log_error") as mock_log_error:
+        with patch("logging.error") as mock_log_error:
             # Mock l'import dynamique de lookup_company_id
             with patch("n2f.process.user.lookup_company_id") as mock_lookup:
                 mock_lookup.return_value = None
@@ -205,7 +205,7 @@ class TestCreateAxes(unittest.TestCase):
             # Mock upsert_axe_value pour lever une exception
             self.mock_client.upsert_axe_value.side_effect = SyncException("API Error")
 
-            with patch("n2f.process.axe.log_error") as mock_log_error:
+            with patch("logging.error") as mock_log_error:
                 # Mock l'import dynamique de lookup_company_id
                 with patch("n2f.process.user.lookup_company_id") as mock_lookup:
                     mock_lookup.return_value = "company_uuid2"
@@ -344,7 +344,7 @@ class TestUpdateAxes(unittest.TestCase):
         with patch("n2f.process.axe.has_payload_changes") as mock_has_changes:
             mock_has_changes.return_value = True
 
-            with patch("n2f.process.axe.log_error") as mock_log_error:
+            with patch("logging.error") as mock_log_error:
                 # Mock l'import dynamique de lookup_company_id
                 with patch("n2f.process.user.lookup_company_id") as mock_lookup:
                     mock_lookup.return_value = None
@@ -375,7 +375,7 @@ class TestUpdateAxes(unittest.TestCase):
                     "API Error"
                 )
 
-                with patch("n2f.process.axe.log_error") as mock_log_error:
+                with patch("logging.error") as mock_log_error:
                     # Mock l'import dynamique de lookup_company_id
                     with patch("n2f.process.user.lookup_company_id") as mock_lookup:
                         mock_lookup.return_value = "company_uuid1"
@@ -478,7 +478,7 @@ class TestDeleteAxes(unittest.TestCase):
             }
         )
 
-        with patch("n2f.process.axe.log_error") as mock_log_error:
+        with patch("logging.error") as mock_log_error:
             result_df, status_col = delete_axes(
                 self.mock_client,
                 "axe_id",
@@ -496,7 +496,7 @@ class TestDeleteAxes(unittest.TestCase):
         """Test de suppression avec exception API."""
         self.mock_client.delete_axe_value.side_effect = SyncException("API Error")
 
-        with patch("n2f.process.axe.log_error") as mock_log_error:
+        with patch("logging.error") as mock_log_error:
             result_df, status_col = delete_axes(
                 self.mock_client,
                 "axe_id",
