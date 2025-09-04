@@ -134,7 +134,7 @@ def create_arg_parser() -> argparse.ArgumentParser:
 
     # Utilisation des scopes par défaut pour le parser d'arguments
     # Le registry sera initialisé plus tard dans le processus
-    scope_choices = ["users", "projects", "plates", "subposts", "departments", "all"]
+    scope_choices = ["users", "projects", "plates", "subposts", "all"]
 
     parser.add_argument(
         "-s",

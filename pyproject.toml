@@ -56,7 +56,7 @@ dev = [
 ]
 
 [project.scripts]
-n2f-sync = "src.sync_agresso_n2f:main"
+n2f-sync = "sync_agresso_n2f:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

@@ -8,8 +8,7 @@ import sys
 import os
 import time
 
-# Ajouter le répertoire python au path pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))
+# Le path est configuré par pyproject.toml, pas besoin de modification manuelle
 
 
 def run_all_tests():

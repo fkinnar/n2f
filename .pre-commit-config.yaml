@@ -47,7 +47,7 @@ repos:
         pass_filenames: false
         always_run: true
         types: [python]
-        stages: [commit]
+        stages: [pre-commit]
         verbose: true
         # Ne pas faire échouer le commit si les tests échouent
         require_serial: false

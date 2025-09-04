@@ -4,11 +4,8 @@ import os
 import sys
 import importlib
 
-# Add the python directory to the path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))
-
-# Dynamically import the module with hyphens in its name
-sync_script = importlib.import_module("sync-agresso-n2f")
+# Import the renamed main module
+sync_script = importlib.import_module("src.sync_agresso_n2f")
 
 
 class TestSyncAgressoN2F(unittest.TestCase):

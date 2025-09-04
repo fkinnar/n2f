@@ -11,11 +11,8 @@ Si vous clonez le projet sur une nouvelle machine, installez d'abord toutes les
 dÃ©pendances de dÃ©veloppement :
 
 ```bash
-# Option 1: Via pyproject.toml (recommandÃ©)
+# Via pyproject.toml
 python -m pip install -e ".[dev]"
-
-# Option 2: Via requirements-dev.txt
-python -m pip install -r requirements-dev.txt
 ```
 
 ### Installation des hooks pre-commit
@@ -108,16 +105,16 @@ pre-commit autoupdate
 
 Si les hooks semblent ignorÃ©s, vÃ©rifiez que :
 
-1. `pre-commit install` a Ã©tÃ© exÃ©cutÃ©
+1. `pre-commit install` a été exécuté
 1. Le fichier `.git/hooks/pre-commit` existe
-1. Vous Ãªtes dans le bon repository Git
+1. Vous êtes dans le bon repository Git
 
 ### Erreurs de formatage
 
 Si Black Ã©choue :
 
-1. VÃ©rifiez la syntaxe Python
-1. ExÃ©cutez `black .` manuellement pour voir les erreurs
+1. Vérifiez la syntaxe Python
+1. Exécutez `black .` manuellement pour voir les erreurs
 1. Corrigez le code et recommencez
 
 ### Fichiers ignorÃ©s
@@ -131,12 +128,12 @@ Certains fichiers sont automatiquement exclus :
 
 ## ðŸ”„ Workflow recommandÃ©
 
-1. **DÃ©veloppement** : Codez normalement
+1. **Développement** : Codez normalement
 1. **Staging** : `git add <fichiers>`
 1. **Commit** : `git commit -m "message"`
-1. **Hooks automatiques** : Black formate, autres hooks vÃ©rifient
-1. **SuccÃ¨s** : Commit crÃ©Ã© avec code formatÃ©
-1. **Ã‰chec** : Corrigez et recommencez
+1. **Hooks automatiques** : Black formate, autres hooks vérifient
+1. **Succès** : Commit créé avec code formaté
+1. **Échec** : Corrigez et recommencez
 
 ## ðŸ“š Ressources
 
