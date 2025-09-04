@@ -154,7 +154,7 @@ def normalize_n2f_users(
 def build_mapping(df: pd.DataFrame) -> Dict[str, str]:
     """
     Construit un mapping de toutes les valeurs de profile (toutes langues) vers la
-    valeur française.
+    valeur française de manière optimisée.
 
     Args:
         df: DataFrame contenant les données de mapping
@@ -169,32 +169,45 @@ def build_mapping(df: pd.DataFrame) -> Dict[str, str]:
     if df.empty:
         return {}
 
-    # Vérification de la colonne essentielle
     if COL_NAMES not in df.columns:
         raise ValidationException(
             message="Colonne manquante dans le DataFrame de mapping",
             field=COL_NAMES,
-            details=f"La colonne '{COL_NAMES}' est requise pour construire le mapping.",
+            details=f"La colonne '{COL_NAMES}' est requise.",
         )
 
-    mapping: Dict[str, str] = {}
-    for _, row in df.iterrows():
-        names = row[COL_NAMES]
-        if not names:  # Skip si la liste des noms est vide
-            continue
+    # Crée une copie pour éviter les SettingWithCopyWarning
+    df_work = df[[COL_NAMES]].copy()
+    df_work.dropna(subset=[COL_NAMES], inplace=True)
 
-        fr_value: Optional[str] = None
-        # Chercher la valeur française
-        for name in names:
-            if name.get(COL_CULTURE) == CULTURE_FR:
-                fr_value = name.get(COL_VALUE, "").strip()
-                break
+    # Associe un identifiant unique à chaque ligne originale
+    df_work["group_id"] = range(len(df_work))
 
-        # Si on a trouvé une valeur française, créer le mapping
-        if fr_value:
-            for name in names:
-                nl_value = name.get(COL_VALUE, "").strip()
-                if nl_value:  # Ne pas mapper les valeurs vides
-                    mapping[nl_value.lower()] = fr_value
+    # Déplie la liste de dictionnaires en plusieurs lignes
+    df_exploded = df_work.explode(COL_NAMES)
+    df_exploded.reset_index(drop=True, inplace=True)
+
+    # Crée des colonnes à partir des dictionnaires
+    df_exploded = pd.concat(
+        [
+            df_exploded.drop([COL_NAMES], axis=1),
+            df_exploded[COL_NAMES].apply(pd.Series),
+        ],
+        axis=1,
+    )
+    df_exploded.dropna(subset=[COL_VALUE], inplace=True)
+    df_exploded = df_exploded[df_exploded[COL_VALUE].astype(str).str.strip() != ""]
+    df_exploded[COL_VALUE] = df_exploded[COL_VALUE].astype(str).str.strip().str.lower()
+
+    # Trouve la valeur française pour chaque groupe
+    fr_values_df = df_exploded[df_exploded[COL_CULTURE] == CULTURE_FR].copy()
+    fr_values_df["fr_value"] = fr_values_df[COL_VALUE].str.capitalize()
+    fr_values = fr_values_df[["group_id", "fr_value"]]
+
+    # Fusionne les valeurs françaises avec toutes les autres valeurs
+    df_merged = pd.merge(df_exploded, fr_values, on="group_id")
+
+    # Crée le mapping final
+    mapping = df_merged.set_index(COL_VALUE)["fr_value"].to_dict()
 
     return mapping
