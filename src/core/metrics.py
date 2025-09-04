@@ -8,6 +8,7 @@ Ce module fournit un système de métriques complet qui :
 - Génère des rapports détaillés de performance
 """
 
+import logging
 import time
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Any
@@ -383,67 +384,71 @@ class SyncMetrics:
         """Affiche un résumé des métriques dans la console."""
         summary = self.get_summary()
 
-        print("\n" + "=" * 70)
-        print("RÉSUMÉ DES MÉTRIQUES DE SYNCHRONISATION")
-        print("=" * 70)
+        logging.info("\n" + "=" * 70)
+        logging.info("RÉSUMÉ DES MÉTRIQUES DE SYNCHRONISATION")
+        logging.info("=" * 70)
 
         # Résumé général
-        print(
+        logging.info(
             f"Durée totale: {summary['summary']['total_duration_seconds']:.2f} secondes"
         )
-        print(
+        logging.info(
             f"Opérations: {summary['summary']['successful_operations']}/"
             f"{summary['summary']['total_operations']} "
             f"réussies ({summary['summary']['success_rate'] * 100:.1f}%)"
         )
-        print(
+        logging.info(
             f"Enregistrements traités: "
             f"{summary['summary']['total_records_processed']:,}"
         )
-        print(
+        logging.info(
             f"Performance: {summary['summary']['average_records_per_second']:.1f} "
             f"enregistrements / seconde"
         )
 
         # Performance
-        print("\nPERFORMANCE:")
-        print(
+        logging.info("\nPERFORMANCE:")
+        logging.info(
             f"   - Durée moyenne: "
             f"{summary['performance']['average_duration_seconds']:.2f}s"
         )
-        print(f"   - Durée max: {summary['performance']['max_duration_seconds']:.2f}s")
-        print(f"   - Appels API: {summary['performance']['total_api_calls']}")
-        print(
+        logging.info(
+            f"   - Durée max: {summary['performance']['max_duration_seconds']:.2f}s"
+        )
+        logging.info(f"   - Appels API: {summary['performance']['total_api_calls']}")
+        logging.info(
             f"- Cache hit rate: {summary['performance']['cache_hit_rate'] * 100:.1f}%"
         )
 
         # Mémoire
-        print("\nMÉMOIRE:")
-        print(f"   - Pic d'utilisation: {summary['memory']['peak_usage_mb']:.1f}MB")
-        print(
+        logging.info("\nMÉMOIRE:")
+        logging.info(
+            f"   - Pic d'utilisation: {summary['memory']['peak_usage_mb']:.1f}MB"
+        )
+        logging.info(
             f"   - Utilisation moyenne: {summary['memory']['average_usage_mb']:.1f}MB"
         )
 
         # Par scope
-        print("\nPAR SCOPE:")
+        logging.info("\nPAR SCOPE:")
         for scope, scope_data in summary["operations_by_scope"].items():
             success_rate = (
                 scope_data["success"] / scope_data["total"] * 100
                 if scope_data["total"] > 0
                 else 0
             )
-            print(
+            logging.info(
                 f"   - {scope}: {scope_data['success']}/{scope_data['total']} "
                 f"({success_rate:.1f}%)"
             )
 
         # Erreurs
         if summary["error_summary"]:
-            print("\nERREURS:")
+            logging.warning("\nERREURS:")
             for error, count in summary["error_summary"].items():
-                print(f"   - {error}: {count} occurrence(s)")
+                logging.warning(f"   - {error}: {count} occurrence(s)")
 
-        print("=" * 70)
+        logging.info("=" * 70)
 
     def _group_operations_by_scope(self) -> Dict[str, Dict[str, int]]:
         """Groupe les opérations par scope."""

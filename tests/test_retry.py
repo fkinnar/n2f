@@ -311,8 +311,8 @@ class TestRetryManager(unittest.TestCase):
         self.manager.reset_metrics()
         self.assertEqual(len(self.manager.metrics), 0)
 
-    @patch("builtins.print")
-    def test_print_summary(self, mock_print):
+    @patch("logging.info")
+    def test_print_summary(self, mock_log_info: Mock) -> None:
         """Test de l'affichage du résumé."""
         self.manager.metrics["op1"] = RetryMetrics(
             total_attempts=3,
@@ -322,13 +322,13 @@ class TestRetryManager(unittest.TestCase):
         )
 
         self.manager.print_summary()
-        mock_print.assert_called()
+        mock_log_info.assert_called()
 
-    @patch("builtins.print")
-    def test_print_summary_empty(self, mock_print):
+    @patch("logging.info")
+    def test_print_summary_empty(self, mock_log_info: Mock) -> None:
         """Test de l'affichage du résumé avec des métriques vides."""
         self.manager.print_summary()
-        mock_print.assert_called_with("Aucune métrique de retry disponible.")
+        mock_log_info.assert_called_with("Aucune métrique de retry disponible.")
 
 
 class TestRetryDecorators(unittest.TestCase):

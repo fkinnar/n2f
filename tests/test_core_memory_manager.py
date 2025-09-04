@@ -77,7 +77,7 @@ class TestMemoryManager(unittest.TestCase):
         self.mock_virtual_memory = self.virtual_memory_patcher.start()
 
         # Mock print pour éviter l'affichage
-        self.print_patcher = patch("builtins.print")
+        self.print_patcher = patch("logging.info")
         self.mock_print = self.print_patcher.start()
 
         self.memory_manager = MemoryManager(max_memory_mb=100, cleanup_threshold=0.8)
@@ -342,7 +342,7 @@ class TestGlobalFunctions(unittest.TestCase):
         self.virtual_memory_patcher = patch("core.memory_manager.psutil.virtual_memory")
         self.mock_virtual_memory = self.virtual_memory_patcher.start()
 
-        self.print_patcher = patch("builtins.print")
+        self.print_patcher = patch("logging.info")
         self.mock_print = self.print_patcher.start()
 
     def tearDown(self):

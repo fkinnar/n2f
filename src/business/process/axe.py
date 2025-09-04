@@ -1,3 +1,4 @@
+import logging
 import pandas as pd
 from typing import List, Dict
 
@@ -46,7 +47,9 @@ def _load_agresso_axes(
             df_agresso_axes[AGRESSO_COL_AXE_TYPE].astype(str).str.upper()
             == sql_column_filter
         ].copy()
-    print(f"Number of {sql_column_filter} Agresso loaded : {len(df_agresso_axes)}")
+    logging.info(
+        f"Number of {sql_column_filter} Agresso loaded : {len(df_agresso_axes)}"
+    )
     return df_agresso_axes
 
 
@@ -65,7 +68,7 @@ def _load_n2f_axes(
     df_n2f_axes = (
         pd.concat(axes_list, ignore_index=True) if axes_list else pd.DataFrame()
     )
-    print(f"Number of N2F axe values loaded : {len(df_n2f_axes)}")
+    logging.info(f"Number of N2F axe values loaded : {len(df_n2f_axes)}")
     return df_n2f_axes
 
 
@@ -161,7 +164,7 @@ def synchronize(
     n2f_client = N2fApiClient(context)
 
     df_n2f_companies = n2f_client.get_companies()
-    print(f"Number of N2F companies loaded : {len(df_n2f_companies)}")
+    logging.info(f"Number of N2F companies loaded : {len(df_n2f_companies)}")
 
     company_id_for_mapping = (
         df_n2f_companies[COL_UUID].iloc[0] if not df_n2f_companies.empty else ""

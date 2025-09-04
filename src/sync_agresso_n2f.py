@@ -1,5 +1,6 @@
 import argparse
 import os
+import logging
 from pathlib import Path
 from core import SyncOrchestrator
 from core.config import ConfigLoader
@@ -57,7 +58,7 @@ def main() -> None:
         from dotenv import load_dotenv  # noqa: E402
 
         load_dotenv()
-        print("Environment variables loaded from .env file (sandbox mode)")
+        logging.info("Environment variables loaded from .env file (sandbox mode)")
 
     # Validation des variables d'environnement requises
     validate_environment_variables()
@@ -88,11 +89,13 @@ def validate_environment_variables() -> None:
 
     if missing_vars:
         error_msg = f"Missing required environment variables: {', '.join(missing_vars)}"
-        print(f"ERROR: {error_msg}")
-        print("Please ensure these variables are set in your environment or .env file")
+        logging.error(f"ERROR: {error_msg}")
+        logging.error(
+            "Please ensure these variables are set in your environment or .env file"
+        )
         raise ValueError(error_msg)
 
-    print("All required environment variables are present")
+    logging.info("All required environment variables are present")
 
 
 def create_arg_parser() -> argparse.ArgumentParser:

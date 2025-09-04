@@ -24,30 +24,30 @@ class TestBusinessHelper(unittest.TestCase):
             }
         )
 
-    @patch("builtins.print")
-    def test_reporting_with_results(self, mock_print: Mock) -> None:
+    @patch("logging.info")
+    def test_reporting_with_results(self, mock_log_info: Mock) -> None:
         """Test de reporting avec des résultats."""
         business_helper.reporting(
             self.sample_df, "Aucune opération", "Opérations effectuées", "success"
         )
 
-        # Vérifier que print a été appelé avec les bonnes valeurs
-        calls: List = mock_print.call_args_list
+        # Vérifier que logging.info a été appelé avec les bonnes valeurs
+        calls: List = mock_log_info.call_args_list
         self.assertIn("Opérations effectuées :", [call[0][0] for call in calls])
         self.assertIn("  Success : 3 / 4", [call[0][0] for call in calls])
         self.assertIn("  Failures : 1 / 4", [call[0][0] for call in calls])
 
-    @patch("builtins.print")
-    def test_reporting_empty_dataframe(self, mock_print: Mock) -> None:
+    @patch("logging.info")
+    def test_reporting_empty_dataframe(self, mock_log_info: Mock) -> None:
         """Test de reporting avec DataFrame vide."""
         business_helper.reporting(
             pd.DataFrame(), "Aucune opération", "Opérations effectuées", "success"
         )
 
-        mock_print.assert_called_once_with("Aucune opération")
+        mock_log_info.assert_called_once_with("Aucune opération")
 
-    @patch("builtins.print")
-    def test_reporting_without_status_column(self, mock_print: Mock) -> None:
+    @patch("logging.info")
+    def test_reporting_without_status_column(self, mock_log_info: Mock) -> None:
         """Test de reporting sans colonne de statut."""
         df_no_status: pd.DataFrame = pd.DataFrame({"entity_id": ["user1", "user2"]})
 
@@ -55,7 +55,7 @@ class TestBusinessHelper(unittest.TestCase):
             df_no_status, "Aucune opération", "Opérations effectuées", "success"
         )
 
-        calls: List = mock_print.call_args_list
+        calls: List = mock_log_info.call_args_list
         self.assertIn("Opérations effectuées :", [call[0][0] for call in calls])
         self.assertIn("  Total : 2", [call[0][0] for call in calls])
 

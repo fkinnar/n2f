@@ -8,6 +8,7 @@ Ce module fournit un gestionnaire de mémoire intelligent qui :
 - Fournit des métriques d'utilisation mémoire
 """
 
+import logging
 import time
 import gc
 import psutil
@@ -69,7 +70,7 @@ class MemoryManager:
         self.metrics = MemoryMetrics()
         self.process = psutil.Process()
 
-        print(
+        logging.info(
             f"MemoryManager initialisé - Limite: {max_memory_mb}MB, "
             f"Seuil: {cleanup_threshold * 100}%"
         )
@@ -100,7 +101,7 @@ class MemoryManager:
 
         # Si toujours trop de mémoire après nettoyage, refuser l'enregistrement
         if self.metrics.current_usage_mb + size_mb > self.max_memory_mb:
-            print(
+            logging.warning(
                 f"Impossible d'enregistrer {name} - Mémoire insuffisante "
                 f"({self.metrics.current_usage_mb:.1f}MB + {size_mb:.1f}MB > "
                 f"{self.max_memory_mb}MB)"
@@ -123,7 +124,7 @@ class MemoryManager:
             self.metrics.peak_usage_mb, self.metrics.current_usage_mb
         )
 
-        print(
+        logging.info(
             f"DataFrame '{name}' enregistré - Taille: {size_mb:.1f}MB, "
             f"Total: {self.metrics.current_usage_mb:.1f}MB/{self.max_memory_mb}MB"
         )
@@ -175,7 +176,9 @@ class MemoryManager:
         self.metrics.last_cleanup_time = time.time()
 
         if freed_memory > 0:
-            print(f"Nettoyage du scope '{scope_name}' - {freed_memory:.1f}MB libérés")
+            logging.info(
+                f"Nettoyage du scope '{scope_name}' - {freed_memory:.1f}MB libérés"
+            )
 
         return freed_memory
 
@@ -200,7 +203,7 @@ class MemoryManager:
         # Forcer le garbage collector
         gc.collect()
 
-        print(f"Nettoyage complet - {freed_memory:.1f}MB libérés")
+        logging.info(f"Nettoyage complet - {freed_memory:.1f}MB libérés")
         return freed_memory
 
     def get_memory_stats(self) -> Dict[str, Any]:
@@ -238,37 +241,39 @@ class MemoryManager:
         """Affiche un résumé de l'utilisation mémoire."""
         stats = self.get_memory_stats()
 
-        print("\n" + "=" * 60)
-        print("RÉSUMÉ MÉMOIRE")
-        print("=" * 60)
+        logging.info("\n" + "=" * 60)
+        logging.info("RÉSUMÉ MÉMOIRE")
+        logging.info("=" * 60)
 
         # Mémoire du gestionnaire
         mm = stats["memory_manager"]
-        print(
+        logging.info(
             f"Utilisation actuelle: {mm['current_usage_mb']:.1f}MB / "
             f"{mm['max_memory_mb']}MB ({mm['usage_percentage']:.1f}%)"
         )
-        print(f"Pic d'utilisation: {mm['peak_usage_mb']:.1f}MB")
-        print(
+        logging.info(f"Pic d'utilisation: {mm['peak_usage_mb']:.1f}MB")
+        logging.info(
             f"DataFrames actifs: {mm['active_dataframes']} / "
             f"{mm['total_dataframes']} total"
         )
-        print(
+        logging.info(
             f"Mémoire libérée: {mm['freed_memory_mb']:.1f}MB "
             f"({mm['cleanup_count']} nettoyages)"
         )
 
         # Mémoire système
         sys = stats["system"]
-        print(f"Mémoire système: {sys['memory_percentage']:.1f}% utilisée")
-        print(f"Processus: {sys['process_memory_mb']:.1f}MB")
+        logging.info(f"Mémoire système: {sys['memory_percentage']:.1f}% utilisée")
+        logging.info(f"Processus: {sys['process_memory_mb']:.1f}MB")
 
         # DataFrames par scope
-        print("\nDataFrames par scope:")
+        logging.info("\nDataFrames par scope:")
         for scope, info in stats["dataframes_by_scope"].items():
-            print(f"   - {scope}: {info['count']} DataFrames, {info['size_mb']:.1f}MB")
+            logging.info(
+                f"   - {scope}: {info['count']} DataFrames, {info['size_mb']:.1f}MB"
+            )
 
-        print("=" * 60)
+        logging.info("=" * 60)
 
     def _calculate_dataframe_size(self, df: pd.DataFrame) -> float:
         """Calcule la taille d'un DataFrame en MB."""
@@ -304,7 +309,7 @@ class MemoryManager:
         self.metrics.last_cleanup_time = time.time()
 
         if freed_memory > 0:
-            print(
+            logging.info(
                 f"Nettoyage LRU - {freed_memory:.1f}MB libérés, "
                 f"Reste: {self.metrics.current_usage_mb:.1f}MB"
             )

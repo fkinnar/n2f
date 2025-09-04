@@ -131,7 +131,7 @@ class ScopeExecutor:
                     error_message=f"Scope '{scope_name}' not found or disabled",
                 )
 
-            print(
+            logging.info(
                 f"--- Starting synchronization for scope : {scope_name} "
                 f"({scope_config.display_name}) ---"
             )
@@ -144,7 +144,7 @@ class ScopeExecutor:
             )
 
             duration = time.time() - start_time
-            print(f"--- End of synchronization for scope : {scope_name} ---")
+            logging.info(f"--- End of synchronization for scope : {scope_name} ---")
 
             return SyncResult(
                 scope_name=scope_name,
@@ -156,7 +156,9 @@ class ScopeExecutor:
         except SyncException as e:
             duration = time.time() - start_time
             error_message = f"Error during synchronization: {str(e)}"
-            print(f"--- Error in scope {scope_name}: {error_message} ---")
+            logging.error(
+                f"--- Error in scope {scope_name}: {error_message} ---", exc_info=True
+            )
 
             return SyncResult(
                 scope_name=scope_name,
@@ -233,17 +235,17 @@ class LogManager:
         failed_scopes = total_scopes - successful_scopes
         total_duration = self.get_total_duration()
 
-        print("\n--- Synchronization Summary ---")
-        print(f"  - Total scopes processed : {total_scopes}")
-        print(f"  - Successful : {successful_scopes}")
-        print(f"  - Failed : {failed_scopes}")
-        print(f"  - Total duration : {total_duration:.2f} seconds")
+        logging.info("\n--- Synchronization Summary ---")
+        logging.info(f"  - Total scopes processed : {total_scopes}")
+        logging.info(f"  - Successful : {successful_scopes}")
+        logging.info(f"  - Failed : {failed_scopes}")
+        logging.info(f"  - Total duration : {total_duration:.2f} seconds")
 
         if failed_scopes > 0:
-            print("\nFailed scopes :")
+            logging.warning("\nFailed scopes :")
             for result in self.results:
                 if not result.success:
-                    print(f"  - {result.scope_name}: {result.error_message}")
+                    logging.warning(f"  - {result.scope_name}: {result.error_message}")
 
 
 class SyncOrchestrator:
@@ -286,17 +288,17 @@ class SyncOrchestrator:
         try:
             # Gestion du cache si demandé
             if hasattr(self.args, "clear_cache") and self.args.clear_cache:
-                print("--- Clearing cache ---")
+                logging.info("--- Clearing cache ---")
                 cache_clear()
-                print("Cache cleared successfully")
+                logging.info("Cache cleared successfully")
 
             # Invalidation sélective du cache si demandé
             if hasattr(self.args, "invalidate_cache") and self.args.invalidate_cache:
-                print("--- Invalidating specific cache entries ---")
+                logging.info("--- Invalidating specific cache entries ---")
                 for function_name in self.args.invalidate_cache:
                     cache_invalidate(function_name)
-                    print(f"  - Invalidated: {function_name}")
-                print("Cache invalidation completed")
+                    logging.info(f"  - Invalidated: {function_name}")
+                logging.info("Cache invalidation completed")
 
             # Construction du contexte
             context = self.context_builder.build()
@@ -315,8 +317,8 @@ class SyncOrchestrator:
             config_loader = ConfigLoader(self.config_path)
             sync_config = config_loader.load()
             if sync_config.cache.enabled:
-                print("\n--- Cache Statistics ---")
-                print(cache_stats())
+                logging.info("\n--- Cache Statistics ---")
+                logging.info(cache_stats())
 
             # Affichage des statistiques mémoire
             print_memory_summary()
@@ -328,7 +330,7 @@ class SyncOrchestrator:
             print_retry_summary()
 
         except Exception as e:
-            print(f"Fatal error during synchronization: {e}")
+            logging.critical(f"Fatal error during synchronization: {e}", exc_info=True)
             raise
         finally:
             # Nettoyage final de la mémoire

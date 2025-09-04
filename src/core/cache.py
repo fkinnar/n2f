@@ -9,6 +9,7 @@ Ce module fournit un système de cache avancé avec :
 - Configuration centralisée
 """
 
+import logging
 import json
 import pickle
 import time
@@ -179,7 +180,7 @@ class AdvancedCache:
                 pickle.dump(entry_data, f)
 
         except (IOError, pickle.PickleError) as e:
-            print(f"Warning: Failed to save cache entry {key}: {e}")
+            logging.warning(f"Warning: Failed to save cache entry {key}: {e}")
 
     def _load_entry(self, key: str) -> Optional[CacheEntry]:
         """Charge une entrée depuis la persistance."""
@@ -204,7 +205,7 @@ class AdvancedCache:
             )
 
         except (IOError, pickle.PickleError, KeyError) as e:
-            print(f"Warning: Failed to load cache entry {key}: {e}")
+            logging.warning(f"Warning: Failed to load cache entry {key}: {e}")
             return None
 
     def _load_persistent_cache(self) -> None:
@@ -222,7 +223,7 @@ class AdvancedCache:
                     self.metrics.entry_count += 1
 
         except (IOError, pickle.PickleError, KeyError) as e:
-            print(f"Warning: Failed to load persistent cache: {e}")
+            logging.warning(f"Warning: Failed to load persistent cache: {e}")
 
     def get(self, function_name: str, *args: Any) -> Optional[Any]:
         """

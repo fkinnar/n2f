@@ -1,3 +1,4 @@
+import logging
 import pandas as pd
 from typing import Dict, Any, Optional
 
@@ -18,17 +19,17 @@ def reporting(
         status_col: Nom de la colonne contenant le statut (True=succès, False=échec)
     """
     if result_df.empty:
-        print(empty_message)
+        logging.info(empty_message)
     else:
-        print(update_message + " :")
+        logging.info(update_message + " :")
         if status_col and status_col in result_df.columns:
             nb_success = result_df[status_col].sum()
             nb_total = len(result_df)
             nb_failed = nb_total - nb_success
-            print(f"  Success : {nb_success} / {nb_total}")
-            print(f"  Failures : {nb_failed} / {nb_total}")
+            logging.info(f"  Success : {nb_success} / {nb_total}")
+            logging.info(f"  Failures : {nb_failed} / {nb_total}")
         else:
-            print(f"  Total : {len(result_df)}")
+            logging.info(f"  Total : {len(result_df)}")
 
 
 def has_payload_changes(

@@ -1,9 +1,9 @@
-from typing import Dict, Optional, Callable, List, Any
-from dataclasses import dataclass
-
+import logging
 import importlib
-import inspect
 import pkgutil
+from typing import Dict, List, Optional, Callable, Any
+from dataclasses import dataclass
+import inspect
 
 from core.exceptions import ConfigurationException
 
@@ -150,13 +150,15 @@ class SyncRegistry:
                         submodule = importlib.import_module(submodule_path)
                         self._scan_module_for_scopes(submodule, submodule_path)
                     except ImportError as e:
-                        print(
+                        logging.warning(
                             f"Warning: Could not import {submodule_path} for "
                             f"auto-discovery: {e}"
                         )
 
         except ImportError as e:
-            print(f"Warning: Could not import {modules_path} for auto - discovery: {e}")
+            logging.warning(
+                f"Warning: Could not import {modules_path} for auto - discovery: {e}"
+            )
 
     def _scan_module_for_scopes(self, module: Any, module_path: str) -> None:
         """Scanne un module pour trouver les fonctions de synchronisation."""

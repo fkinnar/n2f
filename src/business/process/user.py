@@ -1,5 +1,6 @@
 import pandas as pd
-from typing import Tuple, List
+import logging
+from typing import List, Tuple
 
 from core import SyncContext
 from business.process.helper import reporting
@@ -38,7 +39,7 @@ def _load_agresso_users(context: SyncContext, sql_filename: str) -> pd.DataFrame
             prod=prod,
         )
     )
-    print(f"Number of Agresso users loaded : {len(df_agresso_users)}")
+    logging.info(f"Number of Agresso users loaded : {len(df_agresso_users)}")
     return df_agresso_users
 
 
@@ -48,20 +49,20 @@ def _load_n2f_data(n2f_client: N2fApiClient) -> Tuple[pd.DataFrame, pd.DataFrame
     entreprises).
     """
     df_roles = n2f_client.get_roles()
-    print(f"Number of N2F roles loaded : {len(df_roles)}")
+    logging.info(f"Number of N2F roles loaded : {len(df_roles)}")
 
     df_userprofiles = n2f_client.get_userprofiles()
-    print(f"Number of N2F profiles loaded : {len(df_userprofiles)}")
+    logging.info(f"Number of N2F profiles loaded : {len(df_userprofiles)}")
 
     df_companies = n2f_client.get_companies()
-    print(f"Number of N2F companies loaded : {len(df_companies)}")
+    logging.info(f"Number of N2F companies loaded : {len(df_companies)}")
 
     profile_mapping = build_n2f_mapping(df_userprofiles)
     role_mapping = build_n2f_mapping(df_roles)
     df_users = normalize_n2f_users(
         n2f_client.get_users(), profile_mapping, role_mapping
     )
-    print(f"Number of N2F users loaded : {len(df_users)}")
+    logging.info(f"Number of N2F users loaded : {len(df_users)}")
 
     return df_users, df_companies
 
