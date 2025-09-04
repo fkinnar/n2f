@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List, Tuple, Any, Optional
+from typing import Dict, List, Tuple, Any, Optional, cast
 import pandas as pd
 from n2f.client import N2fApiClient
 from n2f.api_result import ApiResult
@@ -137,7 +137,7 @@ class EntitySynchronizer(ABC):
 
                 # Effectuer l'opération de mise à jour
                 api_result: ApiResult = self._perform_update_operation(
-                    entity, payload, n2f_entity, df_n2f_companies
+                    entity, payload, n2f_entity.to_dict(), df_n2f_companies
                 )
                 api_results.append(api_result)
                 updated_entities.append(entity.to_dict())
@@ -278,7 +278,11 @@ class EntitySynchronizer(ABC):
         agresso_id_col = self.get_agresso_id_column()
         n2f_id_col = self.get_n2f_id_column()
 
-        return df_agresso[~df_agresso[agresso_id_col].isin(df_n2f[n2f_id_col])].copy()
+        result = cast(
+            pd.DataFrame,
+            df_agresso[~df_agresso[agresso_id_col].isin(df_n2f[n2f_id_col])].copy(),
+        )
+        return result
 
     def _get_entities_to_update(
         self, df_agresso: pd.DataFrame, df_n2f: pd.DataFrame
@@ -291,11 +295,14 @@ class EntitySynchronizer(ABC):
             # Utiliser la comparaison normalisée pour identifier les entités
             agresso_normalized = df_agresso[agresso_id_col].str.lower()
             n2f_normalized = df_n2f[n2f_id_col].str.lower()
-            result = df_agresso[agresso_normalized.isin(n2f_normalized)].copy()
+            result = cast(
+                pd.DataFrame, df_agresso[agresso_normalized.isin(n2f_normalized)].copy()
+            )
         else:
-            result = df_agresso[
-                df_agresso[agresso_id_col].isin(df_n2f[n2f_id_col])
-            ].copy()
+            result = cast(
+                pd.DataFrame,
+                df_agresso[df_agresso[agresso_id_col].isin(df_n2f[n2f_id_col])].copy(),
+            )
 
         return result
 
@@ -309,7 +316,11 @@ class EntitySynchronizer(ABC):
         agresso_id_col = self.get_agresso_id_column()
         n2f_id_col = self.get_n2f_id_column()
 
-        return df_n2f[~df_n2f[n2f_id_col].isin(df_agresso[agresso_id_col])].copy()
+        result = cast(
+            pd.DataFrame,
+            df_n2f[~df_n2f[n2f_id_col].isin(df_agresso[agresso_id_col])].copy(),
+        )
+        return result
 
     def _create_n2f_index(self, df_n2f: pd.DataFrame) -> Dict[str, pd.Series]:
         """Crée un index pour accéder rapidement aux données N2F."""
