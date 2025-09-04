@@ -404,16 +404,16 @@ graph TD
 
 ```bash
 # Synchronisation complete
-python sync-agresso-n2f.py --scope all
+python sync_agresso_n2f.py --scope all
 
 # Synchronisation utilisateurs uniquement
-python sync-agresso-n2f.py --scope users --create --update
+python sync_agresso_n2f.py --scope users --create --update
 
 # Synchronisation avec nettoyage du cache
-python sync-agresso-n2f.py --scope projects --clear-cache
+python sync_agresso_n2f.py --scope projects --clear-cache
 
 # Configuration production
-python sync-agresso-n2f.py --config prod --scope all
+python sync_agresso_n2f.py --config prod --scope all
 ```
 
 **Options disponibles :**
@@ -493,7 +493,7 @@ N2F_SANDBOX=true
 
 ### 1. Code principal
 
-- `src/sync-agresso-n2f.py` : Point d'entree principal
+- `src/sync_agresso_n2f.py` : Point d'entree principal
 - `src/core/orchestrator.py` : Orchestrateur de synchronisation
 - `src/core/config.py` : Gestion de la configuration
 
@@ -869,16 +869,16 @@ graph TD
 
 ```bash
 # Synchronisation complete
-python sync-agresso-n2f.py --scope all
+python sync_agresso_n2f.py --scope all
 
 # Synchronisation utilisateurs uniquement
-python sync-agresso-n2f.py --scope users --create --update
+python sync_agresso_n2f.py --scope users --create --update
 
 # Synchronisation avec nettoyage du cache
-python sync-agresso-n2f.py --scope projects --clear-cache
+python sync_agresso_n2f.py --scope projects --clear-cache
 
 # Configuration production
-python sync-agresso-n2f.py --config prod --scope all
+python sync_agresso_n2f.py --config prod --scope all
 ```
 
 **Options disponibles :**
@@ -958,20 +958,20 @@ N2F_SANDBOX=true
 
 ### 1. Code principal
 
-- `python/sync-agresso-n2f.py` : Point d'entree principal
-- `python/core/orchestrator.py` : Orchestrateur de synchronisation
-- `python/core/config.py` : Gestion de la configuration
+- `src/sync_agresso_n2f.py` : Point d'entree principal
+- `src/core/orchestrator.py` : Orchestrateur de synchronisation
+- `src/core/config.py` : Gestion de la configuration
 
 ### 2. Modules Synchronizers
 
-- `python/business/process/base_synchronizer.py` : Classe abstraite
-- `python/business/process/user_synchronizer.py` : Synchronisation utilisateurs
-- `python/business/process/axe_synchronizer.py` : Synchronisation axes
+- `src/business/process/base_synchronizer.py` : Classe abstraite
+- `src/business/process/user_synchronizer.py` : Synchronisation utilisateurs
+- `src/business/process/axe_synchronizer.py` : Synchronisation axes
 
 ### 3. Clients API
 
-- `python/n2f/client.py` : Client API N2F
-- `python/agresso/database.py` : Acces base Agresso
+- `src/n2f/client.py` : Client API N2F
+- `src/agresso/database.py` : Acces base Agresso
 
 ### 4. Configuration
 

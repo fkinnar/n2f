@@ -72,3 +72,16 @@ test_config.yaml
 .vscode/settings.json
 .vscode/tasks.json
 .vscode/launch.json
+
+# Fichiers d'analyse de type hints générés
+type_hints_*.txt
+
+# Rapports et documentation générés automatiquement
+BLACK_FORMATTING.md
+FLAKE8_LINTING_SUMMARY.md
+
+# Fichiers de configuration des outils de développement
+.flake8
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/

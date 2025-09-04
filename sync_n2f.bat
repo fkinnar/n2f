@@ -21,7 +21,7 @@ if not exist "env\Scripts\python.exe" (
     echo.
     echo Then activate it and install requirements:
     echo env\Scripts\activate
-    echo pip install -r requirements.txt
+    echo pip install -e .[dev]
     echo.
     pause
     exit /b 1
@@ -36,7 +36,7 @@ if %ERRORLEVEL% NEQ 0 (
     echo ========================================
     echo This may take a few minutes...
     echo.
-    env\Scripts\pip.exe install -r requirements.txt
+env\Scripts\pip.exe install -e .[dev]
     if %ERRORLEVEL% NEQ 0 (
         echo ========================================
         echo ERROR: Failed to install requirements!
@@ -70,7 +70,7 @@ set "timestamp=%YYYY%%MM%%DD%_%HH%%Min%%Sec%"
 REM Run the synchronization script with log redirection using virtual environment Python
 echo Running synchronization script...
 echo Using Python from virtual environment...
-env\Scripts\python.exe src\sync-agresso-n2f.py %* > "logs\sync_%timestamp%.log" 2>&1
+env\Scripts\python.exe src\sync_agresso_n2f.py %* > "logs\sync_%timestamp%.log" 2>&1
 
 REM Check if the script ran successfully
 if %ERRORLEVEL% EQU 0 (

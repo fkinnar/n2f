@@ -24,7 +24,7 @@ cohÃ©rente et traÃ§able.
 
 ### PrÃ©requis
 
-- Python 3.13+
+- Python 3.11+
 - AccÃ¨s aux bases de donnÃ©es Agresso
 - Credentials N2F API
 
@@ -56,8 +56,10 @@ source env/bin/activate  # Linux/Mac
 # ou
 env\Scripts\activate     # Windows
 
-# Installer les dÃ©pendances
-pip install -r requirements.txt
+# Installer les dÃ©pendances (recommandÃ©)
+pip install -e .[dev]
+# ou pour la production uniquement
+# pip install .
 ```
 
 ### Configuration
@@ -119,19 +121,19 @@ api:
 
 ```bash
 # Synchroniser tous les scopes
-python python/sync-agresso-n2f.py --all
+python src/sync_agresso_n2f.py --scope all
 
 # Synchroniser des scopes spÃ©cifiques
-python python/sync-agresso-n2f.py --scopes users projects
+python src/sync_agresso_n2f.py --scope users projects
 
 # Synchroniser en mode production
-python python/sync-agresso-n2f.py --config prod.yaml --scopes users
+python src/sync_agresso_n2f.py --config prod --scope users
 ```
 
 ### Options disponibles
 
 ```bash
-python python/sync-agresso-n2f.py --help
+python src/sync_agresso_n2f.py --help
 
 Options:
   --config FILE          Fichier de configuration (dev.yaml par dÃ©faut)
@@ -146,13 +148,13 @@ Options:
 
 ```bash
 # Synchronisation rapide des utilisateurs
-python python/sync-agresso-n2f.py --scopes users
+python src/sync_agresso_n2f.py --scope users
 
 # Synchronisation complÃ¨te avec cache vidÃ©
-python python/sync-agresso-n2f.py --all --clear-cache
+python src/sync_agresso_n2f.py --scope all --clear-cache
 
 # Synchronisation en production
-python python/sync-agresso-n2f.py --config prod.yaml --scopes users,projects
+python src/sync_agresso_n2f.py --config prod --scope users projects
 ```
 
 ### Scripts batch (Windows)
@@ -318,7 +320,7 @@ python tests/run_tests.py --list
 1. **CrÃ©er le synchronizer :**
 
 ```python
-# python/business/process/new_entity_synchronizer.py
+# src/business/process/new_entity_synchronizer.py
 class NewEntitySynchronizer(EntitySynchronizer):
     def build_payload(self, entity):
         return {"name": entity["name"], "type": "new_entity"}
@@ -330,7 +332,7 @@ class NewEntitySynchronizer(EntitySynchronizer):
 1. **Enregistrer le scope :**
 
 ```python
-# python/business/process/new_entity.py
+# src/business/process/new_entity.py
 def synchronize_new_entities(context, sql_filename):
     synchronizer = NewEntitySynchronizer(context.n2f_client, context.sandbox, "new_entities")
     return synchronizer.synchronize(context, sql_filename)
@@ -365,7 +367,8 @@ python scripts/fix_markdown.py
 ### Mode debug
 
 ```bash
-python python/sync-agresso-n2f.py --verbose --scopes users
+# Mode verbeux disponible dans les arguments
+python src/sync_agresso_n2f.py --scope users
 ```
 
 ## ðŸ¤ Contribution
@@ -379,10 +382,10 @@ python python/sync-agresso-n2f.py --verbose --scopes users
 
 ### Workflow Git
 
-1. CrÃ©er une branche feature : `git checkout -b feature/nouvelle-fonctionnalite`
-1. DÃ©velopper et tester
-1. VÃ©rifier les fichiers Markdown : `python scripts/check_markdown.py`
-1. CrÃ©er une pull request
+1. Créer une branche feature : `git checkout -b feature/nouvelle-fonctionnalite`
+1. Développer et tester
+1. Vérifier les fichiers Markdown : `python scripts/check_markdown.py`
+1. Créer une pull request
 
 ## ðŸ“„ Licence
 
@@ -414,9 +417,6 @@ Test line for pre-commit hooks.
 ```bash
 # Install all development dependencies
 python -m pip install -e ".[dev]"
-
-# Or use the requirements file
-python -m pip install -r requirements-dev.txt
 ```
 
 **Note**: After installing dev dependencies, run `pre-commit install` to set up Git
