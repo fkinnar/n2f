@@ -37,6 +37,9 @@ class TestBusinessAxe(unittest.TestCase):
         self.mock_context = Mock(spec=SyncContext)
         self.mock_context.get_config_value.return_value = {}
         self.mock_context.args = self.mock_args
+        self.mock_context.base_dir = "/test"
+        self.mock_context.db_user = "user"
+        self.mock_context.db_password = "password"
 
         # Mock du client N2F
         self.mock_n2f_client = Mock()
@@ -50,7 +53,7 @@ class TestBusinessAxe(unittest.TestCase):
             {
                 "code": ["PROJ001", "PROJ002"],
                 "name": ["Project 1", "Project 2"],
-                "type": ["PROJECTS", "PROJECTS"],
+                "typ": ["PROJECTS", "PROJECTS"],
                 "description": ["Description 1", "Description 2"],
                 "active": [True, True],
             }
@@ -68,7 +71,7 @@ class TestBusinessAxe(unittest.TestCase):
 
         self.df_n2f_companies = pd.DataFrame(
             {
-                "id": ["comp1", "comp2"],
+                "uuid": ["comp1", "comp2"],
                 "name": ["Company 1", "Company 2"],
             }
         )
@@ -90,6 +93,35 @@ class TestBusinessAxe(unittest.TestCase):
         # Test avec type inconnu (valeur non enum)
         scope = axe_process._get_scope_from_axe_type("INVALID_TYPE")
         self.assertEqual(scope, "unknown")
+
+    @patch("business.process.axe.select")
+    def test_load_agresso_axes(self, mock_select):
+        """Test du chargement des axes depuis Agresso."""
+        mock_select.return_value = self.df_agresso_axes
+        self.mock_context.get_config_value.return_value = {
+            "sql-path": "path/to/sql",
+            "prod": False,
+        }
+
+        result = axe_process._load_agresso_axes(
+            self.mock_context, "test.sql", "PROJECTS"
+        )
+
+        mock_select.assert_called_once()
+        self.assertEqual(len(result), 2)
+
+    @patch("business.process.axe.get_n2f_projects")
+    def test_load_n2f_axes(self, mock_get_n2f_projects):
+        """Test du chargement des axes depuis N2F."""
+        mock_get_n2f_projects.return_value = self.df_n2f_axes
+        self.df_n2f_companies["uuid"] = ["comp1", "comp2"]
+
+        result = axe_process._load_n2f_axes(
+            self.mock_n2f_client, self.df_n2f_companies, "axe123"
+        )
+
+        self.assertEqual(mock_get_n2f_projects.call_count, 2)
+        self.assertEqual(len(result), 2)
 
     @patch("business.process.axe.create_n2f_axes")
     @patch("business.process.axe.reporting")
@@ -265,6 +297,40 @@ class TestBusinessAxe(unittest.TestCase):
         mock_delete_axes.assert_not_called()
         mock_reporting.assert_not_called()  # Aucune opération = aucun appel reporting
         self.assertEqual(len(result), 0)
+
+    @patch("business.process.axe.N2fApiClient")
+    @patch("business.process.axe.get_axe_mapping")
+    @patch("business.process.axe._load_agresso_axes")
+    @patch("business.process.axe._load_n2f_axes")
+    @patch("business.process.axe._perform_sync_actions")
+    def test_synchronize(
+        self,
+        mock_perform_sync,
+        mock_load_n2f,
+        mock_load_agresso,
+        mock_get_mapping,
+        mock_n2f_client,
+    ):
+        """Test de la fonction principale de synchronisation."""
+        # Configuration des mocks
+        mock_n2f_client.return_value.get_companies.return_value = self.df_n2f_companies
+        mock_get_mapping.return_value = ("PROJECTS", "axe123")
+        mock_load_agresso.return_value = self.df_agresso_axes
+        mock_load_n2f.return_value = self.df_n2f_axes
+        mock_perform_sync.return_value = [pd.DataFrame({"status": [True]})]
+
+        # Exécution
+        result = axe_process.synchronize(
+            self.mock_context, AxeType.PROJECTS, "test.sql"
+        )
+
+        # Vérifications
+        mock_n2f_client.return_value.get_companies.assert_called_once()
+        mock_get_mapping.assert_called_once()
+        mock_load_agresso.assert_called_once()
+        mock_load_n2f.assert_called_once()
+        mock_perform_sync.assert_called_once()
+        self.assertEqual(len(result), 1)
 
 
 if __name__ == "__main__":

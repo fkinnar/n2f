@@ -34,7 +34,10 @@ class TestBusinessUser(unittest.TestCase):
 
         # Mock du contexte
         self.mock_context = Mock(spec=SyncContext)
-        self.mock_context.get_config_value.return_value = {}
+        self.mock_context.get_config_value.return_value = {
+            "sql-path": "path/to/sql",
+            "prod": False,
+        }
         self.mock_context.client_id = "test_client_id"
         self.mock_context.client_secret = "test_client_secret"
         self.mock_context.base_dir = "/test/base/dir"
@@ -311,6 +314,44 @@ class TestBusinessUser(unittest.TestCase):
         mock_load_agresso.assert_called_once_with(self.mock_context, "test_query.sql")
         mock_load_n2f.assert_called_once()
         self.assertEqual(len(result), 0)
+
+    @patch("business.process.user.select")
+    @patch("business.process.user.normalize_agresso_users")
+    def test_load_agresso_users(self, mock_normalize, mock_select):
+        """Test du chargement des utilisateurs Agresso."""
+        mock_select.return_value = self.df_agresso_users
+        mock_normalize.return_value = self.df_agresso_users
+        self.mock_context.get_config_value.return_value = {
+            "sql-path": "path/to/sql",
+            "prod": False,
+        }
+
+        result = user_process._load_agresso_users(self.mock_context, "test.sql")
+
+        mock_select.assert_called_once()
+        mock_normalize.assert_called_once()
+        self.assertEqual(len(result), 2)
+
+    @patch("n2f.client.N2fApiClient")
+    @patch("business.process.user.normalize_n2f_users")
+    @patch("business.process.user.build_n2f_mapping")
+    def test_load_n2f_data(self, mock_build_mapping, mock_normalize, mock_n2f_client):
+        """Test du chargement des données N2F."""
+        mock_n2f_client.get_roles.return_value = pd.DataFrame()
+        mock_n2f_client.get_userprofiles.return_value = pd.DataFrame()
+        mock_n2f_client.get_companies.return_value = self.df_n2f_companies
+        mock_n2f_client.get_users.return_value = self.df_n2f_users
+        mock_normalize.return_value = self.df_n2f_users
+        mock_build_mapping.return_value = {}
+
+        df_users, df_companies = user_process._load_n2f_data(mock_n2f_client)
+
+        self.assertEqual(mock_n2f_client.get_roles.call_count, 1)
+        self.assertEqual(mock_n2f_client.get_userprofiles.call_count, 1)
+        self.assertEqual(mock_n2f_client.get_companies.call_count, 1)
+        self.assertEqual(mock_n2f_client.get_users.call_count, 1)
+        self.assertEqual(len(df_users), 1)
+        self.assertEqual(len(df_companies), 2)
 
 
 if __name__ == "__main__":

@@ -21,7 +21,7 @@ def _load_agresso_users(context: SyncContext, sql_filename: str) -> pd.DataFrame
     sql_path = (
         agresso_config.sql_path
         if hasattr(agresso_config, "sql_path")
-        else agresso_config["sql - path"]
+        else agresso_config["sql-path"]
     )
     prod = (
         agresso_config.prod
