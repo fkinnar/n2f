@@ -10,7 +10,6 @@ import os
 import sys
 import time
 import logging
-import numpy as np
 import pandas as pd
 from pathlib import Path
 from typing import List, Optional, Dict, Any
@@ -201,25 +200,7 @@ class LogManager:
 
     def _print_api_summary(self, combined_df: pd.DataFrame) -> None:
         """Affiche un résumé des opérations API."""
-        if "api_success" not in combined_df.columns:
-            return
-
-        success_count = int(combined_df["api_success"].sum())
-        total_count = len(combined_df)
-        error_count = total_count - success_count
-
-        print("\nAPI Operations Summary :")
-        print(f"  - Success : {success_count}/{total_count}")
-        print(f"  - Errors : {error_count}/{total_count}")
-
-        if error_count > 0:
-            print("\nError Details :")
-            errors_df = combined_df.query("api_success == False")
-            for _, row in errors_df.iterrows():
-                print(f"  - {row.get('api_message', 'Unknown error')}")
-                details = row.get("api_error_details")
-                if np.any(pd.notna(details)):
-                    print(f"    Details : {details}")
+        pass
 
     def get_successful_scopes(self) -> List[str]:
         """Retourne la liste des scopes qui ont réussi."""

@@ -1,3 +1,4 @@
+import logging
 import pandas as pd
 import time
 import requests
@@ -114,10 +115,15 @@ class N2fApiClient:
         params = {"start": start, "limit": limit}
         headers = {"Authorization": f"Bearer {access_token}"}
 
+        logging.info(f"Requesting entity '{entity}' with start={start}, limit={limit}")
         response = n2f.get_session_get().get(url, headers=headers, params=params)
         response.raise_for_status()
 
         data = response.json()["response"]
+        logging.info(
+            f"Successfully retrieved {len(data.get('data', []))} "
+            f"items for entity '{entity}'"
+        )
         return data.get("data", [])
 
     def get_companies(self, use_cache: bool = True) -> pd.DataFrame:
@@ -251,7 +257,15 @@ class N2fApiClient:
         scope: Optional[str] = None,
     ) -> ApiResult:
         """Effectue un appel POST pour créer ou mettre à jour un objet."""
+        logging.info(
+            f"[{scope or 'Generic'}] {action_type.upper()} call to endpoint "
+            f"'{endpoint}' for object '{object_id}'"
+        )
         if self.simulate:
+            logging.info(
+                f"SIMULATE: [{scope or 'Generic'}] {action_type.upper()} for object "
+                f"'{object_id}' was successful."
+            )
             return ApiResult.simulate_result(
                 "upsert", action_type, object_type, object_id, scope
             )
@@ -269,6 +283,10 @@ class N2fApiClient:
             duration_ms = (time.time() - start_time) * 1000
 
             if 200 <= response.status_code < 300:
+                logging.info(
+                    f"[{scope or 'Generic'}] {action_type.upper()} for object "
+                    f"'{object_id}' was successful (Status: {response.status_code})."
+                )
                 return ApiResult.success_result(
                     message=f"Upsert successful: {response.status_code}",
                     status_code=response.status_code,
@@ -280,6 +298,11 @@ class N2fApiClient:
                     scope=scope,
                 )
             else:
+                logging.error(
+                    f"[{scope or 'Generic'}] {action_type.upper()} for object "
+                    f"'{object_id}' failed (Status: {response.status_code}). "
+                    f"Response: {response.text}"
+                )
                 return ApiResult.error_result(
                     message=f"Upsert failed: {response.status_code}",
                     status_code=response.status_code,
@@ -292,6 +315,11 @@ class N2fApiClient:
                 )
         except requests.exceptions.RequestException as e:
             duration_ms = (time.time() - start_time) * 1000
+            logging.error(
+                f"[{scope or 'Generic'}] Network exception during "
+                f"{action_type.upper()} for object '{object_id}'.",
+                exc_info=True,
+            )
             return ApiResult.error_result(
                 message=f"Upsert network exception: {str(e)}",
                 duration_ms=duration_ms,
@@ -311,7 +339,15 @@ class N2fApiClient:
         scope: Optional[str] = None,
     ) -> ApiResult:
         """Effectue un appel DELETE pour supprimer un objet."""
+        logging.info(
+            f"[{scope or 'Generic'}] DELETE call to endpoint '{endpoint}' for object "
+            f"'{object_id}'"
+        )
         if self.simulate:
+            logging.info(
+                f"SIMULATE: [{scope or 'Generic'}] DELETE for object '{object_id}' "
+                f"was successful."
+            )
             return ApiResult.simulate_result(
                 "delete", action_type, object_type, object_id, scope
             )
@@ -326,6 +362,10 @@ class N2fApiClient:
             duration_ms = (time.time() - start_time) * 1000
 
             if 200 <= response.status_code < 300:
+                logging.info(
+                    f"[{scope or 'Generic'}] DELETE for object '{object_id}' was "
+                    f"successful (Status: {response.status_code})."
+                )
                 return ApiResult.success_result(
                     message=f"Delete successful: {response.status_code}",
                     status_code=response.status_code,
@@ -336,6 +376,10 @@ class N2fApiClient:
                     scope=scope,
                 )
             else:
+                logging.error(
+                    f"[{scope or 'Generic'}] DELETE for object '{object_id}' failed "
+                    f"(Status: {response.status_code}). Response: {response.text}"
+                )
                 return ApiResult.error_result(
                     message=f"Delete failed: {response.status_code}",
                     status_code=response.status_code,
@@ -348,6 +392,11 @@ class N2fApiClient:
                 )
         except requests.exceptions.RequestException as e:
             duration_ms = (time.time() - start_time) * 1000
+            logging.error(
+                f"[{scope or 'Generic'}] Network exception during DELETE for object "
+                f"'{object_id}'.",
+                exc_info=True,
+            )
             return ApiResult.error_result(
                 message=f"Delete network exception: {str(e)}",
                 duration_ms=duration_ms,
