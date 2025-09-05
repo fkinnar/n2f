@@ -6,7 +6,8 @@ Ce module teste les fonctions d'API pour les rôles et profils utilisateur.
 """
 
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
+from typing import List, Dict, Any
 import tempfile
 import os
 import sys
@@ -34,12 +35,14 @@ class TestN2fApiRole(unittest.TestCase):
     def test_get_roles_success(self, mock_retreive):
         """Test de récupération des rôles avec succès."""
         # Mock de la réponse
-        mock_response = {
-            "response": [
-                {"id": 1, "name": "Admin", "description": "Administrator"},
-                {"id": 2, "name": "User", "description": "Regular user"},
-            ]
-        }
+        mock_response: List[Dict[str, Any]] = [
+            {
+                "response": [
+                    {"id": 1, "name": "Admin", "description": "Administrator"},
+                    {"id": 2, "name": "User", "description": "Regular user"},
+                ]
+            }
+        ]
         mock_retreive.return_value = mock_response
 
         # Appeler la fonction
@@ -50,7 +53,7 @@ class TestN2fApiRole(unittest.TestCase):
             "roles", self.base_url, self.client_id, self.client_secret, simulate=False
         )
 
-        self.assertEqual(result, mock_response["response"])
+        self.assertEqual(result, mock_response[0]["response"])
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0]["name"], "Admin")
         self.assertEqual(result[1]["name"], "User")
@@ -59,11 +62,13 @@ class TestN2fApiRole(unittest.TestCase):
     def test_get_roles_with_simulate(self, mock_retreive):
         """Test de récupération des rôles en mode simulation."""
         # Mock de la réponse
-        mock_response = {
-            "response": [
-                {"id": 1, "name": "Test Role", "description": "Test description"}
-            ]
-        }
+        mock_response: List[Dict[str, Any]] = [
+            {
+                "response": [
+                    {"id": 1, "name": "Test Role", "description": "Test description"}
+                ]
+            }
+        ]
         mock_retreive.return_value = mock_response
 
         # Appeler la fonction avec simulate=True
@@ -76,13 +81,13 @@ class TestN2fApiRole(unittest.TestCase):
             "roles", self.base_url, self.client_id, self.client_secret, simulate=True
         )
 
-        self.assertEqual(result, mock_response["response"])
+        self.assertEqual(result, mock_response[0]["response"])
 
     @patch("n2f.api.role.retreive")
     def test_get_roles_empty_response(self, mock_retreive):
         """Test de récupération des rôles avec réponse vide."""
         # Mock de la réponse vide
-        mock_response = {"response": []}
+        mock_response: List[Dict[str, Any]] = []
         mock_retreive.return_value = mock_response
 
         # Appeler la fonction
@@ -116,13 +121,15 @@ class TestN2fApiUserprofile(unittest.TestCase):
     def test_get_userprofiles_success(self, mock_retreive):
         """Test de récupération des profils utilisateurs avec succès."""
         # Mock de la réponse
-        mock_response = {
-            "response": [
-                {"id": 1, "name": "Standard", "description": "Standard profile"},
-                {"id": 2, "name": "Premium", "description": "Premium profile"},
-                {"id": 3, "name": "Admin", "description": "Administrator profile"},
-            ]
-        }
+        mock_response: List[Dict[str, Any]] = [
+            {
+                "response": [
+                    {"id": 1, "name": "Standard", "description": "Standard profile"},
+                    {"id": 2, "name": "Premium", "description": "Premium profile"},
+                    {"id": 3, "name": "Admin", "description": "Administrator profile"},
+                ]
+            }
+        ]
         mock_retreive.return_value = mock_response
 
         # Appeler la fonction
@@ -137,7 +144,7 @@ class TestN2fApiUserprofile(unittest.TestCase):
             simulate=False,
         )
 
-        self.assertEqual(result, mock_response["response"])
+        self.assertEqual(result, mock_response[0]["response"])
         self.assertEqual(len(result), 3)
         self.assertEqual(result[0]["name"], "Standard")
         self.assertEqual(result[1]["name"], "Premium")
@@ -147,11 +154,13 @@ class TestN2fApiUserprofile(unittest.TestCase):
     def test_get_userprofiles_with_simulate(self, mock_retreive):
         """Test de récupération des profils utilisateurs en mode simulation."""
         # Mock de la réponse
-        mock_response = {
-            "response": [
-                {"id": 1, "name": "Test Profile", "description": "Test description"}
-            ]
-        }
+        mock_response: List[Dict[str, Any]] = [
+            {
+                "response": [
+                    {"id": 1, "name": "Test Profile", "description": "Test description"}
+                ]
+            }
+        ]
         mock_retreive.return_value = mock_response
 
         # Appeler la fonction avec simulate=True
@@ -168,13 +177,13 @@ class TestN2fApiUserprofile(unittest.TestCase):
             simulate=True,
         )
 
-        self.assertEqual(result, mock_response["response"])
+        self.assertEqual(result, mock_response[0]["response"])
 
     @patch("n2f.api.userprofile.retreive")
     def test_get_userprofiles_empty_response(self, mock_retreive):
         """Test de récupération des profils utilisateurs avec réponse vide."""
         # Mock de la réponse vide
-        mock_response = {"response": []}
+        mock_response: List[Dict[str, Any]] = []
         mock_retreive.return_value = mock_response
 
         # Appeler la fonction
@@ -198,33 +207,35 @@ class TestN2fApiUserprofile(unittest.TestCase):
     def test_get_userprofiles_complex_data(self, mock_retreive):
         """Test de récupération des profils utilisateurs avec données complexes."""
         # Mock de la réponse avec données complexes
-        mock_response = {
-            "response": [
-                {
-                    "id": 1,
-                    "name": "Complex Profile",
-                    "description": "A complex profile",
-                    "permissions": ["read", "write", "delete"],
-                    "settings": {
-                        "theme": "dark",
-                        "language": "en",
-                        "notifications": True,
-                    },
-                    "metadata": {
-                        "created_at": "2023 - 01-01T00:00:00Z",
-                        "updated_at": "2023 - 01-02T00:00:00Z",
-                        "version": "1.0",
-                    },
-                }
-            ]
-        }
+        mock_response: List[Dict[str, Any]] = [
+            {
+                "response": [
+                    {
+                        "id": 1,
+                        "name": "Complex Profile",
+                        "description": "A complex profile",
+                        "permissions": ["read", "write", "delete"],
+                        "settings": {
+                            "theme": "dark",
+                            "language": "en",
+                            "notifications": True,
+                        },
+                        "metadata": {
+                            "created_at": "2023 - 01-01T00:00:00Z",
+                            "updated_at": "2023 - 01-02T00:00:00Z",
+                            "version": "1.0",
+                        },
+                    }
+                ]
+            }
+        ]
         mock_retreive.return_value = mock_response
 
         # Appeler la fonction
         result = get_userprofiles(self.base_url, self.client_id, self.client_secret)
 
         # Vérifications
-        self.assertEqual(result, mock_response["response"])
+        self.assertEqual(result, mock_response[0]["response"])
         self.assertEqual(len(result), 1)
 
         profile = result[0]

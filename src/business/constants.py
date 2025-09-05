@@ -1,3 +1,7 @@
+"""
+Constants and column names for business logic operations.
+"""
+
 # Fichier pour centraliser les constantes du projet, notamment les noms de colonnes.
 
 # --- Noms de Colonnes Génériques ---

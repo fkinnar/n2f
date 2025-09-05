@@ -1,3 +1,7 @@
+"""
+User synchronizer implementation for business process operations.
+"""
+
 from typing import Dict, Any, Optional
 import pandas as pd
 from n2f.api_result import ApiResult
@@ -45,6 +49,9 @@ class UserSynchronizer(EntitySynchronizer):
         # Import déplacé ici pour éviter les imports circulaires
         from n2f.process.user import build_user_payload
 
+        if df_n2f_companies is None:
+            raise ValueError("df_n2f_companies is required but not provided")
+
         return build_user_payload(
             entity, df_agresso, df_n2f, self.n2f_client, df_n2f_companies, self.sandbox
         )
@@ -59,7 +66,7 @@ class UserSynchronizer(EntitySynchronizer):
         Returns:
             str: Email de l'utilisateur
         """
-        return entity["AdresseEmail"]
+        return str(entity["AdresseEmail"])
 
     def get_agresso_id_column(self) -> str:
         """

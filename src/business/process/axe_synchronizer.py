@@ -1,3 +1,7 @@
+"""
+Axe synchronizer implementation for business process operations.
+"""
+
 from typing import Dict, Any, Optional
 import pandas as pd
 from n2f.api_result import ApiResult
@@ -66,7 +70,7 @@ class AxeSynchronizer(EntitySynchronizer):
         Returns:
             str: Code de l'axe
         """
-        return entity["code"]
+        return str(entity["code"])
 
     def get_agresso_id_column(self) -> str:
         """
@@ -107,6 +111,16 @@ class AxeSynchronizer(EntitySynchronizer):
         from n2f.process.user import lookup_company_id
 
         company_code: Optional[str] = entity.get("client")
+        if df_n2f_companies is None:
+            error_msg = "N2F companies DataFrame is required but not provided"
+            return self._create_error_result(
+                "CREATE", self.get_entity_id(entity), error_msg
+            )
+        if company_code is None:
+            error_msg = "Company code is required but not found in entity"
+            return self._create_error_result(
+                "CREATE", self.get_entity_id(entity), error_msg
+            )
         company_id = lookup_company_id(company_code, df_n2f_companies, self.sandbox)
 
         if company_id:
@@ -143,6 +157,16 @@ class AxeSynchronizer(EntitySynchronizer):
         from n2f.process.user import lookup_company_id
 
         company_code: Optional[str] = entity.get("client")
+        if df_n2f_companies is None:
+            error_msg = "N2F companies DataFrame is required but not provided"
+            return self._create_error_result(
+                "UPDATE", self.get_entity_id(entity), error_msg
+            )
+        if company_code is None:
+            error_msg = "Company code is required but not found in entity"
+            return self._create_error_result(
+                "UPDATE", self.get_entity_id(entity), error_msg
+            )
         company_id: Optional[str] = lookup_company_id(
             company_code, df_n2f_companies, self.sandbox
         )

@@ -1,3 +1,7 @@
+"""
+User API functions for N2F operations.
+"""
+
 from typing import Dict, List, Any
 from n2f.api.base import retreive, upsert, delete
 
@@ -31,8 +35,8 @@ def get_users(
     response = retreive(
         "users", base_url, client_id, client_secret, start, limit, simulate
     )
-    data = response["response"]
-    return data["data"] if "data" in data else []
+    data = response[0]["response"] if response and len(response) > 0 else {}
+    return data.get("data", [])
 
 
 def create_user(

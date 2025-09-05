@@ -310,22 +310,19 @@ class RetryManager:
             logging.info("Aucune métrique de retry disponible.")
             return
 
-        logging.info("\n" + "=" * 60)
-        logging.info("RÉSUMÉ DES MÉTRIQUES DE RETRY")
-        logging.info("=" * 60)
+        logging.info("\n>> RÉSUMÉ DES MÉTRIQUES DE RETRY")
 
         total_attempts = sum(m.total_attempts for m in self.metrics.values())
         total_successful = sum(m.successful_attempts for m in self.metrics.values())
         total_failed = sum(m.failed_attempts for m in self.metrics.values())
 
-        logging.info(f"Tentatives totales: {total_attempts}")
-        logging.info(f"Succès: {total_successful}")
-        logging.info(f"Échecs: {total_failed}")
-        logging.info(
-            f"Taux de succès: {(total_successful / total_attempts * 100):.1f}%"
-            if total_attempts > 0
-            else "N / A"
+        logging.info("Tentatives totales: %s", total_attempts)
+        logging.info("Succès: %s", total_successful)
+        logging.info("Échecs: %s", total_failed)
+        success_rate = (
+            (total_successful / total_attempts * 100) if total_attempts > 0 else 0
         )
+        logging.info("Taux de succès: %.1f%%", success_rate)
 
         logging.info("\nDétail par opération:")
         for op_name, metrics in self.metrics.items():
@@ -335,11 +332,14 @@ class RetryManager:
                 else 0
             )
             logging.info(
-                f"- {op_name}: {metrics.successful_attempts}/{metrics.total_attempts} "
-                f"({success_rate:.1f}%)"
+                "- %s: %s/%s (%.1f%%)",
+                op_name,
+                metrics.successful_attempts,
+                metrics.total_attempts,
+                success_rate,
             )
 
-        logging.info("=" * 60)
+        logging.info(">> FIN DU RÉSUMÉ DES MÉTRIQUES DE RETRY")
 
 
 # Instance globale du gestionnaire de retry

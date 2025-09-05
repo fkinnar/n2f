@@ -1,5 +1,10 @@
-import pandas as pd
+"""
+Data normalization functions for business logic.
+"""
+
 from typing import Dict, Optional
+
+import pandas as pd
 
 from business.constants import (
     AGRESSO_COL_EMAIL,
@@ -177,35 +182,59 @@ def build_mapping(df: pd.DataFrame) -> Dict[str, str]:
         )
 
     # Crée une copie pour éviter les SettingWithCopyWarning
-    df_work = df[[COL_NAMES]].copy()
-    df_work.dropna(subset=[COL_NAMES], inplace=True)
+    df_work = pd.DataFrame(df[[COL_NAMES]].copy())
+    df_work = pd.DataFrame(df_work.dropna(subset=[COL_NAMES]))
 
     # Associe un identifiant unique à chaque ligne originale
     df_work["group_id"] = range(len(df_work))
 
     # Déplie la liste de dictionnaires en plusieurs lignes
-    df_exploded = df_work.explode(COL_NAMES)
+    df_exploded = pd.DataFrame(df_work.explode(COL_NAMES, ignore_index=True))
     df_exploded.reset_index(drop=True, inplace=True)
 
+    # Vérification que COL_NAMES contient des dictionnaires
+    dict_check = df_exploded[COL_NAMES].apply(lambda x: isinstance(x, dict))
+    if not bool(dict_check.all()):
+        raise ValidationException(
+            message="Les données dans la colonne names ne sont pas des dictionnaires",
+            field=COL_NAMES,
+            details="Toutes les valeurs doivent être des dictionnaires valides",
+        )
+
     # Crée des colonnes à partir des dictionnaires
-    df_exploded = pd.concat(
-        [
-            df_exploded.drop([COL_NAMES], axis=1),
-            df_exploded[COL_NAMES].apply(pd.Series),
-        ],
-        axis=1,
+    df_exploded = pd.DataFrame(
+        pd.concat(
+            [
+                df_exploded.drop([COL_NAMES], axis=1),
+                df_exploded[COL_NAMES].apply(pd.Series),
+            ],
+            axis=1,
+        )
     )
-    df_exploded.dropna(subset=[COL_VALUE], inplace=True)
-    df_exploded = df_exploded[df_exploded[COL_VALUE].astype(str).str.strip() != ""]
+
+    # Vérification que COL_VALUE existe après l'explosion
+    if COL_VALUE not in df_exploded.columns:
+        raise ValidationException(
+            message=f"Colonne '{COL_VALUE}' manquante après explosion des données",
+            field=COL_VALUE,
+            details="La colonne value n'a pas été créée lors de l'explosion",
+        )
+
+    df_exploded = pd.DataFrame(df_exploded.dropna(subset=[COL_VALUE]))
+    df_exploded = pd.DataFrame(
+        df_exploded[df_exploded[COL_VALUE].astype(str).str.strip() != ""]
+    )
     df_exploded[COL_VALUE] = df_exploded[COL_VALUE].astype(str).str.strip().str.lower()
 
     # Trouve la valeur française pour chaque groupe
-    fr_values_df = df_exploded[df_exploded[COL_CULTURE] == CULTURE_FR].copy()
+    fr_values_df = pd.DataFrame(
+        df_exploded[df_exploded[COL_CULTURE] == CULTURE_FR].copy()
+    )
     fr_values_df["fr_value"] = fr_values_df[COL_VALUE].str.capitalize()
-    fr_values = fr_values_df[["group_id", "fr_value"]]
+    fr_values = pd.DataFrame(fr_values_df[["group_id", "fr_value"]].copy())
 
     # Fusionne les valeurs françaises avec toutes les autres valeurs
-    df_merged = pd.merge(df_exploded, fr_values, on="group_id")
+    df_merged = pd.DataFrame(pd.merge(df_exploded, fr_values, on="group_id"))
 
     # Crée le mapping final
     mapping = df_merged.set_index(COL_VALUE)["fr_value"].to_dict()

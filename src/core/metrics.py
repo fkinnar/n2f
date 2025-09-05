@@ -384,7 +384,7 @@ class SyncMetrics:
         """Affiche un résumé des métriques dans la console."""
         summary = self.get_summary()
 
-        logging.info("===== RÉSUMÉ DES MÉTRIQUES DE SYNCHRONISATION =====")
+        logging.info(">> RÉSUMÉ DES MÉTRIQUES DE SYNCHRONISATION")
 
         # Résumé général
         logging.info(
@@ -407,24 +407,24 @@ class SyncMetrics:
         # Performance
         logging.info("PERFORMANCE:")
         logging.info(
-            f"   - Durée moyenne: "
-            f"{summary['performance']['average_duration_seconds']:.2f}s"
+            "   - Durée moyenne: %.2fs",
+            summary["performance"]["average_duration_seconds"],
         )
         logging.info(
-            f"   - Durée max: {summary['performance']['max_duration_seconds']:.2f}s"
+            "   - Durée max: %.2fs", summary["performance"]["max_duration_seconds"]
         )
-        logging.info(f"   - Appels API: {summary['performance']['total_api_calls']}")
+        logging.info("   - Appels API: %s", summary["performance"]["total_api_calls"])
         logging.info(
-            f"- Cache hit rate: {summary['performance']['cache_hit_rate'] * 100:.1f}%"
+            "- Cache hit rate: %.1f%%", summary["performance"]["cache_hit_rate"] * 100
         )
 
         # Mémoire
         logging.info("MÉMOIRE:")
         logging.info(
-            f"   - Pic d'utilisation: {summary['memory']['peak_usage_mb']:.1f}MB"
+            "   - Pic d'utilisation: %.1fMB", summary["memory"]["peak_usage_mb"]
         )
         logging.info(
-            f"   - Utilisation moyenne: {summary['memory']['average_usage_mb']:.1f}MB"
+            "   - Utilisation moyenne: %.1fMB", summary["memory"]["average_usage_mb"]
         )
 
         # Par scope
@@ -444,9 +444,9 @@ class SyncMetrics:
         if summary["error_summary"]:
             logging.warning("ERREURS:")
             for error, count in summary["error_summary"].items():
-                logging.warning(f"   - {error}: {count} occurrence(s)")
+                logging.warning("   - %s: %s occurrence(s)", error, count)
 
-        logging.info("=" * 55)
+        logging.info(">> FIN DU RÉSUMÉ DES MÉTRIQUES")
 
     def _group_operations_by_scope(self) -> Dict[str, Dict[str, int]]:
         """Groupe les opérations par scope."""

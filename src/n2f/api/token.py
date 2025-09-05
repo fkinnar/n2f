@@ -1,3 +1,7 @@
+"""
+Token management functions for N2F API authentication.
+"""
+
 import time
 from datetime import datetime
 from functools import wraps

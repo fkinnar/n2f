@@ -1,3 +1,7 @@
+"""
+API result data structures for N2F operations.
+"""
+
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional, Any, Dict

@@ -1,3 +1,7 @@
+"""
+Axe type definitions and mappings for business process operations.
+"""
+
 from enum import Enum
 from typing import Tuple, Dict, Optional
 import requests
@@ -43,7 +47,7 @@ def _get_dynamic_mappings(
                     )
 
                     if french_name:
-                        uuid = row.get("uuid", "")
+                        uuid = str(row.get("uuid", ""))
                         if french_name == "plaque":
                             mappings[AxeType.PLATES] = ("PLAQUE", uuid)
                         elif french_name == "subpost":

@@ -323,14 +323,24 @@ class TestUserSynchronizer(unittest.TestCase):
         entity = pd.Series({"AdresseEmail": "test@example.com", "name": "Test User"})
         df_agresso = pd.DataFrame({"AdresseEmail": ["test@example.com"]})
         df_n2f = pd.DataFrame({"mail": []})
+        df_n2f_companies = pd.DataFrame(
+            {"uuid": ["company1"], "name": ["Test Company"]}
+        )
 
         with patch("n2f.process.user.build_user_payload") as mock_build:
             mock_build.return_value = {"email": "test@example.com", "name": "Test User"}
 
-            payload = self.synchronizer.build_payload(entity, df_agresso, df_n2f)
+            payload = self.synchronizer.build_payload(
+                entity, df_agresso, df_n2f, df_n2f_companies
+            )
 
         mock_build.assert_called_once_with(
-            entity, df_agresso, df_n2f, self.mock_n2f_client, None, self.sandbox
+            entity,
+            df_agresso,
+            df_n2f,
+            self.mock_n2f_client,
+            df_n2f_companies,
+            self.sandbox,
         )
         self.assertEqual(payload, {"email": "test@example.com", "name": "Test User"})
 

@@ -48,8 +48,7 @@ def setup_logging(log_level: str = "INFO") -> None:
     file_handler.setFormatter(log_formatter)
     root_logger.addHandler(file_handler)
 
-    logging.info("=" * 50)
+    logging.info("*** DÉBUT DE SESSION DE SYNCHRONISATION ***")
     logging.info("Le système de logging a été initialisé.")
-    logging.info(f"Niveau de log : {log_level}")
-    logging.info(f"Fichier de log : {log_file.absolute()}")
-    logging.info("=" * 50)
+    logging.info("Niveau de log : %s", log_level)
+    logging.info("Fichier de log : %s", log_file.absolute())

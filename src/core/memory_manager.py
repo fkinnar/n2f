@@ -203,7 +203,7 @@ class MemoryManager:
         # Forcer le garbage collector
         gc.collect()
 
-        logging.info(f"Nettoyage complet - {freed_memory:.1f}MB libérés")
+        logging.info("Nettoyage complet - %.1fMB libérés", freed_memory)
         return freed_memory
 
     def get_memory_stats(self) -> Dict[str, Any]:
@@ -241,37 +241,44 @@ class MemoryManager:
         """Affiche un résumé de l'utilisation mémoire."""
         stats = self.get_memory_stats()
 
-        logging.info("===== RÉSUMÉ MÉMOIRE =====")
+        logging.info(">> RÉSUMÉ MÉMOIRE")
 
         # Mémoire du gestionnaire
         mm = stats["memory_manager"]
         logging.info(
-            f"Utilisation actuelle: {mm['current_usage_mb']:.1f}MB / "
-            f"{mm['max_memory_mb']}MB ({mm['usage_percentage']:.1f}%)"
+            "Utilisation actuelle: %.1fMB / %sMB (%.1f%%)",
+            mm["current_usage_mb"],
+            mm["max_memory_mb"],
+            mm["usage_percentage"],
         )
-        logging.info(f"Pic d'utilisation: {mm['peak_usage_mb']:.1f}MB")
+        logging.info("Pic d'utilisation: %.1fMB", mm["peak_usage_mb"])
         logging.info(
-            f"DataFrames actifs: {mm['active_dataframes']} / "
-            f"{mm['total_dataframes']} total"
+            "DataFrames actifs: %s / %s total",
+            mm["active_dataframes"],
+            mm["total_dataframes"],
         )
         logging.info(
-            f"Mémoire libérée: {mm['freed_memory_mb']:.1f}MB "
-            f"({mm['cleanup_count']} nettoyages)"
+            "Mémoire libérée: %.1fMB (%s nettoyages)",
+            mm["freed_memory_mb"],
+            mm["cleanup_count"],
         )
 
         # Mémoire système
         sys = stats["system"]
-        logging.info(f"Mémoire système: {sys['memory_percentage']:.1f}% utilisée")
-        logging.info(f"Processus: {sys['process_memory_mb']:.1f}MB")
+        logging.info("Mémoire système: %.1f%% utilisée", sys["memory_percentage"])
+        logging.info("Processus: %.1fMB", sys["process_memory_mb"])
 
         # DataFrames par scope
         if stats["dataframes_by_scope"]:
             logging.info("DataFrames par scope:")
             for scope, info in stats["dataframes_by_scope"].items():
                 logging.info(
-                    f"   - {scope}: {info['count']} DataFrames, {info['size_mb']:.1f}MB"
+                    "   - %s: %s DataFrames, %.1fMB",
+                    scope,
+                    info["count"],
+                    info["size_mb"],
                 )
-        logging.info("=" * 28)
+        logging.info(">> FIN DU RÉSUMÉ MÉMOIRE")
 
     def _calculate_dataframe_size(self, df: pd.DataFrame) -> float:
         """Calcule la taille d'un DataFrame en MB."""

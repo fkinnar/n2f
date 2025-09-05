@@ -1,3 +1,7 @@
+"""
+N2F API client for data synchronization operations.
+"""
+
 import logging
 import pandas as pd
 import time
@@ -115,7 +119,9 @@ class N2fApiClient:
         params = {"start": start, "limit": limit}
         headers = {"Authorization": f"Bearer {access_token}"}
 
-        logging.info(f"Requesting entity '{entity}' with start={start}, limit={limit}")
+        logging.info(
+            "Requesting entity '%s' with start=%s, limit=%s", entity, start, limit
+        )
         response = n2f.get_session_get().get(url, headers=headers, params=params)
         response.raise_for_status()
 
@@ -419,7 +425,7 @@ class N2fApiClient:
 
     def delete_user(self, user_email: str) -> ApiResult:
         """Supprime un utilisateur par son email."""
-        return self._delete("/users", user_email, "delete", "user", user_email, "users")
+        return self._delete("/users", user_email, "delete", "user", "users")
 
     def get_custom_axes(self, company_id: str, use_cache: bool = True) -> pd.DataFrame:
         """Récupère les axes personnalisés pour une société."""
@@ -521,4 +527,4 @@ class N2fApiClient:
     ) -> ApiResult:
         """Supprime une valeur d'axe pour une société par son code."""
         endpoint = f"/companies/{company_id}/axes/{value_code}"
-        return self._delete(endpoint, value_code, "delete", "axe", value_code, scope)
+        return self._delete(endpoint, value_code, "delete", "axe", scope)

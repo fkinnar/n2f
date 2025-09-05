@@ -23,14 +23,16 @@ class TestUserApi(unittest.TestCase):
     @patch("n2f.api.user.retreive")
     def test_get_users_success(self, mock_retreive: Mock) -> None:
         """Test de récupération réussie d'utilisateurs."""
-        mock_response: Dict[str, Any] = {
-            "response": {
-                "data": [
-                    {"id": "1", "mail": "user1@example.com"},
-                    {"id": "2", "mail": "user2@example.com"},
-                ]
+        mock_response: List[Dict[str, Any]] = [
+            {
+                "response": {
+                    "data": [
+                        {"id": "1", "mail": "user1@example.com"},
+                        {"id": "2", "mail": "user2@example.com"},
+                    ]
+                }
             }
-        }
+        ]
         mock_retreive.return_value = mock_response
 
         result: List[Dict[str, str]] = user_api.get_users(
@@ -46,7 +48,7 @@ class TestUserApi(unittest.TestCase):
     @patch("n2f.api.user.retreive")
     def test_get_users_with_pagination(self, mock_retreive: Mock) -> None:
         """Test de récupération d'utilisateurs avec pagination."""
-        mock_response: Dict[str, Any] = {"response": {"data": []}}
+        mock_response: List[Dict[str, Any]] = []
         mock_retreive.return_value = mock_response
 
         user_api.get_users(
@@ -60,7 +62,7 @@ class TestUserApi(unittest.TestCase):
     @patch("n2f.api.user.retreive")
     def test_get_users_simulation_mode(self, mock_retreive: Mock) -> None:
         """Test de récupération d'utilisateurs en mode simulation."""
-        mock_response: Dict[str, Any] = {"response": {"data": []}}
+        mock_response: List[Dict[str, Any]] = []
         mock_retreive.return_value = mock_response
 
         result: List[Dict[str, str]] = user_api.get_users(
@@ -74,7 +76,7 @@ class TestUserApi(unittest.TestCase):
     @patch("n2f.api.user.retreive")
     def test_get_users_empty_response(self, mock_retreive: Mock) -> None:
         """Test de récupération d'utilisateurs avec réponse vide."""
-        mock_response: Dict[str, Any] = {"response": {}}  # Pas de "data"
+        mock_response: List[Dict[str, Any]] = []  # Liste vide
         mock_retreive.return_value = mock_response
 
         result: List[Dict[str, str]] = user_api.get_users(
@@ -197,14 +199,16 @@ class TestCompanyApi(unittest.TestCase):
     @patch("n2f.api.company.retreive")
     def test_get_companies_success(self, mock_retreive: Mock) -> None:
         """Test de récupération réussie d'entreprises."""
-        mock_response: Dict[str, Any] = {
-            "response": {
-                "data": [
-                    {"id": "1", "name": "Company 1"},
-                    {"id": "2", "name": "Company 2"},
-                ]
+        mock_response: List[Dict[str, Any]] = [
+            {
+                "response": {
+                    "data": [
+                        {"id": "1", "name": "Company 1"},
+                        {"id": "2", "name": "Company 2"},
+                    ]
+                }
             }
-        }
+        ]
         mock_retreive.return_value = mock_response
 
         result: List[Dict[str, str]] = company_api.get_companies(
@@ -226,7 +230,7 @@ class TestCompanyApi(unittest.TestCase):
     @patch("n2f.api.company.retreive")
     def test_get_companies_with_pagination(self, mock_retreive: Mock) -> None:
         """Test de récupération d'entreprises avec pagination."""
-        mock_response: Dict[str, Any] = {"response": {"data": []}}
+        mock_response: List[Dict[str, Any]] = []
         mock_retreive.return_value = mock_response
 
         company_api.get_companies(
@@ -246,7 +250,7 @@ class TestCompanyApi(unittest.TestCase):
     @patch("n2f.api.company.retreive")
     def test_get_companies_simulation_mode(self, mock_retreive: Mock) -> None:
         """Test de récupération d'entreprises en mode simulation."""
-        mock_response: Dict[str, Any] = {"response": {"data": []}}
+        mock_response: List[Dict[str, Any]] = []
         mock_retreive.return_value = mock_response
 
         result: List[Dict[str, str]] = company_api.get_companies(
@@ -260,7 +264,7 @@ class TestCompanyApi(unittest.TestCase):
     @patch("n2f.api.company.retreive")
     def test_get_companies_empty_response(self, mock_retreive: Mock) -> None:
         """Test de récupération d'entreprises avec réponse vide."""
-        mock_response: Dict[str, Any] = {"response": {}}  # Pas de "data"
+        mock_response: List[Dict[str, Any]] = []  # Liste vide
         mock_retreive.return_value = mock_response
 
         result: List[Dict[str, str]] = company_api.get_companies(

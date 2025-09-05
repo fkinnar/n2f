@@ -1,3 +1,7 @@
+"""
+Role processing functions for N2F synchronization.
+"""
+
 import pandas as pd
 from core.cache import cache_get, cache_set  # noqa: F401
 from n2f.client import N2fApiClient

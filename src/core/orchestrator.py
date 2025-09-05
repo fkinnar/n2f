@@ -132,8 +132,8 @@ class ScopeExecutor:
                 )
 
             logging.info(
-                f"===== Starting synchronization for scope : {scope_name} "
-                f"({scope_config.display_name}) ====="
+                f">> Starting synchronization for scope : {scope_name} "
+                f"({scope_config.display_name})"
             )
 
             # Exécution de la synchronisation
@@ -144,7 +144,7 @@ class ScopeExecutor:
             )
 
             duration = time.time() - start_time
-            logging.info(f"===== End of synchronization for scope : {scope_name} =====")
+            logging.info(">> End of synchronization for scope : %s", scope_name)
 
             return SyncResult(
                 scope_name=scope_name,
@@ -157,7 +157,7 @@ class ScopeExecutor:
             duration = time.time() - start_time
             error_message = f"Error during synchronization: {str(e)}"
             logging.error(
-                f"===== Error in scope {scope_name}: {error_message} =====",
+                f">> Error in scope {scope_name}: {error_message}",
                 exc_info=True,
             )
 
@@ -199,7 +199,7 @@ class LogManager:
             combined_df = pd.concat(all_dataframes, ignore_index=True)
             self._print_api_summary(combined_df)
         except (IOError, ValueError) as e:
-            logging.error(f"Error during summary generation: {e}", exc_info=True)
+            logging.error("Error during summary generation: %s", e, exc_info=True)
 
     def _print_api_summary(self, combined_df: pd.DataFrame) -> None:
         """Affiche un résumé des opérations API."""
@@ -236,11 +236,11 @@ class LogManager:
         failed_scopes = total_scopes - successful_scopes
         total_duration = self.get_total_duration()
 
-        logging.info("===== Synchronization Summary =====")
-        logging.info(f"  - Total scopes processed : {total_scopes}")
-        logging.info(f"  - Successful : {successful_scopes}")
-        logging.info(f"  - Failed : {failed_scopes}")
-        logging.info(f"  - Total duration : {total_duration:.2f} seconds")
+        logging.info(">> Synchronization Summary")
+        logging.info("  - Total scopes processed : %s", total_scopes)
+        logging.info("  - Successful : %s", successful_scopes)
+        logging.info("  - Failed : %s", failed_scopes)
+        logging.info("  - Total duration : %.2f seconds", total_duration)
 
         if failed_scopes > 0:
             logging.warning("  Failed scopes :")
@@ -300,7 +300,7 @@ class SyncOrchestrator:
                 logging.info("--- Invalidating specific cache entries ---")
                 for function_name in self.args.invalidate_cache:
                     cache_invalidate(function_name)
-                    logging.info(f"  - Invalidated: {function_name}")
+                    logging.info("  - Invalidated: %s", function_name)
                 logging.info("Cache invalidation completed")
 
             # Construction du contexte
@@ -320,7 +320,7 @@ class SyncOrchestrator:
             config_loader = ConfigLoader(self.config_path)
             sync_config = config_loader.load()
             if sync_config.cache.enabled:
-                logging.info("===== Cache Statistics =====")
+                logging.info(">> Cache Statistics")
                 for line in cache_stats().split("\n"):
                     logging.info(line)
 
@@ -334,7 +334,7 @@ class SyncOrchestrator:
             print_retry_summary()
 
         except Exception as e:
-            logging.critical(f"Fatal error during synchronization: {e}", exc_info=True)
+            logging.critical("Fatal error during synchronization: %s", e, exc_info=True)
             raise
         finally:
             # Nettoyage final de la mémoire

@@ -95,6 +95,8 @@ class AdvancedCache:
 
     def _get_cache_file_path(self, key: str) -> Path:
         """Retourne le chemin du fichier de cache pour une clé."""
+        if self.cache_dir is None:
+            raise ValueError("Cache directory not set")
         return self.cache_dir / f"{key}.cache"
 
     def _serialize_data(self, data: Any) -> bytes:
@@ -180,7 +182,7 @@ class AdvancedCache:
                 pickle.dump(entry_data, f)
 
         except (IOError, pickle.PickleError) as e:
-            logging.warning(f"Warning: Failed to save cache entry {key}: {e}")
+            logging.warning("Warning: Failed to save cache entry %s: %s", key, e)
 
     def _load_entry(self, key: str) -> Optional[CacheEntry]:
         """Charge une entrée depuis la persistance."""
@@ -205,7 +207,7 @@ class AdvancedCache:
             )
 
         except (IOError, pickle.PickleError, KeyError) as e:
-            logging.warning(f"Warning: Failed to load cache entry {key}: {e}")
+            logging.warning("Warning: Failed to load cache entry %s: %s", key, e)
             return None
 
     def _load_persistent_cache(self) -> None:
@@ -223,7 +225,7 @@ class AdvancedCache:
                     self.metrics.entry_count += 1
 
         except (IOError, pickle.PickleError, KeyError) as e:
-            logging.warning(f"Warning: Failed to load persistent cache: {e}")
+            logging.warning("Warning: Failed to load persistent cache: %s", e)
 
     def get(self, function_name: str, *args: Any) -> Optional[Any]:
         """
@@ -378,15 +380,23 @@ class AdvancedCache:
         """Retourne les statistiques du cache sous forme de texte."""
         metrics = self.get_metrics()
         return (
-            f"Cache Stats:\n"
-            f"  Hits: {metrics['hits']}\n"
-            f"  Misses: {metrics['misses']}\n"
-            f"  Hit Rate: {metrics['hit_rate']:.2%}\n"
-            f"  Sets: {metrics['sets']}\n"
-            f"  Invalidations: {metrics['invalidations']}\n"
-            f"  Entries: {metrics['entry_count']}\n"
-            f"  Size: {metrics['total_size_mb']:.2f} MB / "
-            f"{metrics['max_size_mb']:.2f} MB"
+            "Cache Stats:\n"
+            "  Hits: %s\n"
+            "  Misses: %s\n"
+            "  Hit Rate: %.2f%%\n"
+            "  Sets: %s\n"
+            "  Invalidations: %s\n"
+            "  Entries: %s\n"
+            "  Size: %.2f MB / %.2f MB"
+        ) % (
+            metrics["hits"],
+            metrics["misses"],
+            metrics["hit_rate"] * 100,
+            metrics["sets"],
+            metrics["invalidations"],
+            metrics["entry_count"],
+            metrics["total_size_mb"],
+            metrics["max_size_mb"],
         )
 
 
@@ -395,7 +405,7 @@ _advanced_cache: Optional[AdvancedCache] = None
 
 
 def get_cache(
-    cache_dir: Path = None,
+    cache_dir: Optional[Path] = None,
     max_size_mb: int = 100,
     default_ttl: int = 3600,
 ) -> AdvancedCache:

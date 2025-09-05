@@ -1,3 +1,7 @@
+"""
+Base API functions for N2F operations.
+"""
+
 from typing import Dict, List, Any
 from n2f.api.token import get_access_token
 import n2f
@@ -92,7 +96,7 @@ def delete(
     endpoint: str,
     client_id: str,
     client_secret: str,
-    id: str,
+    object_id: str,
     simulate: bool = False,
 ) -> bool:
     """
@@ -103,7 +107,7 @@ def delete(
         endpoint (str): Point de terminaison de l'API (ex: "/users").
         client_id (str): ID du client pour l'API N2F.
         client_secret (str): Secret du client pour l'API N2F.
-        id (str): Identifiant de l'objet à supprimer (ex: adresse e -
+        object_id (str): Identifiant de l'objet à supprimer (ex: adresse e -
     mail pour un utilisateur).
         simulate (bool): Si True, simule la suppression sans l'exécuter.
 
@@ -117,7 +121,7 @@ def delete(
     access_token, _ = get_access_token(
         base_url, client_id, client_secret, simulate=simulate
     )
-    url = base_url + f"/{endpoint}/{id}"
+    url = base_url + f"/{endpoint}/{object_id}"
     headers = {"Authorization": f"Bearer {access_token}"}
 
     response = n2f.get_session_write().delete(url, headers=headers)

@@ -1,3 +1,7 @@
+"""
+Main synchronization script for Agresso to N2F data sync.
+"""
+
 import argparse
 import os
 import logging
@@ -89,7 +93,7 @@ def validate_environment_variables() -> None:
 
     if missing_vars:
         error_msg = f"Missing required environment variables: {', '.join(missing_vars)}"
-        logging.error(f"ERROR: {error_msg}")
+        logging.error("ERROR: %s", error_msg)
         logging.error(
             "Please ensure these variables are set in your environment or .env file"
         )

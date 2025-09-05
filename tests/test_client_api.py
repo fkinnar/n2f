@@ -476,7 +476,6 @@ class TestN2fApiClient(unittest.TestCase):
                 "test@example.com",
                 "delete",
                 "user",
-                "test@example.com",
                 "users",
             )
 
@@ -581,7 +580,6 @@ class TestN2fApiClient(unittest.TestCase):
                 "VAL1",
                 "delete",
                 "axe",
-                "VAL1",
                 "axes",
             )
 

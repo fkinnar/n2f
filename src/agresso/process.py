@@ -1,3 +1,7 @@
+"""
+Agresso database processing functions.
+"""
+
 import os
 import pandas as pd
 

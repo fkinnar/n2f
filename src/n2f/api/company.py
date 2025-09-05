@@ -1,3 +1,7 @@
+"""
+Company API functions for N2F operations.
+"""
+
 from typing import Dict, List, Any
 from n2f.api.base import retreive
 
@@ -32,5 +36,5 @@ def get_companies(
     response = retreive(
         "companies", base_url, client_id, client_secret, start, limit, simulate
     )
-    data = response["response"]
-    return data["data"] if "data" in data else []
+    data = response[0]["response"] if response and len(response) > 0 else {}
+    return data.get("data", [])

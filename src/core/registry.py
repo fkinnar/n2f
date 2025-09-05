@@ -1,3 +1,7 @@
+"""
+Registry system for dynamic scope discovery and management.
+"""
+
 import logging
 import importlib
 import pkgutil

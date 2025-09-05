@@ -34,8 +34,15 @@ class TestBusinessHelper(unittest.TestCase):
         # Vérifier que logging.info a été appelé avec les bonnes valeurs
         calls: List = mock_log_info.call_args_list
         self.assertIn("Opérations effectuées :", [call[0][0] for call in calls])
-        self.assertIn("  Success : 3 / 4", [call[0][0] for call in calls])
-        self.assertIn("  Failures : 1 / 4", [call[0][0] for call in calls])
+        # Vérifier les appels avec lazy formatting
+        success_calls = [call for call in calls if call[0][0] == "  Success : %s / %s"]
+        failure_calls = [call for call in calls if call[0][0] == "  Failures : %s / %s"]
+        self.assertEqual(len(success_calls), 1)
+        self.assertEqual(len(failure_calls), 1)
+        self.assertEqual(success_calls[0][0][1], 3)  # nb_success
+        self.assertEqual(success_calls[0][0][2], 4)  # nb_total
+        self.assertEqual(failure_calls[0][0][1], 1)  # nb_failed
+        self.assertEqual(failure_calls[0][0][2], 4)  # nb_total
 
     @patch("logging.info")
     def test_reporting_empty_dataframe(self, mock_log_info: Mock) -> None:
@@ -57,7 +64,10 @@ class TestBusinessHelper(unittest.TestCase):
 
         calls: List = mock_log_info.call_args_list
         self.assertIn("Opérations effectuées :", [call[0][0] for call in calls])
-        self.assertIn("  Total : 2", [call[0][0] for call in calls])
+        # Vérifier l'appel avec lazy formatting
+        total_calls = [call for call in calls if call[0][0] == "  Total : %s"]
+        self.assertEqual(len(total_calls), 1)
+        self.assertEqual(total_calls[0][0][1], 2)  # len(result_df)
 
     def test_has_payload_changes_no_changes(self) -> None:
         """Test de détection de changements - aucun changement."""

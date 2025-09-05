@@ -1,3 +1,7 @@
+"""
+Agresso database connection and query execution functions.
+"""
+
 import pandas as pd
 
 from Iris.Database.IrisConnect import IrisConnect

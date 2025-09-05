@@ -1,3 +1,7 @@
+"""
+Context management for synchronization operations.
+"""
+
 import argparse
 from pathlib import Path
 from typing import Any, Union, Dict
@@ -10,7 +14,7 @@ class SyncContext:
 
     args: argparse.Namespace
     config: Union[
-        Dict[str, Any]
+        Dict[str, Any], Any
     ]  # Supporte l'ancien format dict et le nouveau SyncConfig
     base_dir: Path
     db_user: Union[str, None]

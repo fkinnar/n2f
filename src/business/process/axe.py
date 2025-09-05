@@ -1,3 +1,7 @@
+"""
+Business logic for axe synchronization processing.
+"""
+
 import logging
 import pandas as pd
 from typing import List, Dict
@@ -34,10 +38,10 @@ def _load_agresso_axes(
         else agresso_config["prod"]
     )
 
-    df_agresso_axes = select(
-        base_dir=context.base_dir,
-        db_user=context.db_user,
-        db_password=context.db_password,
+    df_agresso_axes: pd.DataFrame = select(
+        base_dir=str(context.base_dir),
+        db_user=context.db_user or "",
+        db_password=context.db_password or "",
         sql_path=sql_path,
         sql_filename=sql_filename,
         prod=prod,
@@ -46,7 +50,7 @@ def _load_agresso_axes(
         df_agresso_axes = df_agresso_axes[
             df_agresso_axes[AGRESSO_COL_AXE_TYPE].astype(str).str.upper()
             == sql_column_filter
-        ].copy()
+        ].copy()  # type: ignore[assignment]
     logging.info(
         f"Number of {sql_column_filter} Agresso loaded : {len(df_agresso_axes)}"
     )
@@ -68,7 +72,7 @@ def _load_n2f_axes(
     df_n2f_axes = (
         pd.concat(axes_list, ignore_index=True) if axes_list else pd.DataFrame()
     )
-    logging.info(f"Number of N2F axe values loaded : {len(df_n2f_axes)}")
+    logging.info("Number of N2F axe values loaded : %s", len(df_n2f_axes))
     return df_n2f_axes
 
 
@@ -164,7 +168,7 @@ def synchronize(
     n2f_client = N2fApiClient(context)
 
     df_n2f_companies = n2f_client.get_companies()
-    logging.info(f"Number of N2F companies loaded : {len(df_n2f_companies)}")
+    logging.info("Number of N2F companies loaded : %s", len(df_n2f_companies))
 
     company_id_for_mapping = (
         df_n2f_companies[COL_UUID].iloc[0] if not df_n2f_companies.empty else ""

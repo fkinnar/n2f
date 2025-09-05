@@ -1,3 +1,7 @@
+"""
+User profile API functions for N2F operations.
+"""
+
 from typing import Dict, List, Any
 from n2f.api.base import retreive
 
@@ -24,5 +28,5 @@ def get_userprofiles(
     response = retreive(
         "userprofiles", base_url, client_id, client_secret, simulate=simulate
     )
-    data = response["response"]
+    data = response[0]["response"] if response and len(response) > 0 else []
     return data  # pas de data dans response ici !

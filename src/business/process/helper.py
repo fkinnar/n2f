@@ -1,3 +1,7 @@
+"""
+Helper functions for business process operations.
+"""
+
 import logging
 import pandas as pd
 from typing import Dict, Any, Optional
@@ -26,10 +30,10 @@ def reporting(
             nb_success = result_df[status_col].sum()
             nb_total = len(result_df)
             nb_failed = nb_total - nb_success
-            logging.info(f"  Success : {nb_success} / {nb_total}")
-            logging.info(f"  Failures : {nb_failed} / {nb_total}")
+            logging.info("  Success : %s / %s", nb_success, nb_total)
+            logging.info("  Failures : %s / %s", nb_failed, nb_total)
         else:
-            logging.info(f"  Total : {len(result_df)}")
+            logging.info("  Total : %s", len(result_df))
 
 
 def has_payload_changes(
