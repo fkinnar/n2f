@@ -7,8 +7,6 @@ the N2F API integration with realistic data without making actual HTTP calls.
 """
 
 import logging
-import pandas as pd
-from typing import Dict, Any
 
 from core import SyncContext
 from n2f.client import N2fApiClient
@@ -137,7 +135,7 @@ def demonstrate_error_simulation() -> None:
 
         result = client.create_user(user_payload)
         status = "SUCCESS" if result.success else "ERROR"
-        print(f"Operation {i+1}: {status} - {result.message}")
+        print(f"Operation {i + 1}: {status} - {result.message}")
         if not result.success:
             print(f"  Error details: {result.error_details}")
 

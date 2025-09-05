@@ -188,7 +188,8 @@ class ProductionDataSimulator:
             profiles_df = self.client.get_userprofiles()
 
             logging.info(
-                f"Données N2F simulées: {len(users_df)} users, {len(companies_df)} companies"
+                f"Données N2F simulées: {len(users_df)} users, "
+                f"{len(companies_df)} companies"
             )
 
             return {
@@ -289,7 +290,8 @@ class ProductionDataSimulator:
                             self.stats["users_updated"] += 1
                     else:
                         results["errors"].append(
-                            f"Erreur pour {user.get('email', 'unknown')}: {result.message}"
+                            f"Erreur pour {user.get('email', 'unknown')}: "
+                            f"{result.message}"
                         )
                         self.stats["errors"] += 1
 
@@ -304,7 +306,9 @@ class ProductionDataSimulator:
                     logging.warning(error_msg)
 
             logging.info(
-                f"Synchronisation utilisateurs: {len(results['created'])} créés, {len(results['updated'])} mis à jour, {len(results['errors'])} erreurs"
+                f"Synchronisation utilisateurs: {len(results['created'])} créés, "
+                f"{len(results['updated'])} mis à jour, "
+                f"{len(results['errors'])} erreurs"
             )
             return results
 
@@ -357,7 +361,8 @@ class ProductionDataSimulator:
                             self.stats["axes_updated"] += 1
                     else:
                         results["errors"].append(
-                            f"Erreur pour axe {axe.get('code', 'unknown')}: {result.message}"
+                            f"Erreur pour axe {axe.get('code', 'unknown')}: "
+                            f"{result.message}"
                         )
                         self.stats["errors"] += 1
 
@@ -370,7 +375,9 @@ class ProductionDataSimulator:
                     logging.warning(error_msg)
 
             logging.info(
-                f"Synchronisation axes: {len(results['created'])} créés, {len(results['updated'])} mis à jour, {len(results['errors'])} erreurs"
+                f"Synchronisation axes: {len(results['created'])} créés, "
+                f"{len(results['updated'])} mis à jour, "
+                f"{len(results['errors'])} erreurs"
             )
             return results
 

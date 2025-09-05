@@ -151,6 +151,6 @@ def create_test_context(
         base_dir=Path(base_dir),
         db_user=db_user or os.getenv("AGRESSO_DB_USER", "test_user"),
         db_password=db_password or os.getenv("AGRESSO_DB_PASSWORD", "test_password"),
-        client_id=os.getenv("N2F_CLIENT_ID", "test_client"),
-        client_secret=os.getenv("N2F_CLIENT_SECRET", "test_secret"),
+        client_id="test_client",
+        client_secret="test_secret",
     )

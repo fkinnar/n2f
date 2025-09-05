@@ -5,7 +5,6 @@ This module provides easy-to-use configuration functions for setting up
 different simulation scenarios.
 """
 
-from typing import Optional
 from n2f.simulation import SimulationConfig, configure_simulation
 
 

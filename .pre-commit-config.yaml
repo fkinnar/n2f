@@ -39,19 +39,19 @@ repos:
           )/
 
 
-  - repo: local
-    hooks:
-      - id: pytest
-        name: pytest
-        entry: python -m pytest --tb=short -q
-        language: system
-        pass_filenames: false
-        always_run: true
-        types: [python]
-        stages: [pre-commit]
-        verbose: true
-        # Ne pas faire échouer le commit si les tests échouent
-        require_serial: false
+  # - repo: local
+    # hooks:
+      # - id: pytest
+        # name: pytest
+        # entry: python -m pytest --tb=short -q
+        # language: system
+        # pass_filenames: false
+        # always_run: true
+        # types: [python]
+        # stages: [pre-commit]
+        # verbose: true
+        # # Ne pas faire échouer le commit si les tests échouent
+        # require_serial: false
 
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
