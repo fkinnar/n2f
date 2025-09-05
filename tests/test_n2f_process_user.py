@@ -5,8 +5,9 @@ Ce module teste les fonctions de traitement des utilisateurs N2F.
 """
 
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 import pandas as pd
+from typing import cast
 
 from n2f.process.user import (
     lookup_company_id,
@@ -206,7 +207,7 @@ class TestEnsureManagerExists(unittest.TestCase):
     def test_ensure_manager_exists_nan_email(self):
         """Test avec email NaN."""
         result = ensure_manager_exists(
-            None,
+            cast(str, None),
             self.df_agresso_users,
             self.df_n2f_users,
             self.mock_client,
@@ -243,7 +244,8 @@ class TestEnsureManagerExists(unittest.TestCase):
 
             mock_result = ApiResult.success_result(
                 "Created",
-                "manager@test.com",
+                200,
+                100.0,
                 "create",
                 "user",
                 "manager@test.com",
@@ -393,7 +395,7 @@ class TestCreateUsers(unittest.TestCase):
             mock_build_payload.return_value = mock_payload
 
             mock_result = ApiResult.success_result(
-                "Created", "user2@test.com", "create", "user", "user2@test.com", "users"
+                "Created", 200, 100.0, "create", "user", "user2@test.com", "users"
             )
             self.mock_client.create_user.return_value = mock_result
 
@@ -509,7 +511,8 @@ class TestUpdateUsers(unittest.TestCase):
 
                 mock_result = ApiResult.success_result(
                     "Updated",
-                    "user1@test.com",
+                    200,
+                    100.0,
                     "update",
                     "user",
                     "user1@test.com",
@@ -610,7 +613,7 @@ class TestDeleteUsers(unittest.TestCase):
     def test_delete_users_success(self):
         """Test de suppression réussie."""
         mock_result = ApiResult.success_result(
-            "Deleted", "user2@test.com", "delete", "user", "user2@test.com", "users"
+            "Deleted", 200, 100.0, "delete", "user", "user2@test.com", "users"
         )
         self.mock_client.delete_user.return_value = mock_result
 

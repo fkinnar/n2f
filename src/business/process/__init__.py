@@ -1,3 +1,10 @@
+"""
+Module de traitement des processus métier.
+
+Ce module contient les classes et fonctions pour la synchronisation
+des entités métier (utilisateurs, axes, projets) avec l'API N2F.
+"""
+
 # Import des nouvelles classes de synchronisation
 from .user_synchronizer import UserSynchronizer
 from .axe_synchronizer import AxeSynchronizer

@@ -4,7 +4,7 @@ Axe processing functions for N2F synchronization.
 
 import logging
 import pandas as pd
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, cast
 
 from n2f.client import N2fApiClient
 from n2f.payload import create_project_upsert_payload
@@ -47,12 +47,15 @@ def create_axes(
     if df_agresso_projects.empty:
         return pd.DataFrame(), status_col
 
-    projects_to_create = (
-        df_agresso_projects[
-            ~df_agresso_projects["code"].isin(df_n2f_projects["code"])
-        ].copy()
-        if not df_n2f_projects.empty
-        else df_agresso_projects.copy()
+    projects_to_create = cast(
+        pd.DataFrame,
+        (
+            df_agresso_projects[
+                ~df_agresso_projects["code"].isin(df_n2f_projects["code"])
+            ].copy()
+            if not df_n2f_projects.empty
+            else df_agresso_projects.copy()
+        ),
     )
 
     if projects_to_create.empty:
@@ -62,6 +65,8 @@ def create_axes(
     for _, project in projects_to_create.iterrows():
         try:
             company_code = project.get("client")
+            if not isinstance(company_code, str):
+                continue
             company_id = lookup_company_id(company_code, df_n2f_companies, sandbox)
             if company_id:
                 payload = build_axe_payload(project, sandbox)
@@ -141,6 +146,8 @@ def update_axes(
         axes_to_update.append(project.to_dict())
         try:
             company_code = project.get("client")
+            if not isinstance(company_code, str):
+                continue
             company_id = lookup_company_id(company_code, df_n2f_companies, sandbox)
             if company_id:
                 api_result = n2f_client.upsert_axe_value(
@@ -206,12 +213,15 @@ def delete_axes(
     if df_n2f_projects.empty:
         return pd.DataFrame(), status_col
 
-    axes_to_delete = (
-        df_n2f_projects[
-            ~df_n2f_projects["code"].isin(df_agresso_projects["code"])
-        ].copy()
-        if not df_agresso_projects.empty
-        else df_n2f_projects.copy()
+    axes_to_delete = cast(
+        pd.DataFrame,
+        (
+            df_n2f_projects[
+                ~df_n2f_projects["code"].isin(df_agresso_projects["code"])
+            ].copy()
+            if not df_agresso_projects.empty
+            else df_n2f_projects.copy()
+        ),
     )
 
     if axes_to_delete.empty:
@@ -225,7 +235,7 @@ def delete_axes(
             )  # Assumes company_id was added during get_axes
             if company_id:
                 api_result = n2f_client.delete_axe_value(
-                    company_id, axe_id, project["code"], scope
+                    company_id, axe_id, str(project["code"]), scope
                 )
                 api_results.append(api_result)
             else:

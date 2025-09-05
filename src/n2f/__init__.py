@@ -1,5 +1,13 @@
-from requests_ratelimiter import LimiterSession
+"""
+N2F API rate limiting and session management.
+
+This module provides rate-limited HTTP sessions for N2F API calls,
+with different quotas for day and night periods, and separate limits
+for GET and WRITE operations.
+"""
+
 from datetime import datetime
+from requests_ratelimiter import LimiterSession
 
 
 # Quota configuration

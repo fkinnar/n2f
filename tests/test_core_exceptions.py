@@ -6,8 +6,6 @@ Ce module teste toutes les classes d'exceptions personnalisées et les fonctions
 """
 
 import unittest
-from unittest.mock import Mock, patch
-import json
 
 from core.exceptions import (
     SyncException,

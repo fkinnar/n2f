@@ -53,7 +53,7 @@ def create_customaxes(
     """Crée les valeurs d'un axe personnalisé via le client N2F."""
     # Implémentation similaire à create_axes dans n2f/process/axe.py
     # Nécessite lookup_company_id et gestion des erreurs
-    pass
+    return pd.DataFrame(), status_col
 
 
 def update_customaxes(
@@ -67,7 +67,7 @@ def update_customaxes(
 ) -> Tuple[pd.DataFrame, str]:
     """Met à jour les valeurs d'un axe personnalisé via le client N2F."""
     # Implémentation similaire à update_axes dans n2f/process/axe.py
-    pass
+    return pd.DataFrame(), status_col
 
 
 def delete_customaxes(
@@ -81,4 +81,4 @@ def delete_customaxes(
 ) -> Tuple[pd.DataFrame, str]:
     """Supprime les valeurs d'un axe personnalisé via le client N2F."""
     # Implémentation similaire à delete_axes dans n2f/process/axe.py
-    pass
+    return pd.DataFrame(), status_col

@@ -1,9 +1,11 @@
-from unittest.mock import Mock, patch, MagicMock
+"""
+Tests unitaires pour les fonctions utilitaires.
 
+Ce module teste les fonctions helper et utilitaires
+utilisées dans l'application de synchronisation N2F.
+"""
 
 import unittest
-import sys
-import os
 
 import pandas as pd
 from datetime import datetime

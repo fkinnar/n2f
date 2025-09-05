@@ -4,7 +4,7 @@ Tests pour la simulation avec données de production.
 """
 
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 import pandas as pd
 
 from core import SyncContext

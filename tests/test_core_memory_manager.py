@@ -5,11 +5,9 @@ Ce module teste le gestionnaire de mémoire intelligent pour les DataFrames.
 """
 
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 import time
-import gc
 import pandas as pd
-import psutil
 
 from core.memory_manager import (
     MemoryManager,

@@ -8,15 +8,14 @@ Ce module démontre comment utiliser le système de retry pour :
 - Intégrer avec le système de métriques existant
 """
 
-import time
 import random
-from typing import Dict, Any
+from typing import Dict, Any, cast
 from ..retry import (
     RetryConfig,
     RetryStrategy,
+    RetryMetrics,
     RetryableError,
     FatalError,
-    retry,
     api_retry,
     database_retry,
     execute_with_retry,
@@ -24,6 +23,13 @@ from ..retry import (
     print_retry_summary,
     reset_retry_metrics,
 )
+
+try:
+    from ..metrics import start_operation, end_operation, print_summary
+
+    METRICS_AVAILABLE = True
+except ImportError:
+    METRICS_AVAILABLE = False
 
 
 def simulate_api_call(
@@ -107,7 +113,7 @@ def example_basic_retry() -> None:
             config=config,
         )
         print(f"Résultat final: {result}")
-    except Exception as e:
+    except (ConnectionError, TimeoutError, RetryableError) as e:
         print(f"Échec définitif: {e}")
 
 
@@ -134,14 +140,14 @@ def example_different_strategies() -> None:
         )
 
         try:
-            result = execute_with_retry(
+            execute_with_retry(
                 simulate_api_call,
                 success_rate=0.1,
                 operation_name=f"strategy_{strategy.value}",
                 config=config,
             )
             print(f"✅ Succès avec {name}")
-        except Exception as e:
+        except (ConnectionError, TimeoutError, RetryableError) as e:
             print(f"❌ Échec avec {name}: {e}")
 
 
@@ -154,7 +160,7 @@ def example_decorators() -> None:
     try:
         result = api_function_with_retry()
         print(f"✅ API function réussie: {result}")
-    except Exception as e:
+    except (ConnectionError, TimeoutError, RetryableError) as e:
         print(f"❌ API function échouée: {e}")
 
     # Test du décorateur DB
@@ -162,7 +168,7 @@ def example_decorators() -> None:
     try:
         result = db_function_with_retry()
         print(f"✅ DB function réussie: {result}")
-    except Exception as e:
+    except (ConnectionError, TimeoutError, RetryableError) as e:
         print(f"❌ DB function échouée: {e}")
 
 
@@ -179,7 +185,7 @@ def example_fatal_error_handling() -> None:
         print(f"Résultat: {result}")
     except FatalError as e:
         print(f"❌ Erreur fatale détectée et non retryée: {e}")
-    except Exception as e:
+    except (ConnectionError, TimeoutError, RetryableError) as e:
         print(f"❌ Autre erreur: {e}")
 
 
@@ -203,11 +209,11 @@ def example_metrics_analysis() -> None:
     for operation_name, operation_func in operations:
         print(f"\n--- Test de {operation_name} ---")
         try:
-            result = execute_with_retry(
+            execute_with_retry(
                 operation_func, operation_name=operation_name, config=config
             )
             print(f"✅ {operation_name} réussi")
-        except Exception as e:
+        except (ConnectionError, TimeoutError, RetryableError) as e:
             print(f"❌ {operation_name} échoué: {e}")
 
     # Afficher les métriques
@@ -216,7 +222,7 @@ def example_metrics_analysis() -> None:
 
     # Métriques détaillées par opération
     print("\n--- Métriques détaillées ---")
-    all_metrics = get_retry_metrics()
+    all_metrics = cast(Dict[str, RetryMetrics], get_retry_metrics())
     for operation_name, metrics in all_metrics.items():
         print(f"\n{operation_name}:")
         print(f"  • Tentatives: {metrics.total_attempts}")
@@ -232,48 +238,45 @@ def example_integration_with_metrics() -> None:
     """Exemple d'intégration avec le système de métriques existant."""
     print("\n=== Exemple d'intégration avec les métriques ===")
 
-    try:
-        from metrics import start_operation, end_operation, print_summary
-        from retry import execute_with_retry
-
-        # Démarrage du suivi des métriques
-        metrics = start_operation("retry_integration_test", "api_call")
-
-        # Configuration du retry
-        config = RetryConfig(max_attempts=3, base_delay=1.0, max_delay=10.0)
-
-        try:
-            # Exécution avec retry
-            result = execute_with_retry(
-                simulate_api_call,
-                success_rate=0.2,
-                operation_name="integration_test",
-                config=config,
-            )
-
-            # Fin du suivi avec succès
-            end_operation(metrics, success=True, records_processed=1, api_calls=1)
-
-            print(f"✅ Intégration réussie: {result}")
-
-        except Exception as e:
-            # Fin du suivi avec échec
-            end_operation(
-                metrics,
-                success=False,
-                error_message=str(e),
-                records_processed=0,
-                api_calls=1,
-            )
-            print(f"❌ Intégration échouée: {e}")
-
-        # Affichage des métriques combinées
-        print("\n--- Métriques combinées ---")
-        print_summary()
-        print_retry_summary()
-
-    except ImportError:
+    if not METRICS_AVAILABLE:
         print("⚠️  Module metrics non disponible pour l'intégration")
+        return
+
+    # Démarrage du suivi des métriques
+    metrics = start_operation("retry_integration_test", "api_call")
+
+    # Configuration du retry
+    config = RetryConfig(max_attempts=3, base_delay=1.0, max_delay=10.0)
+
+    try:
+        # Exécution avec retry
+        result = execute_with_retry(
+            simulate_api_call,
+            success_rate=0.2,
+            operation_name="integration_test",
+            config=config,
+        )
+
+        # Fin du suivi avec succès
+        end_operation(metrics, success=True, records_processed=1, api_calls=1)
+
+        print(f"✅ Intégration réussie: {result}")
+
+    except (ConnectionError, TimeoutError, RetryableError) as e:
+        # Fin du suivi avec échec
+        end_operation(
+            metrics,
+            success=False,
+            error_message=str(e),
+            records_processed=0,
+            api_calls=1,
+        )
+        print(f"❌ Intégration échouée: {e}")
+
+    # Affichage des métriques combinées
+    print("\n--- Métriques combinées ---")
+    print_summary()
+    print_retry_summary()
 
 
 def example_custom_retryable_exceptions() -> None:
@@ -283,12 +286,8 @@ def example_custom_retryable_exceptions() -> None:
     class CustomAPIError(RetryableError):
         """Erreur API personnalisée récupérable."""
 
-        pass
-
     class CustomDBError(RetryableError):
         """Erreur DB personnalisée récupérable."""
-
-        pass
 
     def simulate_custom_api_call() -> Dict[str, str]:
         """Simule un appel API avec erreurs personnalisées."""
@@ -330,7 +329,14 @@ def example_custom_retryable_exceptions() -> None:
             config=config,
         )
         print(f"✅ Test réussi: {result}")
-    except Exception as e:
+    except (
+        CustomAPIError,
+        CustomDBError,
+        ConnectionError,
+        TimeoutError,
+        OSError,
+        RetryableError,
+    ) as e:
         print(f"❌ Test échoué: {e}")
 
 
@@ -348,7 +354,7 @@ if __name__ == "__main__":
         example_integration_with_metrics()
         example_custom_retryable_exceptions()
 
-    except Exception as e:
+    except (ConnectionError, TimeoutError, RetryableError, FatalError) as e:
         print(f"Erreur lors de l'exécution des exemples : {e}")
 
     print("\n" + "=" * 60)

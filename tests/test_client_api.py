@@ -1,15 +1,16 @@
-import n2f.client
-import n2f.api_result
+"""
+Tests unitaires pour le client API N2F.
+
+Ce module teste le client API N2F et ses fonctionnalités
+de gestion des requêtes et des réponses.
+"""
+
 from core import SyncContext
 
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 import pandas as pd
-import json
-import sys
-import os
-from datetime import datetime
-from typing import Dict, List, Any
+from typing import Dict, List
 import requests
 
 from n2f.client import N2fApiClient

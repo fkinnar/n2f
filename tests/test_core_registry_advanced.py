@@ -4,11 +4,9 @@ Tests avancés pour le registry - Couverture des lignes manquantes.
 """
 
 import unittest
-from unittest.mock import Mock, patch, MagicMock
-import tempfile
+from unittest.mock import Mock, patch
 import os
 import sys
-from pathlib import Path
 
 # Ajouter le répertoire python au path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))

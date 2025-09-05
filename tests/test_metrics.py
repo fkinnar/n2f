@@ -1,7 +1,3 @@
-from core.metrics import SyncMetrics
-from core.metrics import OperationMetrics
-from core.metrics import ScopeMetrics
-
 """
 Tests unitaires pour le système de métriques.
 
@@ -11,13 +7,16 @@ Ce module teste les fonctionnalités du système de métriques :
 - Export et résumé
 """
 
+from core.metrics import SyncMetrics
+from core.metrics import OperationMetrics
+from core.metrics import ScopeMetrics
+
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import patch
 import tempfile
-import time
 import json
-import sys
 import os
+from pathlib import Path
 
 # Ajout du chemin du projet pour les imports
 
@@ -307,12 +306,14 @@ class TestSyncMetrics(unittest.TestCase):
 
         scope_metrics = self.metrics.get_scope_metrics("test_scope")
 
-        self.assertEqual(scope_metrics.scope, "test_scope")
-        self.assertEqual(scope_metrics.total_operations, 2)
-        self.assertEqual(scope_metrics.successful_operations, 1)
-        self.assertEqual(scope_metrics.failed_operations, 1)
-        self.assertEqual(scope_metrics.total_records_processed, 75)
-        self.assertEqual(scope_metrics.success_rate, 0.5)
+        self.assertIsNotNone(scope_metrics)
+        if scope_metrics:
+            self.assertEqual(scope_metrics.scope, "test_scope")
+            self.assertEqual(scope_metrics.total_operations, 2)
+            self.assertEqual(scope_metrics.successful_operations, 1)
+            self.assertEqual(scope_metrics.failed_operations, 1)
+            self.assertEqual(scope_metrics.total_records_processed, 75)
+            self.assertEqual(scope_metrics.success_rate, 0.5)
 
     def test_get_summary(self):
         """Test de génération du résumé."""
@@ -356,7 +357,7 @@ class TestSyncMetrics(unittest.TestCase):
             filename = f.name
 
         try:
-            self.metrics.export_metrics(filename)
+            self.metrics.export_metrics(Path(filename))
 
             # Vérifier que le fichier a été créé et contient des données JSON
             with open(filename, "r") as f:

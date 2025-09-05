@@ -1,11 +1,16 @@
-import business.process.helper as business_helper
+"""
+Tests unitaires pour les modules de traitement.
+
+Ce module teste les modules de traitement des données
+pour les processus de synchronisation N2F.
+"""
+
 import n2f.process.user as user_process
 
 import unittest
-import sys
-import os
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 import pandas as pd
+from typing import cast
 
 import n2f.process.axe as axe_process
 import n2f.process.company as company_process
@@ -102,7 +107,7 @@ class TestUserProcess(unittest.TestCase):
     def test_ensure_manager_exists_nan_email(self):
         """Test de vérification de manager avec email NaN."""
         result = user_process.ensure_manager_exists(
-            None,
+            cast(str, None),
             self.df_agresso_users,
             self.df_n2f_users,
             self.n2f_client,

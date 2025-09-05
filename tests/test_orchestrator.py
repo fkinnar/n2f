@@ -8,10 +8,8 @@ Ce module teste les fonctionnalités de l'orchestrateur :
 """
 
 import unittest
-from unittest.mock import Mock, patch, MagicMock
-import tempfile
+from unittest.mock import Mock, patch
 import argparse
-import sys
 import os
 from pathlib import Path
 
@@ -23,7 +21,7 @@ from core.orchestrator import (
     LogManager,
     SyncResult,
 )
-from core.config import SyncConfig, DatabaseConfig, ApiConfig
+from core.config import SyncConfig
 from core.exceptions import SyncException
 
 
@@ -77,7 +75,6 @@ class TestContextBuilder(unittest.TestCase):
     @patch("core.orchestrator.print_memory_summary")
     def test_build_context(
         self,
-        mock_print_memory_summary,
         mock_sync_context,
         mock_get_registry,
         mock_get_retry_manager,
@@ -111,7 +108,7 @@ class TestContextBuilder(unittest.TestCase):
                 "N2F_CLIENT_SECRET": "test_secret",
             },
         ):
-            context = self.builder.build()
+            _context = self.builder.build()
 
         # Vérifier que les composants ont été initialisés
         mock_config_loader.assert_called_once_with(self.config_path)
@@ -132,12 +129,6 @@ class TestContextBuilder(unittest.TestCase):
     @patch("core.orchestrator.print_memory_summary")
     def test_build_context_with_persistent_cache(
         self,
-        mock_print_memory_summary,
-        mock_sync_context,
-        mock_get_registry,
-        mock_get_retry_manager,
-        mock_get_metrics,
-        mock_get_memory_manager,
         mock_get_cache,
         mock_config_loader,
     ):
@@ -166,7 +157,7 @@ class TestContextBuilder(unittest.TestCase):
                 "N2F_CLIENT_SECRET": "test_secret",
             },
         ):
-            context = self.builder.build()
+            _context = self.builder.build()
 
         # Vérifier que le cache persistant a été configuré
         mock_get_cache.assert_called_once()
@@ -193,7 +184,7 @@ class TestScopeExecutor(unittest.TestCase):
         mock_scope_config.display_name = "Test Scope"
         mock_scope_config.sync_function = Mock(return_value=["result1", "result2"])
 
-        self.executor.registry.get.return_value = mock_scope_config
+        self.executor.registry.get = Mock(return_value=mock_scope_config)
 
         # Exécuter le scope
         result = self.executor.execute_scope("test_scope")
@@ -221,7 +212,7 @@ class TestScopeExecutor(unittest.TestCase):
         mock_scope_config = Mock()
         mock_scope_config.enabled = False
 
-        self.executor.registry.get.return_value = mock_scope_config
+        self.executor.registry.get = Mock(return_value=mock_scope_config)
 
         # Exécuter le scope
         result = self.executor.execute_scope("test_scope")
@@ -229,6 +220,8 @@ class TestScopeExecutor(unittest.TestCase):
         # Vérifier le résultat
         self.assertEqual(result.scope_name, "test_scope")
         self.assertFalse(result.success)
+        self.assertIsNotNone(result.error_message)
+        assert result.error_message is not None
         self.assertIn("disabled", result.error_message)
 
     @patch("time.time")
@@ -237,7 +230,7 @@ class TestScopeExecutor(unittest.TestCase):
         mock_time.return_value = 100.0
 
         # Mock du registry retournant None
-        self.executor.registry.get.return_value = None
+        self.executor.registry.get = Mock(return_value=None)
 
         # Exécuter le scope
         result = self.executor.execute_scope("nonexistent_scope")
@@ -245,6 +238,8 @@ class TestScopeExecutor(unittest.TestCase):
         # Vérifier le résultat
         self.assertEqual(result.scope_name, "nonexistent_scope")
         self.assertFalse(result.success)
+        self.assertIsNotNone(result.error_message)
+        assert result.error_message is not None
         self.assertIn("not found", result.error_message)
 
     @patch("time.time")
@@ -259,7 +254,7 @@ class TestScopeExecutor(unittest.TestCase):
         mock_scope_config.display_name = "Test Scope"
         mock_scope_config.sync_function = Mock(side_effect=SyncException("Test error"))
 
-        self.executor.registry.get.return_value = mock_scope_config
+        self.executor.registry.get = Mock(return_value=mock_scope_config)
 
         # Exécuter le scope
         result = self.executor.execute_scope("test_scope")
@@ -267,6 +262,8 @@ class TestScopeExecutor(unittest.TestCase):
         # Vérifier le résultat
         self.assertEqual(result.scope_name, "test_scope")
         self.assertFalse(result.success)
+        self.assertIsNotNone(result.error_message)
+        assert result.error_message is not None
         self.assertIn("Test error", result.error_message)
         self.assertEqual(result.duration_seconds, 1.5)
 
@@ -484,19 +481,23 @@ class TestSyncOrchestrator(unittest.TestCase):
         mock_scope_config2.enabled = True
         mock_scope_config2.display_name = "Scope 2"
 
-        self.orchestrator.registry.get_all_scope_configs.return_value = {
-            "scope1": mock_scope_config1,
-            "scope2": mock_scope_config2,
-        }
+        self.orchestrator.registry.get_all_scope_configs = Mock(
+            return_value={
+                "scope1": mock_scope_config1,
+                "scope2": mock_scope_config2,
+            }
+        )
         # Mock get_enabled_scopes pour retourner une liste
-        self.orchestrator.registry.get_enabled_scopes.return_value = [
-            "scope1",
-            "scope2",
-        ]
+        self.orchestrator.registry.get_enabled_scopes = Mock(
+            return_value=[
+                "scope1",
+                "scope2",
+            ]
+        )
 
         # Mock des résultats
-        result1 = SyncResult("scope1", True, [], 5.0)
-        result2 = SyncResult("scope2", True, [], 3.0)
+        result1 = SyncResult("scope1", True, [], None, 5.0)
+        result2 = SyncResult("scope2", True, [], None, 3.0)
         mock_executor.execute_scope.side_effect = [result1, result2]
 
         # Exécuter l'orchestrateur
@@ -539,11 +540,13 @@ class TestSyncOrchestrator(unittest.TestCase):
         mock_scope_config.enabled = True
         mock_scope_config.display_name = "Test Scope"
 
-        self.orchestrator.registry.get_all_scope_configs.return_value = {
-            "test_scope": mock_scope_config
-        }
+        self.orchestrator.registry.get_all_scope_configs = Mock(
+            return_value={"test_scope": mock_scope_config}
+        )
         # Mock get_enabled_scopes pour retourner une liste
-        self.orchestrator.registry.get_enabled_scopes.return_value = ["test_scope"]
+        self.orchestrator.registry.get_enabled_scopes = Mock(
+            return_value=["test_scope"]
+        )
 
         # Mock du résultat
         result = SyncResult(
@@ -589,10 +592,12 @@ class TestSyncOrchestrator(unittest.TestCase):
         mock_scope_config2.enabled = True
         mock_scope_config2.display_name = "Scope 2"
 
-        self.orchestrator.registry.get.side_effect = [
-            mock_scope_config1,
-            mock_scope_config2,
-        ]
+        self.orchestrator.registry.get = Mock(
+            side_effect=[
+                mock_scope_config1,
+                mock_scope_config2,
+            ]
+        )
 
         # Mock des résultats
         result1 = SyncResult(
@@ -622,7 +627,7 @@ class TestSyncOrchestrator(unittest.TestCase):
         mock_context_builder.return_value.build.side_effect = ValueError("Config error")
 
         # Mock get_enabled_scopes pour éviter l'erreur de Mock non itérable
-        self.orchestrator.registry.get_enabled_scopes.return_value = []
+        self.orchestrator.registry.get_enabled_scopes = Mock(return_value=[])
 
         # Exécuter l'orchestrateur
         # Le code gère les exceptions correctement, donc on teste juste qu'il ne
@@ -649,16 +654,20 @@ class TestSyncOrchestrator(unittest.TestCase):
         mock_scope_config3 = Mock()
         mock_scope_config3.enabled = True
 
-        self.orchestrator.registry.get_all_scope_configs.return_value = {
-            "scope1": mock_scope_config1,
-            "scope2": mock_scope_config2,
-            "scope3": mock_scope_config3,
-        }
+        self.orchestrator.registry.get_all_scope_configs = Mock(
+            return_value={
+                "scope1": mock_scope_config1,
+                "scope2": mock_scope_config2,
+                "scope3": mock_scope_config3,
+            }
+        )
         # Mock get_enabled_scopes pour retourner une liste
-        self.orchestrator.registry.get_enabled_scopes.return_value = [
-            "scope1",
-            "scope3",
-        ]
+        self.orchestrator.registry.get_enabled_scopes = Mock(
+            return_value=[
+                "scope1",
+                "scope3",
+            ]
+        )
 
         # Récupérer les scopes sélectionnés
         selected_scopes = self.orchestrator._get_selected_scopes()
@@ -681,10 +690,12 @@ class TestSyncOrchestrator(unittest.TestCase):
         mock_scope_config3 = Mock()
         mock_scope_config3.enabled = True
 
-        self.orchestrator.registry.get.side_effect = [
-            mock_scope_config1,
-            mock_scope_config3,
-        ]
+        self.orchestrator.registry.get = Mock(
+            side_effect=[
+                mock_scope_config1,
+                mock_scope_config3,
+            ]
+        )
 
         # Récupérer les scopes sélectionnés
         selected_scopes = self.orchestrator._get_selected_scopes()

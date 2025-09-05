@@ -1,12 +1,12 @@
-from unittest.mock import Mock, patch, MagicMock
+"""
+Tests unitaires pour les payloads N2F.
 
-import n2f.payload
+Ce module teste la génération et la validation des payloads
+utilisés pour les appels API N2F.
+"""
 
 import unittest
-import sys
-import os
 
-import pandas as pd
 
 from n2f.payload import create_user_upsert_payload, create_project_upsert_payload
 from business.constants import (
@@ -45,7 +45,6 @@ from business.constants import (
     N2F_COL_ROLE,
     N2F_COL_PROFILE,
     N2F_COL_MANAGER_MAIL,
-    N2F_COL_COST_CENTER,
     N2F_COL_CREATE_VEHICLE,
     N2F_COL_APPROVE_VEHICLE,
     N2F_COL_DEDUCT_DISTANCE,
@@ -54,13 +53,10 @@ from business.constants import (
     N2F_COL_JOB_TITLE,
     N2F_COL_EMPLOYEE_NUMBER,
     N2F_COL_STRUCTURE,
-    N2F_COL_SSO_LOGIN,
     N2F_COL_PRO_PAYMENT,
     N2F_COL_AUX_ACCOUNT,
-    N2F_COL_AUX_ACCOUNT2,
     N2F_COL_RAISE_LIMITS,
     N2F_COL_AUTH_MODE,
-    N2F_COL_UPDATE_PERSONAL,
     N2F_COL_VALIDITY_DATE_FROM,
     N2F_COL_VALIDITY_DATE_TO,
     DEFAULT_AUTH_MODE_SANDBOX,
@@ -245,6 +241,7 @@ class TestPayloads(unittest.TestCase):
             (name for name in names if name[COL_CULTURE] == CULTURE_FR), None
         )
         self.assertIsNotNone(fr_name)
+        assert fr_name is not None
         self.assertEqual(fr_name[COL_VALUE], "Test Project")
 
         # Vérification du nom néerlandais
@@ -252,6 +249,7 @@ class TestPayloads(unittest.TestCase):
             (name for name in names if name[COL_CULTURE] == CULTURE_NL), None
         )
         self.assertIsNotNone(nl_name)
+        assert nl_name is not None
         self.assertEqual(nl_name[COL_VALUE], "Test Project")
 
         # Vérification des dates

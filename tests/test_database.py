@@ -1,11 +1,15 @@
-import agresso.database as agresso_db
+"""
+Tests unitaires pour le module de base de données Agresso.
+
+Ce module teste les fonctionnalités d'accès à la base de données
+Agresso et la récupération des données.
+"""
+
 import pandas as pd
 
 import unittest
-import sys
-import os
 
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 import agresso.database as database_module
 
 

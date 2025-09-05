@@ -6,12 +6,11 @@ Ce module teste les fonctions de synchronisation des utilisateurs.
 """
 
 import unittest
-from unittest.mock import Mock, patch, MagicMock
-import tempfile
+from unittest.mock import Mock, patch
 import os
 import sys
 import pandas as pd
-import numpy as np
+
 
 # Ajouter le répertoire python au path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))

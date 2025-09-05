@@ -4,7 +4,7 @@ User processing functions for N2F synchronization.
 
 import logging
 import pandas as pd
-from typing import Optional, Set, Dict, Any, List, Tuple
+from typing import Optional, Set, Dict, Any, List, Tuple, cast
 
 from n2f.client import N2fApiClient
 from n2f.payload import create_user_upsert_payload
@@ -28,11 +28,11 @@ def build_user_payload(
     manager_email: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Construit le payload JSON pour l'upsert d'un utilisateur."""
-    company_id = lookup_company_id(user["Entreprise"], df_n2f_companies)
+    company_id = lookup_company_id(str(user["Entreprise"]), df_n2f_companies)
     payload = create_user_upsert_payload(user.to_dict(), company_id, sandbox)
     if manager_email is None:
         payload["managerMail"] = ensure_manager_exists(
-            user["Manager"],
+            str(user["Manager"]),
             df_agresso_users,
             df_n2f_users,
             n2f_client,
@@ -111,12 +111,15 @@ def create_users(
     if df_agresso_users.empty:
         return pd.DataFrame(), status_col
 
-    users_to_create = (
-        df_agresso_users[
-            ~df_agresso_users["AdresseEmail"].isin(df_n2f_users["mail"])
-        ].copy()
-        if not df_n2f_users.empty
-        else df_agresso_users.copy()
+    users_to_create = cast(
+        pd.DataFrame,
+        (
+            df_agresso_users[
+                ~df_agresso_users["AdresseEmail"].isin(df_n2f_users["mail"])
+            ].copy()
+            if not df_n2f_users.empty
+            else df_agresso_users.copy()
+        ),
     )
 
     api_results: List[ApiResult] = []
@@ -146,7 +149,7 @@ def create_users(
                     error_details=str(e),
                     action_type="create",
                     object_type="user",
-                    object_id=user["AdresseEmail"],
+                    object_id=str(user["AdresseEmail"]),
                     scope="users",
                 )
             )
@@ -206,7 +209,7 @@ def update_users(
                     error_details=str(e),
                     action_type="update",
                     object_type="user",
-                    object_id=user["AdresseEmail"],
+                    object_id=str(user["AdresseEmail"]),
                     scope="users",
                 )
             )
@@ -231,12 +234,15 @@ def delete_users(
     if df_n2f_users.empty:
         return pd.DataFrame(), status_col
 
-    users_to_delete = (
-        df_n2f_users[
-            ~df_n2f_users["mail"].isin(df_agresso_users["AdresseEmail"])
-        ].copy()
-        if not df_agresso_users.empty
-        else df_agresso_users.copy()
+    users_to_delete = cast(
+        pd.DataFrame,
+        (
+            df_n2f_users[
+                ~df_n2f_users["mail"].isin(df_agresso_users["AdresseEmail"])
+            ].copy()
+            if not df_agresso_users.empty
+            else df_agresso_users.copy()
+        ),
     )
 
     if not users_to_delete.empty:

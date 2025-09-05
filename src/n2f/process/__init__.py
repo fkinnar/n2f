@@ -1,3 +1,10 @@
+"""
+Module de traitement des processus N2F.
+
+Ce module contient les fonctions de traitement des entités N2F
+(utilisateurs, axes, projets) pour les opérations CRUD.
+"""
+
 from .user import (
     create_users,
     update_users,

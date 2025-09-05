@@ -6,12 +6,12 @@ Ce module teste les fonctions de synchronisation des axes.
 """
 
 import unittest
-from unittest.mock import Mock, patch, MagicMock
-import tempfile
+from unittest.mock import Mock, patch
 import os
 import sys
 import pandas as pd
-import numpy as np
+from typing import cast
+
 
 # Ajouter le répertoire python au path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))
@@ -91,7 +91,7 @@ class TestBusinessAxe(unittest.TestCase):
         self.assertEqual(scope, "subposts")
 
         # Test avec type inconnu (valeur non enum)
-        scope = axe_process._get_scope_from_axe_type("INVALID_TYPE")
+        scope = axe_process._get_scope_from_axe_type(cast(AxeType, "INVALID_TYPE"))
         self.assertEqual(scope, "unknown")
 
     @patch("business.process.axe.select")

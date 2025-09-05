@@ -8,9 +8,8 @@ Ce module teste les fonctions de traitement des données Agresso.
 import unittest
 import sys
 import os
-import tempfile
 import pandas as pd
-from unittest.mock import Mock, patch, MagicMock, mock_open
+from unittest.mock import Mock, patch, mock_open
 
 # Ajouter le répertoire python au path pour les imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))

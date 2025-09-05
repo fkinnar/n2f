@@ -75,7 +75,7 @@ def run_coverage_analysis():
     for filename in data.measured_files():
         if filename.startswith("src/"):
             # Obtenir les statistiques pour ce fichier
-            file_coverage = data.get_file_coverage(filename)
+            file_coverage = data.lines(filename)
             if file_coverage:
                 total_lines = len(file_coverage)
                 covered_lines = sum(1 for line in file_coverage if line > 0)
@@ -119,7 +119,7 @@ def _get_missing_lines_by_file(data):
 
     for filename in data.measured_files():
         if filename.startswith("src/"):
-            file_coverage = data.get_file_coverage(filename)
+            file_coverage = data.lines(filename)
             if file_coverage:
                 missing_lines = [
                     i + 1 for i, line in enumerate(file_coverage) if line == 0

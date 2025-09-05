@@ -5,7 +5,7 @@ Ce module teste les fonctions de traitement des axes N2F.
 """
 
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 import pandas as pd
 
 from n2f.process.axe import (
@@ -153,7 +153,7 @@ class TestCreateAxes(unittest.TestCase):
 
             # Mock upsert_axe_value
             mock_result = ApiResult.success_result(
-                "Created", "PROJ2", "create", "axe", "PROJ2", "projects"
+                "Created", 200, 100.0, "create", "axe", "PROJ2", "projects"
             )
             self.mock_client.upsert_axe_value.return_value = mock_result
 
@@ -317,7 +317,7 @@ class TestUpdateAxes(unittest.TestCase):
                 mock_build_payload.return_value = mock_payload
 
                 mock_result = ApiResult.success_result(
-                    "Updated", "PROJ1", "update", "axe", "PROJ1", "projects"
+                    "Updated", 200, 100.0, "update", "axe", "PROJ1", "projects"
                 )
                 self.mock_client.upsert_axe_value.return_value = mock_result
 
@@ -449,7 +449,7 @@ class TestDeleteAxes(unittest.TestCase):
     def test_delete_axes_success(self):
         """Test de suppression réussie."""
         mock_result = ApiResult.success_result(
-            "Deleted", "PROJ2", "delete", "axe", "PROJ2", "projects"
+            "Deleted", 200, 100.0, "delete", "axe", "PROJ2", "projects"
         )
         self.mock_client.delete_axe_value.return_value = mock_result
 

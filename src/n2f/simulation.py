@@ -331,7 +331,9 @@ class EnhancedSimulator:
             message=f"Simulated error: {message}",
             status_code=status_code,
             duration_ms=self.config.response_delay_ms,
-            error_details=f"Simulated {action_type} error for {object_type} {object_id}",
+            error_details=(
+                f"Simulated {action_type} error for {object_type} {object_id}"
+            ),
             action_type=action_type,
             object_type=object_type,
             object_id=object_id,
@@ -342,7 +344,7 @@ class EnhancedSimulator:
         self, payload: Dict[str, Any], object_type: Optional[str]
     ) -> Dict[str, Any]:
         """Generate realistic response data for upsert operations."""
-        response_data = {
+        response_data: Dict[str, Any] = {
             "id": str(uuid.uuid4()),
             "createdAt": datetime.now().isoformat(),
             "updatedAt": datetime.now().isoformat(),

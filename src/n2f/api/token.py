@@ -26,6 +26,8 @@ def cache_token(
             if (
                 "token" in cache
                 and "expires_at" in cache
+                and isinstance(cache["token"], str)
+                and isinstance(cache["expires_at"], (int, float))
                 and cache["expires_at"] - safety_margin > now
             ):
                 return cache["token"], cache["expires_at"]
@@ -36,9 +38,12 @@ def cache_token(
                 return token, validity
 
             # validity est une date ISO, ex: '2025-08-20T09:54:35.8185075Z'
-            expires_at = datetime.fromisoformat(
-                validity.replace("Z", "+00:00")
-            ).timestamp()
+            if isinstance(validity, str):
+                expires_at = datetime.fromisoformat(
+                    validity.replace("Z", "+00:00")
+                ).timestamp()
+            else:
+                expires_at = validity
             cache["token"] = token
             cache["expires_at"] = expires_at
 

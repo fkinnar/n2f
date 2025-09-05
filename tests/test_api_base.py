@@ -1,7 +1,12 @@
+"""
+Tests unitaires pour les fonctions de base de l'API N2F.
+
+Ce module teste les fonctions fondamentales de l'API N2F
+comme la récupération et l'upsert des données.
+"""
+
 import unittest
-import sys
-import os
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 
 import n2f.api.base as base_api
 
@@ -261,7 +266,7 @@ class TestDelete(unittest.TestCase):
         self.endpoint = "users"
         self.client_id = "test_client_id"
         self.client_secret = "test_client_secret"
-        self.id = "test@example.com"
+        self.object_id = "test@example.com"
 
     def test_delete_simulation_mode(self):
         """Test du mode simulation."""
@@ -270,7 +275,7 @@ class TestDelete(unittest.TestCase):
             self.endpoint,
             self.client_id,
             self.client_secret,
-            self.id,
+            self.object_id,
             simulate=True,
         )
 
@@ -288,7 +293,11 @@ class TestDelete(unittest.TestCase):
         mock_get_session.return_value = mock_session
 
         result = base_api.delete(
-            self.base_url, self.endpoint, self.client_id, self.client_secret, self.id
+            self.base_url,
+            self.endpoint,
+            self.client_id,
+            self.client_secret,
+            self.object_id,
         )
 
         # Vérifications
@@ -326,7 +335,7 @@ class TestDelete(unittest.TestCase):
                     self.endpoint,
                     self.client_id,
                     self.client_secret,
-                    self.id,
+                    self.object_id,
                 )
 
                 self.assertTrue(result)
@@ -344,7 +353,7 @@ class TestDelete(unittest.TestCase):
                     self.endpoint,
                     self.client_id,
                     self.client_secret,
-                    self.id,
+                    self.object_id,
                 )
 
                 self.assertFalse(result)

@@ -1,12 +1,16 @@
-from unittest.mock import Mock, patch, MagicMock
+"""
+Tests unitaires pour les fonctions de normalisation.
 
+Ce module teste les fonctions de normalisation et de transformation
+des données pour la synchronisation N2F.
+"""
 
 import unittest
-import sys
-import os
+
 
 import pandas as pd
 import numpy as np
+from typing import cast
 
 from business.normalize import (
     normalize_agresso_users,
@@ -112,8 +116,10 @@ class TestNormalize(unittest.TestCase):
         """Test la normalisation avec des valeurs NaN."""
         # Ajout de valeurs NaN
         data_with_nan = self.agresso_users_data.copy()
-        data_with_nan[AGRESSO_COL_STRUCTURE] = ["IT", np.nan, "HR"]
-        data_with_nan[AGRESSO_COL_MANAGER] = ["manager@test.com", np.nan, ""]
+        data_with_nan[AGRESSO_COL_STRUCTURE] = cast(list, ["IT", np.nan, "HR"])
+        data_with_nan[AGRESSO_COL_MANAGER] = cast(
+            list, ["manager@test.com", np.nan, ""]
+        )
 
         df = pd.DataFrame(data_with_nan)
         result = normalize_agresso_users(df)
@@ -218,8 +224,8 @@ class TestNormalize(unittest.TestCase):
         """Test la normalisation N2F avec des valeurs NaN."""
         # Ajout de valeurs NaN
         data_with_nan = self.n2f_users_data.copy()
-        data_with_nan[N2F_COL_PROFILE] = ["STANDARD", np.nan, "PREMIUM"]
-        data_with_nan[N2F_COL_ROLE] = ["USER", np.nan, "ADMIN"]
+        data_with_nan[N2F_COL_PROFILE] = cast(list, ["STANDARD", np.nan, "PREMIUM"])
+        data_with_nan[N2F_COL_ROLE] = cast(list, ["USER", np.nan, "ADMIN"])
 
         df = pd.DataFrame(data_with_nan)
         result = normalize_n2f_users(df)

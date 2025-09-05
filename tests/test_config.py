@@ -6,13 +6,10 @@ des fichiers de configuration.
 """
 
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 import tempfile
 import yaml
 from pathlib import Path
-import sys
-import os
-from typing import Dict, List, Any
 
 # Ajout du chemin du projet pour les imports
 from core.config import (

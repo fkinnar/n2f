@@ -6,22 +6,18 @@ Ce module teste les fonctionnalit\3s avanc\3es de l'orchestrateur.
 """
 
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 import tempfile
 import os
 import sys
-import pandas as pd
-import numpy as np
 from pathlib import Path
 
 # Ajouter le r\3pertoire python au path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))
 
 # Imports apr\3s modification du path
-from core.orchestrator import SyncOrchestrator, LogManager, SyncResult
+from core.orchestrator import SyncOrchestrator, SyncResult
 from core.config import SyncConfig, DatabaseConfig, ApiConfig, CacheConfig
-from core.registry import SyncRegistry
-from core import SyncContext
 from core.exceptions import SyncException
 
 
@@ -90,10 +86,6 @@ cache:
     @patch("core.orchestrator.print_retry_summary")
     def test_run_with_specific_scopes(
         self,
-        mock_retry_summary,
-        mock_metrics_summary,
-        mock_memory_summary,
-        mock_cache_stats,
         mock_cleanup_all,
         mock_cleanup_scope,
         mock_end_operation,
@@ -146,11 +138,7 @@ cache:
     @patch("core.orchestrator.print_memory_summary")
     def test_run_with_scope_execution_error(
         self,
-        mock_print_memory_summary,
-        mock_cleanup_all,
-        mock_cleanup_scope,
         mock_end_operation,
-        mock_start_operation,
         mock_executor,
         mock_context,
         mock_registry,

@@ -4,9 +4,8 @@ Tests for the enhanced simulation system.
 """
 
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 import pandas as pd
-from typing import Dict, Any
 
 from core import SyncContext
 from n2f.client import N2fApiClient
@@ -15,7 +14,6 @@ from n2f.simulation import (
     SimulationConfig,
     EnhancedSimulator,
     get_simulator,
-    configure_simulation,
 )
 from n2f.simulation_config import apply_simulation_scenario
 

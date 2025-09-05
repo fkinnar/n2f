@@ -1,12 +1,8 @@
-from unittest.mock import Mock, patch, MagicMock
-
 """
 Tests unitaires pour la hiérarchie d'exceptions personnalisées.
 """
 
 import unittest
-import sys
-import os
 
 from core.exceptions import (
     SyncException,

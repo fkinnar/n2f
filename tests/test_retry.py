@@ -1,12 +1,14 @@
+"""
+Tests unitaires pour le système de retry.
+
+Ce module teste les fonctionnalités de retry et de gestion
+des erreurs temporaires dans la synchronisation N2F.
+"""
+
 from unittest.mock import Mock, patch, MagicMock
 
 import unittest
-import time
-import random
-from typing import Dict, Any
-
-import sys
-import os
+from typing import cast
 
 # Ajout du chemin du projet pour les imports
 from core.retry import (
@@ -273,7 +275,7 @@ class TestRetryManager(unittest.TestCase):
             total_attempts=5, successful_attempts=3, failed_attempts=2
         )
 
-        metrics = self.manager.get_metrics("test_op")
+        metrics = cast(RetryMetrics, self.manager.get_metrics("test_op"))
         self.assertEqual(metrics.total_attempts, 5)
         self.assertEqual(metrics.successful_attempts, 3)
 
@@ -282,14 +284,14 @@ class TestRetryManager(unittest.TestCase):
         self.manager.metrics["op1"] = RetryMetrics(total_attempts=1)
         self.manager.metrics["op2"] = RetryMetrics(total_attempts=2)
 
-        all_metrics = self.manager.get_metrics()
+        all_metrics = cast(dict, self.manager.get_metrics())
         self.assertIn("op1", all_metrics)
         self.assertIn("op2", all_metrics)
         self.assertEqual(len(all_metrics), 2)
 
     def test_get_metrics_nonexistent_operation(self):
         """Test de récupération des métriques pour une opération inexistante."""
-        metrics = self.manager.get_metrics("nonexistent")
+        metrics = cast(RetryMetrics, self.manager.get_metrics("nonexistent"))
         self.assertEqual(metrics.total_attempts, 0)
 
     def test_reset_metrics_specific_operation(self):

@@ -1,8 +1,3 @@
-from unittest.mock import Mock, patch, MagicMock
-
-import agresso.database as agresso_db
-from core import SyncContext
-
 """
 Tests unitaires pour le module de contexte.
 
@@ -12,12 +7,16 @@ Ce module teste les fonctionnalités du contexte de synchronisation :
 - Compatibilité avec les anciens et nouveaux formats
 """
 
+from unittest.mock import Mock
+
+import agresso.database as agresso_db
+from core import SyncContext
+
 import unittest
 import argparse
-import sys
-import os
+
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Dict, Any
 
 # Ajout du chemin du projet pour les imports
 from core.config import SyncConfig, DatabaseConfig, ApiConfig

@@ -1,9 +1,14 @@
+"""
+Tests unitaires pour la gestion des tokens N2F.
+
+Ce module teste la gestion des tokens d'authentification
+et leur cache pour l'API N2F.
+"""
+
 import unittest
-from unittest.mock import Mock, patch, MagicMock
-import time
-import sys
-import os
+from unittest.mock import Mock, patch
 from datetime import datetime
+from typing import cast
 
 import n2f.api.token as token_module
 
@@ -142,7 +147,7 @@ class TestCacheToken(unittest.TestCase):
 
                 # Vérifie que la date a été convertie en timestamp
                 self.assertIsInstance(result[1], float)
-                self.assertGreater(result[1], 0)
+                self.assertGreater(cast(float, result[1]), 0)
 
 
 class TestGetAccessToken(unittest.TestCase):

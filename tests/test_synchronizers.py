@@ -1,6 +1,3 @@
-import n2f.api_result
-from business.process.base_synchronizer import EntitySynchronizer
-
 """
 Tests unitaires pour les synchronizers.
 
@@ -10,12 +7,11 @@ Ce module teste les fonctionnalités des synchronizers :
 - AxeSynchronizer (implémentation concrète)
 """
 
+from business.process.base_synchronizer import EntitySynchronizer
+
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 import pandas as pd
-import tempfile
-import sys
-import os
 
 # Ajout du chemin du projet pour les imports
 from business.process.user_synchronizer import UserSynchronizer
@@ -489,6 +485,8 @@ class TestAxeSynchronizer(unittest.TestCase):
                 "UNKNOWN_CLIENT", df_n2f_companies, self.sandbox
             )
             self.assertFalse(result.success)
+            self.assertIsNotNone(result.error_details)
+            assert result.error_details is not None
             self.assertIn("Company not found", result.error_details)
 
     def test_perform_update_operation_success(self):
@@ -547,6 +545,8 @@ class TestAxeSynchronizer(unittest.TestCase):
                 "UNKNOWN_CLIENT", df_n2f_companies, self.sandbox
             )
             self.assertFalse(result.success)
+            self.assertIsNotNone(result.error_details)
+            assert result.error_details is not None
             self.assertIn("Company not found", result.error_details)
 
     def test_perform_delete_operation_success(self):
@@ -573,6 +573,8 @@ class TestAxeSynchronizer(unittest.TestCase):
         result = self.synchronizer._perform_delete_operation(entity)
 
         self.assertFalse(result.success)
+        self.assertIsNotNone(result.error_details)
+        assert result.error_details is not None
         self.assertIn("Company ID not found", result.error_details)
 
 

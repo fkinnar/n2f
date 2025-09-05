@@ -1,12 +1,17 @@
+"""
+Tests unitaires pour les modules métier.
+
+Ce module teste les fonctions et classes du package business
+pour la logique métier et le traitement des données.
+"""
+
 import business.process.helper as business_helper
 import business.process.axe as axe_process
 
 import unittest
-import sys
-import os
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 import pandas as pd
-from typing import Dict, List, Any
+from typing import Dict, List, Any, cast
 
 import business.process.axe_types as axe_types
 from core.exceptions import ApiException, ValidationException
@@ -78,7 +83,9 @@ class TestBusinessHelper(unittest.TestCase):
             "id": 123,
         }
 
-        result: bool = business_helper.has_payload_changes(payload, n2f_entity, "user")
+        result: bool = business_helper.has_payload_changes(
+            payload, pd.Series(n2f_entity), "user"
+        )
 
         self.assertFalse(result)
 
@@ -91,7 +98,9 @@ class TestBusinessHelper(unittest.TestCase):
             "id": 123,
         }
 
-        result: bool = business_helper.has_payload_changes(payload, n2f_entity, "user")
+        result: bool = business_helper.has_payload_changes(
+            payload, pd.Series(n2f_entity), "user"
+        )
 
         self.assertTrue(result)
 
@@ -100,7 +109,9 @@ class TestBusinessHelper(unittest.TestCase):
         payload = {"name": "John Doe", "email": "john@example.com", "id": 123}
         n2f_entity = {"name": "John Doe", "email": "john@example.com", "id": 456}
 
-        result = business_helper.has_payload_changes(payload, n2f_entity, "user")
+        result = business_helper.has_payload_changes(
+            payload, pd.Series(n2f_entity), "user"
+        )
 
         self.assertFalse(result)
 
@@ -109,7 +120,9 @@ class TestBusinessHelper(unittest.TestCase):
         payload = {"name": "John Doe", "email": "john@example.com"}
         n2f_entity = {}
 
-        result = business_helper.has_payload_changes(payload, n2f_entity, "user")
+        result = business_helper.has_payload_changes(
+            payload, pd.Series(n2f_entity), "user"
+        )
 
         self.assertTrue(result)
 
@@ -118,7 +131,9 @@ class TestBusinessHelper(unittest.TestCase):
         payload = {"name": "John Doe", "active": True}
         n2f_entity = {"name": "John Doe", "active": "true"}
 
-        result = business_helper.has_payload_changes(payload, n2f_entity, "user")
+        result = business_helper.has_payload_changes(
+            payload, pd.Series(n2f_entity), "user"
+        )
 
         # Le résultat peut varier selon l'implémentation exacte
         # Testons que la fonction ne lève pas d'exception
@@ -209,7 +224,9 @@ class TestAxeTypes(unittest.TestCase):
 
         with self.assertRaises(ValidationException):
             axe_types.get_axe_mapping(
-                UnknownAxeType.UNKNOWN, self.n2f_client, self.company_id
+                cast(axe_types.AxeType, UnknownAxeType.UNKNOWN),
+                self.n2f_client,
+                self.company_id,
             )
 
     def test_get_axe_mapping_client_error(self):

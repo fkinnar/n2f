@@ -1,10 +1,11 @@
-import n2f.client
-import business.process.user as user_process
-import business.process.axe as axe_process
-import agresso.database as agresso_db
+"""
+Tests d'intégration pour la synchronisation N2F.
+
+Ce module teste l'intégration complète entre les différents
+composants de la synchronisation N2F.
+"""
+
 from core.orchestrator import SyncOrchestrator
-from core.orchestrator import ContextBuilder
-from core.orchestrator import ScopeExecutor
 from core.orchestrator import SyncResult
 
 """
@@ -26,18 +27,14 @@ import unittest
 import tempfile
 import shutil
 import os
-import sys
 import pandas as pd
-import numpy as np
-from unittest.mock import Mock, patch, MagicMock, call
+from unittest.mock import Mock, patch
 from pathlib import Path
 import argparse
-import json
 from datetime import datetime, timedelta
 
 # Ajout du chemin du projet pour les imports
-from core.config import SyncConfig, DatabaseConfig, ApiConfig, ScopeConfig, CacheConfig
-from core.registry import SyncRegistry, RegistryEntry
+from core.config import SyncConfig
 from business.process.user_synchronizer import UserSynchronizer
 from business.process.axe_synchronizer import AxeSynchronizer
 from core import SyncContext
@@ -234,15 +231,11 @@ class TestEndToEndIntegration(TestIntegrationBase):
     @patch("core.orchestrator.print_memory_summary")
     def test_synchronization_with_multiple_scopes(
         self,
-        mock_print_memory_summary,
+        _mock_print_memory_summary,
         mock_log_manager,
         mock_scope_executor,
         mock_sync_context,
         mock_get_registry,
-        mock_get_retry_manager,
-        mock_get_metrics,
-        mock_get_memory_manager,
-        mock_get_cache,
         mock_config_loader,
     ):
         """Test de synchronisation avec plusieurs scopes."""
@@ -454,15 +447,9 @@ class TestPerformanceIntegration(TestIntegrationBase):
     @patch("core.orchestrator.print_memory_summary")
     def test_large_dataset_performance(
         self,
-        mock_print_memory_summary,
-        mock_log_manager,
         mock_scope_executor,
         mock_sync_context,
         mock_get_registry,
-        mock_get_retry_manager,
-        mock_get_metrics,
-        mock_get_memory_manager,
-        mock_get_cache,
         mock_config_loader,
     ):
         """Test de performance avec un grand volume de données."""
@@ -529,16 +516,11 @@ class TestPerformanceIntegration(TestIntegrationBase):
     @patch("core.orchestrator.print_memory_summary")
     def test_memory_usage_integration(
         self,
-        mock_print_memory_summary,
         mock_cleanup_scope,
-        mock_log_manager,
         mock_scope_executor,
         mock_sync_context,
         mock_get_registry,
-        mock_get_retry_manager,
-        mock_get_metrics,
         mock_get_memory_manager,
-        mock_get_cache,
         mock_config_loader,
     ):
         """Test d'intégration de l'utilisation mémoire."""
@@ -615,15 +597,10 @@ class TestErrorRecoveryIntegration(TestIntegrationBase):
     @patch("core.orchestrator.print_memory_summary")
     def test_partial_failure_recovery(
         self,
-        mock_print_memory_summary,
         mock_log_manager,
         mock_scope_executor,
         mock_sync_context,
         mock_get_registry,
-        mock_get_retry_manager,
-        mock_get_metrics,
-        mock_get_memory_manager,
-        mock_get_cache,
         mock_config_loader,
     ):
         """Test de récupération après échec partiel."""
@@ -684,13 +661,6 @@ class TestErrorRecoveryIntegration(TestIntegrationBase):
     @patch("core.orchestrator.print_memory_summary")
     def test_configuration_error_handling(
         self,
-        mock_print_memory_summary,
-        mock_sync_context,
-        mock_get_registry,
-        mock_get_retry_manager,
-        mock_get_metrics,
-        mock_get_memory_manager,
-        mock_get_cache,
         mock_config_loader,
     ):
         """Test de gestion d'erreur de configuration."""
@@ -720,15 +690,10 @@ class TestCacheIntegration(TestIntegrationBase):
     @patch("core.orchestrator.print_memory_summary")
     def test_cache_integration_with_clear_cache(
         self,
-        mock_print_memory_summary,
         mock_cache_clear,
-        mock_log_manager,
         mock_scope_executor,
         mock_sync_context,
         mock_get_registry,
-        mock_get_retry_manager,
-        mock_get_metrics,
-        mock_get_memory_manager,
         mock_get_cache,
         mock_config_loader,
     ):

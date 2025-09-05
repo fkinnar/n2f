@@ -9,12 +9,9 @@ Ce module teste les fonctionnalités du cache avancé :
 """
 
 import unittest
-from unittest.mock import Mock, patch, MagicMock
 import tempfile
 import time
 import pandas as pd
-import sys
-import os
 from pathlib import Path
 
 # Ajout du chemin du projet pour les imports
@@ -50,10 +47,10 @@ class TestCacheEntry(unittest.TestCase):
         self.assertTrue(cache._is_expired(entry))
 
         # Entrée valide
-        entry: CacheEntry = CacheEntry(
+        valid_entry: CacheEntry = CacheEntry(
             data={"test": "data"}, timestamp=time.time(), ttl=3600
         )
-        self.assertFalse(cache._is_expired(entry))
+        self.assertFalse(cache._is_expired(valid_entry))
 
     def test_cache_entry_size(self) -> None:
         """Test du calcul de la taille d'une entrée."""
@@ -175,14 +172,14 @@ class TestAdvancedCache(unittest.TestCase):
         test_data = {"test": "data"}
 
         # Créer une entrée avec un TTL très court
-        self.cache.set(test_data, "test_function", "arg1", ttl=0.1)  # 100ms
+        self.cache.set(test_data, "test_function", "arg1", ttl=1)  # 1 second
 
         # Récupérer immédiatement
         result = self.cache.get("test_function", "arg1")
         self.assertEqual(result, test_data)
 
         # Attendre l'expiration
-        time.sleep(0.2)
+        time.sleep(1.1)
 
         # Récupérer après expiration
         result = self.cache.get("test_function", "arg1")

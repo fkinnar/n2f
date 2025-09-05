@@ -6,13 +6,10 @@ Ce module teste les fonctions d'API pour les rôles et profils utilisateur.
 """
 
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 from typing import List, Dict, Any
-import tempfile
 import os
 import sys
-import pandas as pd
-import numpy as np
 
 # Ajouter le répertoire python au path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))

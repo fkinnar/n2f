@@ -1,7 +1,13 @@
+"""
+Tests unitaires pour le script principal de synchronisation.
+
+Ce module teste le script principal de synchronisation
+entre Agresso et N2F.
+"""
+
 import unittest
 from unittest.mock import patch, MagicMock
 import os
-import sys
 import importlib
 
 # Import the renamed main module

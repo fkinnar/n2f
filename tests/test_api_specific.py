@@ -1,7 +1,12 @@
+"""
+Tests unitaires pour les fonctions spécifiques de l'API N2F.
+
+Ce module teste les fonctions spécialisées de l'API N2F
+pour les différents types d'entités (utilisateurs, axes, etc.).
+"""
+
 import unittest
-import sys
-import os
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 from typing import Dict, List, Any
 
 import n2f.api.user as user_api
