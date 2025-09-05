@@ -149,7 +149,7 @@ class TestN2fApiClient(unittest.TestCase):
 
         result: List[Dict[str, str]] = self.client._request("users", 0, 100)
 
-        self.assertEqual(result, [])
+        self.assertGreater(len(result), 0)  # Enhanced simulation returns realistic data
         # Aucun appel API ne doit être fait en mode simulation
         mock_session.return_value.get.assert_not_called()
 
@@ -385,7 +385,7 @@ class TestN2fApiClient(unittest.TestCase):
         )
 
         self.assertTrue(result.success)
-        self.assertEqual(result.message, "Simulated upsert")
+        self.assertEqual(result.message, "Simulated create successful")
         self.assertEqual(result.action_type, "create")
 
     @patch("n2f.client.n2f.get_session_write")
@@ -437,7 +437,7 @@ class TestN2fApiClient(unittest.TestCase):
         )
 
         self.assertTrue(result.success)
-        self.assertEqual(result.message, "Simulated delete")
+        self.assertEqual(result.message, "Simulated delete successful")
         self.assertEqual(result.action_type, "delete")
 
     def test_create_user(self):
@@ -613,8 +613,8 @@ class TestN2fApiClient(unittest.TestCase):
 
         result = self.client.get_roles(use_cache=True)
 
-        self.assertTrue(result.empty)
-        self.assertEqual(len(result), 0)
+        self.assertFalse(result.empty)  # Enhanced simulation returns realistic data
+        self.assertGreater(len(result), 0)  # Enhanced simulation returns realistic data
 
     def test_get_userprofiles_simulation_mode(self):
         """Test la récupération des profils en mode simulation."""
@@ -622,8 +622,8 @@ class TestN2fApiClient(unittest.TestCase):
 
         result = self.client.get_userprofiles(use_cache=True)
 
-        self.assertTrue(result.empty)
-        self.assertEqual(len(result), 0)
+        self.assertFalse(result.empty)  # Enhanced simulation returns realistic data
+        self.assertGreater(len(result), 0)  # Enhanced simulation returns realistic data
 
     def test_get_custom_axes_simulation_mode(self):
         """Test la récupération des axes personnalisés en mode simulation."""
@@ -631,8 +631,8 @@ class TestN2fApiClient(unittest.TestCase):
 
         result = self.client.get_custom_axes("company123", use_cache=True)
 
-        self.assertTrue(result.empty)
-        self.assertEqual(len(result), 0)
+        self.assertFalse(result.empty)  # Enhanced simulation returns realistic data
+        self.assertGreater(len(result), 0)  # Enhanced simulation returns realistic data
 
     def test_get_axe_values_simulation_mode(self):
         """Test la récupération des valeurs d'axe en mode simulation."""
@@ -640,8 +640,8 @@ class TestN2fApiClient(unittest.TestCase):
 
         result = self.client.get_axe_values("company123", "axis456", use_cache=True)
 
-        self.assertTrue(result.empty)
-        self.assertEqual(len(result), 0)
+        self.assertFalse(result.empty)  # Enhanced simulation returns realistic data
+        self.assertGreater(len(result), 0)  # Enhanced simulation returns realistic data
 
 
 if __name__ == "__main__":

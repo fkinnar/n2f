@@ -12,6 +12,7 @@ import n2f
 from core import SyncContext, cache_get, cache_set
 from n2f.api.token import get_access_token
 from n2f.api_result import ApiResult
+from n2f.simulation import get_simulator
 
 
 class N2fApiClient:
@@ -97,7 +98,7 @@ class N2fApiClient:
 
         Cette méthode gère les appels API GET avec pagination automatique.
         Elle inclut l'authentification, la gestion d'erreur et le support
-        du mode simulation.
+        du mode simulation amélioré.
 
         Args:
             entity: Nom de l'entité à récupérer (ex: 'users', 'companies')
@@ -112,7 +113,9 @@ class N2fApiClient:
             NetworkException: Si la connexion réseau échoue
         """
         if self.simulate:
-            return []
+            # Use enhanced simulation
+            simulator = get_simulator()
+            return simulator.simulate_get_response(entity, start, limit)
 
         access_token = self._get_token()
         url = f"{self.base_url}/{entity}"
@@ -177,17 +180,20 @@ class N2fApiClient:
 
         # L'endpoint "roles" ne semble pas paginé et a une structure différente
         if self.simulate:
-            return pd.DataFrame()
+            # Use enhanced simulation
+            simulator = get_simulator()
+            roles_data = simulator.simulate_get_response("roles", 0, 200)
+            result = pd.DataFrame(roles_data)
+        else:
+            access_token = self._get_token()
+            url = f"{self.base_url}/roles"
+            headers = {"Authorization": f"Bearer {access_token}"}
+            response = n2f.get_session_get().get(url, headers=headers)
+            response.raise_for_status()
 
-        access_token = self._get_token()
-        url = f"{self.base_url}/roles"
-        headers = {"Authorization": f"Bearer {access_token}"}
-        response = n2f.get_session_get().get(url, headers=headers)
-        response.raise_for_status()
-
-        # La réponse pour les rôles est directement la liste
-        roles_data = response.json()["response"]
-        result = pd.DataFrame(roles_data)
+            # La réponse pour les rôles est directement la liste
+            roles_data = response.json()["response"]
+            result = pd.DataFrame(roles_data)
 
         if use_cache:
             cache_set(result, "get_roles", *cache_key_args)
@@ -204,16 +210,19 @@ class N2fApiClient:
 
         # L'endpoint "userprofiles" a la même structure de réponse que "roles"
         if self.simulate:
-            return pd.DataFrame()
+            # Use enhanced simulation
+            simulator = get_simulator()
+            profiles_data = simulator.simulate_get_response("userprofiles", 0, 200)
+            result = pd.DataFrame(profiles_data)
+        else:
+            access_token = self._get_token()
+            url = f"{self.base_url}/userprofiles"
+            headers = {"Authorization": f"Bearer {access_token}"}
+            response = n2f.get_session_get().get(url, headers=headers)
+            response.raise_for_status()
 
-        access_token = self._get_token()
-        url = f"{self.base_url}/userprofiles"
-        headers = {"Authorization": f"Bearer {access_token}"}
-        response = n2f.get_session_get().get(url, headers=headers)
-        response.raise_for_status()
-
-        profiles_data = response.json()["response"]
-        result = pd.DataFrame(profiles_data)
+            profiles_data = response.json()["response"]
+            result = pd.DataFrame(profiles_data)
 
         if use_cache:
             cache_set(result, "get_userprofiles", *cache_key_args)
@@ -268,12 +277,10 @@ class N2fApiClient:
             f"'{endpoint}' for object '{object_id}'"
         )
         if self.simulate:
-            logging.info(
-                f"SIMULATE: [{scope or 'Generic'}] {action_type.upper()} for object "
-                f"'{object_id}' was successful."
-            )
-            return ApiResult.simulate_result(
-                "upsert", action_type, object_type, object_id, scope
+            # Use enhanced simulation
+            simulator = get_simulator()
+            return simulator.simulate_upsert_response(
+                endpoint, payload, action_type, object_type, object_id, scope
             )
 
         start_time = time.time()
@@ -350,12 +357,10 @@ class N2fApiClient:
             f"'{object_id}'"
         )
         if self.simulate:
-            logging.info(
-                f"SIMULATE: [{scope or 'Generic'}] DELETE for object '{object_id}' "
-                f"was successful."
-            )
-            return ApiResult.simulate_result(
-                "delete", action_type, object_type, object_id, scope
+            # Use enhanced simulation
+            simulator = get_simulator()
+            return simulator.simulate_delete_response(
+                endpoint, object_id, action_type, object_type, scope
             )
 
         start_time = time.time()
@@ -438,7 +443,9 @@ class N2fApiClient:
         # Cet endpoint n'est pas paginé dans l'implémentation de référence
         endpoint = f"companies/{company_id}/axes"
         if self.simulate:
-            axes_data: List[Dict[str, Any]] = []
+            # Use enhanced simulation
+            simulator = get_simulator()
+            axes_data = simulator.simulate_get_response(endpoint, 0, 200)
         else:
             access_token = self._get_token()
             url = f"{self.base_url}/{endpoint}"
@@ -476,7 +483,9 @@ class N2fApiClient:
         while True:
             # La méthode _request est pour les endpoints globaux, l'URL est spécifique
             if self.simulate:
-                values_page: List[Dict[str, Any]] = []
+                # Use enhanced simulation
+                simulator = get_simulator()
+                values_page = simulator.simulate_get_response(endpoint, start, limit)
             else:
                 access_token = self._get_token()
                 url = f"{self.base_url}/{endpoint}"
