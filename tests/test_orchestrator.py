@@ -75,6 +75,7 @@ class TestContextBuilder(unittest.TestCase):
     @patch("core.orchestrator.print_memory_summary")
     def test_build_context(
         self,
+        mock_print_memory_summary,
         mock_sync_context,
         mock_get_registry,
         mock_get_retry_manager,
@@ -129,6 +130,12 @@ class TestContextBuilder(unittest.TestCase):
     @patch("core.orchestrator.print_memory_summary")
     def test_build_context_with_persistent_cache(
         self,
+        mock_print_memory_summary,
+        mock_sync_context,
+        mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
+        mock_get_memory_manager,
         mock_get_cache,
         mock_config_loader,
     ):

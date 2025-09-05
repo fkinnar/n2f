@@ -199,11 +199,16 @@ class TestUserSynchronizationScenario(TestRealScenariosBase):
     @patch("core.orchestrator.get_cache")
     def test_full_user_synchronization_scenario(
         self,
+        mock_get_cache,
         mock_config_loader,
         mock_log_manager,
         mock_scope_executor,
         mock_sync_context,
         mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
+        mock_get_memory_manager,
+        mock_print_memory_summary,
     ):
         """Test de synchronisation complète d'utilisateurs (scénario réel)."""
 
@@ -262,10 +267,16 @@ class TestUserSynchronizationScenario(TestRealScenariosBase):
     @patch("core.orchestrator.get_cache")
     def test_user_synchronization_with_conflicts(
         self,
+        mock_get_cache,
         mock_config_loader,
+        mock_log_manager,
         mock_scope_executor,
         mock_sync_context,
         mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
+        mock_get_memory_manager,
+        mock_print_memory_summary,
     ):
         """Test de synchronisation d'utilisateurs avec conflits de données."""
 
@@ -331,11 +342,16 @@ class TestAxeSynchronizationScenario(TestRealScenariosBase):
     @patch("core.orchestrator.get_cache")
     def test_full_axe_synchronization_scenario(
         self,
+        mock_get_cache,
         mock_config_loader,
         mock_log_manager,
         mock_scope_executor,
         mock_sync_context,
         mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
+        mock_get_memory_manager,
+        mock_print_memory_summary,
     ):
         """Test de synchronisation complète d'axes (scénario réel)."""
 
@@ -406,6 +422,11 @@ class TestMultiScopeSynchronizationScenario(TestRealScenariosBase):
         mock_scope_executor,
         mock_sync_context,
         mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
+        mock_get_memory_manager,
+        mock_get_cache,
+        mock_print_memory_summary,
     ):
         """Test de synchronisation multi - scopes (scénario réel)."""
 
@@ -475,9 +496,15 @@ class TestLoadTestingScenario(TestRealScenariosBase):
     def test_large_scale_user_synchronization(
         self,
         mock_config_loader,
+        mock_log_manager,
         mock_scope_executor,
         mock_sync_context,
         mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
+        mock_get_memory_manager,
+        mock_get_cache,
+        mock_print_memory_summary,
     ):
         """Test de charge avec un grand volume d'utilisateurs."""
 
@@ -537,9 +564,15 @@ class TestLoadTestingScenario(TestRealScenariosBase):
     def test_concurrent_scope_execution(
         self,
         mock_config_loader,
+        mock_log_manager,
         mock_scope_executor,
         mock_sync_context,
         mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
+        mock_get_memory_manager,
+        mock_get_cache,
+        mock_print_memory_summary,
     ):
         """Test d'exécution concurrente de plusieurs scopes."""
 
@@ -614,6 +647,11 @@ class TestErrorRecoveryScenario(TestRealScenariosBase):
         mock_scope_executor,
         mock_sync_context,
         mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
+        mock_get_memory_manager,
+        mock_get_cache,
+        mock_print_memory_summary,
     ):
         """Test de récupération après échec partiel (scénario réel)."""
 

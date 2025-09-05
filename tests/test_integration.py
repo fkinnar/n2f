@@ -231,11 +231,15 @@ class TestEndToEndIntegration(TestIntegrationBase):
     @patch("core.orchestrator.print_memory_summary")
     def test_synchronization_with_multiple_scopes(
         self,
-        _mock_print_memory_summary,
+        mock_print_memory_summary,
         mock_log_manager,
         mock_scope_executor,
         mock_sync_context,
         mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
+        mock_get_memory_manager,
+        mock_get_cache,
         mock_config_loader,
     ):
         """Test de synchronisation avec plusieurs scopes."""
@@ -447,9 +451,15 @@ class TestPerformanceIntegration(TestIntegrationBase):
     @patch("core.orchestrator.print_memory_summary")
     def test_large_dataset_performance(
         self,
+        mock_print_memory_summary,
+        mock_log_manager,
         mock_scope_executor,
         mock_sync_context,
         mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
+        mock_get_memory_manager,
+        mock_get_cache,
         mock_config_loader,
     ):
         """Test de performance avec un grand volume de données."""
@@ -516,11 +526,16 @@ class TestPerformanceIntegration(TestIntegrationBase):
     @patch("core.orchestrator.print_memory_summary")
     def test_memory_usage_integration(
         self,
+        mock_print_memory_summary,
         mock_cleanup_scope,
+        mock_log_manager,
         mock_scope_executor,
         mock_sync_context,
         mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
         mock_get_memory_manager,
+        mock_get_cache,
         mock_config_loader,
     ):
         """Test d'intégration de l'utilisation mémoire."""
@@ -597,10 +612,15 @@ class TestErrorRecoveryIntegration(TestIntegrationBase):
     @patch("core.orchestrator.print_memory_summary")
     def test_partial_failure_recovery(
         self,
+        mock_print_memory_summary,
         mock_log_manager,
         mock_scope_executor,
         mock_sync_context,
         mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
+        mock_get_memory_manager,
+        mock_get_cache,
         mock_config_loader,
     ):
         """Test de récupération après échec partiel."""
@@ -661,6 +681,13 @@ class TestErrorRecoveryIntegration(TestIntegrationBase):
     @patch("core.orchestrator.print_memory_summary")
     def test_configuration_error_handling(
         self,
+        mock_print_memory_summary,
+        mock_sync_context,
+        mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
+        mock_get_memory_manager,
+        mock_get_cache,
         mock_config_loader,
     ):
         """Test de gestion d'erreur de configuration."""
@@ -690,10 +717,15 @@ class TestCacheIntegration(TestIntegrationBase):
     @patch("core.orchestrator.print_memory_summary")
     def test_cache_integration_with_clear_cache(
         self,
+        mock_print_memory_summary,
         mock_cache_clear,
+        mock_log_manager,
         mock_scope_executor,
         mock_sync_context,
         mock_get_registry,
+        mock_get_retry_manager,
+        mock_get_metrics,
+        mock_get_memory_manager,
         mock_get_cache,
         mock_config_loader,
     ):

@@ -86,6 +86,10 @@ cache:
     @patch("core.orchestrator.print_retry_summary")
     def test_run_with_specific_scopes(
         self,
+        mock_print_retry_summary,
+        mock_print_metrics_summary,
+        mock_print_memory_summary,
+        mock_cache_stats,
         mock_cleanup_all,
         mock_cleanup_scope,
         mock_end_operation,
@@ -138,7 +142,11 @@ cache:
     @patch("core.orchestrator.print_memory_summary")
     def test_run_with_scope_execution_error(
         self,
+        mock_print_memory_summary,
+        mock_cleanup_all,
+        mock_cleanup_scope,
         mock_end_operation,
+        mock_start_operation,
         mock_executor,
         mock_context,
         mock_registry,
